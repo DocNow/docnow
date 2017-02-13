@@ -3,6 +3,6 @@
 pipenv install
 npm install
 
-./manager.py runserver
-./server.js
+./manage.py runserver
+npm run start
 ```
