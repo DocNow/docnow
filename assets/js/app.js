@@ -1,7 +1,8 @@
-var React = require('react');
+import React, { Component } from 'react'
+import { render } from 'react-dom'
 
-module.exports = React.createClass({
-   render: function(){
-       return <h1>Hello, worldly.</h1>
-   }
-});
+export default class App extends Component {
+  render() {
+    return(<h1>Hello, worldly!</h1>)
+  } 
+}
