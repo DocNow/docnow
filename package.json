@@ -19,7 +19,6 @@
     "style-loader": "0.13.1",
     "svg-url-loader": "1.1.0",
     "webpack": "1.13.3",
-    "webpack-dashboard": "0.2.0",
     "webpack-dev-server": "1.16.2"
   },
   "dependencies": {

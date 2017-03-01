@@ -1,8 +1,4 @@
-
 ```
-pipenv install
-npm install
-
-./manage.py runserver
-npm run start
+docker-compose up
+open http://localhost:8000
 ```
