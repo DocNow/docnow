@@ -1,7 +1,12 @@
 version: '2'
 services:
+
+  redis:
+    image: redis
+
   db:
     image: postgres
+
   webpack:
     build:
       context: .
@@ -10,15 +15,27 @@ services:
       - .:/code
     ports:
       - "3000:3000"
-    command: bash -c "npm run start"
-  web:
+
+  django:
     build:
       context: .
       dockerfile: dockerfile.django
-    command: bash -c "python3 ./manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/code
     ports:
       - "8000:8000"
     depends_on:
       - db
+      - redis
+      - webpack
+
+#  trends:
+#    build:
+#      context: .
+#      dockerfile: dockerfile.worker
+#    volumes:
+#      - .:/code
+#    ports:
+#      - "8000:8000"
+#    depends-on:
+#      - django

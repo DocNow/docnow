@@ -1,1 +1,1 @@
-{"status":"compiling","publicPath":"http://0.0.0.0:3000/assets/bundles/"}
+{"status":"done","publicPath":"http://0.0.0.0:3000/assets/bundles/","chunks":{"main":[{"name":"main-fd37f07f188ab47a2e0d.js","publicPath":"http://0.0.0.0:3000/assets/bundles/main-fd37f07f188ab47a2e0d.js","path":"/main-fd37f07f188ab47a2e0d.js"}]}}
