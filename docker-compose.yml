@@ -29,13 +29,13 @@ services:
       - redis
       - webpack
 
-#  trends:
-#    build:
-#      context: .
-#      dockerfile: dockerfile.worker
-#    volumes:
-#      - .:/code
-#    ports:
-#      - "8000:8000"
-#    depends-on:
-#      - django
+  trends:
+    build:
+      context: .
+      dockerfile: dockerfile.django
+    volumes:
+      - .:/code
+    depends_on:
+      - django
+      - db
+    entrypoint: ["django-admin", "trends"]
