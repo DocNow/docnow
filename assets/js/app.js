@@ -37,9 +37,11 @@ export default class App extends Component {
     )  
     return(
       <div className="App">
-        { this.state.created }
         <ul>
-          <FlipMove duration={1000} easing="ease-out">
+          <FlipMove 
+            duration={1000} 
+            enterAnimation="elevator"
+            leaveAnimation="fade">
             { trends }
           </FlipMove>
         </ul>

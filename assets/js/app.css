@@ -1,20 +1,3 @@
 .App {
-}
-
-.App .trend-enter {
-  opacity: 0.01;
-}
-
-.App .trend-enter.trend-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
-}
-
-.App .trend-leave {
-  opacity: 1;
-}
-
-.trend-leave.trend-leave-active {
-  opacity: 0.01;
-  transition: opacity 300ms ease-in;
+  width: 40%;
 }
