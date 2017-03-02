@@ -21,7 +21,7 @@ class Command(BaseCommand):
             settings.TWITTER_ACCESS_TOKEN_SECRET
         )
         while True:
-            created = datetime.datetime.utcnow()
+            created = datetime.datetime.now()
             trends = t.trends_place(settings.TWITTER_WOE_ID)
             if len(trends) == 0 or 'trends' not in trends[0]: 
                 logger.error("no trends for woe_id %s" % settings.TWITTER_WOE_ID)
