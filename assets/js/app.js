@@ -15,7 +15,6 @@ export default class App extends Component {
   }
 
   getTrends() {
-    console.log("getting trends")
     fetch('/api/v1/trends')
       .then(resp => resp.json())
       .then(result => {
