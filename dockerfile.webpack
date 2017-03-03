@@ -2,5 +2,5 @@ FROM node
 RUN mkdir /code
 WORKDIR /code
 ADD . /code/
-RUN npm install
+RUN npm install --dev
 CMD ["npm", "run", "start"]

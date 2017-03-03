@@ -1,8 +1,8 @@
 FROM python:3.6
 RUN mkdir /code
 WORKDIR /code
-ADD .. /code/
+ADD . /code/
 RUN pip install -r requirements.txt
 ENV DJANGO_SETTINGS_MODULE=docnow.settings
 ENV PYTHONPATH=/code:$PYTHONPATH
-CMD ["python3", "django-admin", "trends"]
+CMD ["/bin/bash", "-c", "sleep 5; django-admin trends"]

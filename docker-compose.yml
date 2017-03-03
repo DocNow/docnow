@@ -32,10 +32,9 @@ services:
   trends:
     build:
       context: .
-      dockerfile: dockerfile.django
+      dockerfile: dockerfile.trends
     volumes:
       - .:/code
     depends_on:
       - django
       - db
-    entrypoint: ["django-admin", "trends"]
