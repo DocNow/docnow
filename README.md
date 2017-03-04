@@ -1,7 +1,8 @@
 ## Development
 
-To get a development environment you will need to install [Git] and install
-[Docker]. Then follow these instructions:
+To set up a development environment you will need to install [Git] and [Docker].
+Once you've got them installed open a terminal window and follow these
+instructions:
 
 1. git clone https://github.com/docnow/docnow
 1. cp docnow/settings.py.template docnow/settings.py
