@@ -3,3 +3,5 @@
 node_modules
 .venv
 docnow/settings.py
+*.log
+*.lock

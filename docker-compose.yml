@@ -12,7 +12,8 @@ services:
       context: .
       dockerfile: dockerfile.webpack
     volumes:
-      - .:/code
+      - ./docnow:/code/docnow
+      - ./assets:/code/assets
     ports:
       - "3000:3000"
 
