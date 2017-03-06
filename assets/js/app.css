@@ -1,3 +1,47 @@
 .App {
-  width: 40%;
+  display: flex 100%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.App .Place {
+  margin: 10px;
+}
+
+.App .Place h3 {
+  text-align: center;
+}
+
+.App .Place hr {
+  width: 60%;
+}
+
+.App .Place ul {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+}
+
+.App .Place li {
+  display: inline block;
+  list-style-type: none;
+}
+
+/* Medium screens */
+@media all and (min-width: 600px) {
+
+  .App {
+    display: flex;
+    flex-direction: row; 
+  }
+
+  .App .Place {
+    width: 30%;
+  }
+
+}
+
+
+/* Large screens */
+@media all and (min-width: 800px) {
 }

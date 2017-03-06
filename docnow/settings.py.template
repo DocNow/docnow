@@ -86,4 +86,18 @@ TWITTER_CONSUMER_KEY = ""
 TWITTER_CONSUMER_SECRET = ""
 TWITTER_ACCESS_TOKEN = ""
 TWITTER_ACCESS_TOKEN_SECRET = ""
-TWITTER_WOE_ID = "1"
+
+TWITTER_TRENDS = [ 
+    {
+        "name": "New York",
+        "woe_id": "2459115"
+    },
+    {
+        "name": "United States",
+        "woe_id": "23424977"
+    },
+    {
+        "name": "World",
+        "woe_id": "1"
+    }
+]

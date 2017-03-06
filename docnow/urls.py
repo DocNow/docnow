@@ -7,5 +7,5 @@ from docnow import views
 urlpatterns = [
     url(r'^$', views.home, name='home'),
 
-    url(r'^api/v1/trends$', api.trends, name='api_trends')
+    url(r'^api/v1/trends$', api.trends, name='api_trends'),
 ]
