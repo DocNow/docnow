@@ -20,11 +20,13 @@
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+  padding: 0;
+  list-style-type: none;
 }
 
 .App .Place li {
   display: inline block;
-  list-style-type: none;
+  padding: 3px;
 }
 
 /* Medium screens */
@@ -37,6 +39,7 @@
 
   .App .Place {
     width: 30%;
+    font-size: 14pt;
   }
 
 }
@@ -44,4 +47,7 @@
 
 /* Large screens */
 @media all and (min-width: 800px) {
+  .App .Place {
+    font-size: 16pt;
+  }
 }

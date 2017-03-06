@@ -17,7 +17,8 @@ class Command(BaseCommand):
         while True:
             for place in settings.TWITTER_TRENDS:
                 get_trends(place['woe_id'])
-            time.sleep(15)
+            # 75 requests every 15 minutes
+            time.sleep(15 * 60 / 75 * len(settings.TWITTER_TRENDS))
 
 def get_trends(woe_id):
     logger.info("getting trends for %s", woe_id)
