@@ -1,4 +1,3 @@
-//import { render } from 'react-dom'
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
 import './app.css'
