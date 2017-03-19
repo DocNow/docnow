@@ -6,7 +6,7 @@ const options = {
   devtool: 'inline-source-map',
 
   entry: {
-    home: './docnow/assets/js/home.js'
+    home: './docnow/assets/home.js'
   },
 
   output: {
