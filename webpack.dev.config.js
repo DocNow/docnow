@@ -5,9 +5,9 @@ var BundleTracker = require('webpack-bundle-tracker');
 const options = {
   devtool: 'inline-source-map',
 
-  entry: [
-    './assets/js/index.js'
-  ],
+  entry: {
+    home: './docnow/assets/js/home.js'
+  },
 
   output: {
     //path: path.resolve('./assets/bundles/'),

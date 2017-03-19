@@ -1,0 +1,17 @@
+{% load webpack_static render_bundle from webpack_loader %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>docnow</title>
+  </head>
+  
+  <body>
+    <header>
+      <img src="{% webpack_static 'images/dn.png' %}">
+    </header>
+    {% block content %}
+    {% endblock %}
+  </body>
+
+</html>

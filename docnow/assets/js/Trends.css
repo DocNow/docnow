@@ -1,22 +1,22 @@
-.App {
+.Trends {
   display: flex 100%;
   margin-left: auto;
   margin-right: auto;
 }
 
-.App .Place {
+.Trends .Place {
   margin: 10px;
 }
 
-.App .Place h3 {
+.Trends .Place h3 {
   text-align: center;
 }
 
-.App .Place hr {
+.Trends .Place hr {
   width: 60%;
 }
 
-.App .Place ul {
+.Trends .Place ul {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
@@ -24,7 +24,7 @@
   list-style-type: none;
 }
 
-.App .Place li {
+.Trends .Place li {
   display: inline block;
   padding: 3px;
 }
@@ -32,12 +32,12 @@
 /* Medium screens */
 @media all and (min-width: 600px) {
 
-  .App {
+  .Trends {
     display: flex;
     flex-direction: row; 
   }
 
-  .App .Place {
+  .Trends .Place {
     width: 30%;
     font-size: 14pt;
   }
@@ -47,7 +47,7 @@
 
 /* Large screens */
 @media all and (min-width: 800px) {
-  .App .Place {
+  .Trends .Place {
     font-size: 16pt;
   }
 }

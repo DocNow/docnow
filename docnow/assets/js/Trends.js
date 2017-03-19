@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import FlipMove from 'react-flip-move'
-import './app.css'
+import './Trends.css'
+import '../images/dn.png'
 
-export default class App extends Component {
+export default class Trends extends Component {
 
   constructor() {
     super();
@@ -26,7 +27,7 @@ export default class App extends Component {
 
   render() {
     return(
-      <div className="App">
+      <div className="Trends">
         {this.state.places.map(place => 
           <Place key={place.name} trends={place.trends} name={place.name} />
         )}
@@ -47,7 +48,7 @@ class Place extends Component {
         <hr />
         <ul>
           <FlipMove 
-            duration={1000} 
+            duration={2000} 
             enterAnimation="elevator"
             leaveAnimation="fade">
             { trends }
