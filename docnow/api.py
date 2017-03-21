@@ -7,6 +7,12 @@ from django.http import JsonResponse
 
 locations = settings.TWITTER_TRENDS
 
+def user(request):
+    user = {}
+    if request.user.username:
+        user = {"username": request.user.username}
+    return JsonResponse(user)
+
 def trends(request):
     places = []
     for place in settings.TWITTER_TRENDS:

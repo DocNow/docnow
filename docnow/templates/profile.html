@@ -1,0 +1,34 @@
+{% extends "site.html" %}
+{% load socialaccount %}
+
+{% block content %}
+
+{% if request.user.is_superuser %}
+
+<form method="POST">
+  <h2>Twitter Application Configuration</h2>
+  <p>
+  Your DocNow instance needs Twitter application keys to use the Twitter API.
+  Please go to <a href="https://apps.twitter.com">apps.twitter.com</a> 
+  create an application, and enter the keys you are given below:
+  </p>
+  <label for="consumer_key">Consumer Key:</label>
+  <input size="50" type="text" name="consumer_key" value="{{ consumer_key }}">
+  <br>
+  <label for="consumer_secret">Consumer Secret:</label>
+  <input size="50" type="text" name="consumer_secret" value="{{ consumer_secret }}">
+  <br>
+  <br>
+  <input type="submit" value="Save">
+  {% csrf_token %}
+</form>
+
+{% endif %}
+
+<h2>Your Twitter Account</h2>
+
+{{ twitter_user.username }}
+
+<a href="{% provider_login_url "twitter" process="connect" %}"><button>Link to Twitter</button></a>
+
+{% endblock %}

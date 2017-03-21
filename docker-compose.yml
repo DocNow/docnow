@@ -29,6 +29,7 @@ services:
       - db
       - redis
       - webpack
+      - mail
 
   trends:
     build:
@@ -39,3 +40,11 @@ services:
     depends_on:
       - django
       - db
+
+  mail:
+    restart: always
+    image: catatnight/postfix
+
+    environment:
+      - "maildomain=localhost"
+      - "smtp_user=test:docnow"

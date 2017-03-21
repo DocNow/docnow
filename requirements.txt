@@ -3,3 +3,4 @@ django-webpack-loader
 psycopg2
 twarc
 rq
+django-allauth
