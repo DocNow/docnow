@@ -4,32 +4,35 @@ import './Login.css'
 export default class Login extends Component {
 
   constructor() {
-    console.log("hi")
     super();
     this.state = {user: null}
   }
 
-  componentDidMount() {
-    fetch('/api/v1/user')
+  componentWillMount() {
+    this.getUser()
+  }
+
+  getUser() {
+    fetch('/api/v1/user', {credentials: 'include'})
       .then(resp => resp.json())
       .then(result => {
-        this.setState({user: result})
+        if (result.username) {
+          this.setState({user: result})
+        }
       })
   }
 
   render() {
-    var u = {} //this.state.user
-
-    if (u.username) {
+    if (this.state.user) {
       return(
         <div> 
-          { u.username }
+          { this.state.user.username } | <a href="/accounts/logout">Logout</a>
         </div>
       )
     } else {
       return(
         <div>
-          Login
+          <a href="/accounts/login/">Login</a> | <a href="/accounts/signup/">Signup</a>
         </div>
       )
     }
