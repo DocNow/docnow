@@ -27,7 +27,7 @@ DEFAULT_FROM_EMAIL = "info@docnow.io"
 # EMAIL_PORT = 587
 # EMAIL_POP_PORT = 995
 # EMAIL_HOST_USER = "jobs@code4lib.org"
-# EMAIL_HOST_PASSWORD = "jobbiejobsj0b"
+# EMAIL_HOST_PASSWORD = "bernie4ever"
 # EMAIL_USE_TLS = True
 
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
