@@ -6,8 +6,7 @@ instructions:
 
 1. git clone https://github.com/docnow/docnow
 1. cd docnow
-1. cp docnow/settings.py.template docnow/settings.py
-1. add the keys for your [Twitter App] to the bottom of docnow/settings.py
+1. cp docnow/settings.py.template docnow/settings.py (no need to edit)
 1. docker-compose up
 1. open http://localhost:8000
 
