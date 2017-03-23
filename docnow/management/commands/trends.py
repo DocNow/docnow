@@ -6,7 +6,7 @@ import datetime
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
-from docnow.models import Trend
+from docnow.models import Trend, User
 
 logger = logging.getLogger(__name__)
 
@@ -15,20 +15,29 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         while True:
-            for place in settings.TWITTER_TRENDS:
-                get_trends(place['woe_id'])
+            try:
+                for place in settings.TWITTER_TRENDS:
+                    get_trends(place['woe_id'])
+            except Exception as e:
+                # getting trends can fail until the superuser has 
+                # created a Twitter app and linked their Twitter account
+                logging.error(e)
+
             # 75 requests every 15 minutes
             time.sleep(15 * 60 / 75 * len(settings.TWITTER_TRENDS))
 
 def get_trends(woe_id):
     logger.info("getting trends for %s", woe_id)
-    t = twarc.Twarc(
-        settings.TWITTER_CONSUMER_KEY,
-        settings.TWITTER_CONSUMER_SECRET,
-        settings.TWITTER_ACCESS_TOKEN,
-        settings.TWITTER_ACCESS_TOKEN_SECRET
-    )
 
+    user = User.objects.get(is_superuser=True)
+    
+    t = twarc.Twarc(
+        user.twitter_consumer_key,
+        user.twitter_consumer_secret,
+        user.twitter_access_token,
+        user.twitter_access_token_secret
+    )
+              
     created = datetime.datetime.now()
     trends = t.trends_place(woe_id)
 

@@ -35,10 +35,10 @@ class Login extends Component {
   render() {
     if (! this.state.loaded) {
       return null
-    } else if (this.state.user.twitter_screen_name) {
+    } else if (this.state.user.username) {
       return(
-        <div> 
-          <img id="avatar" src={ this.state.user.twitter_avatar_url } /> &nbsp; <a href="/accounts/logout">Logout</a>
+        <div>
+          <img title={ this.state.username } id="avatar" src={ this.state.user.twitter_avatar_url } /> &nbsp; <a href="/accounts/logout">Logout</a>
         </div>
       )
     } else {

@@ -40,8 +40,13 @@ def profile(request):
 
     consumer_key, consumer_secret = get_twitter_app_keys()
 
+    protocol = "https://" if request.is_secure() else "http://"
+    hostname = request.get_host()
+    callback_url = protocol + hostname + "/accounts/twitter/login/callback/"
+
     return render(request, 'profile.html', {
-        "consumer_key": consumer_key,
-        "consumer_secret": consumer_secret,
-        "twitter_user": request.user
+        "consumer_key": consumer_key or "",
+        "consumer_secret": consumer_secret or "",
+        "twitter_user": request.user,
+        "callback_url": callback_url
     })
