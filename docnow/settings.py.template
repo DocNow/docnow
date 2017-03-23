@@ -1,5 +1,7 @@
 import os
 
+SITE_ID = 1
+
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_DIR = os.path.join(BASE_DIR, "docnow")
 SECRET_KEY = '+g25&y9i+-6_z$$z!ov$l2s%b#0kcmnx)n7y*2_ehy-w011p#k'
