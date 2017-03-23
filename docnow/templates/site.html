@@ -4,14 +4,15 @@
   <head>
     <meta charset="UTF-8">
     <title>docnow</title>
+    <link rel="stylesheet" href="{% webpack_static 'css/style.css' %}">
   </head>
   
   <body>
-    <header>
-      <a href="{% url "home" %}"><img src="{% webpack_static 'images/dn.png' %}"></a>
-      <div id="login"></div>
-    </header>
+    <header id="header-app"></header>
+    <section id="content">
     {% block content %}{% endblock %}
+    {% render_bundle 'header' %}
+    </section>
   </body>
 
 </html>

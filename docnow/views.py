@@ -1,13 +1,12 @@
 from django.conf import settings
 from django.shortcuts import render, redirect
 from django.views.generic.base import TemplateView
-from django.contrib.auth.models import User
 from django.contrib.sites.models import Site
 from allauth.socialaccount.models import SocialApp
 from django.contrib.auth.decorators import login_required, permission_required
 
-from docnow.models import Trend
-from docnow.utils import get_twitter_app_keys, get_twitter_user
+from docnow.models import Trend, User
+from docnow.utils import get_twitter_app_keys
 
 def home(request):
     if User.objects.count() == 0:
@@ -44,5 +43,5 @@ def profile(request):
     return render(request, 'profile.html', {
         "consumer_key": app_keys[0],
         "consumer_secret": app_keys[1],
-        "twitter_user": get_twitter_user(request.user)
+        "twitter_user": request.user
     })
