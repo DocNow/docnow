@@ -35,16 +35,16 @@ class Login extends Component {
   render() {
     if (! this.state.loaded) {
       return null
-    } else if (this.state.user.username) {
+    } else if (this.state.user.twitter_screen_name) {
       return(
         <div> 
-          <img id="avatar" src={ this.state.user.avatar_url } /> | <a href="/accounts/logout">Logout</a>
+          <img id="avatar" src={ this.state.user.twitter_avatar_url } /> &nbsp; <a href="/accounts/logout">Logout</a>
         </div>
       )
     } else {
       return(
         <div>
-          <a href="/accounts/login/">Login</a> | <a href="/accounts/signup/">Signup</a>
+          <a href="/accounts/login/">Login</a> &nbsp; <a href="/accounts/signup/">Signup</a>
         </div>
       )
     }

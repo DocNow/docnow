@@ -8,13 +8,10 @@ from django.http import JsonResponse
 locations = settings.TWITTER_TRENDS
 
 def user(request):
-    user = {}
-    if request.user.username:
-        user = {
-            "username": request.user.username,
-            "avatar_url": request.user.get_twitter_avatar_url()
-        }
-    return JsonResponse(user)
+    user_info = {}
+    if request.user.is_authenticated():
+        user_info =  request.user.as_dict()
+    return JsonResponse(user_info)
 
 def trends(request):
     places = []

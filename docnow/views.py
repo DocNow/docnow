@@ -38,10 +38,10 @@ def profile(request):
         app.sites.add(site)
         app.save()
 
-    app_keys = get_twitter_app_keys()
+    consumer_key, consumer_secret = get_twitter_app_keys()
 
     return render(request, 'profile.html', {
-        "consumer_key": app_keys[0],
-        "consumer_secret": app_keys[1],
+        "consumer_key": consumer_key,
+        "consumer_secret": consumer_secret,
         "twitter_user": request.user
     })
