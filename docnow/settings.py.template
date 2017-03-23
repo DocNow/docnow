@@ -1,6 +1,7 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+PROJECT_DIR = os.path.join(BASE_DIR, "docnow")
 SECRET_KEY = '+g25&y9i+-6_z$$z!ov$l2s%b#0kcmnx)n7y*2_ehy-w011p#k'
 DEBUG = True
 ALLOWED_HOSTS = []
@@ -17,6 +18,15 @@ EMAIL_HOST = "mail"
 EMAIL_HOST_PASSWORD = "docnow"
 EMAIL_HOST_USER = "test"
 DEFAULT_FROM_EMAIL = "info@docnow.io"
+
+# If you want to use Google as your SMTP:
+#
+# EMAIL_HOST = "pop.gmail.com"
+# EMAIL_PORT = 587
+# EMAIL_POP_PORT = 995
+# EMAIL_HOST_USER = "jobs@code4lib.org"
+# EMAIL_HOST_PASSWORD = "jobbiejobsj0b"
+# EMAIL_USE_TLS = True
 
 ACCOUNT_LOGOUT_REDIRECT_URL = "/"
 ACCOUNT_LOGOUT_ON_GET = True
