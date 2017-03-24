@@ -6,13 +6,24 @@ instructions:
 
 1. git clone https://github.com/docnow/docnow
 1. cd docnow
-1. cp docnow/settings.py.template docnow/settings.py (no need to edit)
+1. cp docnow/settings.py.template docnow/settings.py
 1. docker-compose up
 1. open http://localhost:8000
 
 Things should be setup so that modifications to the Django application source
-code in `docnow` and the JavaScript/CSS in `assets` will be automatically
+code in `docnow` and the JavaScript/CSS in `docnow/assets` will be automatically
 reflected in the running application.
+
+## Gotchas
+
+### No Email
+
+If you never receive the confirmation email when creating an account you may 
+be on a network that doesn't route traffic on port 25 (SMTP) which is what the
+Postfix Docker container tries to do. If you look in your 
+`docnow/settings.py` file you should see a commented out section that
+tells DocNow to use Google as an mail server. Try adding your Google 
+username/password and registering again. 
 
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/
