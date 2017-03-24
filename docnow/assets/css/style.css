@@ -20,7 +20,7 @@ body {
   font-weight: bold;
 }
 
-.form p {
+.form p, ol {
   text-align: left;
 }
 

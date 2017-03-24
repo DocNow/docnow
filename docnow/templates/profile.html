@@ -28,14 +28,26 @@ DocNow needs permission to query Twitter's API on your behalf.
   <h2>Twitter Application Configuration</h2>
 
   {% if not consumer_key and not consumer_secret %}
+
   <p>
   Hi Admin 🎉 your DocNow instance needs Twitter application keys to use the 
   Twitter API. 
   Please go to <a href="https://apps.twitter.com">apps.twitter.com</a>,  
-  create an application, and enter the keys you are given below. When creating your application please use the supplied <em>Callback URL</em>
+  create an application, and enter the keys you are given below.
   </p>
-  <label>Callback URL</label><br>
-  {{ callback_url }}
+  
+  <p>When creating your application please be sure to set the following under
+  the <b>Settings</b> tab: 
+  <ol>
+    <li>Set the <b>Callback URL</b> to <pre>{{ callback_url }}</pre>
+    <li>Enable <b>Allow this application to be used to
+        Sign in with Twitter</b> so other users will be able to login to your
+      DocNow instance using Twitter if they want to.</li>
+  </ol>
+  </p>
+
+  <hr>
+
   <br>
   <br>
   {% endif %}
