@@ -11,6 +11,7 @@ instructions:
 1. cd docnow
 1. cp docnow/settings.py.template docnow/settings.py
 1. docker-compose up
+1. make some ☕️
 1. open http://localhost:8000
 
 Things should be setup so that modifications to the Django application source
