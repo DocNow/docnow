@@ -5,4 +5,4 @@ ADD . /code/
 RUN pip install -r requirements.txt
 ENV DJANGO_SETTINGS_MODULE=docnow.settings
 ENV PYTHONPATH=/code:$PYTHONPATH
-CMD ["/bin/bash", "-c", "sleep 5; django-admin trends"]
+CMD ["/bin/bash", "-c", "sleep 10; django-admin trends"]
