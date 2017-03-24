@@ -20,10 +20,12 @@ reflected in the running application.
 
 If you never receive the confirmation email when creating an account you may 
 be on a network that doesn't route traffic on port 25 (SMTP) which is what the
-Postfix Docker container tries to do. If you look in your 
-`docnow/settings.py` file you should see a commented out section that
-tells DocNow to use Google as an mail server. Try adding your Google 
-username/password and registering again. 
+Postfix Docker container tries to do. For example many ISPs like Verizon will
+block port 25.
+
+If you look in your `docnow/settings.py` file you should see a commented out
+section that tells DocNow to use Google as an mail server. Try adding your
+Google username/password and registering again. 
 
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/
