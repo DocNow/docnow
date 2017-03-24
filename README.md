@@ -24,7 +24,7 @@ Postfix Docker container tries to do. For example many ISPs like Verizon will
 block port 25.
 
 If you look in your `docnow/settings.py` file you should see a commented out
-section that tells DocNow to use Google as an mail server. Try adding your
+section that tells DocNow to use Google as an email server. Try adding your
 Google username/password and registering again. 
 
 [Git]: https://git-scm.com/
