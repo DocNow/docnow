@@ -1,3 +1,6 @@
+This is a work in progress. When it becomes more fleshed out details about how
+to run in production will be provided. Till then ....
+
 ## Development
 
 To set up a development environment you will need to install [Git] and [Docker].
