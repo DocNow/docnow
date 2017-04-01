@@ -15,13 +15,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         while True:
-            try:
-                for place in settings.TWITTER_TRENDS:
-                    get_trends(place['woe_id'])
-            except Exception as e:
-                # getting trends can fail until the superuser has 
-                # created a Twitter app and linked their Twitter account
-                logging.error(e)
+            for place in settings.TWITTER_TRENDS:
+                get_trends(place['woe_id'])
 
             # 75 requests every 15 minutes
             time.sleep(15 * 60 / 75 * len(settings.TWITTER_TRENDS))
@@ -29,7 +24,16 @@ class Command(BaseCommand):
 def get_trends(woe_id):
     logger.info("getting trends for %s", woe_id)
 
-    user = User.objects.get(is_superuser=True)
+    try:
+        user = User.objects.get(is_superuser=True)
+    except User.DoesNotExist:
+        logging.warn("can't fetch trends: admin user not created yet")
+        return
+    
+    if not (user.twitter_consumer_key and user.twitter_consumer_secret
+            and user.twitter_access_token and user.twitter_access_token_secret):
+        logging.warn("can't fetch trends: twitter app keys not set yet")
+        return
     
     t = twarc.Twarc(
         user.twitter_consumer_key,
