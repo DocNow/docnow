@@ -1,12 +1,10 @@
-{% load webpack_static render_bundle from webpack_loader %}
+{% load render_bundle from webpack_loader %}
 <!DOCTYPE html>
 <html>
   <head>
     <meta charset="UTF-8">
     <title>docnow</title>
-    <link rel="stylesheet" href="{% webpack_static 'css/style.css' %}">
   </head>
-  
   <body>
     <header id="header-app"></header>
     <section id="content">
@@ -14,5 +12,4 @@
     {% render_bundle 'header' %}
     </section>
   </body>
-
 </html>
