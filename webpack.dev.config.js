@@ -74,7 +74,8 @@ const options = {
         test: /\.(png|jpg|svg)$/,
         use: [
           {
-            loader: "file-loader?name=images/[name].[ext]"
+            loader: "file-loader
+            name: "images/[name].[ext]"
           }
         ]
       }
