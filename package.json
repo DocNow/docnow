@@ -1,43 +1,39 @@
 {
-  "name": "docnow",
-  "version": "0.0.1",
-  "private": "true",
-  "main": "home.js",
-  "devDependencies": {
-    "babel-core": "6.23.1",
-    "babel-eslint": "7.1.1",
-    "babel-loader": "6.3.2",
-    "babel-preset-es2015": "6.22.0",
-    "babel-preset-react": "6.23.0",
-    "css-loader": "0.26.2",
-    "eslint": "3.16.1",
-    "eslint-loader": "1.6.3",
-    "eslint-plugin-jsx-a11y": "4.0.0",
-    "eslint-plugin-react": "6.10.0",
-    "exports-loader": "0.6.4",
-    "file-loader": "0.10.1",
-    "imports-loader": "0.7.1",
-    "rimraf": "2.6.1",
-    "style-loader": "0.13.2",
-    "svg-url-loader": "2.0.2",
-    "webpack": "2.2.1",
-    "webpack-dev-server": "2.4.1"
+  "scripts": {
+    "postinstall": "npm run build",
+    "prestart": "eslint src/server/app.js",
+    "start": "babel-watch src/server/app.js",
+    "build:server": "babel src/server/app.js --out-file server.js",
+    "build:client": "NODE_ENV=production webpack --optimize-minimize --config webpack.prod.config.js --progress",
+    "build": "better-npm-run build",
+    "clean": "rimraf dist/*"
+  },
+  "betterScripts": {
+    "build": {
+      "command": "npm run clean && npm run build:server && npm run build:client",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
   },
   "dependencies": {
-    "react": "15.4.2",
-    "react-addons-css-transition-group": "^15.4.2",
-    "react-dom": "15.4.2",
-    "react-flip-move": "^2.9.1",
-    "webpack-bundle-tracker": "^0.2.0"
+    "express": "^4.15.2"
   },
-  "scripts": {
-    "clean": "rimraf dist/*",
-    "build": "npm run clean && webpack --config webpack.prod.config.js",
-    "start": "npm run clean && webpack-dev-server --config webpack.dev.config.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "webpack": "webpack"
-  },
-  "eslintConfig": {
-    "extends": "./eslint.js"
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-watch": "^2.0.6",
+    "better-npm-run": "0.0.15",
+    "css-loader": "^0.28.1",
+    "eslint": "^3.19.0",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-react": "^7.0.1",
+    "file-loader": "^0.11.1",
+    "style-loader": "^0.17.0",
+    "webpack": "^2.5.1",
+    "webpack-dev-middleware": "^1.10.2",
+    "webpack-hot-middleware": "^2.18.0"
   }
 }

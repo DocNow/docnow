@@ -1,7 +1,3 @@
-*.pyc
-*.sqlite3
+dist
 node_modules
-.venv
-docnow/settings.py
-*.log
-*.lock
+server
