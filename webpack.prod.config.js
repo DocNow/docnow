@@ -1,5 +1,15 @@
-var baseConfig = require('./webpack.base.config.js');
+var webpack = require('webpack')
+var baseConfig = require('./webpack.base.config.js')
 
-baseConfig.devtool = 'cheap-module-source-map';
+baseConfig.devtool = 'cheap-module-source-map'
 
-module.exports = baseConfig;
+baseConfig.plugins = baseConfig.plugins.concat([  
+  new webpack.DefinePlugin({
+    'process.env': {
+      NODE_ENV: JSON.stringify('production')
+    }
+  }),
+  //new webpack.optimize.UglifyJsPlugin({sourcemap: true})
+])
+
+module.exports = baseConfig

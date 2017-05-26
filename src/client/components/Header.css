@@ -1,0 +1,22 @@
+.Header {
+  display: flex;
+  flex-direction: row;
+  background-color: #eee;
+  padding-left: 10px;
+}
+
+.Logo img {
+  vertical-align: bottom;
+}
+
+.Login {
+  font-size: 18pt;
+  margin-left: auto;
+  line-height: 50px;
+  padding-right: 10px;
+}
+
+.Avatar {
+  height: 55px;
+  vertical-align: middle;
+}

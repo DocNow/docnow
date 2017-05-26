@@ -3,6 +3,8 @@ var webpack    = require("webpack"),
 
 baseConfig.entry = ["webpack-hot-middleware/client", "./main"]
 
+baseConfig.devtool = 'inline-source-map'
+
 baseConfig.output.publicPath = "/"
 
 baseConfig.plugins = baseConfig.plugins.concat([  

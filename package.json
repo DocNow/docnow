@@ -1,16 +1,15 @@
 {
   "scripts": {
     "postinstall": "npm run build",
-    "prestart": "eslint src/server/app.js",
-    "start": "babel-watch src/server/app.js",
-    "build:server": "babel src/server/app.js --out-file server.js",
-    "build:client": "NODE_ENV=production webpack --optimize-minimize --config webpack.prod.config.js --progress",
+    "prestart": "eslint src",
+    "start": "nodemon server.js --ignore src/client",
+    "build:client": "webpack --optimize-minimize --config webpack.prod.config.js --progress",
     "build": "better-npm-run build",
     "clean": "rimraf dist/*"
   },
   "betterScripts": {
     "build": {
-      "command": "npm run clean && npm run build:server && npm run build:client",
+      "command": "npm run clean && npm run build:client",
       "env": {
         "NODE_ENV": "production"
       }
@@ -24,14 +23,16 @@
     "babel-eslint": "^7.2.3",
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.4.0",
-    "babel-watch": "^2.0.6",
+    "babel-preset-react": "^6.24.1",
     "better-npm-run": "0.0.15",
     "css-loader": "^0.28.1",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",
     "eslint-plugin-react": "^7.0.1",
     "file-loader": "^0.11.1",
+    "nodemon": "^1.11.0",
     "style-loader": "^0.17.0",
+    "url-loader": "^0.5.8",
     "webpack": "^2.5.1",
     "webpack-dev-middleware": "^1.10.2",
     "webpack-hot-middleware": "^2.18.0"

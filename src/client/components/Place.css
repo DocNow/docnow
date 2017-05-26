@@ -1,0 +1,40 @@
+.Place {
+  margin: 10px;
+  border: thin solid #eee;
+}
+
+.Place h3 {
+  text-align: center;
+}
+
+.Place hr {
+  width: 60%;
+}
+
+.Place ul {
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
+  padding: 0;
+  list-style-type: none;
+}
+
+.Place li {
+  display: inline block;
+  padding: 3px;
+}
+
+/* Medium screens */
+@media all and (min-width: 600px) {
+  .Place {
+    width: 30%;
+    font-size: 14pt;
+  }
+}
+
+/* Large screens */
+@media all and (min-width: 800px) {
+  .Place {
+    font-size: 16pt;
+  }
+}

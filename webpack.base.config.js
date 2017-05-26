@@ -15,7 +15,6 @@ module.exports = {
     filename: 'bundle.js'
   },
 
-  devtool: 'inline-source-map',
 
   plugins: [
     new webpack.EnvironmentPlugin(),
@@ -67,6 +66,11 @@ module.exports = {
         ]
       }
     ]
+  },
+
+  resolve: {
+    modules: ['node_modules', 'vendor'],
+    extensions: ['.js', '.json', '.css']
   }
 
 }
