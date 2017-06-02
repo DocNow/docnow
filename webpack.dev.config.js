@@ -1,13 +1,13 @@
 var webpack    = require("webpack"),
     baseConfig = require("./webpack.base.config.js")
 
-baseConfig.entry = ["webpack-hot-middleware/client", "./main"]
+baseConfig.entry = baseConfig.entry.concat(["webpack-hot-middleware/client"])
 
 baseConfig.devtool = 'inline-source-map'
 
 baseConfig.output.publicPath = "/"
 
-baseConfig.plugins = baseConfig.plugins.concat([  
+baseConfig.plugins = baseConfig.plugins.concat([
   new webpack.HotModuleReplacementPlugin()
 ])
 

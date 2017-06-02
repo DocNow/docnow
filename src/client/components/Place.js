@@ -29,4 +29,3 @@ Place.propTypes = {
   trends: PropTypes.array,
   name: PropTypes.string
 }
-

@@ -2,13 +2,13 @@ var path = require('path'),
     webpack = require('webpack'),
     HtmlWebpackPlugin = require('html-webpack-plugin')
 
-var DIST_DIR   = path.join(__dirname, 'dist'),  
+var DIST_DIR   = path.join(__dirname, 'dist'),
     CLIENT_DIR = path.join(__dirname, 'src/client')
 
-module.exports = {  
+module.exports = {
   context: CLIENT_DIR,
 
-  entry: './main',
+  entry: ['./index'],
 
   output: {
     path:   DIST_DIR,
@@ -28,16 +28,18 @@ module.exports = {
   module: {
 
     rules: [
+      /*
       {
         test:  /\.jsx?$/,
         enforce: 'pre',
         exclude: /node_modules/,
         use: ['eslint-loader']
       },
+      */
       {
         test:  /\.jsx?$/,
         exclude: /node_modules/,
-        use:  ['babel-loader']
+        use:  ['babel-loader', 'eslint-loader']
 			},
       {
         test:  /\.css$/,
@@ -46,7 +48,7 @@ module.exports = {
           {
             loader: 'style-loader',
           },
-          { 
+          {
             loader: 'css-loader',
             options: {
               modules: true,

@@ -10,14 +10,14 @@ app.get('/trends', (req, res) => {
   res.json({
     'places': [
       {
-        name: 'Paris',
+        name: 'DC',
         trends: [
           {
             text: 'poop',
             tweets: 25
           },
           {
-            text: 'ville',
+            text: 'Ville',
             tweets: 10
           }
         ]

@@ -36,4 +36,3 @@ export default class Trends extends Component {
   }
 
 }
-

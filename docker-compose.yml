@@ -1,0 +1,15 @@
+version: '2'
+services:
+
+  redis:
+    image: redis
+
+  app:
+    build:
+      context: .
+    volumes:
+      - ./src:/code/src
+    ports:
+      - 3000:3000
+    depends_on:
+      - redis
