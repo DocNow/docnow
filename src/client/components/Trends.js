@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import Place from './Place'
 import '../images/dn.png'
 import styles from './Trends.css'
@@ -31,8 +32,13 @@ export default class Trends extends Component {
         {this.state.places.map(place =>
           <Place key={place.name} trends={place.trends} name={place.name} />
         )}
+        count: { this.props.count }
       </div>
     )
   }
 
+}
+
+Trends.propTypes = {
+  count: PropTypes.integer
 }

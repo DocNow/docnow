@@ -1,24 +1,16 @@
-import React from 'react'
-// import PropTypes from 'prop-types'
+// import React from 'react'
 // import { push } from 'react-router-redux'
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Trends from '../components/Trends'
+import * as actions from '../actions/trends'
 
-const TrendsPage = () => (
-  <div>
-    <Trends />
-  </div>
-)
-
-/*
-TrendsPage.propTypes = {
-  changePage: PropTypes.function
+const mapStateToProps = (state) => {
+  return {
+    count: state.trends.count
+  }
 }
-*/
 
-const mapDispatchToProps = dispatch => bindActionCreators({
-//  changePage: () => push('/about')
-}, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
 
-export default connect(null, mapDispatchToProps)(TrendsPage)
+export default connect(mapStateToProps, mapDispatchToProps)(Trends)

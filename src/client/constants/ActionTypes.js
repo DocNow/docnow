@@ -1,1 +1,1 @@
-export const GET_TRENDS = 'GET_PLACES'
+export const GET_TRENDS = 'GET_TRENDS'
