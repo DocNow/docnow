@@ -4,7 +4,7 @@ import trends from './trends'
 
 const rootReducer = combineReducers({
   trends: trends,
-  routing: routerReducer
+  router: routerReducer
 })
 
 export default rootReducer

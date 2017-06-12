@@ -1,6 +1,5 @@
 {
   "scripts": {
-    "postinstall": "npm run build",
     "start": "better-npm-run start",
     "build:client": "webpack --optimize-minimize --config webpack.prod.config.js --progress",
     "build": "better-npm-run build",
@@ -16,7 +15,6 @@
     "start": {
       "command": "nodemon server.js --ignore src/client",
       "env": {
-        "DEBUG": "express:*",
         "NODE_ENV": "development"
       }
     }
@@ -24,6 +22,7 @@
   "dependencies": {
     "better-npm-run": "0.0.15",
     "express": "^4.15.2",
+    "redux-devtools-extension": "^2.13.2",
     "socket.io": "^2.0.2"
   },
   "devDependencies": {
@@ -32,6 +31,7 @@
     "babel-loader": "^7.0.0",
     "babel-preset-env": "^1.4.0",
     "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "css-loader": "^0.28.1",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",

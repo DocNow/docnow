@@ -1,26 +1,19 @@
-import * as types from '../constants/ActionTypes'
+export const SET_PLACES = 'SET_PLACES'
+export const GET_PLACES = 'GET_PLACES'
 
-export const getTrends = () => {
+export const setPlaces = (places) => {
   return {
-    type: types.GET_TRENDS
+    type: SET_PLACES,
+    places: places
   }
-  /*
-  return (dispatch, getState) => {
+}
+
+export const getPlaces = () => {
+  return (dispatch) => {
     fetch('/api/v1/trends')
       .then(resp => resp.json())
       .then(result => {
-        dispatch({
-          type: types.SET_TRENDS,
-          trends: result.places
-        })
+        dispatch(setPlaces(result.places))
       })
-  }
-  */
-}
-
-export const setTrends = (trends) => {
-  return {
-    type: types.SET_TRENDS,
-    trends: trends
   }
 }

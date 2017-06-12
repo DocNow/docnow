@@ -1,18 +1,18 @@
-import { GET_TRENDS } from '../constants/ActionTypes'
+import { SET_PLACES } from '../actions/trends'
 
 const initialState = {
-  places: [],
-  count: 0
+  places: []
 }
 
 export default function trends(state = initialState, action) {
   switch (action.type) {
-  case GET_TRENDS:
-    console.log('got trends: ' + state.count)
+
+  case SET_PLACES:
     return {
-      state,
-      count: state.count + 1
+      ...state,
+      places: action.places
     }
+
   default:
     return state
   }

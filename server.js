@@ -1,4 +1,4 @@
-#!/usr/bin/env node 
+#!/usr/bin/env node
 
 require('babel-register')()
 
@@ -20,19 +20,19 @@ const compiler = webpack(config)
 app = express()
 app.set('port', process.env.PORT || defaultPort)
 
+app.use('/api/v1', api)
+
 if (isDevelopment) {
   app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath
   }))
-  app.use(webpackHotMiddleware(compiler))
-  app.get('/', (req, res) => {
+  app.get('*', (req, res) => {
     res.write(compiler.outputFileSystem.readFileSync(htmlFile))
+    res.end()
   })
 } else {
-  app.get('/', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
+  app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
   app.use(express.static(distDir))
 }
-
-app.use('/api/v1', api)
 
 app.listen(app.get('port'))

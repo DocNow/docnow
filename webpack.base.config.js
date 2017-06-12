@@ -15,7 +15,6 @@ module.exports = {
     filename: 'bundle.js'
   },
 
-
   plugins: [
     new webpack.EnvironmentPlugin(),
     new HtmlWebpackPlugin({
@@ -28,14 +27,6 @@ module.exports = {
   module: {
 
     rules: [
-      /*
-      {
-        test:  /\.jsx?$/,
-        enforce: 'pre',
-        exclude: /node_modules/,
-        use: ['eslint-loader']
-      },
-      */
       {
         test:  /\.jsx?$/,
         exclude: /node_modules/,
