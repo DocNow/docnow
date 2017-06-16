@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Route } from 'react-router-dom'
 import Header from '../components/Header'
 import TrendsPage from './TrendsPage'
-import AppSettingsPage from './AppSettingsPage'
+import SettingsPage from './SettingsPage'
 import './App.css'
 
 export default class App extends Component {
@@ -12,7 +12,7 @@ export default class App extends Component {
         <Header />
         <main>
           <Route exact path="/" component={TrendsPage} />
-          <Route exact path="/app" component={AppSettingsPage} />
+          <Route exact path="/settings/" component={SettingsPage} />
         </main>
       </div>
     )
