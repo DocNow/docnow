@@ -26,7 +26,8 @@ if (isDevelopment) {
   app.use(webpackDevMiddleware(compiler, {
     publicPath: config.output.publicPath
   }))
-  app.get('*', (req, res) => {
+  app.use(webpackHotMiddleware(compiler))
+  app.get('/', (req, res) => {
     res.write(compiler.outputFileSystem.readFileSync(htmlFile))
     res.end()
   })
