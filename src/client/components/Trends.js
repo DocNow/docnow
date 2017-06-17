@@ -6,6 +6,18 @@ import styles from './Trends.css'
 
 export default class Trends extends Component {
 
+  componentDidMount() {
+    const intervalId = setInterval(this.props.getPlaces, 3000)
+    this.setState({intervalId: intervalId})
+  }
+
+  componentWillUnmount() {
+    if (this.state.intervalId) {
+      clearInterval(this.state.intervalId)
+    }
+    this.setState({intervalId: null})
+  }
+
   render() {
     return (
       <div className={styles.Trends}>
@@ -19,5 +31,6 @@ export default class Trends extends Component {
 }
 
 Trends.propTypes = {
-  places: PropTypes.array
+  places: PropTypes.array,
+  getPlaces: PropTypes.func,
 }

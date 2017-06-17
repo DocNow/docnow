@@ -1,6 +1,8 @@
 import express from 'express'
+import redis from 'redis'
 
 const app = express()
+const db = redis.createClient()
 
 const data = {
   'places': [
@@ -33,8 +35,46 @@ const data = {
   ]
 }
 
+app.get('/setup', (req, res) => {
+  db.hmget('settings', ['appKey', 'appSecret'], (err, resp) => {
+    if (! err && resp[0] && resp[1]) {
+      res.json(true)
+    } else {
+      res.json(false)
+    }
+  })
+})
+
 app.get('/user', (req, res) => {
   res.json({})
+})
+
+app.get('/settings', (req, res) => {
+  console.log('getting')
+  db.hmget('settings', ['appKey', 'appSecret'], (err, resp) => {
+    if (err) {
+      res.json({status: 'error', message: err})
+    } else {
+      res.json({
+        appKey: resp[0] || '',
+        appSecret: resp[1] || ''
+      })
+    }
+  })
+})
+
+app.put('/settings', (req, res) => {
+  const appKey = req.body.appKey
+  const appSecret = req.body.appSecret
+  const cmd = ['settings', 'appKey', appKey, 'appSecret', appSecret]
+  db.hmset(cmd, (err, resp) => {
+    if (err) {
+      res.status(500)
+      res.json({status: 'error: ', message: err})
+    } else {
+      res.json({status: 'updated'})
+    }
+  })
 })
 
 app.get('/trends', (req, res) => {

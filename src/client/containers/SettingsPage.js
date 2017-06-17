@@ -5,8 +5,8 @@ import * as actions from '../actions/settings'
 
 const mapStateToProps = (state) => {
   return {
-    appKey: state.appKey,
-    appSecret: state.appSecret
+    appKey: state.settings.appKey,
+    appSecret: state.settings.appSecret
   }
 }
 

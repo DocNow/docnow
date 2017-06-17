@@ -21,7 +21,9 @@
   },
   "dependencies": {
     "better-npm-run": "0.0.15",
+    "body-parser": "^1.17.2",
     "express": "^4.15.2",
+    "redis": "^2.7.1",
     "socket.io": "^2.0.2"
   },
   "devDependencies": {

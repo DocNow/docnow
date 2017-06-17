@@ -1,25 +1,30 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types'
 import style from './Settings.css'
 
-class Settings extends Component {
+export default class Settings extends Component {
 
-  onSubmit(e) {
-    e.preventDefault()
-    console.log(e)
+  componentDidMount() {
+    this.props.getSettings()
   }
 
   render() {
     return (
-      <form onSubmit={this.onSubmit} className={style.Settings}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          this.props.saveSettings()
+        }}
+        className={style.Settings}>
         <p>
-          <label htmlFor="app-key">Application Key: </label><br />
+          <label htmlFor="appKey">Application Key: </label><br />
           <br />
-          <input id="app-key" name="app-key" type="text" />
+          <input onChange={this.props.updateSettings} id="appKey" name="appKey" type="text" value={this.props.appKey} />
         </p>
         <p>
-          <label htmlFor="app-secret">Application Secret: </label><br />
+          <label htmlFor="appSecret">Application Secret: </label><br />
           <br />
-          <input id="app-secret" name="app-secret" type="text"/ >
+          <input onChange={this.props.updateSettings} id="appSecret" name="appSecret" type="text" value={this.props.appSecret} />
         </p>
         <p>
           <button>Save</button>
@@ -29,4 +34,10 @@ class Settings extends Component {
   }
 }
 
-export default Settings
+Settings.propTypes = {
+  appKey: PropTypes.string,
+  appSecret: PropTypes.string,
+  getSettings: PropTypes.func,
+  updateSettings: PropTypes.func,
+  saveSettings: PropTypes.func
+}

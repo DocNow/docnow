@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 
 export default class Login extends Component {
 
@@ -31,7 +32,9 @@ export default class Login extends Component {
     } else {
       return (
         <div>
-          <a href="/accounts/login/">Login</a> &nbsp; <a href="/accounts/signup/">Signup</a>
+          <a href="/accounts/login/">Login</a> &nbsp;
+          <a href="/accounts/signup/">Signup</a> &nbsp;
+          <Link to="/settings/">Settings</Link>
         </div>
       )
     }

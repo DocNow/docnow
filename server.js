@@ -5,6 +5,7 @@ require('babel-register')()
 const path = require('path')
 const webpack = require('webpack')
 const express = require('express')
+const bodyParser = require('body-parser')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 
@@ -19,6 +20,8 @@ const compiler = webpack(config)
 
 app = express()
 app.set('port', process.env.PORT || defaultPort)
+
+app.use(bodyParser.json())
 
 app.use('/api/v1', api)
 
