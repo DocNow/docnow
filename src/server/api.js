@@ -1,8 +1,8 @@
 import express from 'express'
-import redis from 'redis'
+import { db } from './db'
+import { activateKeys } from './auth'
 
 const app = express()
-const db = redis.createClient()
 
 const data = {
   'places': [
@@ -46,11 +46,15 @@ app.get('/setup', (req, res) => {
 })
 
 app.get('/user', (req, res) => {
-  res.json({})
+  if (req.user) {
+    res.json(req.user)
+  } else {
+    res.status(401)
+    res.json({message: 'not logged in'})
+  }
 })
 
 app.get('/settings', (req, res) => {
-  console.log('getting')
   db.hmget('settings', ['appKey', 'appSecret'], (err, resp) => {
     if (err) {
       res.json({status: 'error', message: err})
@@ -72,6 +76,7 @@ app.put('/settings', (req, res) => {
       res.status(500)
       res.json({status: 'error: ', message: err})
     } else {
+      activateKeys()
       res.json({status: 'updated'})
     }
   })

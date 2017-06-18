@@ -3,7 +3,8 @@
     "start": "better-npm-run start",
     "build:client": "webpack --optimize-minimize --config webpack.prod.config.js --progress",
     "build": "better-npm-run build",
-    "clean": "rimraf dist/*"
+    "clean": "rimraf dist/*",
+    "repl": "babel-node"
   },
   "betterScripts": {
     "build": {
@@ -22,7 +23,11 @@
   "dependencies": {
     "better-npm-run": "0.0.15",
     "body-parser": "^1.17.2",
+    "cookie-parser": "^1.4.3",
     "express": "^4.15.2",
+    "express-session": "^1.15.3",
+    "passport": "^0.3.2",
+    "passport-twitter": "^1.0.4",
     "redis": "^2.7.1",
     "socket.io": "^2.0.2"
   },
@@ -41,13 +46,13 @@
     "html-webpack-plugin": "^2.28.0",
     "nodemon": "^1.11.0",
     "react": "^15.5.4",
-    "redux-devtools-extension": "^2.13.2",
     "react-dom": "^15.5.4",
     "react-flip-move": "^2.9.13",
     "react-redux": "^5.0.5",
     "react-router-dom": "^4.1.1",
     "react-router-redux": "^5.0.0-alpha.6",
     "redux": "^3.6.0",
+    "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
     "style-loader": "^0.17.0",
     "url-loader": "^0.5.8",

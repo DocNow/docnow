@@ -7,13 +7,13 @@ const initialState = {
 export default function trends(state = initialState, action) {
   switch (action.type) {
 
-  case SET_PLACES:
-    return {
-      ...state,
-      places: action.places
-    }
+    case SET_PLACES:
+      return {
+        ...state,
+        places: action.places
+      }
 
-  default:
-    return state
+    default:
+      return state
   }
 }

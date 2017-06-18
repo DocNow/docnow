@@ -8,7 +8,6 @@ import TrendsPage from './TrendsPage'
 import SettingsPage from './SettingsPage'
 import './App.css'
 
-
 export default class App extends Component {
 
   componentDidMount() {

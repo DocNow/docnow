@@ -8,23 +8,24 @@ const initialState = {
 export default function settings(state = initialState, action) {
   switch (action.type) {
 
-  case SET_SETTINGS: {
-    return {
-      ...state,
-      appKey: action.appKey,
-      appSecret: action.appSecret
+    case SET_SETTINGS: {
+      return {
+        ...state,
+        appKey: action.appKey,
+        appSecret: action.appSecret
+      }
     }
-  }
 
-  case UPDATE_SETTINGS: {
-    const s = {
-      ...state
+    case UPDATE_SETTINGS: {
+      const s = {
+        ...state
+      }
+      s[action.name] = action.value
+      return s
     }
-    s[action.name] = action.value
-    return s
-  }
 
-  default:
-    return state
+    default: {
+      return state
+    }
   }
 }

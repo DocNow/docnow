@@ -7,6 +7,7 @@ import styles from './Trends.css'
 export default class Trends extends Component {
 
   componentDidMount() {
+    this.props.getPlaces()
     const intervalId = setInterval(this.props.getPlaces, 3000)
     this.setState({intervalId: intervalId})
   }
