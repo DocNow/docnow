@@ -3,15 +3,18 @@ import { Route } from 'react-router-dom'
 import { push } from 'react-router-redux'
 import store from '../store'
 
-import Header from '../components/Header'
+import Header from './Header'
 import TrendsPage from './TrendsPage'
 import SettingsPage from './SettingsPage'
 import './App.css'
 
-export default class App extends Component {
+// import { connect } from 'react-redux'
 
-  componentDidMount() {
-    fetch('/api/v1/setup')
+
+class App extends Component {
+
+  componentWillMount() {
+    fetch('/api/v1/setup', {credentials: 'same-origin'})
       .then(resp => resp.json())
       .then(result => {
         if (! result) { store.dispatch(push('/settings/')) }
@@ -30,3 +33,6 @@ export default class App extends Component {
     )
   }
 }
+
+// export default connect(null, null)(App)
+export default App

@@ -5,6 +5,7 @@ import styles from './Header.css'
 import dn from '../images/dn.png'
 import Login from './Login'
 
+
 export default class Header extends Component {
   render() {
     return (
@@ -14,12 +15,12 @@ export default class Header extends Component {
             <img className={styles.Avatar} src={ dn } />
           </Link>
         </div>
-        <div className={styles.Login}><Login username={this.props.username} /></div>
+        <div className={styles.Login}><Login username={this.props.username}/></div>
       </header>
     )
   }
 }
 
 Header.propTypes = {
-  username: PropTypes.string
+  username: PropTypes.string,
 }
