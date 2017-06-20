@@ -4,6 +4,7 @@
     "build:client": "webpack --optimize-minimize --config webpack.prod.config.js --progress",
     "build": "better-npm-run build",
     "clean": "rimraf dist/*",
+    "test": "mocha --require babel-register test/*",
     "repl": "babel-node"
   },
   "betterScripts": {
@@ -26,10 +27,12 @@
     "cookie-parser": "^1.4.3",
     "express": "^4.15.2",
     "express-session": "^1.15.3",
+    "mocha": "^3.4.2",
     "passport": "^0.3.2",
     "passport-twitter": "^1.0.4",
     "redis": "^2.7.1",
-    "socket.io": "^2.0.2"
+    "socket.io": "^2.0.2",
+    "uuid": "^3.1.0"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

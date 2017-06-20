@@ -3,19 +3,23 @@ import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
 import { getUser } from '../actions/settings'
 import store from '../store'
+import style from './Header.css'
 
 export default class Login extends Component {
-
-  // <img title={ this.props.username } id="avatar" src={ this.props.avatar_url } /> &nbsp;
 
   componentWillMount() {
     store.dispatch(getUser())
   }
 
   render() {
-    if (this.props.username) {
+    if (this.props.twitterScreenName) {
       return (
         <div>
+          <img
+            title={ this.props.twitterScreenName }
+            className={style.Avatar}
+            src={ this.props.twitterAvatarUrl } />
+          &nbsp;
           <a href="/auth/logout">Logout</a>
         </div>
       )
@@ -32,5 +36,6 @@ export default class Login extends Component {
 }
 
 Login.propTypes = {
-  username: PropTypes.string
+  twitterScreenName: PropTypes.string,
+  twitterAvatarUrl: PropTypes.string
 }

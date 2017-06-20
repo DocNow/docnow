@@ -1,8 +1,9 @@
 import express from 'express'
-import { db } from './db'
+import { Database } from './db'
 import { activateKeys } from './auth'
 
 const app = express()
+const db = new Database()
 
 const data = {
   'places': [
@@ -36,8 +37,8 @@ const data = {
 }
 
 app.get('/setup', (req, res) => {
-  db.hmget('settings', ['appKey', 'appSecret'], (err, resp) => {
-    if (! err && resp[0] && resp[1]) {
+  db.getSettings((result) => {
+    if (result && result.appKey && result.appSecret) {
       res.json(true)
     } else {
       res.json(false)
@@ -55,30 +56,20 @@ app.get('/user', (req, res) => {
 })
 
 app.get('/settings', (req, res) => {
-  db.hmget('settings', ['appKey', 'appSecret'], (err, resp) => {
-    if (err) {
-      res.json({status: 'error', message: err})
+  db.getSettings((result) => {
+    if (! result) {
+      res.json({})
     } else {
-      res.json({
-        appKey: resp[0] || '',
-        appSecret: resp[1] || ''
-      })
+      res.json(result)
     }
   })
 })
 
 app.put('/settings', (req, res) => {
-  const appKey = req.body.appKey
-  const appSecret = req.body.appSecret
-  const cmd = ['settings', 'appKey', appKey, 'appSecret', appSecret]
-  db.hmset(cmd, (err, resp) => {
-    if (err) {
-      res.status(500)
-      res.json({status: 'error: ', message: err})
-    } else {
-      activateKeys()
-      res.json({status: 'updated'})
-    }
+  const settings = {appKey: req.body.appKey, appSecret: req.body.appSecret}
+  db.addSettings(settings, (result) => {
+    activateKeys()
+    res.json({status: 'updated'})
   })
 })
 

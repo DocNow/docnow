@@ -51,7 +51,7 @@ export const saveSettings = () => {
 export const setUser = (user) => {
   return {
     type: SET_USER,
-    twitterUsername: user.username
+    user: user
   }
 }
 
@@ -60,7 +60,9 @@ export const getUser = () => {
     fetch('/api/v1/user', {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
-        dispatch(setUser(result.user))
+        if (result.id) {
+          dispatch(setUser(result))
+        }
       })
   }
 }

@@ -27,7 +27,8 @@ export default function settings(state = initialState, action) {
     case SET_USER: {
       return {
         ...state,
-        twitterUsername: action.twitterUsername
+        twitterScreenName: action.user.twitterScreenName,
+        twitterAvatarUrl: action.user.twitterAvatarUrl
       }
     }
 

@@ -5,7 +5,8 @@ import * as actions from '../actions/settings'
 
 const mapStateToProps = (state) => {
   return {
-    username: state.settings.twitterUsername
+    twitterScreenName: state.settings.twitterScreenName,
+    twitterAvatarUrl: state.settings.twitterAvatarUrl
   }
 }
 
