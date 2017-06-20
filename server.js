@@ -7,7 +7,7 @@ const webpack = require('webpack')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
-const session = require('express-session')
+const cookieSession = require('cookie-session')
 const passport = require('passport')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
@@ -28,7 +28,7 @@ app.set('port', process.env.PORT || defaultPort)
 
 app.use(cookieParser())
 app.use(bodyParser.json())
-app.use(session({secret: 'ABCD', resave: true, saveUninitialized: true}))
+app.use(cookieSession({secret: 'ABCD', resave: true, saveUninitialized: true}))
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -45,7 +45,7 @@ if (isDevelopment) {
     res.end()
   })
 } else {
-  app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
+  app.get('/', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
   app.use(express.static(distDir))
 }
 
