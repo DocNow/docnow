@@ -1,7 +1,7 @@
-import { bindActionCreators } from 'redux'
+// import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Header from '../components/Header'
-import * as actions from '../actions/settings'
+// import * as actions from '../actions/settings'
 
 const mapStateToProps = (state) => {
   return {
@@ -10,6 +10,8 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
+// const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(Header)
+// export default connect(mapStateToProps, mapDispatchToProps)(Header)
+
+export default connect(mapStateToProps, null)(Header)

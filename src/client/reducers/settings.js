@@ -2,7 +2,9 @@ import { SET_SETTINGS, UPDATE_SETTINGS, SET_USER } from '../actions/settings'
 
 const initialState = {
   appKey: '',
-  appSecret: ''
+  appSecret: '',
+  twitterScreenName: '',
+  twitterAvatarUrl: ''
 }
 
 export default function settings(state = initialState, action) {

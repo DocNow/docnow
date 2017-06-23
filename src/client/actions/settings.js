@@ -21,7 +21,7 @@ export const getSettings = () => {
     fetch('/api/v1/settings')
       .then(resp => resp.json())
       .then(result => {
-        dispatch(setSettings(result.appKey, result.appSecret))
+        dispatch(setSettings(result.appKey || '', result.appSecret || ''))
       })
   }
 }
