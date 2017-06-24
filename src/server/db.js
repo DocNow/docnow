@@ -10,71 +10,71 @@ export class Database {
     this.db = redis.createClient(opts)
   }
 
-  clear(cb) {
-    this.db.flushdb((err, result) => {
-      if (err) {
-        console.log(err)
-      } else {
-        cb(result)
-      }
+  clear() {
+    return new Promise((resolve, reject) => {
+      this.db.flushdbAsync()
+        .then(() => resolve(true))
     })
   }
 
-  addSettings(settings, cb) {
-    this.db.hmset('settings', settings, (err, result) => {
-      if (err) {
-        console.log(err)
-      } else {
-        cb(result)
-      }
+  addSettings(settings) {
+    return new Promise((resolve, reject) => {
+      this.db.hmsetAsync('settings', settings)
+        .then((result) => resolve(result))
     })
   }
 
-  getSettings(cb) {
-    this.db.hgetall('settings', (err, result) => {
-      if (err) {
-        console.log(err)
-      } else {
-        cb(result)
-      }
+  getSettings() {
+    return new Promise((resolve, reject) => {
+      this.db.hgetallAsync('settings')
+        .then((result) => resolve(result))
     })
   }
 
-  addUser(user, cb) {
-    const userId = 'user:' + uuid()
-    const newUser = {...user, id: userId}
-    this.db.hmset(userId, newUser, (err, result) => {
-      const twitterId = 'twitterUser:' + user.twitterUserId
-      this.db.set(twitterId, userId, (err, result) => {
-        cb(userId)
+  addUser(user) {
+    return new Promise((resolve, reject) => {
+      const userId = 'user:' + uuid()
+      const newUser = {...user, id: userId}
+      this.db.hmsetAsync(userId, newUser)
+        .then((result) => {
+          const twitterId = 'twitterUser:' + user.twitterUserId
+          this.db.setAsync(twitterId, userId)
+            .then((result) => {
+              resolve(userId)
+            })
+          })
       })
+  }
+
+  getUser(userId) {
+    return new Promise((resolve, reject) => {
+      this.db.hgetallAsync(userId)
+        .then((result) => {
+          if (result) {
+            resolve(result)
+          } else {
+            resolve(null)
+          }
+        })
     })
   }
 
-  getUser(userId, cb) {
-    this.db.hgetall(userId, (err, result) => {
-      if (err) {
-        console.log(err)
-      } else if (result) {
-        cb(result)
-      } else {
-        cb(null)
-      }
-    })
-  }
-
-  getUserByTwitterUserId(twitterUserId, cb) {
+  getUserByTwitterUserId(twitterUserId) {
     if (! twitterUserId.match(/^twitterUser:/)) {
       twitterUserId = 'twitterUser:' + twitterUserId
     }
-    this.db.get(twitterUserId, (err, result) => {
-      if (err) {
-        console.log(err)
-      } else if (result) {
-        this.getUser(result, cb)
-      } else {
-        cb(null)
-      }
+    return new Promise((resolve, reject) => {
+      this.db.getAsync(twitterUserId)
+        .then((userId) => {
+          if (userId) {
+            this.getUser(userId)
+              .then((user) => {
+                resolve(user)
+              })
+          } else {
+            resolve(null)
+          }
+        })
     })
   }
 }

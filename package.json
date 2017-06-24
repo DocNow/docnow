@@ -4,7 +4,7 @@
     "build:client": "webpack --optimize-minimize --config webpack.prod.config.js --progress",
     "build": "better-npm-run build",
     "clean": "rimraf dist/*",
-    "test": "mocha --require babel-register test/*",
+    "test": "better-npm-run test",
     "repl": "babel-node"
   },
   "betterScripts": {
@@ -18,6 +18,12 @@
       "command": "nodemon server.js --ignore src/client",
       "env": {
         "NODE_ENV": "development"
+      }
+    },
+    "test": {
+      "command": "mocha --watch --require babel-register test/*",
+      "env": {
+        "NODE_ENV": "test"
       }
     }
   },
@@ -33,6 +39,7 @@
     "passport-twitter": "^1.0.4",
     "redis": "^2.7.1",
     "socket.io": "^2.0.2",
+    "twit": "^2.2.9",
     "uuid": "^3.1.0"
   },
   "devDependencies": {
@@ -42,6 +49,7 @@
     "babel-preset-env": "^1.4.0",
     "babel-preset-react": "^6.24.1",
     "babel-preset-stage-0": "^6.24.1",
+    "chai": "^4.0.2",
     "css-loader": "^0.28.1",
     "eslint": "^3.19.0",
     "eslint-loader": "^1.7.1",

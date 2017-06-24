@@ -8,7 +8,7 @@ const db = new Database()
 export const app = express()
 
 export const activateKeys = () => {
-  db.getSettings((settings) => {
+  db.getSettings().then((settings) => {
     if (! settings || ! settings.appKey || ! settings.appSecret) {
     } else {
       passport.use(new twitter.Strategy(
@@ -18,7 +18,7 @@ export const activateKeys = () => {
           callbackURL: 'http://localhost:3000/auth/twitter/callback'
         },
         (token, tokenSecret, profile, cb) => {
-          let user = db.getUserByTwitterUserId(profile.id, (user) => {
+          let user = db.getUserByTwitterUserId(profile.id).then((user) => {
             if (! user) {
               user = {
                 name: profile.displayName,
@@ -29,7 +29,7 @@ export const activateKeys = () => {
                 twitterAccessToken: token,
                 twitterAccessTokenSecret: tokenSecret
               }
-              db.addUser(user, (userId) => {
+              db.addUser(user).then((userId) => {
                 return cb(null, userId)
               })
             } else {
@@ -50,7 +50,7 @@ passport.serializeUser((userId, done) => {
 })
 
 passport.deserializeUser((userId, done) => {
-  db.getUser(userId, (user) => {
+  db.getUser(userId).then((user) => {
     done(null, user)
   })
 })

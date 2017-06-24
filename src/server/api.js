@@ -37,13 +37,14 @@ const data = {
 }
 
 app.get('/setup', (req, res) => {
-  db.getSettings((result) => {
-    if (result && result.appKey && result.appSecret) {
-      res.json(true)
-    } else {
-      res.json(false)
-    }
-  })
+  db.getSettings()
+    .then((result) => {
+      if (result && result.appKey && result.appSecret) {
+        res.json(true)
+      } else {
+        res.json(false)
+      }
+    })
 })
 
 app.get('/user', (req, res) => {
@@ -56,21 +57,23 @@ app.get('/user', (req, res) => {
 })
 
 app.get('/settings', (req, res) => {
-  db.getSettings((result) => {
-    if (! result) {
-      res.json({})
-    } else {
-      res.json(result)
-    }
-  })
+  db.getSettings()
+    .then((result) => {
+      if (! result) {
+        res.json({})
+      } else {
+        res.json(result)
+      }
+    })
 })
 
 app.put('/settings', (req, res) => {
   const settings = {appKey: req.body.appKey, appSecret: req.body.appSecret}
-  db.addSettings(settings, (result) => {
-    activateKeys()
-    res.json({status: 'updated'})
-  })
+  db.addSettings(settings)
+    .then(() => {
+      activateKeys()
+      res.json({status: 'updated'})
+    })
 })
 
 app.get('/trends', (req, res) => {
