@@ -78,15 +78,17 @@ export class Database {
     })
   }
 
-  setUserLocations(userId, locations) {
+  setUserLocations(userId, locationIds) {
     return new Promise((resolve, reject) => {
-      resolve()
+      this.db.saddAsync('locations:' + userId, locationIds)
+        .then(resolve)
     })
   }
 
   getUserLocations(userId) {
     return new Promise((resolve, reject) => {
-      resolve([1,2,3])
+      this.db.smembersAsync('locations:' + userId)
+        .then((locations) => resolve(locations))
     })
   }
 }
