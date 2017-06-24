@@ -1,4 +1,4 @@
-import { expect, assert } from 'chai'
+import { ok, equal } from 'assert'
 import { Twitter } from '../src/server/twitter'
 
 describe('docnow', () => {
@@ -8,24 +8,31 @@ describe('docnow', () => {
   describe('twitter', () => {
 
     it('should construct', () => {
-      expect(t).to.exist
-      expect(t.consumerKey).to.exist
-      expect(t.consumerSecret).to.exist
-      expect(t.accessToken).to.exist
-      expect(t.accessTokenSecret).to.exist
-      expect(t.twit).to.exist
+      ok(t)
+      ok(t.consumerKey)
+      ok(t.consumerSecret)
+      ok(t.accessToken)
+      ok(t.accessTokenSecret)
+      ok(t.twit)
     })
 
     it('should fetch trends by place', (done) => {
       t.getTrendsAtPlace(1)
         .then((place) => {
-          expect(place.id).to.equal(1)
-          expect(place.name).to.equal('Worldwide')
-          expect(place.trends).to.have.lengthOf.above(0)
-          expect(place.trends[0].name).to.exist
-          expect(place.trends[0].tweets).to.exist
+          equal(place.id, 1)
+          equal(place.name, 'Worldwide')
+          ok(place.trends.length > 0)
+          ok(place.trends[0].name)
+          ok(place.trends[0].tweets)
           done()
         })
+    })
+
+    it('should fetch all places', (done) => {
+      t.getPlaces().then((places) => {
+        ok(places.length > 0)
+        done()
+      })
     })
   })
 })

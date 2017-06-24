@@ -77,4 +77,16 @@ export class Database {
         })
     })
   }
+
+  setUserLocations(userId, locations) {
+    return new Promise((resolve, reject) => {
+      resolve()
+    })
+  }
+
+  getUserLocations(userId) {
+    return new Promise((resolve, reject) => {
+      resolve([1,2,3])
+    })
+  }
 }

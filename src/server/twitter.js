@@ -15,6 +15,12 @@ export class Twitter {
     })
   }
 
+  getPlaces() {
+    return new Promise((resolve, reject) => {
+      resolve([1, 2, 3])
+    })
+  }
+
   getTrendsAtPlace(woeId) {
     return new Promise(
       (resolve, reject) => {

@@ -1,11 +1,13 @@
-import assert from 'assert'
+import { equal } from 'assert'
 import { Database } from '../src/server/db'
 
 const db = new Database({db: 9})
-global.userId = null
 
 describe('docnow', () => {
+
   describe('database', () => {
+
+  let testUserId = null
 
     it('should clear', (done) => {
       db.clear().then(done())
@@ -18,8 +20,8 @@ describe('docnow', () => {
     it('should get settings', (done) => {
       db.getSettings()
         .then((settings) => {
-          assert.equal(settings.appKey, 'abc')
-          assert.equal(settings.appSecret, '123')
+          equal(settings.appKey, 'abc')
+          equal(settings.appSecret, '123')
           done()
         })
     })
@@ -34,20 +36,20 @@ describe('docnow', () => {
       db.addUser(user)
         .then((userId) => {
           if (userId) {
-            global.userId = userId
+            testUserId = userId
             done()
           }
       })
     })
 
     it('should get user by id', (done) => {
-      db.getUser(global.userId)
+      db.getUser(testUserId)
         .then((user) => {
-          assert.equal(user.id, global.userId)
-          assert.equal(user.name, 'Ed Summers')
-          assert.equal(user.twitterScreenName, 'edsu')
-          assert.equal(user.twitterUserId, '1234')
-          assert.equal(user.location, 'Silver Spring, MD')
+          equal(user.id, testUserId)
+          equal(user.name, 'Ed Summers')
+          equal(user.twitterScreenName, 'edsu')
+          equal(user.twitterUserId, '1234')
+          equal(user.location, 'Silver Spring, MD')
           done()
         })
     })
@@ -55,7 +57,7 @@ describe('docnow', () => {
     it('should look up by twitter user id', (done) => {
       db.getUserByTwitterUserId('twitterUser:1234')
         .then((user) => {
-          assert.equal(user.id, global.userId)
+          equal(user.id, testUserId)
           done()
         })
     })
@@ -63,7 +65,7 @@ describe('docnow', () => {
     it('should look up twitter user id without prefix', (done) => {
       db.getUserByTwitterUserId('1234')
         .then((user) => {
-          assert.equal(user.id, global.userId)
+          equal(user.id, testUserId)
           done()
         })
     })
@@ -71,7 +73,7 @@ describe('docnow', () => {
     it('should handle missing user', (done) => {
       db.getUser('foo')
         .then((user) => {
-          assert.equal(user, null)
+          equal(user, null)
           done()
         })
     })
@@ -79,13 +81,18 @@ describe('docnow', () => {
     it('should handle missing twitter user id', (done) => {
       db.getUserByTwitterUserId('foo')
         .then((user) => {
-          assert.equal(user, null)
+          equal(user, null)
           done()
         })
     })
 
-    it('should get trends by location', (done) => {
-      done()
+    it('should set/get locations', (done) => {
+      db.setUserLocations(testUserId, [1,2459115,23424819]).then(() => {
+        db.getUserLocations(testUserId).then((locations) => {
+          equal(locations.length, 3)
+          done()
+        })
+      })
     })
 
   })
