@@ -1,6 +1,7 @@
 import redis from 'redis'
 import uuid from 'uuid/v4'
 import bluebird from 'bluebird'
+import { Twitter } from './twitter'
 
 bluebird.promisifyAll(redis.RedisClient.prototype)
 
@@ -78,17 +79,37 @@ export class Database {
     })
   }
 
-  setUserLocations(userId, locationIds) {
+  setUserPlaces(userId, placeIds) {
     return new Promise((resolve, reject) => {
-      this.db.saddAsync('locations:' + userId, locationIds)
+      this.db.saddAsync('place:' + userId, placeIds)
         .then(resolve)
     })
   }
 
-  getUserLocations(userId) {
+  getUserPlaces(userId) {
     return new Promise((resolve, reject) => {
-      this.db.smembersAsync('locations:' + userId)
-        .then((locations) => resolve(locations))
+      this.db.smembersAsync('place:' + userId)
+        .then((places) => resolve(places))
+    })
+  }
+
+  importLatestTrends() {
+    return new Promise((resolve, reject) => {
+      resolve(123)
+    })
+  }
+
+  getTrends(placeId) {
+    return new Promise((resolve, reject) => {
+      resolve({
+        name: 'World',
+        trends: [
+          {
+            text: 'foo',
+            tweets: 123
+          }
+        ]
+      })
     })
   }
 }

@@ -1,4 +1,4 @@
-import { SET_PLACES } from '../actions/trends'
+import { SET_TRENDS } from '../actions/trends'
 
 const initialState = {
   places: []
@@ -7,7 +7,7 @@ const initialState = {
 export default function trends(state = initialState, action) {
   switch (action.type) {
 
-    case SET_PLACES:
+    case SET_TRENDS:
       return {
         ...state,
         places: action.places

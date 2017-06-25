@@ -35,7 +35,6 @@ export const activateKeys = () => {
             } else {
               return cb(null, user.id)
             }
-          // return cb(null, {user: profile})
           })
         }
       ))

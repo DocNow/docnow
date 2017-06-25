@@ -16,13 +16,17 @@ twitter:{twitterUserId} = user:{userId}
 
 ## Trends
 
-location:{woeId}:
+place:{woeId}
 
-- name: Barcelona, Spain
-- geo:  38.627003,-90.199402
+- id: 753692
+- name: Barcelona
+- country: Spain
+- countryCode: ES
+- type: Town
+- updated: 2017-07-02T12:43:21Z
 
-trends:{userId} := (woeId1, woeId2, ...)
+place:{userId} := (woeId1, woeId2, ...)
 
-trendCount:{woeId} := ((woeId, count1), (woeId2, count2))
+trendCount:{woeId} := ((text1, count1), (text2, count2))
 
-trendCount:{woeId}:YYYYMMDDHHMM := ((woeId, count1), (woeId2, count2))
+trendCount:{woeId}:YYYYMMDDHHMM := ((text1, count1), (text2, count2))

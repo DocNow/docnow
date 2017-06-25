@@ -1,17 +1,19 @@
-// import { bindActionCreators } from 'redux'
+import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Header from '../components/Header'
-// import * as actions from '../actions/settings'
+import { getUser } from '../actions/user'
 
 const mapStateToProps = (state) => {
   return {
-    twitterScreenName: state.settings.twitterScreenName,
-    twitterAvatarUrl: state.settings.twitterAvatarUrl
+    twitterScreenName: state.user.twitterScreenName,
+    twitterAvatarUrl: state.user.twitterAvatarUrl
   }
 }
 
-// const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
+const actions = {
+  getUser: getUser
+}
 
-// export default connect(mapStateToProps, mapDispatchToProps)(Header)
+const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
 
-export default connect(mapStateToProps, null)(Header)
+export default connect(mapStateToProps, mapDispatchToProps)(Header)

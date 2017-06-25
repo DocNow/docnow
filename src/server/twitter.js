@@ -17,7 +17,21 @@ export class Twitter {
 
   getPlaces() {
     return new Promise((resolve, reject) => {
-      resolve([1, 2, 3])
+      this.twit.get('trends/available').
+        then((resp) => {
+          const places = []
+          for (let place of resp.data) {
+            places.push({
+              id: place.woeid,
+              name: place.name,
+              type: place.type,
+              country: place.country,
+              countryCode: place.countryCode,
+              parent: place.parentid
+            })
+          }
+          resolve(places)
+        })
     })
   }
 

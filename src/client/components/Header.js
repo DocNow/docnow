@@ -26,5 +26,6 @@ export default class Header extends Component {
 
 Header.propTypes = {
   twitterScreenName: PropTypes.string,
-  twitterAvatarUrl: PropTypes.string
+  twitterAvatarUrl: PropTypes.string,
+  getUser: PropTypes.func
 }

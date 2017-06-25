@@ -6,14 +6,14 @@ import store from '../store'
 import Header from './Header'
 import TrendsPage from './TrendsPage'
 import SettingsPage from './SettingsPage'
+import ProfilePage from './ProfilePage'
+import { getUser } from '../actions/user'
 import './App.css'
-
-// import { connect } from 'react-redux'
-
 
 class App extends Component {
 
   componentWillMount() {
+    store.dispatch(getUser())
     fetch('/api/v1/setup', {credentials: 'same-origin'})
       .then(resp => resp.json())
       .then(result => {
@@ -28,11 +28,11 @@ class App extends Component {
         <main>
           <Route exact path="/" component={TrendsPage} />
           <Route exact path="/settings/" component={SettingsPage} />
+          <Route exact path="/profile/" component={ProfilePage} />
         </main>
       </div>
     )
   }
 }
 
-// export default connect(null, null)(App)
 export default App

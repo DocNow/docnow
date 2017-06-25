@@ -76,6 +76,21 @@ app.put('/settings', (req, res) => {
     })
 })
 
+app.get('/places', (req, res) => {
+  db.getUserPlaces(req.user.id)
+    .then((places) => {
+      res.json(places)
+    })
+})
+
+
+app.put('/places', (req, res) => {
+  db.setUserPlaces(req.user.id, req.body)
+    .then(() => {
+      res.json({status: 'updated'})
+    })
+})
+
 app.get('/trends', (req, res) => {
   const place = data.places[Math.floor(Math.random() * data.places.length)]
   const trend = place.trends[Math.floor(Math.random() * place.trends.length)]

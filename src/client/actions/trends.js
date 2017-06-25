@@ -1,9 +1,9 @@
-export const SET_PLACES = 'SET_PLACES'
-export const GET_PLACES = 'GET_PLACES'
+export const SET_TRENDS = 'SET_TRENDS'
+export const GET_TRENDS = 'GET_TRENDS'
 
 export const setPlaces = (places) => {
   return {
-    type: SET_PLACES,
+    type: SET_TRENDS,
     places: places
   }
 }
