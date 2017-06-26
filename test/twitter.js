@@ -17,7 +17,7 @@ describe('twitter', () => {
   it('should fetch trends by place', (done) => {
     t.getTrendsAtPlace(1)
       .then((place) => {
-        // equal(place.id, 1)
+        equal(place.id, 1)
         equal(place.name, 'Worldwide')
         ok(place.trends.length > 0)
         ok(place.trends[0].name)

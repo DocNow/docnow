@@ -1,4 +1,4 @@
-import { equal, ok } from 'assert'
+import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
 
 const db = new Database({db: 9})
@@ -88,6 +88,7 @@ describe('database', () => {
     db.setUserPlaces(testUserId, [1,2459115,23424819]).then(() => {
       db.getUserPlaces(testUserId).then((places) => {
         equal(places.length, 3)
+        ok(places[0].match(/^place:\d+$/))
         done()
       })
     })
@@ -105,6 +106,12 @@ describe('database', () => {
           done()
         })
       })
+  })
+
+  it('should add prefix', () => {
+    equal(db.addPrefix('123', 'user'), 'user:123')
+    equal(db.addPrefix('user:123', 'user'), 'user:123')
+    deepEqual(db.addPrefixes(['1', '2'], 'user'), ['user:1', 'user:2'])
   })
 
 })

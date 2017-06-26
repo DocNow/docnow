@@ -18,15 +18,17 @@ twitter:{twitterUserId} = user:{userId}
 
 place:{woeId}
 
-- id: 753692
+- id: place:753692
 - name: Barcelona
 - country: Spain
 - countryCode: ES
 - type: Town
 - updated: 2017-07-02T12:43:21Z
 
-place:{userId} := (woeId1, woeId2, ...)
+places:{userId} := {placeId1, placeId2, ...}
 
-trendCount:{woeId} := ((text1, count1), (text2, count2))
+users:{placeId} := {userId1, userId2, ...}
 
-trendCount:{woeId}:YYYYMMDDHHMM := ((text1, count1), (text2, count2))
+trendsCount:{placeId} := {(text1, count1), (text2, count2)}
+
+trendsCount:{placeId}:YYYYMMDDHHMM := {(text1, count1), (text2, count2)}
