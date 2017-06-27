@@ -1,7 +1,0 @@
-FROM node:7
-RUN mkdir /code
-RUN mkdir /code/docnow
-WORKDIR /code
-ADD . /code/
-RUN yarn
-CMD ["npm", "run", "start"]

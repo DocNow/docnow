@@ -1,0 +1,24 @@
+.Settings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 99vh;
+  width: 99vw;
+}
+
+.Settings p {
+  text-align: center;
+}
+
+.Settings label {
+  font-weight: bold;
+}
+
+.Settings input {
+  font-size: 18pt;
+}
+
+.Settings button {
+  background-color: lightgreen;
+}

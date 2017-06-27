@@ -4,47 +4,12 @@ services:
   redis:
     image: redis
 
-  db:
-    image: postgres
-
-  webpack:
+  app:
     build:
       context: .
-      dockerfile: dockerfile.webpack
     volumes:
-      - ./docnow:/code/docnow
-      - ./assets:/code/assets
+      - ./src:/code/src
     ports:
-      - "3000:3000"
-
-  django:
-    build:
-      context: .
-      dockerfile: dockerfile.django
-    volumes:
-      - .:/code
-    ports:
-      - "8000:8000"
+      - 3000:3000
     depends_on:
-      - db
       - redis
-      - webpack
-      - mail
-
-  trends:
-    build:
-      context: .
-      dockerfile: dockerfile.trends
-    volumes:
-      - .:/code
-    depends_on:
-      - django
-      - db
-
-  mail:
-    restart: always
-    image: catatnight/postfix
-
-    environment:
-      - "maildomain=localhost"
-      - "smtp_user=test:docnow"

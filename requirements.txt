@@ -1,7 +1,0 @@
-django
-django-webpack-loader
-psycopg2
-twarc
-rq
-django-allauth
-git+https://github.com/edsu/appdeps.git@python3
