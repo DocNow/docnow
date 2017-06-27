@@ -11,14 +11,14 @@ const mapStateToProps = (state) => {
 }
 
 const actions = {
-  getSettings: getSettings,
-  saveSettings: saveSettings
+  getSettings,
+  saveSettings
 }
 
 const mapDispatchToProps = (dispatch) => {
   return Object.assign( bindActionCreators(actions, dispatch), {
-    updateSettings: (name, value) => {
-      dispatch(updateSettings(name, value))
+    updateSettings: (e) => {
+      dispatch(updateSettings(e.target.name, e.target.value))
     }
   })
 }

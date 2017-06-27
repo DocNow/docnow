@@ -25,7 +25,7 @@ export default class Profile extends Component {
         })}
         </ul>
         Add a Place to Monitor:
-        <input onChange={ e => {this.props.updateNewPlace(e.target.value)} }
+        <input onChange={ this.props.updateNewPlace }
                type="text" name="place" value={ this.props.newPlace } />
         <br />
         <button onClick={ this.props.savePlaces } className="save">Save</button>
