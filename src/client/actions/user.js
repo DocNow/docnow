@@ -41,10 +41,10 @@ export const getPlaces = () => {
   }
 }
 
-export const updateNewPlace = (event) => {
+export const updateNewPlace = (value) => {
   return {
     type: UPDATE_NEW_PLACE,
-    id: event.target.value
+    id: value
   }
 }
 
