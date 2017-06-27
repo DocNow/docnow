@@ -12,11 +12,16 @@ const mapStateToProps = (state) => {
 }
 
 const actions = {
-  getPlaces: getPlaces,
-  updateNewPlace: updateNewPlace,
-  savePlaces: savePlaces
+  getPlaces,
+  savePlaces
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
+const mapDispatchToProps = (dispatch) => {
+  return Object.assign( bindActionCreators(actions, dispatch), {
+    updateNewPlace: (e) => {
+      dispatch(updateNewPlace(e.target.name))
+    }
+  })
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Settings)

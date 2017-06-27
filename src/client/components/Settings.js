@@ -19,12 +19,14 @@ export default class Settings extends Component {
         <p>
           <label htmlFor="appKey">Application Key: </label><br />
           <br />
-          <input size="30" onChange={this.props.updateSettings} id="appKey" name="appKey" type="text" value={this.props.appKey} />
+          <input size="30" onChange={this.props.updateSettings}
+                 id="appKey" name="appKey" type="text" value={this.props.appKey} />
         </p>
         <p>
           <label htmlFor="appSecret">Application Secret: </label><br />
           <br />
-          <input size="60" onChange={this.props.updateSettings} id="appSecret" name="appSecret" type="text" value={this.props.appSecret} />
+          <input size="60" onChange={this.props.updateSettings}
+                 id="appSecret" name="appSecret" type="text" value={this.props.appSecret} />
         </p>
         <p>
           <button>Save</button>

@@ -24,11 +24,11 @@ export const getSettings = () => {
   }
 }
 
-export const updateSettings = (event) => {
+export const updateSettings = (name, value) => {
   return {
     type: UPDATE_SETTINGS,
-    name: event.target.name,
-    value: event.target.value
+    name,
+    value
   }
 }
 
