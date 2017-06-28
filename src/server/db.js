@@ -108,20 +108,7 @@ export class Database {
       this.getUserIds()
         .then((userIds) => {
           for (const userId of userIds) {
-            this.importLatestTrendsForUser(userId)
-              .then(resolve)
-            /*
-            this.getTwitterClientForUser(userId)
-              .then((twtr) => {
-                this.getUserPlaces(userId)
-                  .then((placeIds) => {
-                    const prefixed = placeIds.map(this.stripPrefix, this)
-                    return Promise.all(prefixed.map(twtr.getTrendsAtPlace, twtr))
-                  })
-                  .then(this.saveTrendsAtPlaces.bind(this))
-                  .then(resolve)
-              })
-            */
+            this.importLatestTrendsForUser(userId).then(resolve)
           }
         })
     })
@@ -268,7 +255,6 @@ export class Database {
       })
     })
   }
-
 
   addPrefix(id, prefix) {
     let idString = String(id)
