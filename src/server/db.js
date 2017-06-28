@@ -26,16 +26,19 @@ export class Database {
   addUser(user) {
     return new Promise((resolve, reject) => {
       const userId = 'user:' + uuid()
-      const newUser = {...user, id: userId}
-      this.db.hmsetAsync(userId, newUser)
-        .then((result) => {
-          const twitterId = 'twitterUser:' + user.twitterUserId
-          this.db.setAsync(twitterId, userId)
-            .then((result) => {
-              resolve(userId)
+      this.getUserIds().then((userIds) => {
+        let isSuperUser = userIds.length == 0 ? true : false
+        const newUser = {...user, id: userId, isSuperUser}
+        this.db.hmsetAsync(userId, newUser)
+          .then((result) => {
+            const twitterId = 'twitterUser:' + user.twitterUserId
+            this.db.setAsync(twitterId, userId)
+              .then((result) => {
+                resolve(userId)
+              })
             })
-          })
       })
+    })
   }
 
   getUser(userId) {
@@ -87,21 +90,37 @@ export class Database {
   }
 
   importLatestTrends() {
+
+    // this is a scary bit of logic does a lot of things with Redis:
+    // gets a list of user ids, gets user information for each one,
+    // creates a Twitter client using the user's keys and then fetches
+    // a list of the place ids that the user watches, and finally it
+    // gets the trends for those locations.
+
     return new Promise((resolve, reject) => {
-      this.getUserIds()
-        .then((userIds) => {
-          for (let userId of userIds) {
-            // TODO: get keys for this user
-            const twtr = new Twitter()
-            this.getUserPlaces(userId)
-              .then((placeIds) => {
-                placeIds = placeIds.map(this.stripPrefix, this)
-                return Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
-              })
-              .then(this.saveTrendsAtPlaces.bind(this))
-              .then(resolve)
-          }
-        })
+      this.getSettings().then((settings) => {
+        this.getUserIds()
+          .then((userIds) => {
+            for (let userId of userIds) {
+              this.getUser(userId)
+                .then((user) => {
+                  let twtr = new Twitter(
+                    settings.appKey,
+                    settings.appSecret,
+                    user.twitterAccessToken,
+                    user.twitterAccessTokenSecret
+                  )
+                  this.getUserPlaces(userId)
+                    .then((placeIds) => {
+                      placeIds = placeIds.map(this.stripPrefix, this)
+                      return Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
+                    })
+                    .then(this.saveTrendsAtPlaces.bind(this))
+                    .then(resolve)
+                })
+            }
+          })
+      })
     })
   }
 
@@ -138,6 +157,7 @@ export class Database {
         }
       }
       m.zadd(args)
+      m.hmset(placeId, 'name', trends.name)
     }
 
     // return a promise that executes all of the commands and returns trends
@@ -151,6 +171,56 @@ export class Database {
       })
     })
   }
+
+  loadPlaces() {
+    let addPrefix = this.addPrefix.bind(this)
+    return new Promise((resolve, reject) => {
+      this.getUserIds()
+        .then((userIds) => {
+          if (userIds.length > 0) {
+            this.getTwitterClientForUser(userIds[0])
+              .then((t) => {
+                t.getPlaces().then((places) => {
+                  let m = this.db.multi()
+                  for (let place of places) {
+                    place.id = addPrefix(place.id, 'place')
+                    m.hmset(place.id, place)
+                  }
+                  m.exec((err, result) => {
+                    if (! err) {
+                      resolve(places)
+                    } else {
+                      reject(err)
+                    }
+                  })
+                })
+              })
+          }
+        })
+      })
+  }
+
+  getPlace(placeId) {
+    placeId = this.addPrefix(placeId, 'place')
+    return this.db.hgetallAsync(placeId)
+  }
+
+  getTwitterClientForUser(userId) {
+    return new Promise((resolve, reject) => {
+      this.getSettings().then((settings) => {
+        this.getUser(userId)
+          .then((user) => {
+            resolve(new Twitter(
+              settings.appKey,
+              settings.appSecret,
+              user.twitterAccessToken,
+              user.twitterAccessTokenSecret
+            ))
+          })
+      })
+    })
+  }
+
 
   addPrefix(id, prefix) {
     id = String(id)

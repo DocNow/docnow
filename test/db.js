@@ -12,14 +12,17 @@ describe('database', () => {
   })
 
   it('should add settings', (done) => {
-    db.addSettings({appKey: 'abc', appSecret: '123'}).then(done())
+    db.addSettings({
+      appKey: process.env.CONSUMER_KEY,
+      appSecret: process.env.CONSUMER_SECRET
+    }).then(done())
   })
 
   it('should get settings', (done) => {
     db.getSettings()
       .then((settings) => {
-        equal(settings.appKey, 'abc')
-        equal(settings.appSecret, '123')
+        equal(settings.appKey, process.env.CONSUMER_KEY)
+        equal(settings.appSecret, process.env.CONSUMER_SECRET)
         done()
       })
   })
@@ -29,7 +32,9 @@ describe('database', () => {
       name: "Ed Summers",
       location: "Silver Spring, MD",
       twitterScreenName: "edsu",
-      twitterUserId: "1234"
+      twitterUserId: "1234",
+      twitterAccessToken: process.env.ACCESS_TOKEN,
+      twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET
     }
     db.addUser(user)
       .then((userId) => {
@@ -48,6 +53,9 @@ describe('database', () => {
         equal(user.twitterScreenName, 'edsu')
         equal(user.twitterUserId, '1234')
         equal(user.location, 'Silver Spring, MD')
+        equal(user.twitterAccessToken, process.env.ACCESS_TOKEN)
+        equal(user.twitterAccessTokenSecret, process.env.ACCESS_TOKEN_SECRET)
+        ok(user.isSuperUser)
         done()
       })
   })
@@ -103,6 +111,16 @@ describe('database', () => {
           ok(result.trends.length > 0)
           ok(result.trends[0].name)
           ok(result.trends[0].tweets)
+          done()
+        })
+      })
+  })
+
+  it('should load all places', (done) => {
+    db.loadPlaces()
+      .then((result) => {
+        db.getPlace('2514815').then((place) => {
+          ok(place.name, 'Washington')
           done()
         })
       })

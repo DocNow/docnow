@@ -24,10 +24,10 @@ export class Twitter {
             places.push({
               id: place.woeid,
               name: place.name,
-              type: place.type,
-              country: place.country,
-              countryCode: place.countryCode,
-              parent: place.parentid
+              type: place.placeType.name,
+              country: place.country || '',
+              countryCode: place.countryCode || '',
+              parent: place.parentid || ''
             })
           }
           resolve(places)
