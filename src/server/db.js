@@ -24,25 +24,25 @@ export class Database {
   }
 
   addUser(user) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       const userId = 'user:' + uuid()
       this.getUserIds().then((userIds) => {
-        let isSuperUser = userIds.length == 0 ? true : false
+        const isSuperUser = userIds.length === 0 ? true : false
         const newUser = {...user, id: userId, isSuperUser}
         this.db.hmsetAsync(userId, newUser)
-          .then((result) => {
+          .then(() => {
             const twitterId = 'twitterUser:' + user.twitterUserId
             this.db.setAsync(twitterId, userId)
-              .then((result) => {
+              .then(() => {
                 resolve(userId)
               })
-            })
+          })
       })
     })
   }
 
   getUser(userId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.db.hgetallAsync(userId)
         .then((result) => {
           if (result) {
@@ -55,9 +55,9 @@ export class Database {
   }
 
   getUserByTwitterUserId(twitterUserId) {
-    twitterUserId = this.addPrefix(twitterUserId, 'twitterUser')
-    return new Promise((resolve, reject) => {
-      this.db.getAsync(twitterUserId)
+    const prefixedId = this.addPrefix(twitterUserId, 'twitterUser')
+    return new Promise((resolve) => {
+      this.db.getAsync(prefixedId)
         .then((userId) => {
           if (userId) {
             this.getUser(userId)
@@ -72,39 +72,38 @@ export class Database {
   }
 
   setUserPlaces(userId, placeIds) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.db.saddAsync('places:' + userId, this.addPrefixes(placeIds, 'place'))
         .then(resolve)
     })
   }
 
   getUserPlaces(userId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.db.smembersAsync('places:' + userId)
         .then((places) => resolve(places))
     })
   }
 
   getUserIds() {
-    return this.db.keysAsync("user:*")
+    return this.db.keysAsync('user:*')
   }
 
   importLatestTrends() {
-
     // this is a scary bit of logic does a lot of things with Redis:
     // gets a list of user ids, gets user information for each one,
     // creates a Twitter client using the user's keys and then fetches
     // a list of the place ids that the user watches, and finally it
     // gets the trends for those locations.
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.getSettings().then((settings) => {
         this.getUserIds()
           .then((userIds) => {
-            for (let userId of userIds) {
+            for (const userId of userIds) {
               this.getUser(userId)
                 .then((user) => {
-                  let twtr = new Twitter(
+                  const twtr = new Twitter(
                     settings.appKey,
                     settings.appSecret,
                     user.twitterAccessToken,
@@ -112,8 +111,8 @@ export class Database {
                   )
                   this.getUserPlaces(userId)
                     .then((placeIds) => {
-                      placeIds = placeIds.map(this.stripPrefix, this)
-                      return Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
+                      const prefixed = placeIds.map(this.stripPrefix, this)
+                      return Promise.all(prefixed.map(twtr.getTrendsAtPlace, twtr))
                     })
                     .then(this.saveTrendsAtPlaces.bind(this))
                     .then(resolve)
@@ -125,18 +124,18 @@ export class Database {
   }
 
   getTrends(placeId) {
-    placeId = this.addPrefix(placeId, 'place')
-    let trendsId = this.addPrefix(placeId, 'trends')
-    return new Promise((resolve, reject) => {
-      let trends = {
+    const prefixedPlaceId = this.addPrefix(placeId, 'place')
+    const trendsId = this.addPrefix(prefixedPlaceId, 'trends')
+    return new Promise((resolve) => {
+      const trends = {
         id: trendsId,
         placeId: placeId,
         trends: []
       }
       this.db.zrevrangeAsync(trendsId, 0, -1, 'WITHSCORES')
         .then((result) => {
-          for (let i=0; i < result.length; i += 2) {
-            trends.trends.push({name: result[i], tweets: result[i+1]})
+          for (let i = 0; i < result.length; i += 2) {
+            trends.trends.push({name: result[i], tweets: result[i + 1]})
           }
           resolve(trends)
         })
@@ -144,14 +143,13 @@ export class Database {
   }
 
   saveTrendsAtPlaces(trendsAtPlaces) {
-
     // build up a list of redis zadd commands to add the trends at each place
     const m = this.db.multi()
-    for (let trends of trendsAtPlaces) {
-      let placeId = this.addPrefix(trends.id, 'place')
-      let trendId = this.addPrefix(placeId, 'trends')
-      let args = [trendId]
-      for (let trend of trends.trends) {
+    for (const trends of trendsAtPlaces) {
+      const placeId = this.addPrefix(trends.id, 'place')
+      const trendId = this.addPrefix(placeId, 'trends')
+      const args = [trendId]
+      for (const trend of trends.trends) {
         if (trend.tweets > 0) {
           args.push(trend.tweets, trend.name)
         }
@@ -162,7 +160,7 @@ export class Database {
 
     // return a promise that executes all of the commands and returns trends
     return new Promise((resolve, reject) => {
-      return m.exec((err, result) => {
+      return m.exec((err) => {
         if (err) {
           reject(err)
         } else {
@@ -173,7 +171,7 @@ export class Database {
   }
 
   loadPlaces() {
-    let addPrefix = this.addPrefix.bind(this)
+    const addPrefix = this.addPrefix.bind(this)
     return new Promise((resolve, reject) => {
       this.getUserIds()
         .then((userIds) => {
@@ -181,12 +179,12 @@ export class Database {
             this.getTwitterClientForUser(userIds[0])
               .then((t) => {
                 t.getPlaces().then((places) => {
-                  let m = this.db.multi()
-                  for (let place of places) {
+                  const m = this.db.multi()
+                  for (const place of places) {
                     place.id = addPrefix(place.id, 'place')
                     m.hmset(place.id, place)
                   }
-                  m.exec((err, result) => {
+                  m.exec((err) => {
                     if (! err) {
                       resolve(places)
                     } else {
@@ -197,16 +195,16 @@ export class Database {
               })
           }
         })
-      })
+    })
   }
 
   getPlace(placeId) {
-    placeId = this.addPrefix(placeId, 'place')
-    return this.db.hgetallAsync(placeId)
+    const prefixed = this.addPrefix(placeId, 'place')
+    return this.db.hgetallAsync(prefixed)
   }
 
   getTwitterClientForUser(userId) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.getSettings().then((settings) => {
         this.getUser(userId)
           .then((user) => {
@@ -223,11 +221,11 @@ export class Database {
 
 
   addPrefix(id, prefix) {
-    id = String(id)
-    if (! id.match('^' + prefix + ':')) {
-      id = prefix + ':' + id
+    let idString = String(id)
+    if (! idString.match('^' + prefix + ':')) {
+      idString = prefix + ':' + idString
     }
-    return id
+    return idString
   }
 
   addPrefixes(ids, prefix) {
