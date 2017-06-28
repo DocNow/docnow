@@ -6,7 +6,7 @@ import styles from './Place.css'
 export default class Place extends Component {
   render() {
     const trends = this.props.trends.slice(0, 10).map(trend =>
-      <li key={ trend.name + trend.text }>{ trend.text } [{ trend.tweets }]</li>
+      <li key={ trend.name + trend.text }>{ trend.name } [{ trend.tweets }]</li>
     )
     return (
       <div className={styles.Place}>

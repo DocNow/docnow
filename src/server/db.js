@@ -96,48 +96,72 @@ export class Database {
     // a list of the place ids that the user watches, and finally it
     // gets the trends for those locations.
 
+    console.log('fetching trends')
+
     return new Promise((resolve) => {
-      this.getSettings().then((settings) => {
-        this.getUserIds()
-          .then((userIds) => {
-            for (const userId of userIds) {
-              this.getUser(userId)
-                .then((user) => {
-                  const twtr = new Twitter(
-                    settings.appKey,
-                    settings.appSecret,
-                    user.twitterAccessToken,
-                    user.twitterAccessTokenSecret
-                  )
-                  this.getUserPlaces(userId)
-                    .then((placeIds) => {
-                      const prefixed = placeIds.map(this.stripPrefix, this)
-                      return Promise.all(prefixed.map(twtr.getTrendsAtPlace, twtr))
-                    })
-                    .then(this.saveTrendsAtPlaces.bind(this))
-                    .then(resolve)
-                })
-            }
-          })
-      })
+      this.getUserIds()
+        .then((userIds) => {
+          for (const userId of userIds) {
+            this.getTwitterClientForUser(userId)
+              .then((twtr) => {
+                this.getUserPlaces(userId)
+                  .then((placeIds) => {
+                    const prefixed = placeIds.map(this.stripPrefix, this)
+                    return Promise.all(prefixed.map(twtr.getTrendsAtPlace, twtr))
+                  })
+                  .then(this.saveTrendsAtPlaces.bind(this))
+                  .then(resolve)
+              })
+          }
+        })
     })
+  }
+
+  startTrendsWatcher(opts = {}) {
+    this.importLatestTrends()
+    this.trendsWatcherId = setInterval(
+      this.importLatestTrends.bind(this),
+      opts.interval || 60 * 1000
+    )
+  }
+
+  stopTrendsWatcher() {
+    if (this.trendsWatcherId) {
+      clearInterval(this.trendsWatcherId)
+      this.trendsWatcherId = null
+    }
   }
 
   getTrends(placeId) {
     const prefixedPlaceId = this.addPrefix(placeId, 'place')
     const trendsId = this.addPrefix(prefixedPlaceId, 'trends')
     return new Promise((resolve) => {
-      const trends = {
-        id: trendsId,
-        placeId: placeId,
-        trends: []
-      }
-      this.db.zrevrangeAsync(trendsId, 0, -1, 'WITHSCORES')
-        .then((result) => {
-          for (let i = 0; i < result.length; i += 2) {
-            trends.trends.push({name: result[i], tweets: result[i + 1]})
-          }
-          resolve(trends)
+      this.getPlace(placeId).then((place) => {
+        const trends = {
+          id: trendsId,
+          name: place.name,
+          placeId: placeId,
+          trends: []
+        }
+        this.db.zrevrangeAsync(trendsId, 0, -1, 'WITHSCORES')
+          .then((result) => {
+            for (let i = 0; i < result.length; i += 2) {
+              trends.trends.push({name: result[i], tweets: result[i + 1]})
+            }
+            resolve(trends)
+          })
+      })
+    })
+  }
+
+  getUserTrends(userId) {
+    return new Promise((resolve) => {
+      this.getUserPlaces(userId)
+        .then((placeIds) => {
+          Promise.all(placeIds.map(this.getTrends, this))
+            .then((result) => {
+              resolve(result)
+            })
         })
     })
   }
@@ -154,6 +178,7 @@ export class Database {
           args.push(trend.tweets, trend.name)
         }
       }
+      m.del(trendId)
       m.zadd(args)
       m.hmset(placeId, 'name', trends.name)
     }
@@ -208,12 +233,12 @@ export class Database {
       this.getSettings().then((settings) => {
         this.getUser(userId)
           .then((user) => {
-            resolve(new Twitter(
-              settings.appKey,
-              settings.appSecret,
-              user.twitterAccessToken,
-              user.twitterAccessTokenSecret
-            ))
+            resolve(new Twitter({
+              consumerKey: settings.appKey,
+              consumerSecret: settings.appSecret,
+              accessToken: user.twitterAccessToken,
+              accessTokenSecret: user.twitterAccessTokenSecret
+            }))
           })
       })
     })

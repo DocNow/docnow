@@ -107,7 +107,6 @@ describe('database', () => {
       .then((result) => {
         equal(result.length, 3)
         db.getTrends(1).then((result) => {
-          // equal(result.id, 'trends:place:1')
           ok(result.trends.length > 0)
           ok(result.trends[0].name)
           ok(result.trends[0].tweets)
@@ -123,6 +122,16 @@ describe('database', () => {
           ok(place.name, 'Washington')
           done()
         })
+      })
+  })
+
+  it('should load user trends', (done) => {
+    db.getUserTrends(testUserId)
+      .then((result) => {
+        ok(result.length === 3)
+        ok(result[0].trends.length > 0)
+        ok(result[0].name)
+        done()
       })
   })
 

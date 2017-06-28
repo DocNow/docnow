@@ -10,10 +10,10 @@ export const setPlaces = (places) => {
 
 export const getPlaces = () => {
   return (dispatch) => {
-    fetch('/api/v1/trends')
+    fetch('/api/v1/trends', {credentials: 'same-origin'})
       .then(resp => resp.json())
       .then(result => {
-        dispatch(setPlaces(result.places))
+        dispatch(setPlaces(result))
       })
   }
 }

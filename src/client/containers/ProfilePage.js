@@ -19,7 +19,7 @@ const actions = {
 const mapDispatchToProps = (dispatch) => {
   return Object.assign( bindActionCreators(actions, dispatch), {
     updateNewPlace: (e) => {
-      dispatch(updateNewPlace(e.target.name))
+      dispatch(updateNewPlace(e.target.value))
     }
   })
 }
