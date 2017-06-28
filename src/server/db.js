@@ -34,7 +34,13 @@ export class Database {
             const twitterId = 'twitterUser:' + user.twitterUserId
             this.db.setAsync(twitterId, userId)
               .then(() => {
-                resolve(userId)
+                if (isSuperUser) {
+                  this.loadPlaces().then(() => {
+                    resolve(userId)
+                  })
+                } else {
+                  resolve(userId)
+                }
               })
           })
       })
