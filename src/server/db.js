@@ -34,13 +34,7 @@ export class Database {
             const twitterId = 'twitterUser:' + user.twitterUserId
             this.db.setAsync(twitterId, userId)
               .then(() => {
-                if (isSuperUser) {
-                  this.loadPlaces().then(() => {
-                    resolve(userId)
-                  })
-                } else {
-                  resolve(userId)
-                }
+                resolve(userId)
               })
           })
       })
@@ -79,6 +73,7 @@ export class Database {
 
   setUserPlaces(userId, placeIds) {
     return new Promise((resolve) => {
+      this.db.del('places:' + userId)
       this.db.saddAsync('places:' + userId, this.addPrefixes(placeIds, 'place'))
         .then(resolve)
     })

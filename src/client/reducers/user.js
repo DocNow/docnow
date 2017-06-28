@@ -1,4 +1,4 @@
-import { SET_USER, SET_PLACES, UPDATE_NEW_PLACE } from '../actions/user'
+import { SET_USER, SET_PLACES, UPDATE_NEW_PLACE, REMOVE_PLACE } from '../actions/user'
 
 const initialState = {
   twitterScreenName: '',
@@ -28,6 +28,16 @@ export default function user(state = initialState, action) {
       return {
         ...state,
         newPlace: action.id
+      }
+    }
+
+    case REMOVE_PLACE: {
+      const places = state.places.filter((place)=>{
+        return place !== action.id
+      })
+      return {
+        ...state,
+        places
       }
     }
 
