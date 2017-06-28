@@ -6,7 +6,7 @@
     "clean": "rimraf dist/*",
     "test": "better-npm-run test",
     "repl": "babel-node",
-    "eslint:server": "eslint src/server/*; exit 0"
+    "eslint:server": "eslint server.js src/server/*"
   },
   "betterScripts": {
     "build": {
@@ -16,13 +16,13 @@
       }
     },
     "start": {
-      "command": "npm run eslint:server && nodemon server.js --ignore src/client",
+      "command": "nodemon server.js --exec 'npm run eslint:server && node' --ignore src/client",
       "env": {
         "NODE_ENV": "development"
       }
     },
     "test": {
-      "command": "npm run eslint:server && mocha --require babel-register test/*",
+      "command": "nodemon --exec 'npm run eslint:server && mocha --require babel-register test/*'",
       "env": {
         "NODE_ENV": "test"
       }

@@ -22,7 +22,7 @@ const isDevelopment = process.env.NODE_ENV !== 'production'
 const defaultPort = 3000
 const compiler = webpack(config)
 
-app = express()
+const app = express()
 
 app.set('port', process.env.PORT || defaultPort)
 
