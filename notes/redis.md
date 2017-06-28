@@ -29,6 +29,6 @@ places:{userId} := {placeId1, placeId2, ...}
 
 users:{placeId} := {userId1, userId2, ...}
 
-trendsCount:{placeId} := {(text1, count1), (text2, count2)}
+trends:{placeId} := {(text1, count1), (text2, count2)}
 
-trendsCount:{placeId}:YYYYMMDDHHMM := {(text1, count1), (text2, count2)}
+trends:{placeId}:YYYYMMDDHHMM := {(text1, count1), (text2, count2)}

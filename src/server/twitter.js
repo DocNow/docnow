@@ -50,6 +50,9 @@ export class Twitter {
             }
             resolve(place)
           })
+          .error((msg) => {
+            reject(msg)
+          })
       }
     )
   }

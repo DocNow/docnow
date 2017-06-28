@@ -99,12 +99,12 @@ describe('database', () => {
       .then((result) => {
         equal(result.length, 3)
         db.getTrends(1).then((result) => {
-          equal(result.name, 'World')
+          // equal(result.id, 'trends:place:1')
           ok(result.trends.length > 0)
-          ok(result.trends[0].text)
+          ok(result.trends[0].name)
           ok(result.trends[0].tweets)
+          done()
         })
-        done()
       })
   })
 

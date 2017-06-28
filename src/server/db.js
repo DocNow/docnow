@@ -91,30 +91,63 @@ export class Database {
       this.getUserIds()
         .then((userIds) => {
           for (let userId of userIds) {
+            // TODO: get keys for this user
             const twtr = new Twitter()
             this.getUserPlaces(userId)
               .then((placeIds) => {
                 placeIds = placeIds.map(this.stripPrefix, this)
-                Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
-                  .then(resolve)
+                return Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
               })
+              .then(this.saveTrendsAtPlaces.bind(this))
+              .then(resolve)
           }
         })
     })
   }
 
   getTrends(placeId) {
-    const woeId = this.stripPrefix(placeId)
-    const t = new Twitter()
+    placeId = this.addPrefix(placeId, 'place')
+    let trendsId = this.addPrefix(placeId, 'trends')
     return new Promise((resolve, reject) => {
-      resolve({
-        name: 'World',
-        trends: [
-          {
-            text: 'foo',
-            tweets: 123
+      let trends = {
+        id: trendsId,
+        placeId: placeId,
+        trends: []
+      }
+      this.db.zrevrangeAsync(trendsId, 0, -1, 'WITHSCORES')
+        .then((result) => {
+          for (let i=0; i < result.length; i += 2) {
+            trends.trends.push({name: result[i], tweets: result[i+1]})
           }
-        ]
+          resolve(trends)
+        })
+    })
+  }
+
+  saveTrendsAtPlaces(trendsAtPlaces) {
+
+    // build up a list of redis zadd commands to add the trends at each place
+    const m = this.db.multi()
+    for (let trends of trendsAtPlaces) {
+      let placeId = this.addPrefix(trends.id, 'place')
+      let trendId = this.addPrefix(placeId, 'trends')
+      let args = [trendId]
+      for (let trend of trends.trends) {
+        if (trend.tweets > 0) {
+          args.push(trend.tweets, trend.name)
+        }
+      }
+      m.zadd(args)
+    }
+
+    // return a promise that executes all of the commands and returns trends
+    return new Promise((resolve, reject) => {
+      return m.exec((err, result) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(trendsAtPlaces)
+        }
       })
     })
   }
@@ -122,7 +155,7 @@ export class Database {
   addPrefix(id, prefix) {
     id = String(id)
     if (! id.match('^' + prefix + ':')) {
-      return prefix + ':' + id
+      id = prefix + ':' + id
     }
     return id
   }
