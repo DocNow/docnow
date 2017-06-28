@@ -3,6 +3,7 @@ export const SET_USER = 'SET_USER'
 export const GET_PLACES = 'GET_PLACES'
 export const SET_PLACES = 'SET_PLACES'
 export const UPDATE_NEW_PLACE = 'UPDATE_NEW_PLACE'
+export const REMOVE_PLACE = 'REMOVE_PLACE'
 export const SAVE_PLACES = 'SAVE_PLACES'
 
 export const setUser = (user) => {
@@ -48,6 +49,13 @@ export const updateNewPlace = (value) => {
   }
 }
 
+export const removePlace = (value) => {
+  return {
+    type: REMOVE_PLACE,
+    id: value
+  }
+}
+
 export const savePlaces = () => {
   return (dispatch, getState) => {
     const { user } = getState()
@@ -65,5 +73,12 @@ export const savePlaces = () => {
       .then(() => {
         dispatch(getPlaces())
       })
+  }
+}
+
+export const deletePlace = (value) => {
+  return (dispatch) => {
+    dispatch(removePlace(value))
+    dispatch(savePlaces())
   }
 }

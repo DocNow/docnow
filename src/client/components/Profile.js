@@ -21,7 +21,10 @@ export default class Profile extends Component {
         Monitoring Places:
         <ul>
         { this.props.places.map( (loc, i) => {
-          return <li key={i} className={ style.Place }>{ loc }</li>
+          return (
+            <li key={i} className={ style.Place }>
+             <button className="del" onClick={()=>{this.props.deletePlace(loc)}}>x</button>{ loc }
+            </li>)
         })}
         </ul>
         Add a Place to Monitor:
@@ -39,6 +42,7 @@ Profile.propTypes = {
   places: PropTypes.array,
   getPlaces: PropTypes.func,
   updateNewPlace: PropTypes.func,
+  deletePlace: PropTypes.func,
   savePlaces: PropTypes.func,
   newPlace: PropTypes.string
 }

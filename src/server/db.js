@@ -79,6 +79,7 @@ export class Database {
 
   setUserPlaces(userId, placeIds) {
     return new Promise((resolve) => {
+      this.db.del('places:' + userId)
       this.db.saddAsync('places:' + userId, this.addPrefixes(placeIds, 'place'))
         .then(resolve)
     })
