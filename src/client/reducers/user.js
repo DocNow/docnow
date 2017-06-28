@@ -20,7 +20,8 @@ export default function user(state = initialState, action) {
     case SET_PLACES: {
       return {
         ...state,
-        places: action.places
+        places: action.places,
+        newPlace: ''
       }
     }
 
