@@ -7,7 +7,8 @@ bluebird.promisifyAll(redis.RedisClient.prototype)
 
 export class Database {
 
-  constructor(opts) {
+  constructor(opts = {}) {
+    opts.host = opts.host || process.env.REDIS_HOST || '127.0.0.1'
     this.db = redis.createClient(opts)
   }
 

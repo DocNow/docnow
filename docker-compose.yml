@@ -5,6 +5,8 @@ services:
     image: redis
 
   app:
+    environment:
+      - REDIS_HOST=redis
     build:
       context: .
     volumes:
