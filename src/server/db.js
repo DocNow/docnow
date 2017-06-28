@@ -80,8 +80,9 @@ export class Database {
 
   setUserPlaces(userId, placeIds) {
     return new Promise((resolve) => {
-      this.db.del('places:' + userId)
-      this.db.saddAsync('places:' + userId, this.addPrefixes(placeIds, 'place'))
+      const key = this.addPrefix(userId, 'places')
+      this.db.del(key)
+      this.db.saddAsync(key, this.addPrefixes(placeIds, 'place'))
         .then(resolve)
     })
   }
@@ -98,14 +99,7 @@ export class Database {
   }
 
   importLatestTrends() {
-    // this is a scary bit of logic does a lot of things with Redis:
-    // gets a list of user ids, gets user information for each one,
-    // creates a Twitter client using the user's keys and then fetches
-    // a list of the place ids that the user watches, and finally it
-    // gets the trends for those locations.
-
     console.log('fetching trends')
-
     return new Promise((resolve) => {
       this.getUserIds()
         .then((userIds) => {
