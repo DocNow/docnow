@@ -17,10 +17,9 @@ export const activateKeys = () => {
           callbackURL: 'http://localhost:3000/auth/twitter/callback'
         },
         (token, tokenSecret, profile, cb) => {
-          db.getUserByTwitterUserId(profile.id).then((userById) => {
-            let user = userById
+          db.getUserByTwitterUserId(profile.id).then((user) => {
             if (! user) {
-              user = {
+              const newUser = {
                 name: profile.displayName,
                 twitterUserId: profile.id,
                 twitterScreenName: profile.username,
@@ -29,11 +28,12 @@ export const activateKeys = () => {
                 twitterAccessToken: token,
                 twitterAccessTokenSecret: tokenSecret
               }
-              db.addUser(user).then((userId) => {
+              db.addUser(newUser).then((userId) => {
                 return cb(null, userId)
               })
+            } else {
+              return cb(null, user.id)
             }
-            return cb(null, user.id)
           })
         }
       ))
