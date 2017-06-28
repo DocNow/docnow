@@ -108,6 +108,9 @@ export class Database {
       this.getUserIds()
         .then((userIds) => {
           for (const userId of userIds) {
+            this.importLatestTrendsForUser(userId)
+              .then(resolve)
+            /*
             this.getTwitterClientForUser(userId)
               .then((twtr) => {
                 this.getUserPlaces(userId)
@@ -118,7 +121,23 @@ export class Database {
                   .then(this.saveTrendsAtPlaces.bind(this))
                   .then(resolve)
               })
+            */
           }
+        })
+    })
+  }
+
+  importLatestTrendsForUser(userId) {
+    return new Promise((resolve) => {
+      this.getTwitterClientForUser(userId)
+        .then((twtr) => {
+          this.getUserPlaces(userId)
+            .then((placeIds) => {
+              const prefixed = placeIds.map(this.stripPrefix, this)
+              return Promise.all(prefixed.map(twtr.getTrendsAtPlace, twtr))
+            })
+            .then(this.saveTrendsAtPlaces.bind(this))
+            .then(resolve)
         })
     })
   }

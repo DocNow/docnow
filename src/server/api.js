@@ -58,7 +58,8 @@ app.get('/places', (req, res) => {
 app.put('/places', (req, res) => {
   db.setUserPlaces(req.user.id, req.body)
     .then(() => {
-      res.json({status: 'updated'})
+      db.importLatestTrendsForUser(req.user.id)
+        .then(res.json({status: 'updated'}))
     })
 })
 
