@@ -9,8 +9,7 @@ export const app = express()
 
 export const activateKeys = () => {
   db.getSettings().then((settings) => {
-    if (! settings || ! settings.appKey || ! settings.appSecret) {
-    } else {
+    if (settings && settings.appKey && settings.appSecret) {
       passport.use(new twitter.Strategy(
         {
           consumerKey: settings.appKey,
@@ -18,7 +17,8 @@ export const activateKeys = () => {
           callbackURL: 'http://localhost:3000/auth/twitter/callback'
         },
         (token, tokenSecret, profile, cb) => {
-          let user = db.getUserByTwitterUserId(profile.id).then((user) => {
+          db.getUserByTwitterUserId(profile.id).then((userById) => {
+            let user = userById
             if (! user) {
               user = {
                 name: profile.displayName,
@@ -32,9 +32,8 @@ export const activateKeys = () => {
               db.addUser(user).then((userId) => {
                 return cb(null, userId)
               })
-            } else {
-              return cb(null, user.id)
             }
+            return cb(null, user.id)
           })
         }
       ))
@@ -62,7 +61,7 @@ app.get('/twitter', passport.authenticate('twitter'))
 app.get('/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   (req, res) => {
-  res.redirect('/');
+    res.redirect('/')
   }
 )
 

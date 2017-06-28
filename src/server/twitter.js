@@ -2,7 +2,7 @@ import Twit from 'twit'
 
 export class Twitter {
 
-  constructor(keys={}) {
+  constructor(keys = {}) {
     this.consumerKey = keys.consumerKey || process.env.CONSUMER_KEY
     this.consumerSecret = keys.consumerSecret || process.env.CONSUMER_SECRET
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN
@@ -16,11 +16,11 @@ export class Twitter {
   }
 
   getPlaces() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.twit.get('trends/available').
         then((resp) => {
           const places = []
-          for (let place of resp.data) {
+          for (const place of resp.data) {
             places.push({
               id: place.woeid,
               name: place.name,
@@ -45,7 +45,7 @@ export class Twitter {
               name: resp.data[0].locations[0].name,
               trends: []
             }
-            for (let trend of resp.data[0].trends) {
+            for (const trend of resp.data[0].trends) {
               place.trends.push({name: trend.name, tweets: trend.tweet_volume})
             }
             resolve(place)
