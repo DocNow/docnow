@@ -12,24 +12,15 @@ export class Database {
   }
 
   clear() {
-    return new Promise((resolve, reject) => {
-      this.db.flushdbAsync()
-        .then(() => resolve(true))
-    })
+    return this.db.flushdbAsync()
   }
 
   addSettings(settings) {
-    return new Promise((resolve, reject) => {
-      this.db.hmsetAsync('settings', settings)
-        .then((result) => resolve(result))
-    })
+    return this.db.hmsetAsync('settings', settings)
   }
 
   getSettings() {
-    return new Promise((resolve, reject) => {
-      this.db.hgetallAsync('settings')
-        .then((result) => resolve(result))
-    })
+    return this.db.hgetallAsync('settings')
   }
 
   addUser(user) {
@@ -91,24 +82,30 @@ export class Database {
     })
   }
 
+  getUserIds() {
+    return this.db.keysAsync("user:*")
+  }
+
   importLatestTrends() {
     return new Promise((resolve, reject) => {
-      this.db.keysAsync("user:*")
+      this.getUserIds()
         .then((userIds) => {
-          let m = this.db.multi()
-          userIds.forEach((userId) => {
-            m.smembers('places:' + userId)
-          })
-          m.exec((err, places) => {
-            // console.log(places)
-            // resolve(places)
-          })
+          for (let userId of userIds) {
+            const twtr = new Twitter()
+            this.getUserPlaces(userId)
+              .then((placeIds) => {
+                placeIds = placeIds.map(this.stripPrefix, this)
+                Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
+                  .then(resolve)
+              })
+          }
         })
-      resolve(123)
     })
   }
 
   getTrends(placeId) {
+    const woeId = this.stripPrefix(placeId)
+    const t = new Twitter()
     return new Promise((resolve, reject) => {
       resolve({
         name: 'World',
@@ -132,6 +129,10 @@ export class Database {
 
   addPrefixes(ids, prefix) {
     return ids.map((id) => { return this.addPrefix(id, prefix) })
+  }
+
+  stripPrefix(s) {
+    return String(s).replace(/^.+:/, '')
   }
 
 }

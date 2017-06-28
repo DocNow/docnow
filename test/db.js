@@ -97,14 +97,14 @@ describe('database', () => {
   it('should import latest trends', (done) => {
     db.importLatestTrends()
       .then((result) => {
-        ok(result > 0)
+        equal(result.length, 3)
         db.getTrends(1).then((result) => {
           equal(result.name, 'World')
           ok(result.trends.length > 0)
           ok(result.trends[0].text)
           ok(result.trends[0].tweets)
-          done()
         })
+        done()
       })
   })
 
@@ -112,6 +112,11 @@ describe('database', () => {
     equal(db.addPrefix('123', 'user'), 'user:123')
     equal(db.addPrefix('user:123', 'user'), 'user:123')
     deepEqual(db.addPrefixes(['1', '2'], 'user'), ['user:1', 'user:2'])
+  })
+
+  it('should strip prefix', () => {
+    equal(db.stripPrefix('foo:bar'), 'bar')
+    equal(db.stripPrefix('foobar'), 'foobar')
   })
 
 })
