@@ -216,6 +216,7 @@ export class Database {
                   for (const place of places) {
                     place.id = addPrefix(place.id, 'place')
                     m.hmset(place.id, place)
+                    m.sadd('places', place.id)
                   }
                   m.exec((err) => {
                     if (! err) {
@@ -234,6 +235,25 @@ export class Database {
   getPlace(placeId) {
     const prefixed = this.addPrefix(placeId, 'place')
     return this.db.hgetallAsync(prefixed)
+  }
+
+  getPlaces() {
+    return new Promise((resolve) => {
+      this.db.smembersAsync('places')
+        .then((placeIds) => {
+          const m = this.db.multi()
+          for (const placeId of placeIds) {
+            m.hgetall(placeId)
+          }
+          m.exec((err, result) => {
+            const places = {}
+            for (const place of result) {
+              places[place.id] = place
+            }
+            resolve(places)
+          })
+        })
+    })
   }
 
   getTwitterClientForUser(userId) {

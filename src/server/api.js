@@ -63,6 +63,12 @@ app.put('/places', (req, res) => {
     })
 })
 
+app.get('/world', (req, res) => {
+  db.getPlaces().then((result) => {
+    res.json(result)
+  })
+})
+
 app.get('/trends', (req, res) => {
   if (req.user) {
     db.getUserTrends(req.user.id)

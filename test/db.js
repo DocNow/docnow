@@ -120,7 +120,11 @@ describe('database', () => {
       .then((result) => {
         db.getPlace('2514815').then((place) => {
           ok(place.name, 'Washington')
-          done()
+          db.getPlaces().then((places) => {
+            ok(places)
+            equal(places['place:90036018']['name'], 'Okayama')
+            done()
+          })
         })
       })
   })
