@@ -25,7 +25,7 @@ place:{woeId}
 - type: Town
 - updated: 2017-07-02T12:43:21Z
 
-places := {placeId1, placeId2, placeId3 ...}
+places := {placeId1, placeId2, placeId3, ...}
 
 places:{userId} := {placeId1, placeId2, ...}
 
