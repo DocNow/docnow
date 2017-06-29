@@ -5,6 +5,7 @@
     "build": "better-npm-run build",
     "clean": "rimraf dist/*",
     "test": "better-npm-run test",
+    "wtest": "better-npm-run wtest",
     "repl": "babel-node",
     "eslint:server": "eslint server.js src/server/*"
   },
@@ -21,8 +22,14 @@
         "NODE_ENV": "development"
       }
     },
-    "test": {
+    "wtest": {
       "command": "nodemon --exec 'npm run eslint:server && mocha --require babel-register test/*'",
+      "env": {
+        "NODE_ENV": "test"
+      }
+    },
+    "test": {
+      "command": "npm run eslint:server && mocha --require babel-register test/*",
       "env": {
         "NODE_ENV": "test"
       }
