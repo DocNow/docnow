@@ -4,10 +4,28 @@ import Settings from '../components/Profile'
 import { getPlaces, updateNewPlace, deletePlace, savePlaces } from '../actions/user'
 
 const mapStateToProps = (state) => {
+  const placeLabelToId = label => {
+    if (state.user.placesByName[label]) {
+      return state.user.placesByName[label][0].id
+    }
+    return undefined
+  }
+
+  const placeIdToLabel = id => {
+    for (const place of Object.values(state.user.placesByName)) {
+      if (place[0].id === id) {
+        return place[0].name
+      }
+    }
+  }
+
   return {
     user: state.user,
     places: state.user.places,
-    newPlace: state.user.newPlace
+    placesByName: state.user.placesByName || {},
+    newPlace: state.user.newPlace,
+    placeLabelToId,
+    placeIdToLabel
   }
 }
 
@@ -18,8 +36,8 @@ const actions = {
 
 const mapDispatchToProps = (dispatch) => {
   return Object.assign( bindActionCreators(actions, dispatch), {
-    updateNewPlace: (e) => {
-      dispatch(updateNewPlace(e.target.value))
+    updateNewPlace: (value) => {
+      dispatch(updateNewPlace(value))
     },
     deletePlace: (place) => {
       dispatch(deletePlace(place))

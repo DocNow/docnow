@@ -66,6 +66,7 @@
     "html-webpack-plugin": "^2.28.0",
     "nodemon": "^1.11.0",
     "react": "^15.5.4",
+    "react-autocomplete": "^1.5.9",
     "react-dom": "^15.5.4",
     "react-flip-move": "^2.9.13",
     "react-redux": "^5.0.5",

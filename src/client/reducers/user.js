@@ -1,4 +1,4 @@
-import { SET_USER, SET_PLACES, UPDATE_NEW_PLACE, REMOVE_PLACE } from '../actions/user'
+import { SET_USER, SET_PLACES, SET_WORLD, UPDATE_NEW_PLACE, REMOVE_PLACE } from '../actions/user'
 
 const initialState = {
   twitterScreenName: '',
@@ -14,6 +14,30 @@ export default function user(state = initialState, action) {
       return {
         ...state,
         ...action.user
+      }
+    }
+
+    case SET_WORLD: {
+      const placesByName = Object.values(action.world).reduce((acc, place) => {
+        if (!acc[place.name]) {
+          acc[place.name] = [place]
+        } else {
+          acc[place.name].push(place)
+        }
+        return acc
+      }, {})
+      Object.keys(placesByName).map(placeName => {
+        if (placesByName[placeName].length > 1) {
+          placesByName[placeName].forEach(place => {
+            const fullName = place.name + ', ' + place.countryCode
+            placesByName[fullName] = [place]
+          })
+          delete placesByName[placeName]
+        }
+      }, {})
+      return {
+        ...state,
+        placesByName
       }
     }
 

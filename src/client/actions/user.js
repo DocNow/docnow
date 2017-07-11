@@ -1,6 +1,6 @@
 export const GET_USER = 'GET_USER'
 export const SET_USER = 'SET_USER'
-export const GET_PLACES = 'GET_PLACES'
+export const SET_WORLD = 'SET_WORLD'
 export const SET_PLACES = 'SET_PLACES'
 export const UPDATE_NEW_PLACE = 'UPDATE_NEW_PLACE'
 export const REMOVE_PLACE = 'REMOVE_PLACE'
@@ -22,6 +22,13 @@ export const getUser = () => {
           dispatch(setUser(result))
         }
       })
+  }
+}
+
+export const setWorld = (world) => {
+  return {
+    type: SET_WORLD,
+    world
   }
 }
 
@@ -56,12 +63,24 @@ export const removePlace = (value) => {
   }
 }
 
-export const savePlaces = () => {
+/* THUNKS */
+
+export const getWorld = () => {
+  return (dispatch) => {
+    fetch('/api/v1/world', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setWorld(result))
+      })
+  }
+}
+
+export const savePlaces = (placeId) => {
   return (dispatch, getState) => {
     const { user } = getState()
     const places = [ ...user.places ]
-    if (user.newPlace) {
-      places.push(user.newPlace)
+    if (placeId) {
+      places.push(placeId)
     }
     const opts = {
       method: 'PUT',

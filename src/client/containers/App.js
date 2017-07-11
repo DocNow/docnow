@@ -7,13 +7,14 @@ import Header from './Header'
 import TrendsPage from './TrendsPage'
 import SettingsPage from './SettingsPage'
 import ProfilePage from './ProfilePage'
-import { getUser } from '../actions/user'
+import { getUser, getWorld } from '../actions/user'
 import './App.css'
 
 class App extends Component {
 
   componentWillMount() {
     store.dispatch(getUser())
+    store.dispatch(getWorld())
     fetch('/api/v1/setup', {credentials: 'same-origin'})
       .then(resp => resp.json())
       .then(result => {

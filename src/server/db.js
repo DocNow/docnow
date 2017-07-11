@@ -82,8 +82,10 @@ export class Database {
     return new Promise((resolve) => {
       const key = this.addPrefix(userId, 'places')
       this.db.del(key)
-      this.db.saddAsync(key, this.addPrefixes(placeIds, 'place'))
-        .then(resolve)
+      if (placeIds.length > 0) {
+        this.db.saddAsync(key, this.addPrefixes(placeIds, 'place'))
+          .then(resolve)
+      } else { resolve() }
     })
   }
 
