@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import style from './Profile.css'
 import Autocomplete from 'react-autocomplete'
+import Keys from './Keys'
 
 export default class Profile extends Component {
 
   componentDidMount() {
     this.props.getPlaces()
+    this.props.getSettings()
   }
 
   matchInputToTerm(input, value) {
@@ -37,9 +39,22 @@ export default class Profile extends Component {
   }
 
   render() {
+    let superUser = ''
+    let adminSettings = ''
+    if (this.props.user.isSuperUser === 'true') {
+      superUser = '(Admin)'
+      adminSettings = (
+        <Keys
+          appKey={this.props.appKey}
+          appSecret={this.props.appSecret}
+          updateSettings={this.props.updateSettings}
+        />
+      )
+    }
+
     return (
       <div className={ style.Profile }>
-        Name: { this.props.user.name }
+        Name: { this.props.user.name }&nbsp;{ superUser }
         <br />
         Twitter Username: <a href={ 'https://twitter.com/' + this.props.user.twitterScreenName }>
           { this.props.user.twitterScreenName }
@@ -72,6 +87,9 @@ export default class Profile extends Component {
           onSelect={value => this.props.updateNewPlace(value)}
         />
         <br />
+
+        {adminSettings}
+
         <button onClick={ this.checkPlace } className="save">Save</button>
       </div>
     )
@@ -89,5 +107,9 @@ Profile.propTypes = {
   updateNewPlace: PropTypes.func,
   deletePlace: PropTypes.func,
   savePlaces: PropTypes.func,
-  newPlace: PropTypes.string
+  newPlace: PropTypes.string,
+  appKey: PropTypes.string,
+  appSecret: PropTypes.string,
+  getSettings: PropTypes.func,
+  updateSettings: PropTypes.func
 }

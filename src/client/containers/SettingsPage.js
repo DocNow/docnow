@@ -1,5 +1,6 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
+import { push } from 'react-router-redux'
 import Settings from '../components/Settings'
 import { getSettings, updateSettings, saveSettings } from '../actions/settings'
 
@@ -20,6 +21,9 @@ const mapDispatchToProps = (dispatch) => {
   return Object.assign( bindActionCreators(actions, dispatch), {
     updateSettings: (e) => {
       dispatch(updateSettings(e.target.name, e.target.value))
+    },
+    returnHome: () => {
+      dispatch(push('/'))
     }
   })
 }

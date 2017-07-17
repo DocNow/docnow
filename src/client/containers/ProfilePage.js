@@ -2,6 +2,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Settings from '../components/Profile'
 import { getPlaces, updateNewPlace, deletePlace, savePlaces } from '../actions/user'
+import { getSettings, updateSettings } from '../actions/settings'
 
 const mapStateToProps = (state) => {
   const placeLabelToId = label => {
@@ -25,13 +26,16 @@ const mapStateToProps = (state) => {
     placesByName: state.user.placesByName || {},
     newPlace: state.user.newPlace,
     placeLabelToId,
-    placeIdToLabel
+    placeIdToLabel,
+    appKey: state.settings.appKey,
+    appSecret: state.settings.appSecret
   }
 }
 
 const actions = {
   getPlaces,
-  savePlaces
+  savePlaces,
+  getSettings
 }
 
 const mapDispatchToProps = (dispatch) => {
@@ -41,7 +45,10 @@ const mapDispatchToProps = (dispatch) => {
     },
     deletePlace: (place) => {
       dispatch(deletePlace(place))
-    }
+    },
+    updateSettings: (e) => {
+      dispatch(updateSettings(e.target.name, e.target.value))
+    },
   })
 }
 
