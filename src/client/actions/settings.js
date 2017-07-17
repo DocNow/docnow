@@ -1,5 +1,3 @@
-import { push } from 'react-router-redux'
-
 export const GET_SETTINGS = 'GET_SETTINGS'
 export const SET_SETTINGS = 'SET_SETTINGS'
 export const UPDATE_SETTINGS = 'UPDATE_SETTINGS'
@@ -40,8 +38,7 @@ export const saveSettings = () => {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(settings)
     }
-    fetch('/api/v1/settings', opts)
+    return fetch('/api/v1/settings', opts)
       .then((resp) => resp.json())
-      .then(() => dispatch(push('/')))
   }
 }

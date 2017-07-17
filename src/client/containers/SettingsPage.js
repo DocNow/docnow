@@ -6,7 +6,8 @@ import { getSettings, updateSettings, saveSettings } from '../actions/settings'
 const mapStateToProps = (state) => {
   return {
     appKey: state.settings.appKey,
-    appSecret: state.settings.appSecret
+    appSecret: state.settings.appSecret,
+    userLoggedIn: state.user.twitterScreenName !== ''
   }
 }
 

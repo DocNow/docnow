@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { push } from 'react-router-redux'
 import PropTypes from 'prop-types'
 import style from './Settings.css'
 
@@ -13,7 +14,13 @@ export default class Settings extends Component {
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          this.props.saveSettings()
+          this.props.saveSettings().then(() => {
+            if (this.props.userLoggedIn) {
+              push('/')
+            } else {
+              window.location = '/auth/twitter/'
+            }
+          })
         }}
         className={style.Settings}>
         <p>
@@ -39,6 +46,7 @@ export default class Settings extends Component {
 Settings.propTypes = {
   appKey: PropTypes.string,
   appSecret: PropTypes.string,
+  userLoggedIn: PropTypes.bool,
   getSettings: PropTypes.func,
   updateSettings: PropTypes.func,
   saveSettings: PropTypes.func
