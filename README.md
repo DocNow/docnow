@@ -1,7 +1,8 @@
 [![Build Status](https://travis-ci.org/DocNow/docnow.svg?branch=master)](https://travis-ci.org/DocNow/docnow)
 
 This is a work in progress. When it becomes more fleshed out details about how
-to run in production will be provided. Till then ....
+to run in production will be found at
+[docnow-ansible](https://github.com/DocNow/docnow-ansible)
 
 ## Development
 
