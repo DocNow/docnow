@@ -27,6 +27,13 @@ app.get('/user', (req, res) => {
   }
 })
 
+app.put('/user', (req, res) => {
+  db.updateUser(req.user.id, req.body)
+    .then(() => {
+      res.json({status: 'updated'})
+    })
+})
+
 app.get('/settings', (req, res) => {
   db.getSettings()
     .then((result) => {
@@ -39,7 +46,7 @@ app.get('/settings', (req, res) => {
 })
 
 app.put('/settings', (req, res) => {
-  const settings = {appKey: req.body.appKey, appSecret: req.body.appSecret}
+  const settings = {instanceTitle: req.body.instanceTitle, appKey: req.body.appKey, appSecret: req.body.appSecret}
   db.addSettings(settings)
     .then(() => {
       activateKeys()

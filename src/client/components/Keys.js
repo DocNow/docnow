@@ -6,12 +6,12 @@ export default class Keys extends Component {
   render() {
     return (
         <p>
-          <label htmlFor="appKey">Consumer Key: </label><br />
+          <label htmlFor="appKey">Consumer Key </label><br />
           <br />
           <input size="30" onChange={this.props.updateSettings}
                  id="appKey" name="appKey" type="text" value={this.props.appKey} />
           <br />
-          <label htmlFor="appSecret">Consumer Secret: </label><br />
+          <label htmlFor="appSecret">Consumer Secret </label><br />
           <br />
           <input size="60" onChange={this.props.updateSettings}
                  id="appSecret" name="appSecret" type="text" value={this.props.appSecret} />

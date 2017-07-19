@@ -48,6 +48,10 @@ export class Database {
     })
   }
 
+  updateUser(userId, data) {
+    return this.db.hmsetAsync(userId, ['name', data.name, 'email', data.email])
+  }
+
   getUser(userId) {
     return new Promise((resolve) => {
       this.db.hgetallAsync(userId)
