@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import style from './Profile.css'
 import Autocomplete from 'react-autocomplete'
+import LogoUpload from './LogoUpload'
 import Keys from './Keys'
 
 export default class AdminSettings extends Component {
@@ -54,9 +55,7 @@ export default class AdminSettings extends Component {
         <input size="30" onChange={this.props.updateSettings}
                id="instanceTitle" name="instanceTitle" type="text" value={this.props.instanceTitle} />
         <br />
-        <label htmlFor="logo">Logo</label><br />
-        <br />
-        <input size="30" id="logo" name="logo" type="file"/>
+        <LogoUpload logoUrl={''}/>
         <Keys
           appKey={this.props.appKey}
           appSecret={this.props.appSecret}
