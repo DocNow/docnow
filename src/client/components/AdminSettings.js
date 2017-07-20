@@ -55,7 +55,9 @@ export default class AdminSettings extends Component {
         <input size="30" onChange={this.props.updateSettings}
                id="instanceTitle" name="instanceTitle" type="text" value={this.props.instanceTitle} />
         <br />
-        <LogoUpload logoUrl={''}/>
+        <LogoUpload
+          logoUrl={this.props.logoUrl}
+          updateSettings={this.props.updateSettings}/>
         <Keys
           appKey={this.props.appKey}
           appSecret={this.props.appSecret}
@@ -105,6 +107,7 @@ AdminSettings.propTypes = {
   newPlace: PropTypes.string,
   appKey: PropTypes.string,
   appSecret: PropTypes.string,
+  logoUrl: PropTypes.string,
   instanceTitle: PropTypes.string,
   saveSettings: PropTypes.func,
   updateSettings: PropTypes.func

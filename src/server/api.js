@@ -1,4 +1,6 @@
 import express from 'express'
+import multiparty from 'multiparty'
+import * as fs from 'fs'
 import { Database } from './db'
 import { activateKeys } from './auth'
 
@@ -46,7 +48,11 @@ app.get('/settings', (req, res) => {
 })
 
 app.put('/settings', (req, res) => {
-  const settings = {instanceTitle: req.body.instanceTitle, appKey: req.body.appKey, appSecret: req.body.appSecret}
+  const settings = {
+    logoUrl: req.body.logoUrl,
+    reinstanceTitle: req.body.instanceTitle,
+    appKey: req.body.appKey,
+    appSecret: req.body.appSecret}
   db.addSettings(settings)
     .then(() => {
       activateKeys()
@@ -84,6 +90,34 @@ app.get('/trends', (req, res) => {
       })
   } else {
     res.json([])
+  }
+})
+
+app.post('/logo', (req, res) => {
+  if (req.user) {
+    if (req.user.isSuperUser) {
+      const form = new multiparty.Form()
+
+      form.parse(req, (parseErr, fields, files) => {
+        const {path} = files.imageFile[0]
+        const newPath = './userData/images/logo.png'
+
+        fs.readFile(path, (readErr, data) => {
+          if (readErr) {
+            console.log(readErr)
+          }
+          fs.writeFile(newPath, data, (writeErr) => {
+            if (writeErr) {
+              console.log(writeErr)
+            }
+            // delete temp image
+            fs.unlink(path, () => {
+              res.send('File uploaded to: ' + newPath)
+            })
+          })
+        })
+      })
+    }
   }
 })
 

@@ -1,6 +1,7 @@
 import { SET_USER, UPDATE_USER_SETTINGS, SAVE_USER_SETTINGS } from '../actions/user'
 
 const initialState = {
+  name: '',
   twitterScreenName: '',
   twitterAvatarUrl: '',
   places: [],

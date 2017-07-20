@@ -3,12 +3,13 @@ export const SET_SETTINGS = 'SET_SETTINGS'
 export const UPDATE_SETTINGS = 'UPDATE_SETTINGS'
 export const SAVE_SETTINGS = 'SAVE_SETTINGS'
 
-export const setSettings = (title, appKey, appSecret) => {
+export const setSettings = (logoUrl, instanceTitle, appKey, appSecret) => {
   return {
     type: SET_SETTINGS,
-    instanceTitle: title,
-    appKey: appKey,
-    appSecret: appSecret
+    instanceTitle,
+    logoUrl,
+    appKey,
+    appSecret
   }
 }
 
@@ -17,7 +18,9 @@ export const getSettings = () => {
     fetch('/api/v1/settings')
       .then(resp => resp.json())
       .then(result => {
-        dispatch(setSettings(result.instanceTitle || '', result.appKey || '', result.appSecret || ''))
+        dispatch(setSettings(
+          result.logoUrl || '', result.instanceTitle || '',
+          result.appKey || '', result.appSecret || ''))
       })
   }
 }
@@ -37,6 +40,20 @@ const saveSettingsAction = () => {
   }
 }
 
+export const postLogo = () => {
+  return (dispatch, getState) => {
+    const { settings } = getState()
+    const imageFormData = new FormData()
+    imageFormData.append('imageFile', settings.logoFile)
+    const opts = {
+      method: 'POST',
+      body: imageFormData,
+      credentials: 'same-origin'
+    }
+    return fetch('/api/v1/logo', opts)
+  }
+}
+
 export const saveSettings = () => {
   return (dispatch, getState) => {
     const { settings } = getState()
@@ -47,6 +64,9 @@ export const saveSettings = () => {
     }
     return fetch('/api/v1/settings', opts)
       .then((resp) => {
+        if (settings.logoFile) {
+          dispatch(postLogo())
+        }
         dispatch(saveSettingsAction())
         resp.json()
       })

@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import AdminSettings from '../components/AdminSettings'
 import { getPlaces, updateNewPlace, deletePlace, savePlaces } from '../actions/places'
-import { updateSettings, saveSettings } from '../actions/settings'
+import { updateSettings, saveSettings, postLogo } from '../actions/settings'
 
 const mapStateToProps = (state) => {
   const placeLabelToId = label => {
@@ -29,6 +29,7 @@ const mapStateToProps = (state) => {
     placeIdToLabel,
     appKey: state.settings.appKey,
     appSecret: state.settings.appSecret,
+    logoUrl: state.settings.logoUrl,
     instanceTitle: state.settings.instanceTitle || ''
   }
 }
@@ -36,7 +37,8 @@ const mapStateToProps = (state) => {
 const actions = {
   getPlaces,
   savePlaces,
-  saveSettings
+  saveSettings,
+  postLogo
 }
 
 const mapDispatchToProps = (dispatch) => {
