@@ -22,8 +22,7 @@ export default class Login extends Component {
     } else {
       return (
         <div>
-          <a href="/auth/twitter">Login</a> &nbsp;
-          <Link to="/settings/">Settings</Link>
+          <a href="/auth/twitter">Login</a>
         </div>
       )
     }

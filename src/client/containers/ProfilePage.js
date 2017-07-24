@@ -1,48 +1,44 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Settings from '../components/Profile'
-import { getPlaces, updateNewPlace, deletePlace, savePlaces } from '../actions/user'
+import Profile from '../components/Profile'
+import { saveSettings } from '../actions/settings'
+import { updateUserSettings, saveUserSettings } from '../actions/user'
 
 const mapStateToProps = (state) => {
-  const placeLabelToId = label => {
-    if (state.user.placesByName[label]) {
-      return state.user.placesByName[label][0].id
-    }
-    return undefined
+  return {
+    user: state.user,
+    updatedSettings: state.settings.updated,
+    updatedUserSettings: state.user.updated,
   }
+}
 
-  const placeIdToLabel = id => {
-    for (const place of Object.values(state.user.placesByName)) {
-      if (place[0].id === id) {
-        return place[0].name
+const mergeProps = (stateProps, dispatchProps, ownProps) => {
+  const { updatedSettings } = stateProps
+  const { updatedUserSettings } = stateProps
+  const { dispatchSave } = dispatchProps
+
+  return {
+    ...ownProps, ...stateProps, ...dispatchProps,
+    saveAllSettings: () => {
+      if (updatedSettings) {
+        dispatchSave(saveSettings)
+      }
+      if (updatedUserSettings) {
+        dispatchSave(saveUserSettings)
       }
     }
   }
-
-  return {
-    user: state.user,
-    places: state.user.places,
-    placesByName: state.user.placesByName || {},
-    newPlace: state.user.newPlace,
-    placeLabelToId,
-    placeIdToLabel
-  }
-}
-
-const actions = {
-  getPlaces,
-  savePlaces
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return Object.assign( bindActionCreators(actions, dispatch), {
-    updateNewPlace: (value) => {
-      dispatch(updateNewPlace(value))
+  return Object.assign( bindActionCreators({}, dispatch), {
+    updateUserSettings: (e) => {
+      dispatch(updateUserSettings(e.target.name, e.target.value))
     },
-    deletePlace: (place) => {
-      dispatch(deletePlace(place))
+    dispatchSave: (save) => {
+      dispatch(save())
     }
   })
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Settings)
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Profile)

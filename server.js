@@ -17,6 +17,7 @@ const auth = require('./src/server/auth')
 const config = require('./webpack.dev.config.js')
 
 const distDir = path.join(__dirname, 'dist')
+const staticAssets = path.join(__dirname, 'userData')
 const htmlFile = path.join(distDir, 'index.html')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const defaultPort = 3000
@@ -34,6 +35,7 @@ app.use(passport.session())
 
 app.use('/api/v1', api)
 app.use('/auth', auth.app)
+app.use('/userData', express.static(staticAssets))
 
 if (isDevelopment) {
   app.use(webpackDevMiddleware(compiler, {

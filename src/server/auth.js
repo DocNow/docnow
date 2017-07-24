@@ -14,7 +14,8 @@ export const activateKeys = () => {
         {
           consumerKey: settings.appKey,
           consumerSecret: settings.appSecret,
-          callbackURL: 'http://localhost:3000/auth/twitter/callback'
+          callbackURL: 'http://localhost:3000/auth/twitter/callback',
+          includeEmail: true
         },
         (token, tokenSecret, profile, cb) => {
           db.getUserByTwitterUserId(profile.id).then((user) => {
@@ -25,6 +26,7 @@ export const activateKeys = () => {
                 twitterScreenName: profile.username,
                 twitterLocation: profile._json.location,
                 twitterAvatarUrl: profile.photos[0].value,
+                twitterEmail: profile.email || '',
                 twitterAccessToken: token,
                 twitterAccessTokenSecret: tokenSecret
               }

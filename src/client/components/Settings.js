@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import Keys from './Keys'
 import style from './Settings.css'
 
 export default class Settings extends Component {
@@ -13,21 +14,21 @@ export default class Settings extends Component {
       <form
         onSubmit={(e) => {
           e.preventDefault()
-          this.props.saveSettings()
+          this.props.saveSettings().then(() => {
+            if (this.props.userLoggedIn) {
+              this.props.returnHome()
+            } else {
+              window.location = '/auth/twitter/'
+            }
+          })
         }}
         className={style.Settings}>
-        <p>
-          <label htmlFor="appKey">Application Key: </label><br />
-          <br />
-          <input size="30" onChange={this.props.updateSettings}
-                 id="appKey" name="appKey" type="text" value={this.props.appKey} />
-        </p>
-        <p>
-          <label htmlFor="appSecret">Application Secret: </label><br />
-          <br />
-          <input size="60" onChange={this.props.updateSettings}
-                 id="appSecret" name="appSecret" type="text" value={this.props.appSecret} />
-        </p>
+        <p>Welcome! To use DocNow, you need to obtain a Consumer Key and Consumer Key from Twitter (learn more)</p>
+        <Keys
+          appKey={this.props.appKey}
+          appSecret={this.props.appSecret}
+          updateSettings={this.props.updateSettings}
+        />
         <p>
           <button>Save</button>
         </p>
@@ -39,7 +40,9 @@ export default class Settings extends Component {
 Settings.propTypes = {
   appKey: PropTypes.string,
   appSecret: PropTypes.string,
+  userLoggedIn: PropTypes.bool,
   getSettings: PropTypes.func,
   updateSettings: PropTypes.func,
-  saveSettings: PropTypes.func
+  saveSettings: PropTypes.func,
+  returnHome: PropTypes.func
 }

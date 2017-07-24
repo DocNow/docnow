@@ -1,10 +1,12 @@
-import { SET_USER, SET_PLACES, SET_WORLD, UPDATE_NEW_PLACE, REMOVE_PLACE } from '../actions/user'
+import { SET_USER, UPDATE_USER_SETTINGS, SAVE_USER_SETTINGS } from '../actions/user'
 
 const initialState = {
+  name: '',
   twitterScreenName: '',
   twitterAvatarUrl: '',
   places: [],
-  newPlace: ''
+  newPlace: '',
+  email: ''
 }
 
 export default function user(state = initialState, action) {
@@ -17,52 +19,19 @@ export default function user(state = initialState, action) {
       }
     }
 
-    case SET_WORLD: {
-      const placesByName = Object.values(action.world).reduce((acc, place) => {
-        if (!acc[place.name]) {
-          acc[place.name] = [place]
-        } else {
-          acc[place.name].push(place)
-        }
-        return acc
-      }, {})
-      Object.keys(placesByName).map(placeName => {
-        if (placesByName[placeName].length > 1) {
-          placesByName[placeName].forEach(place => {
-            const fullName = place.name + ', ' + place.countryCode
-            placesByName[fullName] = [place]
-          })
-          delete placesByName[placeName]
-        }
-      }, {})
-      return {
+    case UPDATE_USER_SETTINGS: {
+      const s = {
         ...state,
-        placesByName
+        updated: true
       }
+      s[action.name] = action.value
+      return s
     }
 
-    case SET_PLACES: {
+    case SAVE_USER_SETTINGS: {
       return {
         ...state,
-        places: action.places,
-        newPlace: ''
-      }
-    }
-
-    case UPDATE_NEW_PLACE: {
-      return {
-        ...state,
-        newPlace: action.id
-      }
-    }
-
-    case REMOVE_PLACE: {
-      const places = state.places.filter((place)=>{
-        return place !== action.id
-      })
-      return {
-        ...state,
-        places
+        updated: !action.saved
       }
     }
 

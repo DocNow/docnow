@@ -7,12 +7,15 @@ import Header from './Header'
 import TrendsPage from './TrendsPage'
 import SettingsPage from './SettingsPage'
 import ProfilePage from './ProfilePage'
-import { getUser, getWorld } from '../actions/user'
+import { getUser } from '../actions/user'
+import { getSettings } from '../actions/settings'
+import { getWorld } from '../actions/places'
 import './App.css'
 
 class App extends Component {
 
   componentWillMount() {
+    store.dispatch(getSettings())
     store.dispatch(getUser())
     store.dispatch(getWorld())
     fetch('/api/v1/setup', {credentials: 'same-origin'})
