@@ -61,14 +61,25 @@ app.put('/settings', (req, res) => {
 })
 
 app.get('/places', (req, res) => {
-  db.getUserPlaces('instance')
-    .then((places) => {
-      res.json(places)
-    })
+  const {instance} = req.query
+  if (instance === 'true') {
+    db.getUserPlaces('instance')
+      .then((places) => {
+        res.json(places)
+      })
+  } else {
+    if (req.user) {
+      db.getUserPlaces(req.user.id)
+        .then((places) => {
+          res.json(places)
+        })
+    }
+  }
 })
 
 app.put('/places', (req, res) => {
-  if (req.user.isSuperUser) {
+  const {instance} = req.query
+  if (instance && req.user.isSuperUser) {
     db.setInstancePlaces(req.body)
       .then(() => {
         db.importLatestTrendsForInstance(req.user.id)
@@ -77,25 +88,10 @@ app.put('/places', (req, res) => {
   } else {
     db.setUserPlaces(req.user.id, req.body)
       .then(() => {
-        db.importLatestTrendsForInstance(req.user.id)
+        db.importLatestTrendsForUser(req.user.id)
           .then(res.json({status: 'updated'}))
       })
   }
-})
-
-app.get('/userPlaces', (req, res) => {
-  db.getUserPlaces(req.user.id)
-    .then((places) => {
-      res.json(places)
-    })
-})
-
-app.put('/userPlaces', (req, res) => {
-  db.setUserPlaces(req.user.id, req.body)
-    .then(() => {
-      db.importLatestTrendsForUser(req.user.id)
-        .then(res.json({status: 'updated'}))
-    })
 })
 
 app.get('/world', (req, res) => {

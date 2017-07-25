@@ -39,7 +39,7 @@ export const setUserPlaces = (places) => {
 
 export const getInstancePlaces = () => {
   return (dispatch) => {
-    fetch('/api/v1/places', {credentials: 'same-origin'})
+    fetch('/api/v1/places?instance=true', {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setPlaces(result))
@@ -49,7 +49,7 @@ export const getInstancePlaces = () => {
 
 export const getUserPlaces = () => {
   return (dispatch) => {
-    fetch('/api/v1/userPlaces', {credentials: 'same-origin'})
+    fetch('/api/v1/places', {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setUserPlaces(result))
@@ -93,7 +93,7 @@ export const saveInstancePlaces = (placeId) => {
       body: JSON.stringify(newPlaces),
       credentials: 'same-origin'
     }
-    fetch('/api/v1/places', opts)
+    fetch('/api/v1/places?instance=true', opts)
       .then(() => {
         dispatch(getInstancePlaces())
       })
@@ -113,7 +113,7 @@ export const saveUserPlaces = (placeId) => {
       body: JSON.stringify(newPlaces),
       credentials: 'same-origin'
     }
-    fetch('/api/v1/userPlaces', opts)
+    fetch('/api/v1/places', opts)
       .then(() => {
         dispatch(getUserPlaces())
       })

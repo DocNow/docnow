@@ -9,6 +9,7 @@ export default class Trends extends Component {
 
   componentDidMount() {
     this.props.getPlaces()
+    this.props.getUserPlaces()
     const intervalId = setInterval(this.props.getPlaces, 3000)
     this.setState({intervalId: intervalId})
   }
@@ -56,6 +57,7 @@ export default class Trends extends Component {
 Trends.propTypes = {
   places: PropTypes.array,
   getPlaces: PropTypes.func,
+  getUserPlaces: PropTypes.func,
   userLoggedIn: PropTypes.bool,
   placesByName: PropTypes.object,
   updateNewPlace: PropTypes.func,

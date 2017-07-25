@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Trends from '../components/Trends'
 import { getPlaces } from '../actions/trends'
-import { updateNewPlace, saveUserPlaces, deleteUserPlace } from '../actions/places'
+import { getUserPlaces, updateNewPlace, saveUserPlaces, deleteUserPlace } from '../actions/places'
 
 const mapStateToProps = (state) => {
   const placeLabelToId = label => {
@@ -32,6 +32,7 @@ const mapStateToProps = (state) => {
 
 const actions = {
   getPlaces,
+  getUserPlaces,
   updateNewPlace,
   savePlaces: saveUserPlaces,
   deletePlace: deleteUserPlace
