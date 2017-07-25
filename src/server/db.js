@@ -82,6 +82,17 @@ export class Database {
     })
   }
 
+  setInstancePlaces(placeIds) {
+    return new Promise((resolve) => {
+      const key = 'places:instance'
+      this.db.del(key)
+      if (placeIds.length > 0) {
+        this.db.saddAsync(key, this.addPrefixes(placeIds, 'place'))
+          .then(resolve)
+      } else { resolve() }
+    })
+  }
+
   setUserPlaces(userId, placeIds) {
     return new Promise((resolve) => {
       const key = this.addPrefix(userId, 'places')
@@ -112,6 +123,21 @@ export class Database {
           for (const userId of userIds) {
             this.importLatestTrendsForUser(userId).then(resolve)
           }
+        })
+    })
+  }
+
+  importLatestTrendsForInstance(userId) {
+    return new Promise((resolve) => {
+      this.getTwitterClientForUser(userId)
+        .then((twtr) => {
+          this.getUserPlaces('instance')
+            .then((placeIds) => {
+              const prefixed = placeIds.map(this.stripPrefix, this)
+              return Promise.all(prefixed.map(twtr.getTrendsAtPlace, twtr))
+            })
+            .then(this.saveTrendsAtPlaces.bind(this))
+            .then(resolve)
         })
     })
   }
