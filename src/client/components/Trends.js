@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Place from './Place'
 import '../images/dn.png'
 import styles from './Trends.css'
+import AddPlace from './AddPlace'
 
 export default class Trends extends Component {
 
@@ -20,11 +21,32 @@ export default class Trends extends Component {
   }
 
   render() {
+    let addUserTrends = null
+    if (this.props.userLoggedIn) {
+      addUserTrends = (<AddPlace
+        limit={5}
+        places={this.props.places}
+        placesByName={this.props.placesByName}
+        updateNewPlace={this.props.updateNewPlace}
+        newPlace={this.props.newPlace}
+        placeLabelToId={this.props.placeLabelToId}
+        savePlaces={this.props.savePlaces} />)
+    }
+
     return (
-      <div className={styles.Trends}>
-        {this.props.places.map(place =>
-          <Place key={place.name} trends={place.trends} name={place.name} />
-        )}
+      <div>
+        {addUserTrends}
+        <div className={styles.Trends}>
+          {this.props.places.map(place =>
+            (<Place
+              key={place.name}
+              trends={place.trends}
+              placeId={place.placeId}
+              name={place.name}
+              isUserPlace={place.user}
+              deletePlace={this.props.deletePlace} />)
+          )}
+        </div>
       </div>
     )
   }
@@ -34,4 +56,11 @@ export default class Trends extends Component {
 Trends.propTypes = {
   places: PropTypes.array,
   getPlaces: PropTypes.func,
+  userLoggedIn: PropTypes.bool,
+  placesByName: PropTypes.object,
+  updateNewPlace: PropTypes.func,
+  newPlace: PropTypes.string,
+  placeLabelToId: PropTypes.func,
+  savePlaces: PropTypes.func,
+  deletePlace: PropTypes.func
 }

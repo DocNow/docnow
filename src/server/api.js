@@ -74,7 +74,28 @@ app.put('/places', (req, res) => {
         db.importLatestTrendsForInstance(req.user.id)
           .then(res.json({status: 'updated'}))
       })
+  } else {
+    db.setUserPlaces(req.user.id, req.body)
+      .then(() => {
+        db.importLatestTrendsForInstance(req.user.id)
+          .then(res.json({status: 'updated'}))
+      })
   }
+})
+
+app.get('/userPlaces', (req, res) => {
+  db.getUserPlaces(req.user.id)
+    .then((places) => {
+      res.json(places)
+    })
+})
+
+app.put('/userPlaces', (req, res) => {
+  db.setUserPlaces(req.user.id, req.body)
+    .then(() => {
+      db.importLatestTrendsForUser(req.user.id)
+        .then(res.json({status: 'updated'}))
+    })
 })
 
 app.get('/world', (req, res) => {

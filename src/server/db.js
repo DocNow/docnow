@@ -172,7 +172,7 @@ export class Database {
     }
   }
 
-  getTrends(placeId) {
+  getTrends(placeId, userId) {
     const prefixedPlaceId = this.addPrefix(placeId, 'place')
     const trendsId = this.addPrefix(prefixedPlaceId, 'trends')
     return new Promise((resolve) => {
@@ -181,7 +181,8 @@ export class Database {
           id: trendsId,
           name: place.name,
           placeId: placeId,
-          trends: []
+          trends: [],
+          user: userId !== 'instance'
         }
         this.db.zrevrangeAsync(trendsId, 0, -1, 'WITHSCORES')
           .then((result) => {
@@ -198,7 +199,7 @@ export class Database {
     return new Promise((resolve) => {
       this.getUserPlaces(userId)
         .then((placeIds) => {
-          Promise.all(placeIds.map(this.getTrends, this))
+          Promise.all(placeIds.map((placeId) => this.getTrends(placeId, userId), this))
             .then((result) => {
               resolve(result)
             })
