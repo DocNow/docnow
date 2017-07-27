@@ -105,7 +105,6 @@ export class Database {
   }
 
   importLatestTrends() {
-    console.log('fetching trends')
     return new Promise((resolve) => {
       this.getUserIds()
         .then((userIds) => {

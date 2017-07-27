@@ -3,6 +3,7 @@
 require('babel-register')()
 
 const path = require('path')
+const logger = require('morgan')
 const webpack = require('webpack')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -32,6 +33,7 @@ app.use(bodyParser.json())
 app.use(cookieSession({secret: 'ABCD', resave: true, saveUninitialized: true}))
 app.use(passport.initialize())
 app.use(passport.session())
+app.use(logger('combined'))
 
 app.use('/api/v1', api)
 app.use('/auth', auth.app)
