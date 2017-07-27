@@ -1,7 +1,9 @@
 export const SET_WORLD = 'SET_WORLD'
 export const SET_PLACES = 'SET_PLACES'
+export const SET_USER_PLACES = 'SET_USER_PLACES'
 export const UPDATE_NEW_PLACE = 'UPDATE_NEW_PLACE'
 export const REMOVE_PLACE = 'REMOVE_PLACE'
+export const REMOVE_USER_PLACE = 'REMOVE_USER_PLACE'
 export const SAVE_PLACES = 'SAVE_PLACES'
 
 export const setWorld = (world) => {
@@ -28,9 +30,16 @@ export const setPlaces = (places) => {
   }
 }
 
-export const getPlaces = () => {
+export const setUserPlaces = (places) => {
+  return {
+    type: SET_USER_PLACES,
+    places: places
+  }
+}
+
+export const getInstancePlaces = () => {
   return (dispatch) => {
-    fetch('/api/v1/places', {credentials: 'same-origin'})
+    fetch('/api/v1/places?instance=true', {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setPlaces(result))
@@ -38,10 +47,20 @@ export const getPlaces = () => {
   }
 }
 
+export const getUserPlaces = () => {
+  return (dispatch) => {
+    fetch('/api/v1/places', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setUserPlaces(result))
+      })
+  }
+}
+
 export const updateNewPlace = (value) => {
   return {
     type: UPDATE_NEW_PLACE,
-    id: value
+    id: value,
   }
 }
 
@@ -52,9 +71,16 @@ export const removePlace = (value) => {
   }
 }
 
+export const removeUserPlace = (value) => {
+  return {
+    type: REMOVE_USER_PLACE,
+    id: value
+  }
+}
+
 /* THUNKS */
 
-export const savePlaces = (placeId) => {
+export const saveInstancePlaces = (placeId) => {
   return (dispatch, getState) => {
     const { places } = getState()
     const newPlaces = [ ...places.places ]
@@ -67,9 +93,29 @@ export const savePlaces = (placeId) => {
       body: JSON.stringify(newPlaces),
       credentials: 'same-origin'
     }
+    fetch('/api/v1/places?instance=true', opts)
+      .then(() => {
+        dispatch(getInstancePlaces())
+      })
+  }
+}
+
+export const saveUserPlaces = (placeId) => {
+  return (dispatch, getState) => {
+    const { places } = getState()
+    const newPlaces = [ ...places.userPlaces ]
+    if (placeId) {
+      newPlaces.push(placeId)
+    }
+    const opts = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(newPlaces),
+      credentials: 'same-origin'
+    }
     fetch('/api/v1/places', opts)
       .then(() => {
-        dispatch(getPlaces())
+        dispatch(getUserPlaces())
       })
   }
 }
@@ -77,6 +123,13 @@ export const savePlaces = (placeId) => {
 export const deletePlace = (value) => {
   return (dispatch) => {
     dispatch(removePlace(value))
-    dispatch(savePlaces())
+    dispatch(saveInstancePlaces())
+  }
+}
+
+export const deleteUserPlace = (value) => {
+  return (dispatch) => {
+    dispatch(removeUserPlace(value))
+    dispatch(saveUserPlaces())
   }
 }

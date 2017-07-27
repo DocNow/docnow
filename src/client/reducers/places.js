@@ -1,7 +1,9 @@
-import { SET_PLACES, SET_WORLD, UPDATE_NEW_PLACE, REMOVE_PLACE } from '../actions/places'
+import { SET_PLACES, SET_WORLD, UPDATE_NEW_PLACE, REMOVE_PLACE,
+SET_USER_PLACES, REMOVE_USER_PLACE } from '../actions/places'
 
 const initialState = {
   places: [],
+  userPlaces: [],
   newPlace: ''
 }
 
@@ -40,6 +42,14 @@ export default function user(state = initialState, action) {
       }
     }
 
+    case SET_USER_PLACES: {
+      return {
+        ...state,
+        userPlaces: action.places,
+        newPlace: ''
+      }
+    }
+
     case UPDATE_NEW_PLACE: {
       return {
         ...state,
@@ -54,6 +64,16 @@ export default function user(state = initialState, action) {
       return {
         ...state,
         places
+      }
+    }
+
+    case REMOVE_USER_PLACE: {
+      const userPlaces = state.userPlaces.filter((place)=>{
+        return place !== action.id
+      })
+      return {
+        ...state,
+        userPlaces
       }
     }
 

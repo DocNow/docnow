@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import AdminSettings from '../components/AdminSettings'
-import { getPlaces, updateNewPlace, deletePlace, savePlaces } from '../actions/places'
+import { getInstancePlaces, updateNewPlace, deletePlace, saveInstancePlaces } from '../actions/places'
 import { updateSettings, saveSettings, postLogo } from '../actions/settings'
 
 const mapStateToProps = (state) => {
@@ -35,8 +35,8 @@ const mapStateToProps = (state) => {
 }
 
 const actions = {
-  getPlaces,
-  savePlaces,
+  getPlaces: getInstancePlaces,
+  savePlaces: saveInstancePlaces,
   saveSettings,
   postLogo
 }

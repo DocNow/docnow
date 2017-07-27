@@ -8,9 +8,13 @@ export default class Place extends Component {
     const trends = this.props.trends.slice(0, 10).map(trend =>
       <li key={ trend.name + trend.text }>{ trend.name } [{ trend.tweets }]</li>
     )
+    let removeBtn = null
+    if (this.props.isUserPlace) {
+      removeBtn = <button onClick={()=>{this.props.deletePlace(this.props.placeId)}}>x</button>
+    }
     return (
       <div className={styles.Place}>
-        <h3>{ this.props.name }</h3>
+        <h3>{ this.props.name } {removeBtn}</h3>
         <hr />
         <ul>
           <FlipMove
@@ -27,5 +31,8 @@ export default class Place extends Component {
 
 Place.propTypes = {
   trends: PropTypes.array,
-  name: PropTypes.string
+  name: PropTypes.string,
+  placeId: PropTypes.string,
+  isUserPlace: PropTypes.bool,
+  deletePlace: PropTypes.func
 }

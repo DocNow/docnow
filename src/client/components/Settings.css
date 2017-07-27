@@ -10,15 +10,3 @@
 .Settings p {
   text-align: center;
 }
-
-.Settings label {
-  font-weight: bold;
-}
-
-.Settings input {
-  font-size: 18pt;
-}
-
-.Settings button {
-  background-color: lightgreen;
-}

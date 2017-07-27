@@ -82,6 +82,17 @@ export class Database {
     })
   }
 
+  setInstancePlaces(placeIds) {
+    return new Promise((resolve) => {
+      const key = 'places:instance'
+      this.db.del(key)
+      if (placeIds.length > 0) {
+        this.db.saddAsync(key, this.addPrefixes(placeIds, 'place'))
+          .then(resolve)
+      } else { resolve() }
+    })
+  }
+
   setUserPlaces(userId, placeIds) {
     return new Promise((resolve) => {
       const key = this.addPrefix(userId, 'places')
@@ -111,6 +122,21 @@ export class Database {
           for (const userId of userIds) {
             this.importLatestTrendsForUser(userId).then(resolve)
           }
+        })
+    })
+  }
+
+  importLatestTrendsForInstance(userId) {
+    return new Promise((resolve) => {
+      this.getTwitterClientForUser(userId)
+        .then((twtr) => {
+          this.getUserPlaces('instance')
+            .then((placeIds) => {
+              const prefixed = placeIds.map(this.stripPrefix, this)
+              return Promise.all(prefixed.map(twtr.getTrendsAtPlace, twtr))
+            })
+            .then(this.saveTrendsAtPlaces.bind(this))
+            .then(resolve)
         })
     })
   }
@@ -145,7 +171,7 @@ export class Database {
     }
   }
 
-  getTrends(placeId) {
+  getTrends(placeId, userId) {
     const prefixedPlaceId = this.addPrefix(placeId, 'place')
     const trendsId = this.addPrefix(prefixedPlaceId, 'trends')
     return new Promise((resolve) => {
@@ -154,7 +180,8 @@ export class Database {
           id: trendsId,
           name: place.name,
           placeId: placeId,
-          trends: []
+          trends: [],
+          user: userId !== 'instance'
         }
         this.db.zrevrangeAsync(trendsId, 0, -1, 'WITHSCORES')
           .then((result) => {
@@ -171,7 +198,7 @@ export class Database {
     return new Promise((resolve) => {
       this.getUserPlaces(userId)
         .then((placeIds) => {
-          Promise.all(placeIds.map(this.getTrends, this))
+          Promise.all(placeIds.map((placeId) => this.getTrends(placeId, userId), this))
             .then((result) => {
               resolve(result)
             })
