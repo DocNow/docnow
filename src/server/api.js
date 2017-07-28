@@ -67,20 +67,16 @@ app.get('/world', (req, res) => {
 })
 
 app.get('/trends', (req, res) => {
+  // when a user isn't logged in they get the super users's trends
+  let lookup = null
   if (req.user) {
-    db.getUserTrends(req.user.id)
-      .then((result) => {
-        res.json(result)
-      })
+    lookup = db.getUserTrends(req.user.id)
   } else {
-    db.getSuperUser()
-      .then((user) => {
-        db.getUserTrends(user.id)
-          .then((result) => {
-            res.json(result)
-          })
-      })
+    lookup = db.getSuperUser().then((user) => {
+      return db.getUserTrends(user.id)
+    })
   }
+  lookup.then((result) => { res.json(result) })
 })
 
 app.put('/trends', (req, res) => {
