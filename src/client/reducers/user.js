@@ -4,8 +4,6 @@ const initialState = {
   name: '',
   twitterScreenName: '',
   twitterAvatarUrl: '',
-  places: [],
-  newPlace: '',
   email: ''
 }
 
