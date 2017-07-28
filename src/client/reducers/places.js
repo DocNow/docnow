@@ -2,6 +2,7 @@ import { SET_PLACES, SET_WORLD, UPDATE_NEW_PLACE, REMOVE_PLACE } from '../action
 
 const initialState = {
   places: [],
+  placesByName: {},
   newPlace: ''
 }
 

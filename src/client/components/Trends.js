@@ -8,8 +8,8 @@ import styles from './Trends.css'
 export default class Trends extends Component {
 
   componentDidMount() {
-    this.props.getPlaces()
-    const intervalId = setInterval(this.props.getPlaces, 3000)
+    this.props.getTrends()
+    const intervalId = setInterval(this.props.getTrends, 3000)
     this.setState({intervalId: intervalId})
   }
 
@@ -52,7 +52,7 @@ export default class Trends extends Component {
 Trends.propTypes = {
   username: PropTypes.string,
   places: PropTypes.array,
-  getPlaces: PropTypes.func,
+  getTrends: PropTypes.func,
   placesByName: PropTypes.object,
   updateNewPlace: PropTypes.func,
   newPlace: PropTypes.string,

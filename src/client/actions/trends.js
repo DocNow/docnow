@@ -8,7 +8,7 @@ export const setPlaces = (places) => {
   }
 }
 
-export const getPlaces = () => {
+export const getTrends = () => {
   return (dispatch) => {
     fetch('/api/v1/trends', {credentials: 'same-origin'})
       .then(resp => resp.json())

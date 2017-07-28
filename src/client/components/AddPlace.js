@@ -32,6 +32,7 @@ export default class AddPlace extends Component {
   }
 
   render() {
+
     let inputProps = {}
     let placeDisabled = false
 
