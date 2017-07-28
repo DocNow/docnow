@@ -31,6 +31,7 @@ export default class Trends extends Component {
           updateNewTrend={this.props.updateNewTrend}
           newPlace={this.props.newPlace}
           placeLabelToId={this.props.placeLabelToId}
+          deleteTrend={this.props.deleteTrend}
           saveTrends={this.props.saveTrends} />
       )
     }
@@ -38,9 +39,15 @@ export default class Trends extends Component {
     return (
       <div>
         <div className={styles.Trends}>
-          {this.props.trends.map(place =>
-            <Place key={place.name} trends={place.trends} name={place.name} />
-          )}
+          {this.props.trends.map(place => (
+            <Place
+              key={place.name}
+              trends={place.trends}
+              placeId={place.placeId}
+              name={place.name}
+              deleteTrend={this.props.deleteTrend}
+              username={this.props.username} />
+          ))}
         </div>
         {addPlace}
       </div>
@@ -57,6 +64,6 @@ Trends.propTypes = {
   updateNewTrend: PropTypes.func,
   newPlace: PropTypes.string,
   placeLabelToId: PropTypes.func,
-  saveTrends: PropTypes.func,
-  deleteTrend: PropTypes.func
+  deleteTrend: PropTypes.func,
+  saveTrends: PropTypes.func
 }

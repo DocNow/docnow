@@ -71,5 +71,6 @@ AddPlace.propTypes = {
   updateNewTrend: PropTypes.func,
   newPlace: PropTypes.string,
   placeLabelToId: PropTypes.func,
+  deleteTrend: PropTypes.func,
   saveTrends: PropTypes.func
 }
