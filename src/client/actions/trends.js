@@ -1,10 +1,10 @@
 export const SET_TRENDS = 'SET_TRENDS'
 export const GET_TRENDS = 'GET_TRENDS'
 
-export const setTrends = (places) => {
+export const setTrends = (trends) => {
   return {
     type: SET_TRENDS,
-    places: places
+    trends
   }
 }
 

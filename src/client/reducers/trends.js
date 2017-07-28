@@ -1,17 +1,12 @@
 import { SET_TRENDS } from '../actions/trends'
 
-const initialState = {
-  places: []
-}
+const initialState = []
 
 export default function trends(state = initialState, action) {
   switch (action.type) {
 
     case SET_TRENDS:
-      return {
-        ...state,
-        places: action.places
-      }
+      return [ ...action.trends ]
 
     default:
       return state

@@ -38,7 +38,7 @@ export default class Trends extends Component {
     return (
       <div>
         <div className={styles.Trends}>
-          {this.props.places.map(place =>
+          {this.props.trends.map(place =>
             <Place key={place.name} trends={place.trends} name={place.name} />
           )}
         </div>
@@ -51,8 +51,9 @@ export default class Trends extends Component {
 
 Trends.propTypes = {
   username: PropTypes.string,
-  places: PropTypes.array,
+  trends: PropTypes.array,
   getTrends: PropTypes.func,
+  places: PropTypes.array,
   placesByName: PropTypes.object,
   updateNewPlace: PropTypes.func,
   newPlace: PropTypes.string,

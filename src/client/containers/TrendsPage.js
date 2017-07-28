@@ -23,7 +23,8 @@ const mapStateToProps = (state) => {
 
   return {
     username: state.user.twitterScreenName,
-    places: state.trends.places,
+    places: state.places.places,
+    trends: state.trends,
     placesByName: state.places.placesByName,
     newPlace: state.places.newPlace,
     placeIdToLabel,
