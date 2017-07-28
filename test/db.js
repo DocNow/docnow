@@ -92,6 +92,14 @@ describe('database', () => {
       })
   })
 
+  it('should lookup by superUser', (done) => {
+    db.getSuperUser()
+      .then((user) => {
+        equal(user.id, testUserId)
+        done()
+      })
+  })
+
   it('should set/get places', (done) => {
     db.setUserPlaces(testUserId, [1,2459115,23424819]).then(() => {
       db.getUserPlaces(testUserId).then((places) => {

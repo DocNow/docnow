@@ -36,6 +36,7 @@ export class Database {
             this.db.setAsync(twitterId, userId)
               .then(() => {
                 if (isSuperUser) {
+                  this.db.set('superUser', userId)
                   this.loadPlaces().then(() => {
                     resolve(userId)
                   })
@@ -61,6 +62,15 @@ export class Database {
           } else {
             resolve(null)
           }
+        })
+    })
+  }
+
+  getSuperUser() {
+    return new Promise((resolve) => {
+      this.db.getAsync('superUser')
+        .then((userId) => {
+          resolve(this.getUser(userId))
         })
     })
   }

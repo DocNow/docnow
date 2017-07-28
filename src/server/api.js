@@ -73,7 +73,13 @@ app.get('/trends', (req, res) => {
         res.json(result)
       })
   } else {
-    res.json([])
+    db.getSuperUser()
+      .then((user) => {
+        db.getUserTrends(user.id)
+          .then((result) => {
+            res.json(result)
+          })
+      })
   }
 })
 
