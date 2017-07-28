@@ -1,4 +1,4 @@
-import { SET_TRENDS, UPDATE_NEW_PLACE, REMOVE_PLACE } from '../actions/trends'
+import { SET_TRENDS, NEW_TREND, REMOVE_TREND } from '../actions/trends'
 
 const initialState = {
   places: [],
@@ -14,14 +14,14 @@ export default function trends(state = initialState, action) {
         places: action.trends
       }
 
-    case UPDATE_NEW_PLACE: {
+    case NEW_TREND: {
       return {
         ...state,
         newPlace: action.id
       }
     }
 
-    case REMOVE_PLACE: {
+    case REMOVE_TREND: {
       const places = state.places.filter((place)=>{
         return place !== action.id
       })

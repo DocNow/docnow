@@ -1,10 +1,8 @@
 export const SET_TRENDS = 'SET_TRENDS'
 export const GET_TRENDS = 'GET_TRENDS'
-export const SET_PLACES = 'SET_PLACES'
-export const UPDATE_NEW_PLACE = 'UPDATE_NEW_PLACE'
-export const REMOVE_PLACE = 'REMOVE_PLACE'
-export const SAVE_PLACES = 'SAVE_PLACES'
-
+export const NEW_TREND = 'NEW_TREND'
+export const REMOVE_TREND = 'REMOVE_TREND'
+export const SAVE_TRENDS = 'SAVE_TRENDS'
 
 export const setTrends = (trends) => {
   return {
@@ -23,21 +21,21 @@ export const getTrends = () => {
   }
 }
 
-export const updateNewPlace = (value) => {
+export const updateNewTrend = (value) => {
   return {
-    type: UPDATE_NEW_PLACE,
+    type: NEW_TREND,
     id: value
   }
 }
 
-export const removePlace = (value) => {
+export const removeTrend = (value) => {
   return {
-    type: REMOVE_PLACE,
+    type: REMOVE_TREND,
     id: value
   }
 }
 
-export const savePlaces = (placeId) => {
+export const saveTrends = (placeId) => {
   return (dispatch, getState) => {
     const { trends } = getState()
     const placeIds = trends.places.map((p) => { return p.placeId })
@@ -59,9 +57,9 @@ export const savePlaces = (placeId) => {
   }
 }
 
-export const deletePlace = (value) => {
+export const deleteTrend = (value) => {
   return (dispatch) => {
-    dispatch(removePlace(value))
-    dispatch(savePlaces())
+    dispatch(removeTrend(value))
+    dispatch(saveTrends())
   }
 }

@@ -28,10 +28,10 @@ export default class Trends extends Component {
           limit={5}
           places={this.props.trends}
           placesByName={this.props.placesByName}
-          updateNewPlace={this.props.updateNewPlace}
+          updateNewTrend={this.props.updateNewTrend}
           newPlace={this.props.newPlace}
           placeLabelToId={this.props.placeLabelToId}
-          savePlaces={this.props.savePlaces} />
+          saveTrends={this.props.saveTrends} />
       )
     }
 
@@ -54,9 +54,9 @@ Trends.propTypes = {
   trends: PropTypes.array,
   getTrends: PropTypes.func,
   placesByName: PropTypes.object,
-  updateNewPlace: PropTypes.func,
+  updateNewTrend: PropTypes.func,
   newPlace: PropTypes.string,
   placeLabelToId: PropTypes.func,
-  savePlaces: PropTypes.func,
-  deletePlace: PropTypes.func
+  saveTrends: PropTypes.func,
+  deleteTrend: PropTypes.func
 }

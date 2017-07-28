@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Trends from '../components/Trends'
-import { getTrends, updateNewPlace, savePlaces, deletePlace } from '../actions/trends'
+import { getTrends, updateNewTrend, saveTrends, deleteTrend } from '../actions/trends'
 
 const mapStateToProps = (state) => {
 
@@ -32,9 +32,9 @@ const mapStateToProps = (state) => {
 
 const actions = {
   getTrends,
-  updateNewPlace,
-  savePlaces,
-  deletePlace
+  updateNewTrend,
+  saveTrends,
+  deleteTrend
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)

@@ -24,7 +24,7 @@ export default class AddPlace extends Component {
   checkPlace = () => {
     const placeId = this.props.placeLabelToId(this.props.newPlace)
     if (placeId) {
-      this.props.savePlaces(placeId)
+      this.props.saveTrends(placeId)
     } else {
       // TODO: Replace with an alert component
       alert('place not found')
@@ -54,8 +54,8 @@ export default class AddPlace extends Component {
              </div>)
            }
            value={this.props.newPlace}
-           onChange={(event, value) => this.props.updateNewPlace(value)}
-           onSelect={value => this.props.updateNewPlace(value)}
+           onChange={(event, value) => this.props.updateNewTrend(value)}
+           onSelect={value => this.props.updateNewTrend(value)}
            inputProps={inputProps}
          />
          <button onClick={ this.checkPlace } className="save" disabled={placeDisabled}>Add Place</button>
@@ -68,8 +68,8 @@ AddPlace.propTypes = {
   limit: PropTypes.number,
   places: PropTypes.array,
   placesByName: PropTypes.object,
-  updateNewPlace: PropTypes.func,
+  updateNewTrend: PropTypes.func,
   newPlace: PropTypes.string,
   placeLabelToId: PropTypes.func,
-  savePlaces: PropTypes.func
+  saveTrends: PropTypes.func
 }
