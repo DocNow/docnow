@@ -6,14 +6,14 @@ import { getTrends, updateNewTrend, saveTrends, deleteTrend } from '../actions/t
 const mapStateToProps = (state) => {
 
   const placeLabelToId = label => {
-    if (state.trends.placesByName[label]) {
-      return state.trends.placesByName[label][0].id
+    if (state.trends.world[label]) {
+      return state.trends.world[label][0].id
     }
     return undefined
   }
 
   const placeIdToLabel = id => {
-    for (const place of Object.values(state.trends.placesByName)) {
+    for (const place of Object.values(state.trends.world)) {
       if (place[0].id === id) {
         return place[0].name
       }
@@ -23,7 +23,7 @@ const mapStateToProps = (state) => {
   return {
     username: state.user.twitterScreenName,
     trends: state.trends.places,
-    placesByName: state.trends.placesByName,
+    world: state.trends.world,
     newPlace: state.trends.newPlace,
     placeIdToLabel,
     placeLabelToId

@@ -27,7 +27,7 @@ export default class Trends extends Component {
         <AddPlace
           limit={5}
           places={this.props.trends}
-          placesByName={this.props.placesByName}
+          world={this.props.world}
           updateNewTrend={this.props.updateNewTrend}
           newPlace={this.props.newPlace}
           placeLabelToId={this.props.placeLabelToId}
@@ -53,7 +53,7 @@ Trends.propTypes = {
   username: PropTypes.string,
   trends: PropTypes.array,
   getTrends: PropTypes.func,
-  placesByName: PropTypes.object,
+  world: PropTypes.object,
   updateNewTrend: PropTypes.func,
   newPlace: PropTypes.string,
   placeLabelToId: PropTypes.func,

@@ -46,7 +46,7 @@ export default class AddPlace extends Component {
         <Autocomplete
            getItemValue={(item) => item}
            sortItems={this.sortPlaces}
-           items={Object.keys(this.props.placesByName)}
+           items={Object.keys(this.props.world)}
            shouldItemRender={this.matchInputToTerm}
            renderItem={(item, isHighlighted) =>
              (<div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
@@ -67,7 +67,7 @@ export default class AddPlace extends Component {
 AddPlace.propTypes = {
   limit: PropTypes.number,
   places: PropTypes.array,
-  placesByName: PropTypes.object,
+  world: PropTypes.object,
   updateNewTrend: PropTypes.func,
   newPlace: PropTypes.string,
   placeLabelToId: PropTypes.func,

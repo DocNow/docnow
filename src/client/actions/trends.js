@@ -5,23 +5,6 @@ export const REMOVE_TREND = 'REMOVE_TREND'
 export const SAVE_TRENDS = 'SAVE_TRENDS'
 export const SET_WORLD = 'SET_WORLD'
 
-export const setWorld = (world) => {
-  return {
-    type: SET_WORLD,
-    world
-  }
-}
-
-export const getWorld = () => {
-  return (dispatch) => {
-    fetch('/api/v1/world', {credentials: 'same-origin'})
-      .then((resp) => resp.json())
-      .then((result) => {
-        dispatch(setWorld(result))
-      })
-  }
-}
-
 export const setTrends = (trends) => {
   return {
     type: SET_TRENDS,
@@ -79,5 +62,39 @@ export const deleteTrend = (value) => {
   return (dispatch) => {
     dispatch(removeTrend(value))
     dispatch(saveTrends())
+  }
+}
+
+export const setWorld = (world) => {
+  return {
+    type: SET_WORLD,
+    world
+  }
+}
+
+export const getWorld = () => {
+  return (dispatch) => {
+    fetch('/api/v1/world', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        const world = Object.values(result).reduce((acc, place) => {
+          if (!acc[place.name]) {
+            acc[place.name] = [place]
+          } else {
+            acc[place.name].push(place)
+          }
+          return acc
+        }, {})
+        Object.keys(world).map(placeName => {
+          if (world[placeName].length > 1) {
+            world[placeName].forEach(place => {
+              const fullName = place.name + ', ' + place.countryCode
+              world[fullName] = [place]
+            })
+            delete world[placeName]
+          }
+        }, {})
+        dispatch(setWorld(world))
+      })
   }
 }
