@@ -3,6 +3,24 @@ export const GET_TRENDS = 'GET_TRENDS'
 export const NEW_TREND = 'NEW_TREND'
 export const REMOVE_TREND = 'REMOVE_TREND'
 export const SAVE_TRENDS = 'SAVE_TRENDS'
+export const SET_WORLD = 'SET_WORLD'
+
+export const setWorld = (world) => {
+  return {
+    type: SET_WORLD,
+    world
+  }
+}
+
+export const getWorld = () => {
+  return (dispatch) => {
+    fetch('/api/v1/world', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setWorld(result))
+      })
+  }
+}
 
 export const setTrends = (trends) => {
   return {

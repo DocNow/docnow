@@ -1,8 +1,9 @@
-import { SET_TRENDS, NEW_TREND, REMOVE_TREND } from '../actions/trends'
+import { SET_WORLD, SET_TRENDS, NEW_TREND, REMOVE_TREND } from '../actions/trends'
 
 const initialState = {
   places: [],
-  newPlace: ''
+  newPlace: '',
+  placesByName: {}
 }
 
 export default function trends(state = initialState, action) {
@@ -31,7 +32,32 @@ export default function trends(state = initialState, action) {
       }
     }
 
-    default:
+    case SET_WORLD: {
+      const placesByName = Object.values(action.world).reduce((acc, place) => {
+        if (!acc[place.name]) {
+          acc[place.name] = [place]
+        } else {
+          acc[place.name].push(place)
+        }
+        return acc
+      }, {})
+      Object.keys(placesByName).map(placeName => {
+        if (placesByName[placeName].length > 1) {
+          placesByName[placeName].forEach(place => {
+            const fullName = place.name + ', ' + place.countryCode
+            placesByName[fullName] = [place]
+          })
+          delete placesByName[placeName]
+        }
+      }, {})
+      return {
+        ...state,
+        placesByName
+      }
+    }
+
+    default: {
       return state
+    }
   }
 }

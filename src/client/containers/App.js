@@ -9,7 +9,7 @@ import SettingsPage from './SettingsPage'
 import ProfilePage from './ProfilePage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
-import { getWorld } from '../actions/places'
+import { getWorld } from '../actions/trends'
 import './App.css'
 
 class App extends Component {
