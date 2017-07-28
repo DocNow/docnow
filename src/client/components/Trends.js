@@ -21,8 +21,9 @@ export default class Trends extends Component {
   }
 
   render() {
+    const loggedIn = this.props.username ? true : false
     let addPlace = null
-    if (this.props.username) {
+    if (loggedIn) {
       addPlace = (
         <AddPlace
           limit={5}
@@ -36,9 +37,20 @@ export default class Trends extends Component {
       )
     }
 
+    let message = null
+    if (this.props.trends.length === 0 && loggedIn) {
+      message = (
+        <div className={styles.Welcome}>
+          It looks like you might be new here.
+          Get started by adding a few locations to monitor.
+        </div>
+      )
+    }
+
     return (
       <div>
         <div className={styles.Trends}>
+          {message}
           {this.props.trends.map(place => (
             <Place
               key={place.name}
@@ -49,7 +61,9 @@ export default class Trends extends Component {
               username={this.props.username} />
           ))}
         </div>
-        {addPlace}
+        <div className={styles.AddPlace}>
+          {addPlace}
+        </div>
       </div>
     )
   }

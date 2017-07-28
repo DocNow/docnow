@@ -2,11 +2,12 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import LogoUpload from './LogoUpload'
 import Keys from './Keys'
+import style from './Settings.css'
 
 export default class AdminSettings extends Component {
   render() {
     return (
-      <div>
+      <div className={style.Settings}>
         <h3>Admin Settings</h3>
         <label htmlFor="instanceTitle">Instance Title</label><br />
         <br />

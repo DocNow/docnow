@@ -12,7 +12,7 @@ export default function trends(state = initialState, action) {
     case SET_TRENDS:
       return {
         ...state,
-        places: action.trends
+        places: action.trends,
       }
 
     case NEW_TREND: {

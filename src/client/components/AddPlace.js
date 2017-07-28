@@ -58,6 +58,7 @@ export default class AddPlace extends Component {
            onSelect={value => this.props.updateNewTrend(value)}
            inputProps={inputProps}
          />
+         &nbsp;
          <button onClick={ this.checkPlace } className="save" disabled={placeDisabled}>Add Place</button>
       </div>
     )

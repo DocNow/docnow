@@ -53,6 +53,7 @@ export const saveTrends = (placeId) => {
     }
     fetch('/api/v1/trends', opts)
       .then(() => {
+        dispatch(updateNewTrend(''))
         dispatch(getTrends())
       })
   }
