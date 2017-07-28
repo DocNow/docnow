@@ -60,22 +60,6 @@ app.put('/settings', (req, res) => {
     })
 })
 
-app.get('/places', (req, res) => {
-  db.getUserPlaces(req.user.id)
-    .then((places) => {
-      res.json(places)
-    })
-})
-
-
-app.put('/places', (req, res) => {
-  db.setUserPlaces(req.user.id, req.body)
-    .then(() => {
-      db.importLatestTrendsForUser(req.user.id)
-        .then(res.json({status: 'updated'}))
-    })
-})
-
 app.get('/world', (req, res) => {
   db.getPlaces().then((result) => {
     res.json(result)
@@ -91,6 +75,14 @@ app.get('/trends', (req, res) => {
   } else {
     res.json([])
   }
+})
+
+app.put('/trends', (req, res) => {
+  db.setUserPlaces(req.user.id, req.body)
+    .then(() => {
+      db.importLatestTrendsForUser(req.user.id)
+        .then(res.json({status: 'updated'}))
+    })
 })
 
 app.post('/logo', (req, res) => {

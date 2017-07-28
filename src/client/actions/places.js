@@ -56,18 +56,25 @@ export const removePlace = (value) => {
 
 export const savePlaces = (placeId) => {
   return (dispatch, getState) => {
+    /*
     const { places } = getState()
     const newPlaces = [ ...places.places ]
+    */
+
+    const { trends } = getState()
+    const placeIds = trends.map((p) => { return p.placeId })
+
     if (placeId) {
-      newPlaces.push(placeId)
+      placeIds.push(placeId)
     }
+
     const opts = {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify(newPlaces),
+      body: JSON.stringify(placeIds),
       credentials: 'same-origin'
     }
-    fetch('/api/v1/places', opts)
+    fetch('/api/v1/trends', opts)
       .then(() => {
         dispatch(getPlaces())
       })
