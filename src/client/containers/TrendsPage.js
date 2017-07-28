@@ -1,8 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Trends from '../components/Trends'
-import { getTrends } from '../actions/trends'
-import { updateNewPlace, savePlaces, deletePlace } from '../actions/places'
+import { getTrends, updateNewPlace, savePlaces, deletePlace } from '../actions/trends'
 
 const mapStateToProps = (state) => {
 
@@ -23,10 +22,9 @@ const mapStateToProps = (state) => {
 
   return {
     username: state.user.twitterScreenName,
-    places: state.places.places,
-    trends: state.trends,
+    trends: state.trends.places,
     placesByName: state.places.placesByName,
-    newPlace: state.places.newPlace,
+    newPlace: state.trends.newPlace,
     placeIdToLabel,
     placeLabelToId
   }
