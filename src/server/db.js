@@ -31,7 +31,7 @@ export class Database {
       this.getUserIds().then((userIds) => {
         const isSuperUser = userIds.length === 0 ? true : false
         const newUser = {...user, id: userId, isSuperUser}
-        log.info("adding user", user=newUser)
+        log.info('adding user', {user: newUser})
         this.db.hmsetAsync(userId, newUser)
           .then(() => {
             const twitterId = 'twitterUser:' + user.twitterUserId
