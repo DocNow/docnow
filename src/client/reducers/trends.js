@@ -26,7 +26,6 @@ export default function trends(state = initialState, action) {
       const places = state.places.filter((place)=>{
         return place.placeId !== action.id
       })
-      console.log(action.id, places)
       return {
         ...state,
         places

@@ -51,7 +51,8 @@
     "redis": "^2.7.1",
     "socket.io": "^2.0.2",
     "twit": "^2.2.9",
-    "uuid": "^3.1.0"
+    "uuid": "^3.1.0",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

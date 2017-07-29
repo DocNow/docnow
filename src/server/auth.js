@@ -14,7 +14,8 @@ export const activateKeys = () => {
         {
           consumerKey: settings.appKey,
           consumerSecret: settings.appSecret,
-          callbackURL: 'http://localhost:3000/auth/twitter/callback',
+          callbackURL: '/auth/twitter/callback',
+          proxy: true,
           includeEmail: true
         },
         (token, tokenSecret, profile, cb) => {

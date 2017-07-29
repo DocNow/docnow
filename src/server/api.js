@@ -3,6 +3,7 @@ import multiparty from 'multiparty'
 import * as fs from 'fs'
 import { Database } from './db'
 import { activateKeys } from './auth'
+import log from './logger'
 
 const app = express()
 const db = new Database()
@@ -98,17 +99,18 @@ app.post('/logo', (req, res) => {
 
         fs.readFile(path, (readErr, data) => {
           if (readErr) {
-            console.log(readErr)
-          }
-          fs.writeFile(newPath, data, (writeErr) => {
-            if (writeErr) {
-              console.log(writeErr)
-            }
-            // delete temp image
-            fs.unlink(path, () => {
-              res.send('File uploaded to: ' + newPath)
+            log.error(readErr)
+          } else {
+            fs.writeFile(newPath, data, (writeErr) => {
+              if (writeErr) {
+                log.error(writeErr)
+              } else {
+                fs.unlink(path, () => {
+                  res.send('File uploaded to: ' + newPath)
+                })
+              }
             })
-          })
+          }
         })
       })
     }

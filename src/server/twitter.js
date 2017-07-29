@@ -1,4 +1,5 @@
 import Twit from 'twit'
+import log from './logger'
 
 export class Twitter {
 
@@ -36,6 +37,7 @@ export class Twitter {
   }
 
   getTrendsAtPlace(woeId) {
+    log.info('fetching trends for ' + woeId)
     return new Promise(
       (resolve, reject) => {
         this.twit.get('trends/place', {id: woeId})

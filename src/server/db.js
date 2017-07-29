@@ -1,6 +1,7 @@
 import redis from 'redis'
 import uuid from 'uuid/v4'
 import bluebird from 'bluebird'
+import log from './logger'
 import { Twitter } from './twitter'
 
 bluebird.promisifyAll(redis.RedisClient.prototype)
@@ -30,6 +31,7 @@ export class Database {
       this.getUserIds().then((userIds) => {
         const isSuperUser = userIds.length === 0 ? true : false
         const newUser = {...user, id: userId, isSuperUser}
+        log.info("adding user", user=newUser)
         this.db.hmsetAsync(userId, newUser)
           .then(() => {
             const twitterId = 'twitterUser:' + user.twitterUserId
@@ -115,6 +117,7 @@ export class Database {
   }
 
   importLatestTrends() {
+    log.info('importing trends')
     return new Promise((resolve) => {
       this.getUserIds()
         .then((userIds) => {
@@ -126,6 +129,7 @@ export class Database {
   }
 
   importLatestTrendsForUser(userId) {
+    log.info('importing trends for ' + userId)
     return new Promise((resolve) => {
       this.getTwitterClientForUser(userId)
         .then((twtr) => {
@@ -141,6 +145,7 @@ export class Database {
   }
 
   startTrendsWatcher(opts = {}) {
+    log.info('starting trend watcher')
     this.importLatestTrends()
     this.trendsWatcherId = setInterval(
       this.importLatestTrends.bind(this),
@@ -149,6 +154,7 @@ export class Database {
   }
 
   stopTrendsWatcher() {
+    log.info('stopping trend watcher')
     if (this.trendsWatcherId) {
       clearInterval(this.trendsWatcherId)
       this.trendsWatcherId = null

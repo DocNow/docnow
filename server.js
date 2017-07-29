@@ -3,7 +3,7 @@
 require('babel-register')()
 
 const path = require('path')
-const logger = require('morgan')
+const morgan = require('morgan')
 const webpack = require('webpack')
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -15,6 +15,7 @@ const webpackHotMiddleware = require('webpack-hot-middleware')
 
 const api = require('./src/server/api')
 const auth = require('./src/server/auth')
+const log = require('./src/server/logger')
 const config = require('./webpack.dev.config.js')
 
 const distDir = path.join(__dirname, 'dist')
@@ -33,7 +34,7 @@ app.use(bodyParser.json())
 app.use(cookieSession({secret: 'ABCD', resave: true, saveUninitialized: true}))
 app.use(passport.initialize())
 app.use(passport.session())
-app.use(logger('combined'))
+app.use(morgan('combined'))
 
 app.use('/api/v1', api)
 app.use('/auth', auth.app)
@@ -53,4 +54,5 @@ if (isDevelopment) {
   app.use(express.static(distDir))
 }
 
+log.info('starting app')
 app.listen(app.get('port'))
