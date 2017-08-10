@@ -25,7 +25,7 @@ Returns the users trending locations, or the application wide trends when
 a user is not logged in. If a list of place identifiers is PUT then
 the trending locations are updated to use those places.
 
-### /searches *(POST)*
+### /search *(POST)*
 
 Post a query as JSON and get a redirect to a URL for the search result.
 
