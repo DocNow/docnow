@@ -117,4 +117,17 @@ app.post('/logo', (req, res) => {
   }
 })
 
+app.post('/searches', (req, res) => {
+  if (req.user) {
+    const fakeId = req.body.q + '-fakeId'
+    res.json({
+      id: fakeId,
+      samples: `/search/${fakeId}/samples`,
+      topUsers: `/search/${fakeId}/topUsers`,
+      topHashtags: `/search/${fakeId}/topHashtags`,
+      sampleMedia: `/search/${fakeId}/sampleMedia`
+    })
+  }
+})
+
 module.exports = app
