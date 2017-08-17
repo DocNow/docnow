@@ -3,11 +3,13 @@ import { routerReducer } from 'react-router-redux'
 import settings from './settings'
 import user from './user'
 import trends from './trends'
+import search from './search'
 
 const rootReducer = combineReducers({
-  settings: settings,
-  user: user,
-  trends: trends,
+  settings,
+  user,
+  trends,
+  search,
   router: routerReducer
 })
 
