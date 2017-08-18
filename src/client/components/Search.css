@@ -1,4 +1,10 @@
-.Search {
+.Column {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.Row {
   display: flex;
   flex-direction: row;
   width: 100%;

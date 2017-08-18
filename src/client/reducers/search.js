@@ -1,5 +1,6 @@
 import {
-  SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS, SET_TWITTER_SEARCH_USERS
+  SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS, SET_TWITTER_SEARCH_USERS,
+  SET_TWITTER_SEARCH_HASHTAGS
 } from '../actions/search'
 
 export default function user(state = {}, action) {
@@ -23,6 +24,13 @@ export default function user(state = {}, action) {
       return {
         ...state,
         users: action.users
+      }
+    }
+
+    case SET_TWITTER_SEARCH_HASHTAGS: {
+      return {
+        ...state,
+        hashtags: action.hashtags
       }
     }
 

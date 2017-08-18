@@ -3,6 +3,8 @@ import PropTypes from 'prop-types'
 import style from './Search.css'
 import TweetListBox from '../containers/TweetListBox'
 import UserListBox from '../containers/UserListBox'
+import HashtagsBox from '../containers/HashtagsBox'
+import MediaBox from '../containers/MediaBox'
 
 export default class Search extends Component {
 
@@ -11,7 +13,8 @@ export default class Search extends Component {
   }
 
   render() {
-    return (<div className={ style.Search }>
+    return (<div className={ style.Column }>
+      <div className={ style.Row }>
         <div>
           <h4>Sample Tweets</h4>
           <TweetListBox endpoint={this.props.searchInfo.tweets}/>
@@ -22,9 +25,16 @@ export default class Search extends Component {
         </div>
         <div>
           <h4>Top Hashtags</h4>
-          <div className={ style.Box }>...</div>
+          <HashtagsBox endpoint={this.props.searchInfo.hashtags}/>
         </div>
-      </div>)
+      </div>
+      <div className={ style.Row }>
+      <div>
+        <h4>Media</h4>
+        <MediaBox endpoint={this.props.searchInfo.tweets}/>
+      </div>
+      </div>
+    </div>)
   }
 
 }

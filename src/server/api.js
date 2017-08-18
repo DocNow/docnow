@@ -136,24 +136,26 @@ app.get('/search/:searchId/tweets', (req, res) => {
     res.json([
       {
         id: '895394443465019393',
+        avatarUrl: 'https://pbs.twimg.com/profile_images/728713121884311552/Yjoenpxp_normal.png',
         link: 'https://twitter.com/documentnow/status/895394443465019393',
         date: '5:20 PM - 9 Aug 2017',
         handle: 'documentnow',
         screenName: 'DocumentingTheNow',
         text: 'Info about how the dataset was generated can be found at https://github.com/edsu/ferguson-201408 … 14% of the tweets have since been deleted or protected.',
-        media: 'https://pbs.twimg.com/media/DG0UfosXUAEckNM.png',
+        media: [{type: 'image', url: 'https://pbs.twimg.com/media/DG0UfosXUAEckNM.png'}],
         likes: 0,
         retweets: 1,
         replies: 1
       },
       {
         id: '881265828309590017',
+        avatarUrl: 'https://pbs.twimg.com/profile_images/728713121884311552/Yjoenpxp_normal.png',
         link: 'https://twitter.com/documentnow/status/881265828309590017',
         date: '5:38 PM - 1 July 2017',
         handle: 'documentnow',
         screenName: 'DocumentingTheNow',
         text: 'This is so awesome & thoughtful by @fakerapper. We\'ve been thinking abt how to add these to tweet datasets in DocNow https://twitter.com/anildash/status/881242678620499970',
-        media: 'https://pbs.twimg.com/media/DG0UfosXUAEckNM.png',
+        media: [{type: 'video', url: 'https://www.youtube.com/watch?v=TnzFRV1LwIo'}],
         likes: 9,
         retweets: 4,
         replies: 1
@@ -167,6 +169,7 @@ app.get('/search/:searchId/users', (req, res) => {
     res.json([
       {
         handle: 'documentnow',
+        avatarUrl: 'https://pbs.twimg.com/profile_images/728713121884311552/Yjoenpxp_normal.png',
         screenName: 'DocumentingTheNow',
         tweets: 3789,
         followers: 123,
@@ -175,12 +178,27 @@ app.get('/search/:searchId/users', (req, res) => {
       },
       {
         handle: 'raffazizzi',
+        avatarUrl: 'https://pbs.twimg.com/profile_images/511510383496941568/evXUTpyI_normal.jpeg',
         screenName: 'Raff',
         tweets: 1293,
         followers: 56,
         following: 46,
         matchingTweets: 1
       },
+    ])
+  }
+})
+
+app.get('/search/:searchId/hashtags', (req, res) => {
+  if (req.user) {
+    res.json([{
+      hashtag: 'someHashTag',
+      count: 55
+    },
+    {
+      hashtag: 'anotherHashTag',
+      count: 105
+    }
     ])
   }
 })
