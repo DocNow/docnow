@@ -7,6 +7,7 @@ import Header from './Header'
 import TrendsPage from './TrendsPage'
 import SettingsPage from './SettingsPage'
 import ProfilePage from './ProfilePage'
+import SearchPage from './SearchPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
@@ -33,6 +34,7 @@ class App extends Component {
           <Route exact path="/" component={TrendsPage} />
           <Route exact path="/settings/" component={SettingsPage} />
           <Route exact path="/profile/" component={ProfilePage} />
+          <Route exact path="/search/:q" component={SearchPage} />
         </main>
       </div>
     )

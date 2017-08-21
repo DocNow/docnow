@@ -1,0 +1,20 @@
+.Column {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.Row {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+}
+
+.Box {
+  border: 1px Solid Black;
+  width: 500px;
+  min-height: 200px;
+  margin: 10px;
+  padding: 5px;
+  overflow-x: hidden;
+}

@@ -14,6 +14,8 @@ user:{userId}
 
 twitter:{twitterUserId} = user:{userId}
 
+superUser = userId
+
 ## Trends
 
 place:{woeId}

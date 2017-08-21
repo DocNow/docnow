@@ -1,4 +1,7 @@
-import { SET_USER, UPDATE_USER_SETTINGS, SAVE_USER_SETTINGS } from '../actions/user'
+import {
+  SET_USER, UPDATE_USER_SETTINGS, SAVE_USER_SETTINGS,
+  SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS
+} from '../actions/user'
 
 const initialState = {
   name: '',
@@ -30,6 +33,20 @@ export default function user(state = initialState, action) {
       return {
         ...state,
         updated: !action.saved
+      }
+    }
+
+    case SET_TWITTER_SEARCH: {
+      return {
+        ...state,
+        searchInfo: action.searchInfo
+      }
+    }
+
+    case SET_TWITTER_SEARCH_TWEETS: {
+      return {
+        ...state,
+        tweets: action.tweets
       }
     }
 
