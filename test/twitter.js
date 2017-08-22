@@ -34,4 +34,21 @@ describe('twitter', () => {
       done()
     })
   })
+
+  it('should get search results', (done) => {
+    t.search({q: 'obama'}).then((tweets) => {
+      ok(tweets.length > 0)
+      const t = tweets[0]
+      ok(t.text.match(/obama/i))
+      ok(t.id)
+      ok(t.screenName)
+      ok(t.avatarUrl)
+      ok(t.created)
+      ok(t.twitterUrl)
+      ok(t.likeCount >= 0)
+      ok(t.retweetCount >= 0)
+      ok(t._data.id_str)
+      done()
+    })
+  })
 })

@@ -58,4 +58,39 @@ export class Twitter {
       }
     )
   }
+
+  search(opts) {
+    const params = {
+      q: opts.q,
+      tweet_mode: 'extended',
+      result_type: opts.resultType || 'recent',
+      count: opts.count || 100,
+      since_id: opts.sinceId,
+      max_id: opts.maxId,
+      include_entities: true
+    }
+    return new Promise(
+      (resolve) => {
+        this.twit.get('search/tweets', params)
+          .then((resp) => {
+            resolve(resp.data.statuses.map(this.extractTweet))
+          })
+      }
+    )
+  }
+
+  extractTweet(t) {
+    return ({
+      id: t.id_str,
+      text: t.full_text,
+      screenName: t.user.screen_name,
+      created: t.created_at,
+      avatarUrl: t.user.profile_image_url_https,
+      twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
+      likeCount: t.favorite_count,
+      retweetCount: t.retweet_count,
+      _data: t
+    })
+  }
+
 }
