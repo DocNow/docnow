@@ -4,9 +4,13 @@ services:
   redis:
     image: redis
 
+  elasticsearch:
+    image: elasticsearch
+
   app:
     environment:
       - REDIS_HOST=redis
+      - ES_HOST=elasticserch:9200
     build:
       context: .
     volumes:
@@ -15,3 +19,4 @@ services:
       - 3000:3000
     depends_on:
       - redis
+      - elasticsearch

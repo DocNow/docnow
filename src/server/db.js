@@ -11,9 +11,15 @@ bluebird.promisifyAll(redis.RedisClient.prototype)
 export class Database {
 
   constructor(opts = {}) {
-    opts.host = opts.host || process.env.REDIS_HOST || '127.0.0.1'
-    this.db = redis.createClient(opts)
-    this.es = new elasticsearch.Client()
+    const redisOpts = opts.redis || {}
+    redisOpts.host = redisOpts.host || process.env.REDIS_HOST || '127.0.0.1'
+    log.info('connecting to redis: ' + redisOpts)
+    this.db = redis.createClient(redisOpts)
+
+    const esOpts = opts.es || {}
+    esOpts.host = esOpts.host || process.env.ES_HOST || '127.0.0.1:9200'
+    log.info('connecting to elasticsearch: ' + esOpts)
+    this.es = new elasticsearch.Client(esOpts)
   }
 
   clear() {
