@@ -1,6 +1,8 @@
 import redis from 'redis'
 import uuid from 'uuid/v4'
 import bluebird from 'bluebird'
+import elasticsearch from 'elasticsearch'
+
 import log from './logger'
 import { Twitter } from './twitter'
 
@@ -11,6 +13,7 @@ export class Database {
   constructor(opts = {}) {
     opts.host = opts.host || process.env.REDIS_HOST || '127.0.0.1'
     this.db = redis.createClient(opts)
+    this.es = new elasticsearch.Client()
   }
 
   clear() {
@@ -290,6 +293,12 @@ export class Database {
             }))
           })
       })
+    })
+  }
+
+  health() {
+    this.es.cluster.health({}, (err, resp) => {
+      console.log('-- client health --', resp)
     })
   }
 
