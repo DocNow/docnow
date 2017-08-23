@@ -26,6 +26,7 @@ describe('twitter', () => {
       })
   })
 
+
   it('should fetch all places', (done) => {
     t.getPlaces().then((places) => {
       ok(places.length > 100)
@@ -51,4 +52,5 @@ describe('twitter', () => {
       done()
     })
   })
+
 })
