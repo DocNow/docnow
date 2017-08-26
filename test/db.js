@@ -1,14 +1,23 @@
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
+import log from '../src/server/logger'
 
-const db = new Database({db: 9})
+const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 
 describe('database', () => {
 
   let testUserId = null
+  let testSearchId = null
+
+  it('should have elasticsearch prefix set', () => {
+    equal(db.esPrefix, 'test')
+    equal(db.esTweetIndex, 'test:tweets')
+  })
 
   it('should clear', (done) => {
-    db.clear().then(done())
+    db.clear()
+      .then(done)
+      .catch((msg) => {log.error(msg)})
   })
 
   it('should add settings', (done) => {
@@ -156,6 +165,27 @@ describe('database', () => {
   it('should strip prefix', () => {
     equal(db.stripPrefix('foo:bar'), 'bar')
     equal(db.stripPrefix('foobar'), 'foobar')
+  })
+
+  it('should create search', (done) => {
+    db.createSearch(testUserId, 'obama')
+      .then((search) => {
+        ok(search.id, 'search.id')
+        testSearchId = search.id
+        done()
+      })
+  })
+
+  it('should get search results', (done) => {
+    // wait a second to make sure the index has updated
+    setTimeout(() => {
+      db.getSearch(testSearchId)
+        .then((search) => {
+          ok(search.tweets.length > 0, 'search has tweets')
+          ok(search.hashtags, 'hashtags')
+          done()
+        })
+    }, 1000)
   })
 
 })

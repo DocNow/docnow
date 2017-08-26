@@ -11,19 +11,36 @@ bluebird.promisifyAll(redis.RedisClient.prototype)
 export class Database {
 
   constructor(opts = {}) {
+    // setup redis
     const redisOpts = opts.redis || {}
     redisOpts.host = redisOpts.host || process.env.REDIS_HOST || '127.0.0.1'
     log.info('connecting to redis: ' + redisOpts)
     this.db = redis.createClient(redisOpts)
 
+    // setup elasticsearch
     const esOpts = opts.es || {}
     esOpts.host = esOpts.host || process.env.ES_HOST || '127.0.0.1:9200'
     log.info('connecting to elasticsearch: ' + esOpts)
+    this.esPrefix = esOpts.prefix || 'docnow'
+    this.esTweetIndex = this.esPrefix + ':tweets'
     this.es = new elasticsearch.Client(esOpts)
+    this.setupIndexes()
   }
 
   clear() {
-    return this.db.flushdbAsync()
+    return new Promise((resolve, reject) => {
+      this.db.flushdbAsync()
+        .then((didSucceed) => {
+          if (didSucceed === 'OK') {
+            this.deleteIndexes()
+              .then(() => {this.addIndexes()})
+              .then(resolve)
+              .catch(reject)
+          } else {
+            reject('redis flushdb failed')
+          }
+        })
+    })
   }
 
   addSettings(settings) {
@@ -302,12 +319,6 @@ export class Database {
     })
   }
 
-  health() {
-    this.es.cluster.health({}, (err, resp) => {
-      console.log('-- client health --', resp)
-    })
-  }
-
   addPrefix(id, prefix) {
     let idString = String(id)
     if (! idString.match('^' + prefix + ':')) {
@@ -322,6 +333,121 @@ export class Database {
 
   stripPrefix(s) {
     return String(s).replace(/^.+:/, '')
+  }
+
+  /* ElasticSearch */
+
+  /*
+   * setupIndex() will look to see if the ElasticSearch indexes have
+   * been setup. If they haven't then they will be added.
+   */
+
+  setupIndexes() {
+    this.es.indices.exists({index: this.esPrefix + ':*'})
+      .then((exists) => {
+        if (! exists) {
+          this.addIndexes()
+        }
+      })
+  }
+
+  addIndexes() {
+    this.es.indices.create({
+      index: this.esTweetIndex,
+      body: {
+        mappings: {
+          tweet: {
+            properties: {
+              id: {type: 'keyword'},
+              search: {type: 'keyword'},
+              retweetCount: {type: 'integer'},
+              likeCount: {type: 'integer'},
+              created: {type: 'date', format: 'date_time'},
+              client: {type: 'keyword'},
+              hashtags: {type: 'keyword'},
+              screenName: {type: 'keyword'}
+            }
+          }
+        }
+      }
+    })
+  }
+
+  deleteIndexes() {
+    return new Promise((resolve) => {
+      const indexes = this.esPrefix + ':*'
+      this.es.indices.delete({index: indexes})
+        .then(() => {
+          log.info('deleted indexes: ' + indexes)
+          resolve()
+        })
+        .catch((err) => {
+          log.warn('indexes delete failed: ' + err)
+          // if any of the indexes aren't there this will fail
+          // but that's ok because we're deleting them
+          resolve()
+        })
+    })
+  }
+
+  createSearch(userId, q) {
+    return new Promise((resolve, reject) => {
+      this.getTwitterClientForUser(userId)
+        .then((twtr) => {
+          twtr.search({q: q})
+            .then((results) => {
+              const searchId = 'search:' + uuid()
+              const index = this.esTweetIndex
+              const bulk = []
+              for (const r of results) {
+                r.search = searchId
+                const id = searchId + ':' + r.id
+                bulk.push(
+                  {index: {_index: index, _type: 'tweet', _id: id}},
+                  r
+                )
+              }
+              this.es.bulk({
+                index: index,
+                type: 'tweet',
+                body: bulk
+              }).then(() => {
+                resolve({id: searchId})
+              }, (err) => {
+                log.error(err.message)
+                reject(err.message)
+              })
+            })
+        })
+    })
+  }
+
+  getSearch(searchId) {
+    const body = {
+      size: 100,
+      query: {match: {search: searchId}},
+      aggregations: {
+        hashtags: {terms: {field: 'hashtags'}},
+        screenNames: {terms: {field: 'screenName'}}
+      }
+    }
+    return new Promise((resolve, reject) => {
+      log.info('searching for: ' + body)
+      this.es.search({
+        index: this.esTweetIndex,
+        type: 'tweet',
+        body: body
+      }).then((response) => {
+        log.info(JSON.toString(response, null, 2))
+        resolve({
+          tweets: response.hits.hits,
+          hashtags: response.aggregations.hashtags.buckets
+        })
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
+    })
   }
 
 }

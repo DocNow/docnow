@@ -80,16 +80,19 @@ export class Twitter {
   }
 
   extractTweet(t) {
+    const created = new Date(t.created_at).toISOString()
+    const hashtags = t.entities.hashtags.map((ht) => {return ht.text.toLowerCase()})
     return ({
       id: t.id_str,
       text: t.full_text,
       screenName: t.user.screen_name,
-      created: t.created_at,
+      created: created,
       avatarUrl: t.user.profile_image_url_https,
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
-      _data: t
+      client: t.source.match(/>(.+?)</)[1],
+      hashtags: hashtags
     })
   }
 
