@@ -177,7 +177,10 @@ describe('database', () => {
   })
 
   it('should get search results', (done) => {
+    // db.importTweets(searchId)
+
     // wait a second to make sure the index has updated
+
     setTimeout(() => {
       db.getSearch(testSearchId)
         .then((search) => {

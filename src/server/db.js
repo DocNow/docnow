@@ -356,6 +356,13 @@ export class Database {
       index: this.esTweetIndex,
       body: {
         mappings: {
+          search: {
+            properties: {
+              creator: {type: 'keyword'},
+              query: {type: 'text'},
+              active: {type: 'boolean'}
+            }
+          },
           tweet: {
             properties: {
               id: {type: 'keyword'},
@@ -365,7 +372,22 @@ export class Database {
               created: {type: 'date', format: 'date_time'},
               client: {type: 'keyword'},
               hashtags: {type: 'keyword'},
-              screenName: {type: 'keyword'}
+              screenName: {type: 'keyword'},
+              mentions: {type: 'keyword'},
+              retweet: {type: 'keyword'},
+              geo: {type: 'geo_point'},
+              videos: {type: 'keyword'},
+              photos: {type: 'keyword'},
+              animatedGifs: {type: 'keyword'},
+              emojis: {type: 'keyword'},
+              'place.id': {type: 'keyword'},
+              'place.name': {type: 'keyword'},
+              'place.boundingBox': {type: 'geo_shape'},
+              'place.country': {type: 'keyword'},
+              'place.countryCode': {type: 'keyword'},
+              'urls.short': {type: 'keyword'},
+              'urls.full': {type: 'keyword'},
+              'urls.hostname': {type: 'keyword'},
             }
           }
         }
@@ -428,7 +450,7 @@ export class Database {
       query: {match: {search: searchId}},
       aggregations: {
         hashtags: {terms: {field: 'hashtags'}},
-        screenNames: {terms: {field: 'screenName'}}
+        screenNames: {terms: {field: 'screenName'}},
       }
     }
     return new Promise((resolve, reject) => {

@@ -1,5 +1,9 @@
+import url from 'url'
 import Twit from 'twit'
 import log from './logger'
+import emojiRegex from 'emoji-regex'
+
+const emojiMatch = emojiRegex()
 
 export class Twitter {
 
@@ -82,17 +86,71 @@ export class Twitter {
   extractTweet(t) {
     const created = new Date(t.created_at).toISOString()
     const hashtags = t.entities.hashtags.map((ht) => {return ht.text.toLowerCase()})
+    const mentions = t.entities.user_mentions.map((m) => {return m.screen_name})
+    const geo = t.coordinates ? t.coordinates.coordinates : null
+    const retweet = t.retweeted_status ? t.retweeted_status.id_str : null
+    const emojis = emojiMatch.exec(t.full_text)
+
+    let place = null
+    if (t.place) {
+      place = {
+        name: t.place.full_name,
+        type: t.place.place_type,
+        id: t.place.id,
+        country: t.place.country,
+        countryCode: t.place.country_code,
+        boundingBox: t.place.bounding_box[0]
+      }
+    }
+
+    const urls = []
+    if (t.entities.urls) {
+      for (const e of t.entities.urls) {
+        const u = url.parse(e.expanded_url)
+        urls.push({
+          short: e.url,
+          long: e.expanded_url,
+          hostname: u.hostname
+        })
+      }
+    }
+
+    const photos = []
+    const videos = []
+    const animatedGifs = []
+    if (t.extended_entities && t.extended_entities.media) {
+      for (const e of t.extended_entities.media) {
+        if (e.type === 'photo') {
+          photos.push(e.media_url_https)
+        } else if (e.type === 'video') {
+          videos.push(e.media_url_https)
+        } else if (e.type === 'animated_gif') {
+          animatedGifs.push(e.media_url_https)
+        }
+      }
+    }
+
     return ({
       id: t.id_str,
       text: t.full_text,
       screenName: t.user.screen_name,
-      created: created,
       avatarUrl: t.user.profile_image_url_https,
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
       client: t.source.match(/>(.+?)</)[1],
-      hashtags: hashtags
+      created,
+      hashtags,
+      mentions,
+      geo,
+      retweet,
+      place,
+      urls,
+      photos,
+      videos,
+      animatedGifs,
+      emojis
+      // user info? id, created, followers, friends
     })
   }
 
