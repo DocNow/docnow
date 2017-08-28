@@ -38,12 +38,17 @@ describe('twitter', () => {
 
   it('should get search results', (done) => {
     t.search({q: 'obama'}).then((tweets) => {
-      ok(tweets.length > 0)
+      ok(tweets.length > 0, 'number of tweets')
       const t = tweets[0]
       ok(t.text.match(/obama/i), 'text')
       ok(t.id, 'id')
-      ok(t.screenName, 'screenName')
-      ok(t.avatarUrl, 'avatarUrl')
+      ok(t.user.id, 'user.id')
+      ok(t.user.screenName, 'user.screenName')
+      ok(t.user.followersCount >= 0, 'user.followersCount')
+      ok(t.user.friendsCount >= 0, 'user.friendsCount')
+      ok(t.user.tweetsCount >= 0, 'user.tweetsCount')
+      ok(t.user.avatarUrl, 'user.avatarUrl')
+      ok(t.user.created, 'user.created')
       ok(t.created, 'created')
       ok(t.twitterUrl, 'twitterUrl')
       ok(t.likeCount >= 0, 'likeCount')
@@ -52,7 +57,17 @@ describe('twitter', () => {
       ok('videos' in t, 'videos')
       ok('photos' in t, 'photos')
       ok('animatedGifs' in t, 'animatedGifs')
+
       ok('retweet' in t, 'retweet')
+      if (t.retweet) {
+        ok(t.retweet.id, 'retweet.id')
+      }
+
+      ok('quote' in t, 'quote')
+      if (t.quote) {
+        ok(t.quote.id, 'quote.id')
+      }
+
       done()
     })
   })

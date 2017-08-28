@@ -77,7 +77,11 @@ export class Twitter {
       (resolve) => {
         this.twit.get('search/tweets', params)
           .then((resp) => {
-            resolve(resp.data.statuses.map(this.extractTweet))
+            const tweets = []
+            for (const t of resp.data.statuses) {
+              tweets.push(this.extractTweet(t))
+            }
+            resolve(tweets)
           })
       }
     )
@@ -85,11 +89,21 @@ export class Twitter {
 
   extractTweet(t) {
     const created = new Date(t.created_at).toISOString()
+    const userCreated = new Date(t.user.created_at).toISOString()
     const hashtags = t.entities.hashtags.map((ht) => {return ht.text.toLowerCase()})
     const mentions = t.entities.user_mentions.map((m) => {return m.screen_name})
     const geo = t.coordinates ? t.coordinates.coordinates : null
-    const retweet = t.retweeted_status ? t.retweeted_status.id_str : null
     const emojis = emojiMatch.exec(t.full_text)
+
+    let retweet = null
+    if (t.retweeted_status) {
+      retweet = this.extractTweet(t.retweeted_status)
+    }
+
+    let quote = null
+    if (t.quoted_status) {
+      quote = this.extractTweet(t.quoted_status)
+    }
 
     let place = null
     if (t.place) {
@@ -133,24 +147,32 @@ export class Twitter {
     return ({
       id: t.id_str,
       text: t.full_text,
-      screenName: t.user.screen_name,
-      avatarUrl: t.user.profile_image_url_https,
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
       client: t.source.match(/>(.+?)</)[1],
+      user: {
+        id: t.user.id_str,
+        screenName: t.user.screen_name,
+        created, userCreated,
+        avatarUrl: t.user.profile_image_url_https,
+        followersCount: t.user.followers_count,
+        friendsCount: t.user.friends_count,
+        tweetsCount: t.user.statuses_count,
+        listedCount: t.user.listed_count
+      },
       created,
       hashtags,
       mentions,
       geo,
-      retweet,
       place,
       urls,
       photos,
       videos,
       animatedGifs,
-      emojis
-      // user info? id, created, followers, friends
+      emojis,
+      retweet,
+      quote
     })
   }
 

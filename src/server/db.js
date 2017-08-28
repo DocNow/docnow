@@ -374,7 +374,6 @@ export class Database {
               hashtags: {type: 'keyword'},
               screenName: {type: 'keyword'},
               mentions: {type: 'keyword'},
-              retweet: {type: 'keyword'},
               geo: {type: 'geo_point'},
               videos: {type: 'keyword'},
               photos: {type: 'keyword'},
