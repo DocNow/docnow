@@ -1,0 +1,27 @@
+.AppBar {
+  display: flex;
+  justify-content: flex-end;
+  background-color: #000000;
+  color: #ffffff;
+  font-size: 9pt;
+}
+
+.AppBar a {
+  padding: 10px;
+  margin-right: 10px;
+  text-decoration: none
+}
+
+.AppBar a:visited {
+  color: #ffffff;
+  text-decoration: none
+}
+
+.AppBar a {
+  padding: 10px;
+  margin-right: 10px;
+}
+
+.AppBar i {
+  padding-right: 2px;
+}

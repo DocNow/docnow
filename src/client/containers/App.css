@@ -1,14 +1,28 @@
 body {
-  margin: 0px;
-  font-family: "Helvetica Neue",Helvetica,Arial;
-  font-size: 18pt;
+  font-family: 'Roboto', sans-serif;
 }
 
-button {
-  font-size: 16px;
-  padding: 10px 24px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  outline: none;
+.container {
+  margin-top: 20px;
+}
+
+h2 {
+position: relative;
+text-transform: uppercase;
+color: #2E2633;
+font-size: 16pt;
+font-weight: 500;
+}
+
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+li {
+    display: inline;
+}
+@media screen and (max-width: 780px) {
+  li { display: block;
+       margin: 10;}
 }

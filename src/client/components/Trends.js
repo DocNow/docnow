@@ -2,8 +2,10 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Place from './Place'
 import AddPlace from './AddPlace'
-import '../images/dn.png'
+import mapbg from '../images/mapbg.png'
 import styles from './Trends.css'
+import button from './Button.css'
+import cards from './Card.css'
 
 export default class Trends extends Component {
 
@@ -37,36 +39,63 @@ export default class Trends extends Component {
       )
     }
 
-    let message = null
-    if (this.props.trends.length === 0 && loggedIn) {
-      message = (
-        <div className={styles.Welcome}>
-          It looks like you might be new here.
-          Get started by adding a few locations to monitor.
+    let intro = null
+    if (!loggedIn) {
+      intro = (
+        <div className={'container ' + styles.Intro}>
+          <login>
+            <intro-p>Welcome to DocNow, an app built to appraise social media content for potential collection.
+              <a href="http://docnow.io">Learn more.</a>
+            </intro-p>
+            <button className={button.Button} onClick={() => {window.location = '/auth/twitter'; return false}}>
+              <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
+            </button>
+          <a href="/">Request an Account</a>
+          </login>
         </div>
       )
     }
 
     return (
       <div>
-        <div className={styles.Trends}>
-          {message}
-          {this.props.trends.map(place => (
-            <Place
-              key={place.name}
-              trends={place.trends}
-              placeId={place.placeId}
-              name={place.name}
-              deleteTrend={this.props.deleteTrend}
-              username={this.props.username} />
-          ))}
-        </div>
-        <div className={styles.AddPlace}>
-          {addPlace}
-        </div>
+        {intro}
+        <trends className={styles.Trends} style={{backgroundImage: `url(${mapbg})`}}>
+          <cardholder className={cards.Cardholder}>
+            {this.props.trends.map(place => (
+              <Place
+                key={place.name}
+                trends={place.trends}
+                placeId={place.placeId}
+                name={place.name}
+                deleteTrend={this.props.deleteTrend}
+                username={this.props.username} />
+            ))}
+          </cardholder>
+        </trends>
+        {addPlace}
       </div>
     )
   }
+
+  /*
+  <div>
+    <div className={styles.Trends}>
+      {message}
+      {this.props.trends.map(place => (
+        <Place
+          key={place.name}
+          trends={place.trends}
+          placeId={place.placeId}
+          name={place.name}
+          deleteTrend={this.props.deleteTrend}
+          username={this.props.username} />
+      ))}
+    </div>
+    <div className={styles.AddPlace}>
+      {addPlace}
+    </div>
+  </div>
+  */
 
 }
 

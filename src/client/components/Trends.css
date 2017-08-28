@@ -1,25 +1,54 @@
+.Intro {}
 .Trends {
-  display: flex 100%;
-  margin-left: auto;
-  margin-right: auto;
+  position: relative;
+  height: 700px;
+  margin: 20px 0px 20px 0px;
+   /* Location of the image */
+  /*background-image: url("images/mapbg.png");*/
+  background-position: center center;
+  background-repeat: no-repeat;
+  /* Background image is fixed in the viewport so that it doesn't move when
+     the content's height is greater than the image's height */
+  background-attachment: fixed;
+  /* This is what makes the background image rescale based
+     on the container's size */
+  background-size: 100%;
+  display: flex;
+  align-items: center;
   justify-content: center;
 }
 
-.AddPlace {
-  margin-top: 20px;
-  text-align: center;
+.Intro intro-p {
+  font-family: 'Roboto:300' serif;
+  font-size: 20px;
+  font-weight: 200 !important;
+  color: #666666;
+  margin-left: 20px;
+  margin-top:20px;
+  align-self: flex-start;
 }
 
-/* Medium screens */
-@media all and (min-width: 600px) {
-
-  .Trends {
-    display: flex;
-    flex-direction: row;
-  }
-
-  .Welcome {
-    margin-top: 300px;
-    width: 40%;
-  }
+.Intro intro-p a {
+  padding-left: 5px;
+    font-size: 10pt;
+    color: #666666;
 }
+
+.Intro login  {
+  display: flex;
+  flex-direction: column;
+  margin-right: 50px !important;
+  align-items: flex-end;
+}
+
+.Intro login a {
+  font-family: 'Roboto:300' serif;
+  font-size: 10pt;
+  color: #666666;
+}
+
+/*@media screen and (min-width: 1180px) {
+  login button {
+    margin-top: -25px;
+  }
+}*/
