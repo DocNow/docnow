@@ -11,17 +11,11 @@
 }
 
 .Header logo {
-  display:inline-block;
+  display: inline-block;
   margin: 0 auto;
   padding-top: 10px;
 }
 
-.Header:media(max-width: 480px) {
+.Header:media (max-width:480px) {
   height: 50px;
 }
-
-/*@media screen and (max-width: 480px) {
-  header {height: 50px;}
-  avatar img {width: 90% }
-  logo img {width: 80%;}
-}*/
