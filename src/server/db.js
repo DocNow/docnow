@@ -358,9 +358,11 @@ export class Database {
         mappings: {
           search: {
             properties: {
+              id: {type: 'keyword'},
+              created: {type: 'date', format: 'date_time'},
               creator: {type: 'keyword'},
               query: {type: 'text'},
-              active: {type: 'boolean'}
+              active: {type: 'boolean'},
             }
           },
           tweet: {
@@ -413,28 +415,76 @@ export class Database {
 
   createSearch(userId, q) {
     return new Promise((resolve, reject) => {
-      this.getTwitterClientForUser(userId)
+      const search = {
+        id: 'search:' + uuid(),
+        creator: userId,
+        query: q,
+        created: new Date().toISOString()
+      }
+      this.es.create({
+        index: this.esTweetIndex,
+        type: 'search',
+        id: search.id,
+        body: search
+      }).then((resp) => {
+        if (resp.created) {
+          resolve(search)
+        } else {
+          reject('search not created!')
+        }
+      }).catch((err) => {
+        reject(err)
+      })
+    })
+  }
+
+  getSearch(searchId) {
+    return new Promise((resolve, reject) => {
+      this.es.get({
+        index: this.esTweetIndex,
+        type: 'search',
+        id: searchId
+      }).then((resp) => {
+        resolve(resp._source)
+      }).catch((err) => {
+        reject(err)
+      })
+    })
+  }
+
+  importFromSearch(search) {
+    return new Promise((resolve, reject) => {
+      this.getTwitterClientForUser(search.creator)
         .then((twtr) => {
-          twtr.search({q: q})
+          twtr.search({q: search.query})
             .then((results) => {
-              const searchId = 'search:' + uuid()
               const index = this.esTweetIndex
               const bulk = []
-              for (const r of results) {
-                r.search = searchId
-                const id = searchId + ':' + r.id
+              for (const tweet of results) {
+                tweet.search = search.id
+                const id = search.id + ':' + tweet.id
                 bulk.push(
-                  {index: {_index: index, _type: 'tweet', _id: id}},
-                  r
+                  {
+                    index: {
+                      _index: index,
+                      _type: 'tweet',
+                      _id: id
+                    }
+                  },
+                  tweet
                 )
               }
               this.es.bulk({
                 index: index,
                 type: 'tweet',
                 body: bulk
-              }).then(() => {
-                resolve({id: searchId})
-              }, (err) => {
+              }).then((resp) => {
+                if (resp.errors) {
+                  reject('indexing error check elasticsearch log')
+                } else {
+                  resolve(results)
+                }
+              }).catch((err) => {
                 log.error(err.message)
                 reject(err.message)
               })
@@ -443,10 +493,10 @@ export class Database {
     })
   }
 
-  getSearch(searchId) {
+  getTweets(search) {
     const body = {
       size: 100,
-      query: {match: {search: searchId}},
+      query: {match: {search: search.id}},
       aggregations: {
         hashtags: {terms: {field: 'hashtags'}},
         screenNames: {terms: {field: 'screenName'}},
@@ -468,6 +518,34 @@ export class Database {
         log.error(err)
         reject(err)
       })
+    })
+  }
+
+  getUsers(searchId) {
+    log.debug(searchId)
+    return new Promise((resolve) => {
+      resolve()
+    })
+  }
+
+  getHashtags(searchId) {
+    log.debug(searchId)
+    return new Promise((resolve) => {
+      resolve()
+    })
+  }
+
+  getPhotos(searchId) {
+    log.debug(searchId)
+    return new Promise((resolve) => {
+      resolve()
+    })
+  }
+
+  getVideos(searchId) {
+    log.debug(searchId)
+    return new Promise((resolve) => {
+      resolve()
     })
   }
 

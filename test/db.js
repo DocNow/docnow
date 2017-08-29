@@ -7,7 +7,7 @@ const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 describe('database', () => {
 
   let testUserId = null
-  let testSearchId = null
+  let testSearch = null
 
   it('should have elasticsearch prefix set', () => {
     equal(db.esPrefix, 'test')
@@ -171,24 +171,62 @@ describe('database', () => {
     db.createSearch(testUserId, 'obama')
       .then((search) => {
         ok(search.id, 'search.id')
-        testSearchId = search.id
+        testSearch = search
         done()
       })
   })
 
-  it('should get search results', (done) => {
-    // db.importTweets(searchId)
+  it('should get search', (done) => {
+    db.getSearch(testSearch.id).then((search) => {
+      equal(search.id, testSearch.id, 'search.id')
+      equal(search.query, 'obama', 'search.query')
+      equal(search.creator, testUserId, 'search.user')
+      ok(search.created, 'search.created')
+      done()
+    })
+  })
 
-    // wait a second to make sure the index has updated
-
+  it('should import from search', (done) => {
     setTimeout(() => {
-      db.getSearch(testSearchId)
-        .then((search) => {
-          ok(search.tweets.length > 0, 'search has tweets')
-          ok(search.hashtags, 'hashtags')
+      db.importFromSearch(testSearch)
+        .then((tweets) => {
+          ok(tweets.length > 0, 'search found tweets')
           done()
         })
+        .catch((err) => {
+          console.log(err)
+        })
     }, 1000)
+  })
+
+  it('should get tweets', (done) => {
+    db.getTweets(testSearch).then((tweets) => {
+      done()
+    })
+  })
+
+  it('should get users', (done) => {
+    db.getUsers(testSearch).then((tweets) => {
+      done()
+    })
+  })
+
+  it('shoud get hashtags', (done) => {
+    db.getHashtags(testSearch).then((hashtags) => {
+      done()
+    })
+  })
+
+  it('should get videos', (done) => {
+    db.getVideos(testSearch).then((hashtags) => {
+      done()
+    })
+  })
+
+  it('should get photos', (done) => {
+    db.getPhotos(testSearch).then((photos) => {
+      done()
+    })
   })
 
 })
