@@ -120,19 +120,33 @@ app.post('/logo', (req, res) => {
 
 app.post('/searches', (req, res) => {
   if (req.user) {
-    const fakeId = req.body.q + '-fakeId'
-    res.json({
-      id: fakeId,
-      tweets: `/api/v${version}/search/${fakeId}/tweets`,
-      users: `/api/v${version}/search/${fakeId}/users`,
-      hashtags: `/api/v${version}/search/${fakeId}/hashtags`,
-      media: `/api/v${version}/search/${fakeId}/media`
-    })
+    db.createSearch(req.user.id, req.body.q)
+      .then((search) => {
+        const searchId = search.id
+        res.json({
+          ...search,
+          tweets: `/api/v${version}/search/${searchId}/tweets`,
+          users: `/api/v${version}/search/${searchId}/users`,
+          hashtags: `/api/v${version}/search/${searchId}/hashtags`,
+          media: `/api/v${version}/search/${searchId}/media`
+        })
+        db.importFromSearch(search)
+      })
   }
 })
 
 app.get('/search/:searchId/tweets', (req, res) => {
   if (req.user) {
+    console.log('looking up ' + req.params.searchId)
+    db.getSearch(req.params.searchId)
+      .then((search) => {
+        db.getTweets(search)
+          .then((tweets) => {
+            res.json(tweets)
+          })
+      })
+  }
+  /*
     res.json([
       {
         id: '895394443465019393',
@@ -162,6 +176,7 @@ app.get('/search/:searchId/tweets', (req, res) => {
       }
     ])
   }
+  */
 })
 
 app.get('/search/:searchId/users', (req, res) => {

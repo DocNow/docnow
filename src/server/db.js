@@ -496,24 +496,19 @@ export class Database {
   getTweets(search) {
     const body = {
       size: 100,
-      query: {match: {search: search.id}},
-      aggregations: {
-        hashtags: {terms: {field: 'hashtags'}},
-        screenNames: {terms: {field: 'screenName'}},
+      query: {
+        match: {
+          search: search.id
+        }
       }
     }
     return new Promise((resolve, reject) => {
-      log.info('searching for: ' + body)
       this.es.search({
         index: this.esTweetIndex,
         type: 'tweet',
         body: body
       }).then((response) => {
-        log.info(JSON.toString(response, null, 2))
-        resolve({
-          tweets: response.hits.hits,
-          hashtags: response.aggregations.hashtags.buckets
-        })
+        resolve(response.hits.hits.map((h) => {return h._source}))
       }).catch((err) => {
         log.error(err)
         reject(err)

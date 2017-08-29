@@ -20,7 +20,7 @@ export default class Media extends Component {
         <div className={ style.Box }>
           {loader}
           {this.props.tweets.map(tweet => (
-            tweet.media.map((medium, idx) => (
+            tweet.photos.map((medium, idx) => (
               <Medium key={tweet.id + '_m' + idx} data={medium}/>
             ))
           ))}

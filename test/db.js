@@ -189,23 +189,26 @@ describe('database', function() {
   })
 
   it('should import from search', (done) => {
-    db.es.indices.refresh({index: db.esTweetIndex})
-      .then(() => {
-        db.importFromSearch(testSearch)
-          .then((tweets) => {
-            ok(tweets.length > 0, 'search found tweets')
-            done()
-          })
-          .catch((err) => {
-            console.log(err)
-          })
+    db.importFromSearch(testSearch)
+      .then((tweets) => {
+        ok(tweets.length > 0, 'search found tweets')
+        done()
+      })
+      .catch((err) => {
+        console.log(err)
       })
   })
 
   it('should get tweets', (done) => {
-    db.getTweets(testSearch).then((tweets) => {
-      done()
-    })
+    // wait for indices to sync before looking for search results
+    db.es.indices.refresh({index: db.esTweetIndex})
+      .then(() => {
+        db.getTweets(testSearch).then((tweets) => {
+          ok(tweets.length > 0, 'tweets.length')
+          ok(tweets[0].id, 'tweets[0].id')
+          done()
+        })
+      })
   })
 
   it('should get users', (done) => {
