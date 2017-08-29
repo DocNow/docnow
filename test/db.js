@@ -4,7 +4,9 @@ import log from '../src/server/logger'
 
 const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 
-describe('database', () => {
+describe('database', function() {
+
+  this.timeout(5000)
 
   let testUserId = null
   let testSearch = null
@@ -187,16 +189,17 @@ describe('database', () => {
   })
 
   it('should import from search', (done) => {
-    setTimeout(() => {
-      db.importFromSearch(testSearch)
-        .then((tweets) => {
-          ok(tweets.length > 0, 'search found tweets')
-          done()
-        })
-        .catch((err) => {
-          console.log(err)
-        })
-    }, 1000)
+    db.es.indices.refresh({index: db.esTweetIndex})
+      .then(() => {
+        db.importFromSearch(testSearch)
+          .then((tweets) => {
+            ok(tweets.length > 0, 'search found tweets')
+            done()
+          })
+          .catch((err) => {
+            console.log(err)
+          })
+      })
   })
 
   it('should get tweets', (done) => {
