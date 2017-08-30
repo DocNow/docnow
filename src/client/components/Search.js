@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from './Search.css'
+import style from '../styles/Search.css'
 import TweetListBox from '../containers/TweetListBox'
 import UserListBox from '../containers/UserListBox'
 import HashtagsBox from '../containers/HashtagsBox'

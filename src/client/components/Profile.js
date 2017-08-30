@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from './Profile.css'
+import style from '../styles/Profile.css'
 import AdminSettingsForm from '../containers/AdminSettingsForm'
 
 export default class Profile extends Component {

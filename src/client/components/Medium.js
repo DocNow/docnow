@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import style from './Media.css'
+import style from '../styles/Media.css'
 import PropTypes from 'prop-types'
 
 export default class Medium extends Component {

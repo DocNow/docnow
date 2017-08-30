@@ -2,16 +2,39 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Place from './Place'
 import mapbg from '../images/mapbg.png'
-import styles from './Trends.css'
-import button from './Button.css'
-import cards from './Card.css'
+import styles from '../styles/Trends.css'
+import button from '../styles/Button.css'
+import cards from '../styles/Card.css'
+import globStyles from '../styles/App.css'
 
 export default class Trends extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { introStyle: styles.Intro }
+  }
 
   componentDidMount() {
     this.props.getTrends()
     const intervalId = setInterval(this.props.getTrends, 3000)
-    this.setState({intervalId: intervalId})
+    this.setState((prevState) => {
+      return Object.assign(prevState, {intervalId: intervalId})
+    })
+
+    const widthChange = (mq) => {
+      if (mq.matches) {
+        this.setState((prevState) => {
+          return Object.assign(prevState, {introStyle: `${styles.Intro} ${styles.IntroOver1180px}`})
+        })
+      } else {
+        this.setState((prevState) => {
+          return Object.assign(prevState, {introStyle: styles.Intro})
+        })
+      }
+    }
+
+    const mq = window.matchMedia('(min-width: 1180px)')
+    mq.addListener(widthChange)
+    widthChange(mq)
   }
 
   componentWillUnmount() {
@@ -26,7 +49,7 @@ export default class Trends extends Component {
     let intro = null
     if (!loggedIn) {
       intro = (
-        <div className={'container ' + styles.Intro}>
+        <div className={`${globStyles.Container} ${this.state.introStyle}`}>
           <login>
             <intro-p>Welcome to DocNow, an app built to appraise social media content for potential collection.
               <a href="http://docnow.io">Learn more.</a>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 // import AddPlace from './AddPlace'
 import FlipMove from 'react-flip-move'
 import { Link } from 'react-router-dom'
-import styles from './Card.css'
+import styles from '../styles/Card.css'
 
 export default class Place extends Component {
   render() {

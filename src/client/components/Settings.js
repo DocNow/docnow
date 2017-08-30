@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Keys from './Keys'
-import style from './Settings.css'
+import style from '../styles/Settings.css'
 
 export default class Settings extends Component {
 

@@ -11,9 +11,13 @@ import SearchPage from './SearchPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
-import './App.css'
+import styles from '../styles/App.css'
 
 class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = { headerStyle: styles.Header }
+  }
 
   componentWillMount() {
     store.dispatch(getSettings())
@@ -26,9 +30,27 @@ class App extends Component {
       })
   }
 
+  componentDidMount() {
+    const widthChange = (mq) => {
+      if (mq.matches) {
+        this.setState(() => {
+          return {appStyle: `${styles.App} ${styles.AppUnder780px}`}
+        })
+      } else {
+        this.setState(() => {
+          return {appStyle: styles.App}
+        })
+      }
+    }
+
+    const mq = window.matchMedia('(max-width: 780px)')
+    mq.addListener(widthChange)
+    widthChange(mq)
+  }
+
   render() {
     return (
-      <div>
+      <div className={this.state.appStyle}>
         <Header />
         <main>
           <Route exact path="/" component={TrendsPage} />

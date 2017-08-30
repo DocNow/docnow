@@ -1,17 +1,16 @@
-body {
+.App {
   font-family: 'Roboto', sans-serif;
-
 }
 
-div {
+.App div {
   position: relative;
 }
 
-.container {
+.Container {
   margin-top: 20px;
 }
 
-h2 {
+.App h2 {
 position: relative;
 text-transform: uppercase;
 color: #2E2633;
@@ -19,17 +18,19 @@ font-size: 16pt;
 font-weight: 500;
 }
 
-ul {
+.App ul {
     list-style-type: none;
     margin: 0;
     padding: 0;
 }
 
-li {
+.App li {
     display: inline;
 }
 
-/*@media screen and (max-width: 780px) {
-  li { display: block;
-       margin: 10;}
-}*/
+.AppUnder780px {}
+
+.AppUnder780px li {
+    display: block;
+    margin: 10;
+}

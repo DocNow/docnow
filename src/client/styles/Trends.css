@@ -47,8 +47,8 @@
   color: #666666;
 }
 
-/*@media screen and (min-width: 1180px) {
-  login button {
-    margin-top: -25px;
-  }
-}*/
+.IntroOver1180px {}
+
+.IntroOver1180px login button {
+  margin-top: -25px;
+}

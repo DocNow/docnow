@@ -16,12 +16,9 @@
   padding-top: 10px;
 }
 
-.Header:media(max-width: 480px) {
+.HeaderUnder480px {
   height: 50px;
 }
 
-/*@media screen and (max-width: 480px) {
-  header {height: 50px;}
-  avatar img {width: 90% }
-  logo img {width: 80%;}
-}*/
+.HeaderUnder480px avatar img { width: 90% }
+.HeaderUnder480px logo img { width: 80%;}
