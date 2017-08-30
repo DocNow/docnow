@@ -1,7 +1,7 @@
 {
   "scripts": {
     "start": "better-npm-run start",
-    "build:client": "webpack --optimize-minimize --config webpack.prod.config.js --progress",
+    "build:client": "webpack --optimize-minimize --config webpack.prod.config.js",
     "build": "better-npm-run build",
     "clean": "rimraf dist/*",
     "test": "better-npm-run test",
