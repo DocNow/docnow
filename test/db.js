@@ -6,7 +6,7 @@ const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 
 describe('database', function() {
 
-  this.timeout(5000)
+  this.timeout(10000)
 
   let testUserId = null
   let testSearch = null
