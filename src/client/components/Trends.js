@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Place from './Place'
-import AddPlace from './AddPlace'
 import mapbg from '../images/mapbg.png'
 import styles from './Trends.css'
 import button from './Button.css'
@@ -24,21 +23,6 @@ export default class Trends extends Component {
 
   render() {
     const loggedIn = this.props.username ? true : false
-    let addPlace = null
-    if (loggedIn) {
-      addPlace = (
-        <AddPlace
-          limit={5}
-          places={this.props.trends}
-          world={this.props.world}
-          updateNewTrend={this.props.updateNewTrend}
-          newPlace={this.props.newPlace}
-          placeLabelToId={this.props.placeLabelToId}
-          deleteTrend={this.props.deleteTrend}
-          saveTrends={this.props.saveTrends} />
-      )
-    }
-
     let intro = null
     if (!loggedIn) {
       intro = (
@@ -67,36 +51,18 @@ export default class Trends extends Component {
                 trends={place.trends}
                 placeId={place.placeId}
                 name={place.name}
+                world={this.props.world}
                 deleteTrend={this.props.deleteTrend}
+                updateNewTrend={this.props.updateNewTrend}
+                placeLabelToId={this.props.placeLabelToId}
+                saveTrends={this.props.saveTrends}
                 username={this.props.username} />
             ))}
           </cardholder>
         </trends>
-        {addPlace}
       </div>
     )
   }
-
-  /*
-  <div>
-    <div className={styles.Trends}>
-      {message}
-      {this.props.trends.map(place => (
-        <Place
-          key={place.name}
-          trends={place.trends}
-          placeId={place.placeId}
-          name={place.name}
-          deleteTrend={this.props.deleteTrend}
-          username={this.props.username} />
-      ))}
-    </div>
-    <div className={styles.AddPlace}>
-      {addPlace}
-    </div>
-  </div>
-  */
-
 }
 
 Trends.propTypes = {

@@ -27,26 +27,39 @@
     margin: 30px;
   }
 
+.Card a, .Card a:hover, .Card a:visited, .Card a:active {
+  color: #1E77B6
+}
+
 /* On mouse-over, add a deeper shadow */
 .Card:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
-.Card data {
+.Data {
   padding-top: 20px;
   text-align: center;
 }
 
 
-.Card data ul {
+.Data ul {
   list-style: url();
 }
-.Card data li {
+.Data li {
   padding-bottom: 10px;
   display: block !important;
 }
 
 /* Add some padding inside the card container */
 .Cardcontainer {
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
     padding: 2px 16px;
+}
+
+.Cardcontainer a {
+  padding-left: 5px;
+    font-size: 10pt;
+    color: #666666;
 }

@@ -1,5 +1,10 @@
 body {
   font-family: 'Roboto', sans-serif;
+
+}
+
+div {
+  position: relative;
 }
 
 .container {
@@ -19,10 +24,12 @@ ul {
     margin: 0;
     padding: 0;
 }
+
 li {
     display: inline;
 }
-@media screen and (max-width: 780px) {
+
+/*@media screen and (max-width: 780px) {
   li { display: block;
        margin: 10;}
-}
+}*/
