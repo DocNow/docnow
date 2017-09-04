@@ -8,7 +8,7 @@
     "wtest": "better-npm-run wtest",
     "repl": "babel-node",
     "eslint:server": "eslint server.js src/server/*",
-    "reset": "redis-cli flushdb;"
+    "reset": "node src/commands/reset.js"
   },
   "betterScripts": {
     "build": {

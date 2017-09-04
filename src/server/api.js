@@ -206,6 +206,18 @@ app.get('/search/:searchId/users', (req, res) => {
 
 app.get('/search/:searchId/hashtags', (req, res) => {
   if (req.user) {
+    console.log('looking up ' + req.params.searchId)
+    db.getSearch(req.params.searchId)
+      .then((search) => {
+        db.getHashtags(search)
+          .then((hashtags) => {
+            res.json(hashtags)
+          })
+      })
+  }
+  /*
+  if (req.user) {
+
     res.json([{
       hashtag: 'someHashTag',
       count: 55
@@ -216,6 +228,7 @@ app.get('/search/:searchId/hashtags', (req, res) => {
     }
     ])
   }
+  */
 })
 
 module.exports = app

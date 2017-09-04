@@ -212,13 +212,19 @@ describe('database', function() {
   })
 
   it('should get users', (done) => {
-    db.getUsers(testSearch).then((tweets) => {
+    db.getUsers(testSearch).then((users) => {
+      ok(users.length > 0, 'users.length')
       done()
     })
   })
 
   it('shoud get hashtags', (done) => {
     db.getHashtags(testSearch).then((hashtags) => {
+      // hopefully the test search pulled in some tweets with hashtags?
+      if (hashtags.length > 0) {
+        ok(hashtags[0].hashtag, '.hashtag text')
+        ok(hashtags[0].count > 0, 'hashtag count')
+      }
       done()
     })
   })

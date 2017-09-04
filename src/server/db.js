@@ -27,6 +27,10 @@ export class Database {
     this.setupIndexes()
   }
 
+  close() {
+    this.db.quit()
+  }
+
   clear() {
     return new Promise((resolve, reject) => {
       this.db.flushdbAsync()
@@ -352,7 +356,7 @@ export class Database {
   }
 
   addIndexes() {
-    this.es.indices.create({
+    return this.es.indices.create({
       index: this.esTweetIndex,
       body: {
         mappings: {
@@ -363,6 +367,14 @@ export class Database {
               creator: {type: 'keyword'},
               query: {type: 'text'},
               active: {type: 'boolean'},
+            }
+          },
+          user: {
+            properties: {
+              id: {type: 'keyword'},
+              screenName: {type: 'keyword'},
+              created: {type: 'date', format: 'date_time'},
+              updated: {type: 'date', format: 'date_time'},
             }
           },
           tweet: {
@@ -389,6 +401,8 @@ export class Database {
               'urls.short': {type: 'keyword'},
               'urls.full': {type: 'keyword'},
               'urls.hostname': {type: 'keyword'},
+              'user.screenName': {type: 'keyword'},
+              'retweet.user.screenName': {type: 'keyword'}
             }
           }
         }
@@ -496,11 +510,8 @@ export class Database {
   getTweets(search) {
     const body = {
       size: 100,
-      query: {
-        match: {
-          search: search.id
-        }
-      }
+      query: {match: {search: search.id}},
+      sort: [{created: 'desc'}]
     }
     return new Promise((resolve, reject) => {
       this.es.search({
@@ -516,17 +527,77 @@ export class Database {
     })
   }
 
-  getUsers(searchId) {
-    log.debug(searchId)
-    return new Promise((resolve) => {
-      resolve()
+  getUsers(search) {
+
+    // first get user counts in the search
+
+    let body = {
+      size: 100,
+      _source: 'retweet.user',
+      query: {match: {search: search.id}},
+      aggregations: {users: {terms: {field: 'retweet.user.screenName'}}}
+    }
+    return new Promise((resolve, reject) => {
+      this.es.search({
+        index: this.esTweetIndex,
+        type: 'tweet',
+        body: body
+      }).then((response) => {
+
+        // with the list of users go get the user information for them
+
+        const counts = response.aggregations.users.buckets
+        const screenNames = counts.map((c) => {return c.key})
+        body = {
+          size: 100,
+          query: {
+            constant_score: {
+              filter: {
+                terms: {
+                  'user.screenName': screenNames
+                }
+              }
+            }
+          },
+          sort: [
+            {created: 'desc'}
+          ]
+        }
+        this.es.search({
+          index: this.esTweetIndex,
+          type: 'tweet',
+          body: body
+        }).then(() => {
+          // const users = []
+          resolve(counts)
+        })
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
     })
   }
 
-  getHashtags(searchId) {
-    log.debug(searchId)
-    return new Promise((resolve) => {
-      resolve()
+  getHashtags(search) {
+    const body = {
+      size: 0,
+      query: {match: {search: search.id}},
+      aggregations: {hashtags: {terms: {field: 'hashtags'}}}
+    }
+    return new Promise((resolve, reject) => {
+      this.es.search({
+        index: this.esTweetIndex,
+        type: 'tweet',
+        body: body
+      }).then((response) => {
+        const hashtags = response.aggregations.hashtags.buckets.map((ht) => {
+          return {hashtag: ht.key, count: ht.doc_count}
+        })
+        resolve(hashtags)
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
     })
   }
 
