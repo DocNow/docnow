@@ -187,8 +187,6 @@ describe('database', function() {
   })
 
   it('should import from search', function(done) {
-    // this can take longer than 2 seconds (default for mocha tests)
-    this.timeout(5000)
     db.importFromSearch(testSearch)
       .then((tweets) => {
         ok(tweets.length > 0, 'search found tweets')
