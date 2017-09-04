@@ -200,8 +200,8 @@ describe('database', function() {
   })
 
   it('should get tweets', (done) => {
-    // wait for indices to sync before looking for search results
-    db.es.indices.refresh({index: db.esTweetIndex})
+    // wait for indices to sync before querying
+    db.es.indices.refresh({index: '_all'})
       .then(() => {
         db.getTweets(testSearch).then((tweets) => {
           ok(tweets.length > 0, 'tweets.length')
@@ -214,6 +214,9 @@ describe('database', function() {
   it('should get users', (done) => {
     db.getUsers(testSearch).then((users) => {
       ok(users.length > 0, 'users.length')
+      ok(users[0].screenName, 'users[0].screenName')
+      ok(users[0].tweetsInSearch > 0, 'users[0].tweetsInSearch')
+      ok(users[0].tweetsInSearch >= users[1].tweetsInSearch)
       done()
     })
   })

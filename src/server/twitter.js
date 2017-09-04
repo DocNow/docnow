@@ -88,8 +88,8 @@ export class Twitter {
   }
 
   extractTweet(t) {
-    const created = new Date(t.created_at).toISOString()
-    const userCreated = new Date(t.user.created_at).toISOString()
+    const created = new Date(t.created_at)
+    const userCreated = new Date(t.user.created_at)
     const hashtags = t.entities.hashtags.map((ht) => {return ht.text.toLowerCase()})
     const mentions = t.entities.user_mentions.map((m) => {return m.screen_name})
     const geo = t.coordinates ? t.coordinates.coordinates : null

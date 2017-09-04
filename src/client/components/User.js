@@ -6,9 +6,13 @@ export default class User extends Component {
     return (
       <div style={{borderBottom: '1px solid black'}}>
         <img src={this.props.data.avatarUrl} /> &nbsp;
-        <strong>{this.props.data.screenName}</strong> @{this.props.data.handle}<br/>
-        Matching: <strong>{this.props.data.matchingTweets}</strong><br/>
-        <em>Tweets: {this.props.data.tweets}, Followers: {this.props.data.followers}, Following: {this.props.data.following},</em>
+        <strong>{this.props.data.screenName}</strong> @{this.props.data.screenName}<br/>
+        Matching: <strong>{this.props.data.tweetsInSearch}</strong><br/>
+        <em>
+        Tweets: {this.props.data.tweetsCount},
+        Followers: {this.props.data.followersCount},
+        Following: {this.props.data.friendsCount},
+        </em>
       </div>
     )
   }

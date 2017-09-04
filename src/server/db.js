@@ -386,7 +386,6 @@ export class Database {
               created: {type: 'date', format: 'date_time'},
               client: {type: 'keyword'},
               hashtags: {type: 'keyword'},
-              screenName: {type: 'keyword'},
               mentions: {type: 'keyword'},
               geo: {type: 'geo_point'},
               videos: {type: 'keyword'},
@@ -402,6 +401,7 @@ export class Database {
               'urls.full': {type: 'keyword'},
               'urls.hostname': {type: 'keyword'},
               'user.screenName': {type: 'keyword'},
+              'quote.user.screenName': {type: 'keyword'},
               'retweet.user.screenName': {type: 'keyword'}
             }
           }
@@ -472,25 +472,38 @@ export class Database {
         .then((twtr) => {
           twtr.search({q: search.query})
             .then((results) => {
-              const index = this.esTweetIndex
               const bulk = []
+              const seenUsers = new Set()
               for (const tweet of results) {
                 tweet.search = search.id
                 const id = search.id + ':' + tweet.id
                 bulk.push(
                   {
                     index: {
-                      _index: index,
+                      _index: this.esTweetIndex,
                       _type: 'tweet',
                       _id: id
                     }
                   },
                   tweet
                 )
+                if (! seenUsers.has(tweet.user.id)) {
+                  bulk.push(
+                    {
+                      index: {
+                        _index: this.esTweetIndex,
+                        _type: 'user',
+                        _id: tweet.user.id,
+                      }
+                    },
+                    tweet.user
+                  )
+                  seenUsers.add(tweet.user.id)
+                }
               }
               this.es.bulk({
-                index: index,
-                type: 'tweet',
+                // index: tweet.esTweetIndex,
+                // type: 'tweet',
                 body: bulk
               }).then((resp) => {
                 if (resp.errors) {
@@ -529,47 +542,53 @@ export class Database {
 
   getUsers(search) {
 
-    // first get user counts in the search
+    // first get the user counts for tweets
 
     let body = {
-      size: 100,
-      _source: 'retweet.user',
       query: {match: {search: search.id}},
-      aggregations: {users: {terms: {field: 'retweet.user.screenName'}}}
+      aggregations: {users: {terms: {field: 'user.screenName', size: 100}}}
     }
     return new Promise((resolve, reject) => {
       this.es.search({
         index: this.esTweetIndex,
         type: 'tweet',
         body: body
-      }).then((response) => {
+      }).then((response1) => {
 
-        // with the list of users go get the user information for them
+        // with the list of users get the user information for them
 
-        const counts = response.aggregations.users.buckets
-        const screenNames = counts.map((c) => {return c.key})
+        const counts = new Map()
+        const buckets = response1.aggregations.users.buckets
+        buckets.map((c) => {counts.set(c.key, c.doc_count)})
+        const screenNames = Array.from(counts.keys())
+
         body = {
           size: 100,
           query: {
             constant_score: {
               filter: {
                 terms: {
-                  'user.screenName': screenNames
+                  'screenName': screenNames
                 }
               }
             }
-          },
-          sort: [
-            {created: 'desc'}
-          ]
+          }
         }
         this.es.search({
           index: this.esTweetIndex,
-          type: 'tweet',
+          type: 'user',
           body: body
-        }).then(() => {
-          // const users = []
-          resolve(counts)
+        }).then((response2) => {
+          const users = response2.hits.hits.map((h) => {return h._source})
+
+          // add the tweet counts per user that we got previously
+          for (const user of users) {
+            user.tweetsInSearch = counts.get(user.screenName)
+          }
+
+          // sort them by their counts
+          users.sort((a, b) => {return b.tweetsInSearch - a.tweetsInSearch})
+          resolve(users)
         })
       }).catch((err) => {
         log.error(err)
@@ -582,7 +601,7 @@ export class Database {
     const body = {
       size: 0,
       query: {match: {search: search.id}},
-      aggregations: {hashtags: {terms: {field: 'hashtags'}}}
+      aggregations: {hashtags: {terms: {field: 'hashtags', size: 100}}}
     }
     return new Promise((resolve, reject) => {
       this.es.search({
