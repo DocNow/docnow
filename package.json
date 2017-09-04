@@ -24,7 +24,7 @@
       }
     },
     "wtest": {
-      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 15000 --require babel-register test/*'",
+      "command": "nodemon --exec 'npm run eslint:server && mocha --require babel-register test/*'",
       "env": {
         "NODE_ENV": "test"
       }

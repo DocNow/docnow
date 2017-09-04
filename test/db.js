@@ -6,8 +6,6 @@ const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 
 describe('database', function() {
 
-  this.timeout(10000)
-
   let testUserId = null
   let testSearch = null
 
@@ -188,7 +186,9 @@ describe('database', function() {
     })
   })
 
-  it('should import from search', (done) => {
+  it('should import from search', function(done) {
+    // this can take longer than 2 seconds (default for mocha tests)
+    this.timeout(5000)
     db.importFromSearch(testSearch)
       .then((tweets) => {
         ok(tweets.length > 0, 'search found tweets')
