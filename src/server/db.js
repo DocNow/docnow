@@ -24,6 +24,7 @@ export class Database {
     this.esPrefix = esOpts.prefix || 'docnow'
     this.esTweetIndex = this.esPrefix + ':tweets'
     this.es = new elasticsearch.Client(esOpts)
+    log.info('setting up index')
     this.setupIndexes()
   }
 
@@ -347,10 +348,13 @@ export class Database {
    */
 
   setupIndexes() {
-    this.es.indices.exists({index: this.esPrefix + ':*'})
+    this.es.indices.exists({index: this.esTweetIndex})
       .then((exists) => {
         if (! exists) {
+          log.info('adding indexes')
           this.addIndexes()
+        } else {
+          log.info('indexes already present, not adding')
         }
       })
   }

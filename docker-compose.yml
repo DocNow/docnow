@@ -10,7 +10,7 @@ services:
   app:
     environment:
       - REDIS_HOST=redis
-      - ES_HOST=elasticserch:9200
+      - ES_HOST=elasticsearch:9200
     build:
       context: .
     volumes:
@@ -20,3 +20,4 @@ services:
     depends_on:
       - redis
       - elasticsearch
+    entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- npm run start
