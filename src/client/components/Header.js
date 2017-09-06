@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import MediaQueryComponent from './MediaQueryComponent'
 import PropTypes from 'prop-types'
 import dn from '../images/dn.png'
 import mith from '../images/mith.png'
@@ -6,28 +7,14 @@ import AppBar from './AppBar'
 import TabBar from './TabBar'
 import styles from '../styles/Header.css'
 
-export default class Header extends Component {
+export default class Header extends MediaQueryComponent {
   constructor(props) {
     super(props)
     this.state = { headerStyle: styles.Header }
   }
 
   componentDidMount() {
-    const widthChange = (mq) => {
-      if (mq.matches) {
-        this.setState(() => {
-          return {headerStyle: `${styles.Header} ${styles.HeaderUnder480px}`}
-        })
-      } else {
-        this.setState(() => {
-          return {headerStyle: styles.Header}
-        })
-      }
-    }
-
-    const mq = window.matchMedia('(max-width: 480px)')
-    mq.addListener(widthChange)
-    widthChange(mq)
+    this.setMediaQuery('(max-width: 480px)', styles.Header, styles.HeaderUnder480px)
   }
 
   render() {
@@ -41,7 +28,7 @@ export default class Header extends Component {
     return (
       <div>
         {appBar}
-        <header className={this.state.headerStyle}>
+        <header className={this.state.mediaStyle}>
           <avatar><a href="http://docnow.io"><img src={dn}/></a></avatar>
           <logo><center><img src={mith}/></center></logo>
         </header>

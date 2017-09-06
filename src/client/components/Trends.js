@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import MediaQueryComponent from './MediaQueryComponent'
 import PropTypes from 'prop-types'
 import Place from './Place'
 import mapbg from '../images/mapbg.png'
@@ -7,7 +8,7 @@ import button from '../styles/Button.css'
 import cards from '../styles/Card.css'
 import globStyles from '../styles/App.css'
 
-export default class Trends extends Component {
+export default class Trends extends MediaQueryComponent {
   constructor(props) {
     super(props)
     this.state = { introStyle: styles.Intro }
@@ -19,22 +20,7 @@ export default class Trends extends Component {
     this.setState((prevState) => {
       return Object.assign(prevState, {intervalId: intervalId})
     })
-
-    const widthChange = (mq) => {
-      if (mq.matches) {
-        this.setState((prevState) => {
-          return Object.assign(prevState, {introStyle: `${styles.Intro} ${styles.IntroOver1180px}`})
-        })
-      } else {
-        this.setState((prevState) => {
-          return Object.assign(prevState, {introStyle: styles.Intro})
-        })
-      }
-    }
-
-    const mq = window.matchMedia('(min-width: 1180px)')
-    mq.addListener(widthChange)
-    widthChange(mq)
+    this.setMediaQuery('(min-width: 1180px)', styles.Intro, styles.IntroOver1180px)
   }
 
   componentWillUnmount() {
@@ -49,7 +35,7 @@ export default class Trends extends Component {
     let intro = null
     if (!loggedIn) {
       intro = (
-        <div className={`${globStyles.Container} ${this.state.introStyle}`}>
+        <div className={`${globStyles.Container} ${this.state.mediaStyle}`}>
           <login>
             <intro-p>Welcome to DocNow, an app built to appraise social media content for potential collection.
               <a href="http://docnow.io">Learn more.</a>

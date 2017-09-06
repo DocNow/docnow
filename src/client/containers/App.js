@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import MediaQueryComponent from '../components/MediaQueryComponent'
 import { Route } from 'react-router-dom'
 import { push } from 'react-router-redux'
 import store from '../store'
@@ -13,7 +14,7 @@ import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
 import styles from '../styles/App.css'
 
-class App extends Component {
+class App extends MediaQueryComponent {
   constructor(props) {
     super(props)
     this.state = { headerStyle: styles.Header }
@@ -31,26 +32,12 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const widthChange = (mq) => {
-      if (mq.matches) {
-        this.setState(() => {
-          return {appStyle: `${styles.App} ${styles.AppUnder780px}`}
-        })
-      } else {
-        this.setState(() => {
-          return {appStyle: styles.App}
-        })
-      }
-    }
-
-    const mq = window.matchMedia('(max-width: 780px)')
-    mq.addListener(widthChange)
-    widthChange(mq)
+    this.setMediaQuery('(max-width: 780px)', styles.App, styles.AppUnder780px)
   }
 
   render() {
     return (
-      <div className={this.state.appStyle}>
+      <div className={this.state.mediaStyle}>
         <Header />
         <main>
           <Route exact path="/" component={TrendsPage} />
