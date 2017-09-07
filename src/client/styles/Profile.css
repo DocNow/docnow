@@ -1,8 +1,5 @@
-.Preview {
-  background-color: #4A4A4A;
-}
-
 .Preview img {
+  background-color: #4A4A4A;
   max-height: 100px;
   padding: 10px;
 }

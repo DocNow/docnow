@@ -2,10 +2,9 @@
   color: #1E77B6;
   display: inline-block;
   position: relative;
-  min-width: 64px;
   height: 36px;
   padding: 0 16px;
-  margin: 20px 0px 20px 0px;
+  margin: 20 0 20 0;
   border: none;
   border-radius: 2px;
   outline: solid 1px;
@@ -23,11 +22,13 @@
   box-sizing: border-box;
   box-shadow: 1px 2px 3px 1px rgba(30, 119,182,0.2), 0 2px 3px 0 rgba(0,0,0,0.19);
   -webkit-appearance: none;
-
+}
+.Button i {
+  padding-left: 5px;
 }
 .Button:hover {
-    cursor: pointer;
-    color: #ffffff !important;
-    outline: none !important;
-    background-color: #1e77b6;
-  }
+  cursor: pointer;
+  color: #ffffff !important;
+  outline: none !important;
+  background-color: #1e77b6;
+}

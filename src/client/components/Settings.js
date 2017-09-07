@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Keys from './Keys'
-import style from '../styles/Settings.css'
+// import globStyles from '../styles/App.css'
+import button from '../styles/Button.css'
+import textfield from '../styles/Textfield.css'
 
 export default class Settings extends Component {
 
@@ -11,18 +13,7 @@ export default class Settings extends Component {
 
   render() {
     return (
-      <form
-        onSubmit={(e) => {
-          e.preventDefault()
-          this.props.saveSettings().then(() => {
-            if (this.props.userLoggedIn) {
-              this.props.returnHome()
-            } else {
-              window.location = '/auth/twitter/'
-            }
-          })
-        }}
-        className={style.Settings}>
+      <div className={textfield.Textfield}>
         <p>Welcome! To use DocNow, you need to obtain a Consumer Key and Consumer Key from Twitter (learn more)</p>
         <Keys
           appKey={this.props.appKey}
@@ -30,9 +21,17 @@ export default class Settings extends Component {
           updateSettings={this.props.updateSettings}
         />
         <p>
-          <button>Save</button>
+          <button className={button.Button} onClick={()=>{
+            this.props.saveSettings().then(() => {
+              if (this.props.userLoggedIn) {
+                this.props.returnHome()
+              } else {
+                window.location = '/auth/twitter/'
+              }
+            })
+          }}>Save</button>
         </p>
-      </form>
+      </div>
     )
   }
 }
