@@ -1,4 +1,3 @@
-.Intro {}
 .Trends {
   position: relative;
   height: 700px;
@@ -18,37 +17,54 @@
   justify-content: center;
 }
 
-.Intro intro-p {
-  font-family: 'Roboto:300' serif;
-  font-size: 20px;
-  font-weight: 200 !important;
-  color: #666666;
-  margin-left: 20px;
-  margin-top:20px;
-  align-self: flex-start;
-}
-
-.Intro intro-p a {
-  padding-left: 5px;
-    font-size: 10pt;
-    color: #666666;
-}
-
-.Intro login  {
+.Login  {
   display: flex;
   flex-direction: column;
   margin-right: 50px !important;
   align-items: flex-end;
 }
 
-.Intro login a {
+.Login a {
   font-family: 'Roboto:300' serif;
   font-size: 10pt;
   color: #666666;
 }
 
-.IntroOver1180px {}
+.Newlocation {
+  background-color: #ffffff;
+  padding-right:  10px;
+  padding-left: 20px;
+}
 
-.IntroOver1180px login button {
-  margin-top: -25px;
+.Newlocation i {
+  padding: 10px;
+}
+
+.Newlocation select {
+  border-style: none;
+  padding: 2px 2px 2px 2px;
+  font-size: 16pt;
+  text-transform: uppercase;
+}
+
+.Newlocation select option {
+    padding: 2px 2px 2px 2px;
+    font-size: 14px;
+    width: 100px;
+
+}
+
+.Newlocation select:disabled {
+  color: #666666;
+}
+
+.Newlocation button {
+  color: #1E77B6;
+  border-style: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.Newlocation button:disabled {
+  color: inherit;
 }

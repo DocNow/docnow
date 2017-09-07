@@ -1,14 +1,8 @@
-.Profile {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 99vw;
+.Preview {
+  background-color: #4A4A4A;
 }
 
-.Profile button {
-  background-color: lightgreen;
-}
-
-.Place {
+.Preview img {
+  max-height: 100px;
+  padding: 10px;
 }

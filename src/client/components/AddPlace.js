@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
+import styles from '../styles/Trends.css'
 
 export default class AddPlace extends Component {
 
@@ -33,16 +34,18 @@ export default class AddPlace extends Component {
 
   render() {
 
-    let inputProps = {}
+    const inputProps = {
+      placeholder: 'ADD LOCATION'
+    }
     let placeDisabled = false
 
     if (this.props.places.length >= this.props.limit) {
-      inputProps = {disabled: true}
+      inputProps.disabled = true
       placeDisabled = true
     }
-
     return (
-      <div>
+      <div className={styles.Newlocation}>
+        <h2>
         <Autocomplete
            getItemValue={(item) => item}
            sortItems={this.sortPlaces}
@@ -58,8 +61,8 @@ export default class AddPlace extends Component {
            onSelect={value => this.props.updateNewTrend(value)}
            inputProps={inputProps}
          />
-         &nbsp;
-         <button onClick={ this.checkPlace } className="save" disabled={placeDisabled}>Add Place</button>
+         <button href="#" onClick={ this.checkPlace } className="save" disabled={placeDisabled}><i className="fa fa-plus" aria-hidden="true"/></button>
+        </h2>
       </div>
     )
   }

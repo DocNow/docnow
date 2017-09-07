@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-// import AddPlace from './AddPlace'
 import FlipMove from 'react-flip-move'
 import { Link } from 'react-router-dom'
 import styles from '../styles/Card.css'
@@ -8,9 +7,11 @@ import styles from '../styles/Card.css'
 export default class Place extends Component {
   render() {
     let trends = null
-    // const remove = null
+    let remove = null
     if (this.props.username) {
-      // remove = <button onClick={()=>{this.props.deleteTrend(this.props.placeId)}}>x</button>
+      remove = (
+        <a href="#" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}}><i className="fa fa-minus" aria-hidden="true"/></a>
+      )
       trends = this.props.trends.slice(0, 8).map(trend =>
         <li key={ trend.name + trend.text }><Link to={'/search/' + encodeURIComponent(trend.name)}>{ trend.name } { trend.tweets }</Link></li>
       )
@@ -20,22 +21,8 @@ export default class Place extends Component {
       )
     }
 
-    const addPlace = <h2>{this.props.name}</h2>
-    // if (this.props.username) {
-    //   addPlace = (
-    //     <AddPlace
-    //       limit={5}
-    //       places={this.props.trends}
-    //       world={this.props.world}
-    //       updateNewTrend={this.props.updateNewTrend}
-    //       placeLabelToId={this.props.placeLabelToId}
-    //       deleteTrend={this.props.deleteTrend}
-    //       saveTrends={this.props.saveTrends} />
-    //   )
-    // }
-
     return (
-      <card className={styles.Card}>
+      <div className={styles.Card}>
         <div className={styles.Data}>
           <FlipMove
             duration={2000}
@@ -44,10 +31,11 @@ export default class Place extends Component {
             { trends }
           </FlipMove>
         </div>
-        <div className={styles.Cardcontainer}>
-        {addPlace}
+        <div className={styles.Cardtitle}>
+          <h2>{this.props.name}</h2>
+          {remove}
         </div>
-      </card>
+      </div>
     )
   }
 }
@@ -58,8 +46,5 @@ Place.propTypes = {
   name: PropTypes.string,
   placeId: PropTypes.string,
   username: PropTypes.string,
-  deleteTrend: PropTypes.func,
-  saveTrends: PropTypes.func,
-  placeLabelToId: PropTypes.func,
-  updateNewTrend: PropTypes.func
+  deleteTrend: PropTypes.func
 }

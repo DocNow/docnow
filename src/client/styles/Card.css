@@ -1,5 +1,6 @@
 .Cardholder {
   display: inline-flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
 }
@@ -36,6 +37,18 @@
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
+.Cardtitle {
+  display: flex;
+  justify-content: space-around;
+  align-items: baseline;
+  padding: 2px 16px;
+}
+
+.Cardtitle a {
+  padding-left: 5px;
+  padding-right: 20px;
+}
+
 .Data {
   padding-top: 20px;
   text-align: center;
@@ -48,18 +61,4 @@
 .Data li {
   padding-bottom: 10px;
   display: block !important;
-}
-
-/* Add some padding inside the card container */
-.Cardcontainer {
-  display: flex;
-  justify-content: space-around;
-  align-items: baseline;
-    padding: 2px 16px;
-}
-
-.Cardcontainer a {
-  padding-left: 5px;
-    font-size: 10pt;
-    color: #666666;
 }

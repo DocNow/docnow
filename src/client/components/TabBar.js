@@ -23,7 +23,7 @@ export default class TabBar extends Component {
         break
     }
     return (
-      <tabBar className={styles.TabBar}>
+      <div className={styles.TabBar}>
         <ul>
           <li><a className={`${styles.Tab} ${trendsActive}`} href="/">
           <i className="fa fa-area-chart" aria-hidden="true"/> Trending</a></li>
@@ -32,7 +32,7 @@ export default class TabBar extends Component {
           <li><a className={`${styles.Tab} ${savedsearchesActive}`} href="/savedsearches">
           <i className="fa fa-archive" aria-hidden="true"/> Saved Searches</a></li>
         </ul>
-      </tabBar>
+      </div>
     )
   }
 

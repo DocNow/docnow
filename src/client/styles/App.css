@@ -11,11 +11,12 @@
 }
 
 .App h2 {
-position: relative;
-text-transform: uppercase;
-color: #2E2633;
-font-size: 16pt;
-font-weight: 500;
+  position: relative;
+  text-transform: uppercase;
+  color: #444444;
+  font-size: 14pt;
+  font-stretch: expanded;
+  font-weight: 500;
 }
 
 .App ul {

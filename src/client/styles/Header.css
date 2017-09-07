@@ -5,15 +5,19 @@
   margin-bottom: 20px;
 }
 
-.Header avatar {
+.Avatar {
   padding-left: 10px;
   padding-top: 5px;
 }
 
-.Header logo {
+.Logo {
   display: inline-block;
   margin: 0 auto;
   padding-top: 10px;
+}
+
+.Logo img {
+  max-height: 40px;
 }
 
 .HeaderUnder480px {

@@ -20,6 +20,12 @@ export default class Header extends MediaQueryComponent {
   render() {
     let appBar = null
     let tabBar = null
+    let logo = null
+    if (this.props.logoUrl) {
+      logo = <img src={this.props.logoUrl}/>
+    } else {
+      logo = <img src={mith}/>
+    }
     if (this.props.twitterScreenName && this.props.twitterAvatarUrl) {
       appBar = <AppBar />
       tabBar = <TabBar location={this.props.location}/>
@@ -29,8 +35,8 @@ export default class Header extends MediaQueryComponent {
       <div>
         {appBar}
         <header className={this.state.mediaStyle}>
-          <avatar><a href="http://docnow.io"><img src={dn}/></a></avatar>
-          <logo><center><img src={mith}/></center></logo>
+          <div className={styles.Avatar}><a href="http://docnow.io"><img src={dn}/></a></div>
+          <div className={styles.Logo}><center>{logo}</center></div>
         </header>
         {tabBar}
       </div>
@@ -42,5 +48,6 @@ Header.propTypes = {
   twitterScreenName: PropTypes.string,
   twitterAvatarUrl: PropTypes.string,
   getUser: PropTypes.func,
-  location: PropTypes.string
+  location: PropTypes.string,
+  logoUrl: PropTypes.string
 }

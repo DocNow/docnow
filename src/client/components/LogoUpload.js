@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import dn from '../images/dn.png'
+import def from '../images/mith.png'
+import styles from '../styles/Profile.css'
 import PropTypes from 'prop-types'
 
 export default class LogoUpload extends Component {
   state = {
-    imagePreviewUrl: this.props.logoUrl ? this.props.logoUrl : dn
+    imagePreviewUrl: this.props.logoUrl ? this.props.logoUrl : def
   }
 
   handleImageChange(e) {
@@ -39,17 +40,18 @@ export default class LogoUpload extends Component {
     const {imagePreviewUrl} = this.state
     let imagePreview = null
     if (imagePreviewUrl) {
-      imagePreview = (<img width="100" height="100" src={imagePreviewUrl} />)
+      imagePreview = (<img src={imagePreviewUrl} />)
     } else {
-      imagePreview = (<div className="previewText">Please select an Image for Preview</div>)
+      imagePreview = (<span>Please select an Image for Preview</span>)
     }
 
     return (
-      <div className="previewComponent">
-          <input className="fileInput"
+      <div>
+        <label>Your Logo:</label>
+          <input
             type="file"
             onChange={(e)=>this.handleImageChange(e)} />
-        <div className="imgPreview">
+        <div className={styles.Preview}>
           {imagePreview}
         </div>
       </div>
