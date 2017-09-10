@@ -45,27 +45,27 @@ export default class Search extends Component {
         <div className={introStyles.IntroP}><center>Retrieved XX,XXX tweets so far using Twitter Search API for last 24 hours and Twitter Stream API</center></div>
         <div className={cards.Cardholder}>
           <div className={cards.Card}>
-            <div className={cards.Data}>
-              <TweetListBox endpoint={this.props.searchInfo.tweets}/>
-            </div>
             <div className={cards.Cardtitle}>
               <h2>Sample Tweets</h2>
             </div>
+            <div className={cards.Data}>
+              <TweetListBox endpoint={this.props.searchInfo.tweets}/>
+            </div>
           </div>
           <div className={cards.Card}>
-            <div className={cards.Data}>
-              <UserListBox endpoint={this.props.searchInfo.users}/>
-            </div>
             <div className={cards.Cardtitle}>
               <h2>Top Users</h2>
             </div>
+            <div className={cards.Data}>
+              <UserListBox endpoint={this.props.searchInfo.users}/>
+            </div>
           </div>
           <div className={cards.Card}>
-            <div className={cards.Data}>
-              <HashtagsBox endpoint={this.props.searchInfo.hashtags}/>
-            </div>
             <div className={cards.Cardtitle}>
               <h2>Top Hashtags</h2>
+            </div>
+            <div className={cards.Data}>
+              <HashtagsBox endpoint={this.props.searchInfo.hashtags}/>
             </div>
           </div>
           <div className={cards.Card}>
