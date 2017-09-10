@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from './Search.css'
+import style from '../styles/Search.css'
 import User from './User'
 
 export default class TweetList extends Component {

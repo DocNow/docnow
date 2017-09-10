@@ -1,4 +1,5 @@
-import React, { Component } from 'react'
+import React from 'react'
+import MediaQueryComponent from '../components/MediaQueryComponent'
 import { Route } from 'react-router-dom'
 import { push } from 'react-router-redux'
 import store from '../store'
@@ -11,9 +12,13 @@ import SearchPage from './SearchPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
-import './App.css'
+import styles from '../styles/App.css'
 
-class App extends Component {
+class App extends MediaQueryComponent {
+  constructor(props) {
+    super(props)
+    this.state = { headerStyle: styles.Header }
+  }
 
   componentWillMount() {
     store.dispatch(getSettings())
@@ -26,9 +31,13 @@ class App extends Component {
       })
   }
 
+  componentDidMount() {
+    this.setMediaQuery('(max-width: 780px)', styles.App, styles.AppUnder780px)
+  }
+
   render() {
     return (
-      <div>
+      <div className={this.state.mediaStyle}>
         <Header />
         <main>
           <Route exact path="/" component={TrendsPage} />

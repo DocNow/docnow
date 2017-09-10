@@ -1,0 +1,70 @@
+.Trends {
+  position: relative;
+  height: 700px;
+  margin: 20px 0px 20px 0px;
+   /* Location of the image */
+  /*background-image: url("images/mapbg.png");*/
+  background-position: center center;
+  background-repeat: no-repeat;
+  /* Background image is fixed in the viewport so that it doesn't move when
+     the content's height is greater than the image's height */
+  background-attachment: fixed;
+  /* This is what makes the background image rescale based
+     on the container's size */
+  background-size: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Login  {
+  display: flex;
+  flex-direction: column;
+  margin-right: 50px !important;
+  align-items: flex-end;
+}
+
+.Login a {
+  font-family: 'Roboto:300' serif;
+  font-size: 10pt;
+  color: #666666;
+}
+
+.Newlocation {
+  background-color: #ffffff;
+  padding-right:  10px;
+  padding-left: 20px;
+}
+
+.Newlocation i {
+  padding: 10px;
+}
+
+.Newlocation select {
+  border-style: none;
+  padding: 2px 2px 2px 2px;
+  font-size: 16pt;
+  text-transform: uppercase;
+}
+
+.Newlocation select option {
+    padding: 2px 2px 2px 2px;
+    font-size: 14px;
+    width: 100px;
+
+}
+
+.Newlocation select:disabled {
+  color: #666666;
+}
+
+.Newlocation button {
+  color: #1E77B6;
+  border-style: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+.Newlocation button:disabled {
+  color: inherit;
+}
