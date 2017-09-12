@@ -50,7 +50,7 @@ if (isDevelopment) {
     res.end()
   })
 } else {
-  app.get('/', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
+  app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
   app.use(express.static(distDir))
 }
 
