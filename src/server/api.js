@@ -122,22 +122,14 @@ app.post('/searches', (req, res) => {
   if (req.user) {
     db.createSearch(req.user.id, req.body.q)
       .then((search) => {
-        const searchId = search.id
-        res.json({
-          ...search,
-          tweets: `/api/v${version}/search/${searchId}/tweets`,
-          users: `/api/v${version}/search/${searchId}/users`,
-          hashtags: `/api/v${version}/search/${searchId}/hashtags`,
-          media: `/api/v${version}/search/${searchId}/media`
-        })
         db.importFromSearch(search)
+        res.redirect(303, `/api/v1/search/${search.id}`)
       })
   }
 })
 
 app.get('/search/:searchId/tweets', (req, res) => {
   if (req.user) {
-    console.log('looking up ' + req.params.searchId)
     db.getSearch(req.params.searchId)
       .then((search) => {
         db.getTweets(search)
@@ -145,6 +137,23 @@ app.get('/search/:searchId/tweets', (req, res) => {
             res.json(tweets)
           })
       })
+  }
+})
+
+app.get('/search/:searchId', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.params.searchId).then((search) => {
+      db.getSearchSummary(search).then((summ) => {
+        res.json({
+          ...summ,
+          url: `/api/v${version}/search/${search.id}`,
+          tweets: `/api/v${version}/search/${search.id}/tweets`,
+          users: `/api/v${version}/search/${search.id}/users`,
+          hashtags: `/api/v${version}/search/${search.id}/hashtags`,
+          media: `/api/v${version}/search/${search.id}/media`
+        })
+      })
+    })
   }
 })
 
@@ -157,34 +166,11 @@ app.get('/search/:searchId/users', (req, res) => {
             res.json(users)
           })
       })
-    /*
-    res.json([
-      {
-        handle: 'documentnow',
-        avatarUrl: 'https://pbs.twimg.com/profile_images/728713121884311552/Yjoenpxp_normal.png',
-        screenName: 'DocumentingTheNow',
-        tweets: 3789,
-        followers: 123,
-        following: 123,
-        matchingTweets: 5
-      },
-      {
-        handle: 'raffazizzi',
-        avatarUrl: 'https://pbs.twimg.com/profile_images/511510383496941568/evXUTpyI_normal.jpeg',
-        screenName: 'Raff',
-        tweets: 1293,
-        followers: 56,
-        following: 46,
-        matchingTweets: 1
-      },
-    ])
-    */
   }
 })
 
 app.get('/search/:searchId/hashtags', (req, res) => {
   if (req.user) {
-    console.log('looking up ' + req.params.searchId)
     db.getSearch(req.params.searchId)
       .then((search) => {
         db.getHashtags(search)

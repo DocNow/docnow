@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Keys from './Keys'
-// import globStyles from '../styles/App.css'
 import button from '../styles/Button.css'
 import textfield from '../styles/Textfield.css'
 

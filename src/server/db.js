@@ -470,6 +470,38 @@ export class Database {
     })
   }
 
+  getSearchSummary(search) {
+    return new Promise((resolve, reject) => {
+      const body = {
+        query: {
+          match: {
+            search: search.id
+          }
+        },
+        aggregations: {
+          minDate: {min: {field: 'created'}},
+          maxDate: {max: {field: 'created'}}
+        }
+      }
+      this.es.search({
+        index: this.esTweetIndex,
+        type: 'tweet',
+        body: body
+      }).then((resp) => {
+        resolve({
+          ...search,
+          minDate: new Date(resp.aggregations.minDate.value),
+          maxDate: new Date(resp.aggregations.maxDate.value),
+          count: resp.hits.total
+        })
+      })
+      .catch((err) => {
+        log.error(err)
+        reject(err)
+      })
+    })
+  }
+
   importFromSearch(search) {
     return new Promise((resolve, reject) => {
       this.getTwitterClientForUser(search.creator)

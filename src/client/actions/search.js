@@ -2,6 +2,7 @@ export const SET_TWITTER_SEARCH = 'SET_TWITTER_SEARCH'
 export const SET_TWITTER_SEARCH_TWEETS = 'SET_TWITTER_SEARCH_TWEETS'
 export const SET_TWITTER_SEARCH_USERS = 'SET_TWITTER_SEARCH_USERS'
 export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
+export const SET_TWITTER_SEARCH_SUMMARY = 'SET_TWITTER_SEARCH_SUMMARY'
 
 const setTwitterSearch = (searchInfo) => {
   return {
@@ -31,6 +32,13 @@ const setTwitterSearchHashtags = (hashtags) => {
   }
 }
 
+const setTwitterSearchSummary = (summary) => {
+  return {
+    type: SET_TWITTER_SEARCH_SUMMARY,
+    summary
+  }
+}
+
 export const searchTwitter = (q) => {
   return (dispatch, getState) => {
     const { user } = getState()
@@ -39,12 +47,14 @@ export const searchTwitter = (q) => {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(body),
+      redirect: 'follow',
       credentials: 'same-origin'
     }
     return fetch('/api/v1/searches', opts)
-      .then((resp) => resp.json())
-      .then((result) => {
-        dispatch(setTwitterSearch(result))
+      .then((resp) => {
+        resp.json().then((result) => {
+          dispatch(setTwitterSearch(result))
+        })
       })
   }
 }
@@ -75,6 +85,16 @@ export const getHashtags = (endpoint) => {
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchHashtags(result))
+      })
+  }
+}
+
+export const getSearchSummary = (endpoint) => {
+  return (dispatch) => {
+    fetch(endpoint, {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTwitterSearchSummary(result))
       })
   }
 }
