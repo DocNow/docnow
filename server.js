@@ -50,8 +50,8 @@ if (isDevelopment) {
     res.end()
   })
 } else {
-  app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
   app.use(express.static(distDir))
+  app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
 }
 
 log.info('starting app')
