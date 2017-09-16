@@ -86,10 +86,27 @@ export default class Search extends Component {
               <MediaBox endpoint={this.props.searchInfo.tweets}/>
             </div>
             <div className={card.CardTitle}>
-              <h2>Media</h2>
+              <h2>URLs</h2>
             </div>
           </div>
 
+          <div className={card.Card}>
+            <div className={card.Data}>
+              <MediaBox endpoint={this.props.searchInfo.tweets}/>
+            </div>
+            <div className={card.CardTitle}>
+              <h2>Images</h2>
+            </div>
+          </div>
+
+          <div className={card.Card}>
+            <div className={card.Data}>
+              <MediaBox endpoint={this.props.searchInfo.tweets}/>
+            </div>
+            <div className={card.CardTitle}>
+              <h2>Video</h2>
+            </div>
+          </div>
         </div>
 
       </div>
