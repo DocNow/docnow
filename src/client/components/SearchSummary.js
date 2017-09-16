@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import style from '../styles/Intro.css'
+import button from '../styles/Button.css'
 
 export default class SearchSummary extends Component {
 
@@ -32,11 +33,9 @@ export default class SearchSummary extends Component {
       message = `${this.props.count} tweets from ${this.props.minDate} to ${this.props.maxDate} from the Twitter Search API.`
     }
     return (
-      <div className={style.Login}>
-        <div className={style.Intro}>
-          {message}
-          <button type="button">Update</button>
-        </div>
+      <div className={style.Intro}>
+        <div>{message}</div>
+        <button>Update</button>
       </div>
     )
   }

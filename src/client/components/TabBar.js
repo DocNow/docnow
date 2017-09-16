@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
+
 import styles from '../styles/TabBar.css'
 
 export default class TabBar extends Component {
@@ -25,10 +26,10 @@ export default class TabBar extends Component {
     return (
       <div className={styles.TabBar}>
         <ul>
-          <li><a className={`${styles.Tab} ${trendsActive}`} href="/">
-          <i className="fa fa-area-chart" aria-hidden="true"/> Trending</a></li>
-          <li><a className={`${styles.Tab} ${searchActive}`} href="/search">
-          <i className="fa fa-search" aria-hidden="true"/> Search</a></li>
+          <li><Link className={`${styles.Tab} ${trendsActive}`} to="/">
+          <i className="fa fa-area-chart" aria-hidden="true"/> Trending</Link></li>
+          <li><Link className={`${styles.Tab} ${searchActive}`} to="/search">
+          <i className="fa fa-search" aria-hidden="true"/> Search</Link></li>
           <li><a className={`${styles.Tab} ${savedsearchesActive}`} href="/savedsearches">
           <i className="fa fa-archive" aria-hidden="true"/> Saved Searches</a></li>
         </ul>

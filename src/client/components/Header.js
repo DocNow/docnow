@@ -9,13 +9,14 @@ import TabBar from './TabBar'
 import styles from '../styles/Header.css'
 
 export default class Header extends MediaQueryComponent {
+
   constructor(props) {
     super(props)
-    this.state = { headerStyle: styles.header }
+    this.state = { headerStyle: styles.Header }
   }
 
   componentDidMount() {
-    this.setMediaQuery('(max-width: 480px)', styles.header, styles.headerUnder480px)
+    this.setMediaQuery('(max-width: 480px)', styles.Header, styles.HeaderUnder480px)
   }
 
   render() {
@@ -36,8 +37,8 @@ export default class Header extends MediaQueryComponent {
       <div>
         {appBar}
         <header className={this.state.mediaStyle}>
-          <div className={styles.avatar}><a href="http://docnow.io"><img src={dn}/></a></div>
-          <div className={styles.logo}><center>{logo}</center></div>
+          <div className={styles.Avatar}><a href="http://docnow.io"><img src={dn}/></a></div>
+          <div className={styles.Logo}><center>{logo}</center></div>
         </header>
         {tabBar}
       </div>

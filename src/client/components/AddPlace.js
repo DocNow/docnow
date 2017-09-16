@@ -45,7 +45,7 @@ export default class AddPlace extends Component {
       placeDisabled = true
     }
     return (
-      <div className={trends.newLocation}>
+      <div className={trends.NewLocation}>
         <h2>
         <Autocomplete
            getItemValue={(item) => item}
@@ -62,7 +62,7 @@ export default class AddPlace extends Component {
            onSelect={value => this.props.updateNewTrend(value)}
            inputProps={inputProps}
          />
-         <button href="#" onClick={ this.checkPlace } className="save" disabled={placeDisabled}><i className="fa fa-plus" aria-hidden="true"/></button>
+         <button href="#" onClick={ this.checkPlace } className="Save" disabled={placeDisabled}><i className="fa fa-plus" aria-hidden="true"/></button>
         </h2>
       </div>
     )

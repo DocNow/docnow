@@ -17,7 +17,7 @@ export default class Media extends Component {
       loader = 'Loading...'
     }
     return (
-        <div className={ style.Box }>
+        <div className={style.Box}>
           {loader}
           {this.props.tweets.map(tweet => (
             tweet.photos.map((medium, idx) => (

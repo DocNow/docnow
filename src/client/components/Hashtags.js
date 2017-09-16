@@ -17,7 +17,7 @@ export default class Hashtags extends Component {
       loader = 'Loading...'
     }
     return (
-        <div className={ style.Box }>
+        <div className={style.Box}>
           {loader}
           {this.props.hashtags.map(ht => (
             <Hashtag key={ht.hashtag} data={ht}/>

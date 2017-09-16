@@ -4,11 +4,10 @@ import PropTypes from 'prop-types'
 import Place from './Place'
 import AddPlace from './AddPlace'
 
-import trends from '../styles/Trends.css'
 import intro from '../styles/Intro.css'
 import button from '../styles/Button.css'
 import card from '../styles/Card.css'
-import app from '../styles/App.css'
+import trends from '../styles/Trends.css'
 
 export default class Trends extends MediaQueryComponent {
   constructor(props) {
@@ -38,16 +37,15 @@ export default class Trends extends MediaQueryComponent {
     let newLocation = null
     if (!loggedIn) {
       introElement = (
-        <div className={`${app.container} ${this.state.mediaStyle}`}>
-          <div className={intro.Login}>
-            <div className={intro.Intro}>Welcome to DocNow, an app built to appraise social media content for potential collection.
-              <a href="http://docnow.io">Learn more.</a>
-            </div>
-            <button className={button.button} onClick={() => {window.location = '/auth/twitter'; return false}}>
-              <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
-            </button>
-          <a href="/">Request an Account</a>
+        <div className={this.state.mediaStyle}>
+          <div>
+            Welcome to DocNow, an app built to appraise social media content for potential collection.
+            <a href="http://docnow.io">Learn more.</a>
           </div>
+          <button className={button.button} onClick={() => {window.location = '/auth/twitter'; return false}}>
+            <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
+          </button>
+          <a href="/">Request an Account</a>
         </div>
       )
     } else {
@@ -65,9 +63,8 @@ export default class Trends extends MediaQueryComponent {
     }
 
     return (
-      <div>
+      <div className={trends.Trends}>
         {introElement}
-        <div className={trends.Trends}>
           <div className={card.CardHolder}>
             {this.props.trends.map(place => (
               <Place
@@ -81,7 +78,6 @@ export default class Trends extends MediaQueryComponent {
             ))}
             {newLocation}
           </div>
-        </div>
       </div>
     )
   }

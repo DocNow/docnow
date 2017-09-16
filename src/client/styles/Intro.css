@@ -1,4 +1,13 @@
 .Intro {
+  display: flex;
+  flex-direction: column;
+  margin-right: 50px !important;
+  align-items: flex-end;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.Intro div {
   font-family: 'Roboto:300' serif;
   font-size: 20px;
   font-weight: 200 !important;
@@ -10,25 +19,16 @@
 
 .Intro a {
   padding-left: 5px;
-    font-size: 10pt;
-    color: #666666;
-}
-
-.Login  {
-  display: flex;
-  flex-direction: column;
-  margin-right: 50px !important;
-  align-items: flex-end;
-}
-
-.Login a {
-  font-family: 'Roboto:300' serif;
   font-size: 10pt;
   color: #666666;
 }
 
+.Intro button {
+  margin: -25px 0px 20px 0px;
+}
+
 @media screen and (min-width: 1180px) {
-  .login button {
+  .Login button {
     margin-top: -25px;
   }
 }

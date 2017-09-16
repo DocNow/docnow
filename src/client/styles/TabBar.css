@@ -6,7 +6,7 @@
 }
 
 .TabBar a {
-    color: #4A4A4A;
+  color: #4A4A4A;
 }
 
 .TabBar a:hover, a:active {
@@ -14,18 +14,17 @@
 }
 
 .Tab {
- font-size: 14pt;
- font-weight: 500;
- min-width: 120px;
- min-height: 48px;
- padding: 0 24px 0 0;
- text-align: center;
- text-decoration: none;
- overflow: hidden;
- vertical-align: middle;
- }
+  font-size: 14pt;
+  font-weight: 500;
+  min-width: 120px;
+  min-height: 48px;
+  padding: 0 24px 0 0;
+  text-align: center;
+  text-decoration: none;
+  overflow: hidden;
+  vertical-align: middle;
+}
 
 .Active {
-/*  border-bottom: 3px solid #1E77B6; */
   color: #1E77B6 !important;
 }

@@ -19,7 +19,7 @@ class App extends MediaQueryComponent {
 
   constructor(props) {
     super(props)
-    this.state = { headerStyle: styles.header }
+    this.state = { headerStyle: styles.Header }
   }
 
   componentWillMount() {
@@ -34,7 +34,7 @@ class App extends MediaQueryComponent {
   }
 
   componentDidMount() {
-    this.setMediaQuery('(max-width: 780px)', styles.app, styles.appUnder780px)
+    this.setMediaQuery('(max-width: 780px)', styles.App, styles.AppUnder780px)
   }
 
   render() {

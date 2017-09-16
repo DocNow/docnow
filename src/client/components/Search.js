@@ -14,7 +14,7 @@ export default class Search extends Component {
 
   constructor(props) {
     super(props)
-    this.state = { searchTerm: '' }
+    this.state = {searchTerm: ''}
     this.setSearchTerm = this.setSearchTerm.bind(this)
     this.searchNewTerm = this.searchNewTerm.bind(this)
   }
@@ -38,21 +38,22 @@ export default class Search extends Component {
 
   render() {
     return (
-      <div className={styles.SearchBar}>
-
-        <div className={styles.Form}>
-          <input
-            required
-            type="text"
-            value={decodeURIComponent(this.state.searchTerm)}
-            placeholder="#hashtag"
-            onChange={this.setSearchTerm} />
-          <button
-            className={button.Button}
-            onClick={this.searchNewTerm}>
-            <i className="fa fa-search" aria-hidden="true"/>
-          </button>
-          <a href="#">Search tips</a>
+      <div>
+        <div className={styles.SearchBar}>
+          <div className={styles.Form}>
+            <input
+              required
+              type="text"
+              value={decodeURIComponent(this.state.searchTerm)}
+              placeholder="#hashtag"
+              onChange={this.setSearchTerm} />
+            <button
+              className={button.Button}
+              onClick={this.searchNewTerm}>
+              <i className="fa fa-search" aria-hidden="true"/>
+            </button>
+            <a href="#">Search tips</a>
+          </div>
         </div>
 
         <SearchSummaryBox endpoint={this.props.searchInfo.url}/>
@@ -90,6 +91,7 @@ export default class Search extends Component {
           </div>
 
         </div>
+
       </div>
     )
   }

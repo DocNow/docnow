@@ -11,14 +11,14 @@ export default class Medium extends Component {
     } else {
       medium = (
         <a href={this.props.data.url} target="_blank">
-          <svg className={ style.play } viewBox="0 0 200 200" alt="Play video">
+          <svg className={style.play} viewBox="0 0 200 200" alt="Play video">
               <circle cx="100" cy="100" r="90" fill="none" strokeWidth="15" stroke="#000"/>
               <polygon points="70, 55 70, 145 145, 100" fill="#000"/>
           </svg>
         </a>)
     }
     return (
-      <div className={ style.Medium }>{medium}</div>
+      <div className={style.Medium}>{medium}</div>
     )
   }
 }
