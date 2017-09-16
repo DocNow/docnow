@@ -3,17 +3,17 @@ import MediaQueryComponent from './MediaQueryComponent'
 import PropTypes from 'prop-types'
 import Place from './Place'
 import AddPlace from './AddPlace'
-import mapbg from '../images/mapbg.png'
-import styles from '../styles/Trends.css'
-import introStyles from '../styles/Intro.css'
+
+import trends from '../styles/Trends.css'
+import intro from '../styles/Intro.css'
 import button from '../styles/Button.css'
-import cards from '../styles/Card.css'
-import globStyles from '../styles/App.css'
+import card from '../styles/Card.css'
+import app from '../styles/App.css'
 
 export default class Trends extends MediaQueryComponent {
   constructor(props) {
     super(props)
-    this.state = { introStyle: styles.Intro }
+    this.state = { introStyle: intro.Intro }
   }
 
   componentDidMount() {
@@ -22,7 +22,7 @@ export default class Trends extends MediaQueryComponent {
     this.setState((prevState) => {
       return Object.assign(prevState, {intervalId: intervalId})
     })
-    this.setMediaQuery('(min-width: 1180px)', introStyles.Intro, introStyles.IntroOver1180px)
+    this.setMediaQuery('(min-width: 1180px)', intro.Intro, intro.IntroOver1180px)
   }
 
   componentWillUnmount() {
@@ -34,16 +34,16 @@ export default class Trends extends MediaQueryComponent {
 
   render() {
     const loggedIn = this.props.username ? true : false
-    let intro = null
+    let introElement = null
     let newLocation = null
     if (!loggedIn) {
-      intro = (
-        <div className={`${globStyles.Container} ${this.state.mediaStyle}`}>
-          <div className={styles.Login}>
-            <div className={introStyles.IntroP}>Welcome to DocNow, an app built to appraise social media content for potential collection.
+      introElement = (
+        <div className={`${app.container} ${this.state.mediaStyle}`}>
+          <div className={intro.Login}>
+            <div className={intro.Intro}>Welcome to DocNow, an app built to appraise social media content for potential collection.
               <a href="http://docnow.io">Learn more.</a>
             </div>
-            <button className={button.Button} onClick={() => {window.location = '/auth/twitter'; return false}}>
+            <button className={button.button} onClick={() => {window.location = '/auth/twitter'; return false}}>
               <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
             </button>
           <a href="/">Request an Account</a>
@@ -66,9 +66,9 @@ export default class Trends extends MediaQueryComponent {
 
     return (
       <div>
-        {intro}
-        <div className={styles.Trends} style={{backgroundImage: `url(${mapbg})`}}>
-          <div className={cards.Cardholder}>
+        {introElement}
+        <div className={trends.Trends}>
+          <div className={card.CardHolder}>
             {this.props.trends.map(place => (
               <Place
                 key={place.name}

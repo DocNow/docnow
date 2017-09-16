@@ -12,12 +12,14 @@ import SearchPage from './SearchPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
+
 import styles from '../styles/App.css'
 
 class App extends MediaQueryComponent {
+
   constructor(props) {
     super(props)
-    this.state = { headerStyle: styles.Header }
+    this.state = { headerStyle: styles.header }
   }
 
   componentWillMount() {
@@ -32,7 +34,7 @@ class App extends MediaQueryComponent {
   }
 
   componentDidMount() {
-    this.setMediaQuery('(max-width: 780px)', styles.App, styles.AppUnder780px)
+    this.setMediaQuery('(max-width: 780px)', styles.app, styles.appUnder780px)
   }
 
   render() {

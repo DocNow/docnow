@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import introStyles from '../styles/Intro.css'
+
+import style from '../styles/Intro.css'
 
 export default class SearchSummary extends Component {
 
@@ -26,12 +27,17 @@ export default class SearchSummary extends Component {
   }
 
   render() {
-    let message = <center>Loading...</center>
+    let message = 'Loading...'
     if (this.props.count > 0) {
-      message = <center>{this.props.count} tweets from {this.props.minDate} to {this.props.maxDate} from the Twitter Search API.</center>
+      message = `${this.props.count} tweets from ${this.props.minDate} to ${this.props.maxDate} from the Twitter Search API.`
     }
     return (
-      <div className={introStyles.IntroP}>{message}</div>
+      <div className={style.Login}>
+        <div className={style.Intro}>
+          {message}
+          <button type="button">Update</button>
+        </div>
+      </div>
     )
   }
 }

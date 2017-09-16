@@ -1,28 +1,30 @@
-.Header {
+.header {
   display: flex;
   background-color: #4A4A4A;
   height: 60px;
   margin-bottom: 20px;
 }
 
-.Avatar {
+.avatar {
   padding-left: 10px;
   padding-top: 5px;
+  display: inline;
 }
 
-.Logo {
-  display: inline-block;
+.logo {
+  position: relative;
   margin: 0 auto;
   padding-top: 10px;
 }
 
-.Logo img {
-  max-height: 40px;
-}
-
-.HeaderUnder480px {
+.headerUnder480px {
   height: 50px;
 }
 
-.HeaderUnder480px avatar img { width: 90% }
-.HeaderUnder480px logo img { width: 80%;}
+.headerUnder480px avatar img {
+  width: 90%
+}
+
+.headerUnder480px logo img {
+  width: 80%;
+}

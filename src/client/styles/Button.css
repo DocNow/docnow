@@ -1,4 +1,4 @@
-.Button {
+button {
   color: #1E77B6;
   display: inline-block;
   position: relative;
@@ -23,10 +23,12 @@
   box-shadow: 1px 2px 3px 1px rgba(30, 119,182,0.2), 0 2px 3px 0 rgba(0,0,0,0.19);
   -webkit-appearance: none;
 }
-.Button i {
+
+button i {
   padding-left: 5px;
 }
-.Button:hover {
+
+button:hover {
   cursor: pointer;
   color: #ffffff !important;
   outline: none !important;

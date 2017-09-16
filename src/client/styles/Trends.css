@@ -1,9 +1,9 @@
 .Trends {
   position: relative;
-  height: 700px;
-  margin: 20px 0px 20px 0px;
+  height: 760px;
+  margin: 20 0 20 0;
    /* Location of the image */
-  /*background-image: url("images/mapbg.png");*/
+  background-image: url("../images/mapbg.png");
   background-position: center center;
   background-repeat: no-repeat;
   /* Background image is fixed in the viewport so that it doesn't move when
@@ -13,58 +13,35 @@
      on the container's size */
   background-size: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
 }
 
-.Login  {
-  display: flex;
-  flex-direction: column;
-  margin-right: 50px !important;
-  align-items: flex-end;
+.Trends a {
+    color: #1E77B6;
 }
 
-.Login a {
-  font-family: 'Roboto:300' serif;
-  font-size: 10pt;
-  color: #666666;
-}
-
-.Newlocation {
+.NewLocation {
   background-color: #ffffff;
   padding-right:  10px;
-  padding-left: 20px;
 }
 
-.Newlocation i {
+.NewLocation i {
   padding: 10px;
 }
 
-.Newlocation select {
+input {
   border-style: none;
   padding: 2px 2px 2px 2px;
   font-size: 16pt;
   text-transform: uppercase;
+  text-align: center;
 }
 
-.Newlocation select option {
-    padding: 2px 2px 2px 2px;
-    font-size: 14px;
-    width: 100px;
-
+input option {
+  padding: 2px 2px 2px 2px;
+  font-size: 14px;
 }
 
-.Newlocation select:disabled {
+input:disabled {
   color: #666666;
-}
-
-.Newlocation button {
-  color: #1E77B6;
-  border-style: none;
-  background-color: transparent;
-  cursor: pointer;
-}
-
-.Newlocation button:disabled {
-  color: inherit;
 }

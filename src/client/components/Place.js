@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import FlipMove from 'react-flip-move'
 import { Link } from 'react-router-dom'
-import styles from '../styles/Card.css'
+import card from '../styles/Card.css'
 
 export default class Place extends Component {
   render() {
@@ -21,8 +21,8 @@ export default class Place extends Component {
     }
 
     return (
-      <div className={styles.Card}>
-        <div className={styles.Data}>
+      <div className={card.Card}>
+        <div className={card.Data}>
           <FlipMove
             duration={2000}
             enterAnimation="elevator"
@@ -30,7 +30,7 @@ export default class Place extends Component {
             { trends }
           </FlipMove>
         </div>
-        <div className={styles.Cardtitle}>
+        <div className={card.CardTitle}>
           <h2>{this.props.name}</h2>
           {remove}
         </div>

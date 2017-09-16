@@ -1,0 +1,48 @@
+.UsersCard {
+  height: 264px;
+  background-color: #C8D2D3;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.Users {
+  background-color: #ffffff;
+  margin: 5px;
+  padding: 5px;
+  font-size: 10px;
+  border: 1px solid #CCCCCC;
+  border-radius: 3px;
+}
+
+.Users img {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  padding: 3px;
+}
+
+.Users a {
+  color: #1E77B6;
+}
+
+.UsersProfile {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.UsersName {
+  font-weight: bold;
+  padding-left: 5px;
+  padding-right: 10px;
+}
+
+.Inline {
+  display: inline-block;
+  padding-left: 5px;
+}
+
+.Users p {
+  margin: 5px;
+  font-size: 8pt;
+}

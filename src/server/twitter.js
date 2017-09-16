@@ -129,6 +129,11 @@ export class Twitter {
       }
     }
 
+    let userUrl = null
+    if (t.user.entities.url) {
+      userUrl = t.user.entities.url.urls[0].expanded_url
+    }
+
     const photos = []
     const videos = []
     const animatedGifs = []
@@ -154,8 +159,11 @@ export class Twitter {
       user: {
         id: t.user.id_str,
         screenName: t.user.screen_name,
+        name: t.user.name,
+        description: t.user.description,
         created, userCreated,
         avatarUrl: t.user.profile_image_url_https,
+        url: userUrl,
         followersCount: t.user.followers_count,
         friendsCount: t.user.friends_count,
         tweetsCount: t.user.statuses_count,

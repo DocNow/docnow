@@ -1,15 +1,17 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import styles from '../styles/Search.css'
-import button from '../styles/Button.css'
-import cards from '../styles/Card.css'
 import TweetListBox from '../containers/TweetListBox'
 import UserListBox from '../containers/UserListBox'
 import HashtagsBox from '../containers/HashtagsBox'
 import MediaBox from '../containers/MediaBox'
 import SearchSummaryBox from '../containers/SearchSummaryBox'
 
+import styles from '../styles/Search.css'
+import button from '../styles/Button.css'
+import card from '../styles/Card.css'
+
 export default class Search extends Component {
+
   constructor(props) {
     super(props)
     this.state = { searchTerm: '' }
@@ -37,45 +39,56 @@ export default class Search extends Component {
   render() {
     return (
       <div className={styles.SearchBar}>
+
         <div className={styles.Form}>
-          <input type="text" value={decodeURIComponent(this.state.searchTerm)} placeholder="#hashtag" required
+          <input
+            required
+            type="text"
+            value={decodeURIComponent(this.state.searchTerm)}
+            placeholder="#hashtag"
             onChange={this.setSearchTerm} />
-          <button className={button.Button} onClick={this.searchNewTerm}> <i className="fa fa-search" aria-hidden="true"/></button> <a href="#">Search tips</a>
+          <button
+            className={button.Button}
+            onClick={this.searchNewTerm}>
+            <i className="fa fa-search" aria-hidden="true"/>
+          </button>
+          <a href="#">Search tips</a>
         </div>
+
         <SearchSummaryBox endpoint={this.props.searchInfo.url}/>
-        <div className={cards.Cardholder}>
-          <div className={cards.Card}>
-            <div className={cards.Cardtitle}>
-              <h2>Sample Tweets</h2>
-            </div>
-            <div className={cards.Data}>
-              <TweetListBox endpoint={this.props.searchInfo.tweets}/>
-            </div>
-          </div>
-          <div className={cards.Card}>
-            <div className={cards.Cardtitle}>
-              <h2>Top Users</h2>
-            </div>
-            <div className={cards.Data}>
-              <UserListBox endpoint={this.props.searchInfo.users}/>
+
+        <div className={card.CardHolder}>
+
+          <div className={card.Card}>
+            <TweetListBox endpoint={this.props.searchInfo.tweets}/>
+            <div className={card.CardTitle}>
+              <h2>Tweets</h2>
             </div>
           </div>
-          <div className={cards.Card}>
-            <div className={cards.Cardtitle}>
-              <h2>Top Hashtags</h2>
-            </div>
-            <div className={cards.Data}>
-              <HashtagsBox endpoint={this.props.searchInfo.hashtags}/>
+
+          <div className={card.Card}>
+            <UserListBox endpoint={this.props.searchInfo.users}/>
+            <div className={card.CardTitle}>
+              <h2>Users</h2>
             </div>
           </div>
-          <div className={cards.Card}>
-            <div className={cards.Data}>
+
+          <div className={card.Card}>
+            <HashtagsBox endpoint={this.props.searchInfo.hashtags}/>
+            <div className={card.CardTitle}>
+              <h2>Hashtags</h2>
+            </div>
+          </div>
+
+          <div className={card.Card}>
+            <div className={card.Data}>
               <MediaBox endpoint={this.props.searchInfo.tweets}/>
             </div>
-            <div className={cards.Cardtitle}>
+            <div className={card.CardTitle}>
               <h2>Media</h2>
             </div>
           </div>
+
         </div>
       </div>
     )

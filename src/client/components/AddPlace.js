@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
-import styles from '../styles/Trends.css'
+
+import trends from '../styles/Trends.css'
 
 export default class AddPlace extends Component {
 
@@ -44,7 +45,7 @@ export default class AddPlace extends Component {
       placeDisabled = true
     }
     return (
-      <div className={styles.Newlocation}>
+      <div className={trends.newLocation}>
         <h2>
         <Autocomplete
            getItemValue={(item) => item}

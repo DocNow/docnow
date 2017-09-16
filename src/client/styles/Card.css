@@ -1,43 +1,33 @@
-.Cardholder {
+.CardHolder {
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
 }
 
- /* @media screen and (max-width: 780px) {
-  cardholder {
-    position: relative;
-    flex-direction: column;
-  }
-} */
-
 .Card {
-    display: flex;
-    flex-direction: column;
-    justify-content:  space-between;
-    padding: 0;
-    box-sizing: border-box;
-    border-radius: 2px;
-    background-color: #ffffff;
-    height: 350px;
-    width: 300px;
-    box-shadow: 1px 4px 8px 1px rgba(0,0,0,0.2);
-    transition: 0.3s;
-    margin: 30px;
-    overflow: auto;
-  }
-
-.Card a, .Card a:hover, .Card a:visited, .Card a:active {
-  color: #1E77B6
+  display: flex;
+  flex-direction: column;
+  justify-content:  space-between;
+  padding: 0;
+  box-sizing: border-box;
+  border-radius: 2px;
+  overflow: hidden;
+  background-color: #ffffff;
+  height: 320px;
+  width: 300px;
+  box-shadow: 1px 4px 8px 1px rgba(0,0,0,0.2);
+  transition: 0.3s;
+  margin: 30px;
 }
 
 /* On mouse-over, add a deeper shadow */
 .Card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
 }
 
-.Cardtitle {
+/* Add some padding inside the card container */
+.CardTitle {
   border-top: 1px solid #CCCCCC;
   background-color: #ffffff;
   display: flex;
@@ -46,9 +36,18 @@
   padding: 2px 16px;
 }
 
-.Cardtitle a {
+.CardTitle a {
   padding-left: 5px;
   padding-right: 20px;
+}
+
+.NewLocation {
+  background-color: #ffffff;
+  padding-right:  10px;
+}
+
+.NewLocation i {
+  padding: 10px;
 }
 
 .Data {
@@ -56,10 +55,10 @@
   text-align: center;
 }
 
-
 .Data ul {
   list-style: url();
 }
+
 .Data li {
   padding-bottom: 10px;
   display: block !important;

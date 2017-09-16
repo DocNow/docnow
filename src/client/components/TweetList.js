@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from '../styles/Search.css'
 import Tweet from './Tweet'
+
+import style from '../styles/Tweets.css'
 
 export default class TweetList extends Component {
 
@@ -17,7 +18,7 @@ export default class TweetList extends Component {
       loader = 'Loading...'
     }
     return (
-        <div className={ style.Box }>
+        <div className={ style.TweetsCard }>
           {loader}
           {this.props.tweets.map(tweet => (
             <Tweet key={tweet.id} data={tweet}/>
