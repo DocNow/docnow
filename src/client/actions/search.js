@@ -1,4 +1,5 @@
 export const SET_TWITTER_SEARCH = 'SET_TWITTER_SEARCH'
+export const RESET_SEARCH = 'RESET_SEARCH'
 export const SET_TWITTER_SEARCH_TWEETS = 'SET_TWITTER_SEARCH_TWEETS'
 export const SET_TWITTER_SEARCH_USERS = 'SET_TWITTER_SEARCH_USERS'
 export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
@@ -8,6 +9,12 @@ const setTwitterSearch = (searchInfo) => {
   return {
     type: SET_TWITTER_SEARCH,
     searchInfo
+  }
+}
+
+const resetSearch = () => {
+  return {
+    type: RESET_SEARCH,
   }
 }
 
@@ -41,6 +48,7 @@ const setTwitterSearchSummary = (summary) => {
 
 export const searchTwitter = (q) => {
   return (dispatch, getState) => {
+    dispatch(resetSearch())
     const { user } = getState()
     const body = { user, q }
     const opts = {

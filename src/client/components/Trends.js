@@ -10,9 +10,10 @@ import card from '../styles/Card.css'
 import trends from '../styles/Trends.css'
 
 export default class Trends extends MediaQueryComponent {
+
   constructor(props) {
     super(props)
-    this.state = { introStyle: intro.Intro }
+    this.state = {introStyle: intro.Intro}
   }
 
   componentDidMount() {
@@ -63,8 +64,9 @@ export default class Trends extends MediaQueryComponent {
     }
 
     return (
-      <div className={trends.Trends}>
+      <div>
         {introElement}
+        <div className={trends.Trends}>
           <div className={card.CardHolder}>
             {this.props.trends.map(place => (
               <Place
@@ -78,6 +80,7 @@ export default class Trends extends MediaQueryComponent {
             ))}
             {newLocation}
           </div>
+        </div>
       </div>
     )
   }

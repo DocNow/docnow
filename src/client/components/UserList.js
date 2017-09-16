@@ -6,8 +6,19 @@ import style from '../styles/Users.css'
 
 export default class TweetList extends Component {
 
-  componentDidUpdate() {
-    if (this.props.endpoint && this.props.users.length === 0) {
+  componentDidMount() {
+    this.tick()
+    this.timerId = setInterval(() => {
+      this.tick()
+    }, 3000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId)
+  }
+
+  tick() {
+    if (this.props.endpoint) {
       this.props.getUsers(this.props.endpoint)
     }
   }

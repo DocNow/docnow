@@ -5,8 +5,19 @@ import Hashtag from './Hashtag'
 
 export default class Hashtags extends Component {
 
-  componentDidUpdate() {
-    if (this.props.endpoint && this.props.hashtags.length === 0) {
+  componentDidMount() {
+    this.tick()
+    this.timerId = setInterval(() => {
+      this.tick()
+    }, 3000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId)
+  }
+
+  tick() {
+    if (this.props.endpoint) {
       this.props.getHashtags(this.props.endpoint)
     }
   }
