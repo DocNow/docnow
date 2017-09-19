@@ -8,6 +8,7 @@ const mapStateToProps = (state) => {
     minDate: state.search.searchInfo.minDate,
     maxDate: state.search.searchInfo.maxDate,
     count: state.search.searchInfo.count,
+    id: state.search.searchInfo.id,
     endpoint: state.search.searchInfo.url
   }
 }

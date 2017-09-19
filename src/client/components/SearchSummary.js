@@ -13,9 +13,9 @@ export default class SearchSummary extends Component {
 
   componentDidUpdate() {
     if (this.props.endpoint && this.intervalId === null) {
-      this.props.getSearchSummary(this.props.endpoint)
+      this.props.getSearchSummary(this.props.id)
       this.intervalId = setInterval(() => {
-        this.props.getSearchSummary(this.props.endpoint)
+        this.props.getSearchSummary(this.props.id)
       }, 3000)
     }
   }
@@ -42,6 +42,7 @@ export default class SearchSummary extends Component {
 }
 
 SearchSummary.propTypes = {
+  id: PropTypes.string,
   maxDate: PropTypes.instanceOf(Date),
   minDate: PropTypes.instanceOf(Date),
   count: PropTypes.number,

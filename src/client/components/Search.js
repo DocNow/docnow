@@ -56,7 +56,7 @@ export default class Search extends Component {
           </div>
         </div>
 
-        <SearchSummaryBox endpoint={this.props.searchInfo.url}/>
+        <SearchSummaryBox endpoint={this.props.searchInfo.id}/>
 
         <div className={card.CardHolder}>
 

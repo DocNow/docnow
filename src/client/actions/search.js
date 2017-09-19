@@ -97,9 +97,10 @@ export const getHashtags = (endpoint) => {
   }
 }
 
-export const getSearchSummary = (endpoint) => {
+export const getSearchSummary = (searchId) => {
   return (dispatch) => {
-    fetch(endpoint, {credentials: 'same-origin'})
+    const url = '/api/v1/search/' + searchId
+    fetch(url, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchSummary(result))
