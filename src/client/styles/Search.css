@@ -19,22 +19,22 @@
 }
 
 .SearchBar input {
-    font-family: 'Roboto Medium', sans-serif;
-    width: 240px;
-    height: 36px;
-    background: transparent;
-    border: none;
-    font-size: 14pt;
-    line-height: 36px;
-    padding-left: 10px;
-    text-transform: uppercase;
-    text-decoration: none;
-    overflow: hidden;
-    vertical-align: middle;
-    user-select: none;
-    box-shadow: 1px 2px 3px 1px rgba(30, 119,182,0.2), 0px 2px 3px 0px rgba(0,0,0,0.1);
-    -webkit-appearance: none;
-    margin-right: 5px;
+  font-family: 'Roboto Medium', sans-serif;
+  width: 240px;
+  height: 36px;
+  background: transparent;
+  border: none;
+  font-size: 14pt;
+  line-height: 36px;
+  padding-left: 10px;
+  text-transform: uppercase;
+  text-decoration: none;
+  overflow: hidden;
+  vertical-align: middle;
+  user-select: none;
+  box-shadow: 1px 2px 3px 1px rgba(30, 119,182,0.2), 0px 2px 3px 0px rgba(0,0,0,0.1);
+  -webkit-appearance: none;
+  margin-right: 5px;
 }
 
 .SearchBar input:focus {

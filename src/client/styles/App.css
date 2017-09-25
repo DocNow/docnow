@@ -57,10 +57,10 @@
 }
 
 .App button:hover {
-    cursor: pointer;
-    color: #ffffff !important;
-    outline: none !important;
-    background-color: #1e77b6;
+  cursor: pointer;
+  color: #ffffff !important;
+  outline: none !important;
+  background-color: #1e77b6;
 }
 
 .AppUnder780px li {
