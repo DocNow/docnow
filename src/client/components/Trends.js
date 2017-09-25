@@ -5,7 +5,6 @@ import Place from './Place'
 import AddPlace from './AddPlace'
 
 import intro from '../styles/Intro.css'
-import button from '../styles/Button.css'
 import card from '../styles/Card.css'
 import trends from '../styles/Trends.css'
 
@@ -43,7 +42,7 @@ export default class Trends extends MediaQueryComponent {
             Welcome to DocNow, an app built to appraise social media content for potential collection.
             <a href="http://docnow.io">Learn more.</a>
           </div>
-          <button className={button.button} onClick={() => {window.location = '/auth/twitter'; return false}}>
+          <button onClick={() => {window.location = '/auth/twitter'; return false}}>
             <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
           </button>
           <a href="/">Request an Account</a>

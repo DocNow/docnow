@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Keys from './Keys'
-import button from '../styles/Button.css'
 import textfield from '../styles/Textfield.css'
 
 export default class Settings extends Component {
@@ -20,7 +19,7 @@ export default class Settings extends Component {
           updateSettings={this.props.updateSettings}
         />
         <p>
-          <button className={button.Button} onClick={()=>{
+          <button onClick={()=>{
             this.props.saveSettings().then(() => {
               if (this.props.userLoggedIn) {
                 this.props.returnHome()

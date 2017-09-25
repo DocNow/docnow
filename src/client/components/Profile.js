@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import introStyles from '../styles/Intro.css'
 import globStyles from '../styles/App.css'
 import tfStyles from '../styles/Textfield.css'
-import button from '../styles/Button.css'
 import AdminSettingsForm from '../containers/AdminSettingsForm'
 
 export default class Profile extends Component {
@@ -37,8 +36,14 @@ export default class Profile extends Component {
 
             { adminSettings }
 
-            <div><button onClick={this.props.saveAllSettings} disabled={disableSave}
-              className={button.Button} type="button">Save Settings</button></div>
+            <div>
+              <button
+                type="button"
+                onClick={this.props.saveAllSettings}
+                disabled={disableSave}>
+                Save Settings
+              </button>
+            </div>
           </textfield>
         </div>
       </div>

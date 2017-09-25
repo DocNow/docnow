@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 
 import style from '../styles/Intro.css'
-import button from '../styles/Button.css'
 
 export default class SearchSummary extends Component {
 

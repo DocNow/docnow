@@ -7,7 +7,6 @@ import MediaBox from '../containers/MediaBox'
 import SearchSummaryBox from '../containers/SearchSummaryBox'
 
 import styles from '../styles/Search.css'
-import button from '../styles/Button.css'
 import card from '../styles/Card.css'
 
 export default class Search extends Component {
@@ -48,7 +47,6 @@ export default class Search extends Component {
               placeholder="#hashtag"
               onChange={this.setSearchTerm} />
             <button
-              className={button.Button}
               onClick={this.searchNewTerm}>
               <i className="fa fa-search" aria-hidden="true"/>
             </button>
