@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import TweetListBox from '../containers/TweetListBox'
-import UserListBox from '../containers/UserListBox'
-import HashtagsBox from '../containers/HashtagsBox'
-import MediaBox from '../containers/MediaBox'
-import SearchSummaryBox from '../containers/SearchSummaryBox'
+import TweetList from './TweetList'
+import UserList from './UserList'
+import Hashtags from './Hashtags'
+import Media from './Media'
+import SearchSummary from './SearchSummary'
 
 import styles from '../styles/Search.css'
 import button from '../styles/Button.css'
@@ -15,6 +15,7 @@ export default class Search extends Component {
   constructor(props) {
     super(props)
     this.state = {searchTerm: ''}
+    this.timerId = null
     this.setSearchTerm = this.setSearchTerm.bind(this)
     this.searchNewTerm = this.searchNewTerm.bind(this)
   }
@@ -24,6 +25,23 @@ export default class Search extends Component {
     this.setState({
       searchTerm: this.props.q
     })
+    this.tick()
+    this.timerId = setInterval(() => {
+      this.tick()
+    }, 3000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId)
+  }
+
+  tick() {
+    if (this.props.id) {
+      this.props.getSearch(this.props.id)
+      this.props.getTweets(this.props.id)
+      this.props.getHashtags(this.props.id)
+      this.props.getUsers(this.props.id)
+    }
   }
 
   setSearchTerm(e) {
@@ -56,26 +74,29 @@ export default class Search extends Component {
           </div>
         </div>
 
-        <SearchSummaryBox />
+        <SearchSummary
+          maxDate={this.props.maxDate}
+          minDate={this.props.minDate}
+          count={this.props.count} />
 
         <div className={card.CardHolder}>
 
           <div className={card.Card}>
-            <TweetListBox />
+            <TweetList tweets={this.props.tweets} />
             <div className={card.CardTitle}>
               <h2>Tweets</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <UserListBox />
+            <UserList users={this.props.users}/>
             <div className={card.CardTitle}>
               <h2>Users</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <HashtagsBox />
+            <Hashtags hashtags={this.props.hashtags}/>
             <div className={card.CardTitle}>
               <h2>Hashtags</h2>
             </div>
@@ -83,7 +104,7 @@ export default class Search extends Component {
 
           <div className={card.Card}>
             <div className={card.Data}>
-              <MediaBox />
+              <Media tweets={this.props.tweets}/>
             </div>
             <div className={card.CardTitle}>
               <h2>URLs</h2>
@@ -92,7 +113,7 @@ export default class Search extends Component {
 
           <div className={card.Card}>
             <div className={card.Data}>
-              <MediaBox />
+              <Media tweets={this.props.tweets}/>
             </div>
             <div className={card.CardTitle}>
               <h2>Images</h2>
@@ -101,7 +122,7 @@ export default class Search extends Component {
 
           <div className={card.Card}>
             <div className={card.Data}>
-              <MediaBox />
+              <Media tweets={this.props.tweets}/>
             </div>
             <div className={card.CardTitle}>
               <h2>Video</h2>
@@ -117,5 +138,15 @@ export default class Search extends Component {
 Search.propTypes = {
   id: PropTypes.string,
   q: PropTypes.string,
+  maxDate: PropTypes.string,
+  minDate: PropTypes.string,
+  count: PropTypes.number,
+  tweets: PropTypes.array,
+  users: PropTypes.array,
+  hashtags: PropTypes.array,
   searchTwitter: PropTypes.func,
+  getSearch: PropTypes.func,
+  getTweets: PropTypes.func,
+  getHashtags: PropTypes.func,
+  getUsers: PropTypes.func
 }

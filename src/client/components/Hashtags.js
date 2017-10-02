@@ -5,23 +5,6 @@ import styles from '../styles/Hashtags.css'
 
 export default class Hashtags extends Component {
 
-  componentDidMount() {
-    this.tick()
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 3000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-  }
-
-  tick() {
-    if (this.props.id) {
-      this.props.getHashtags(this.props.id)
-    }
-  }
-
   render() {
     let loader = null
     if (this.props.hashtags.length === 0) {
@@ -39,7 +22,5 @@ export default class Hashtags extends Component {
 }
 
 Hashtags.propTypes = {
-  id: PropTypes.string,
-  getHashtags: PropTypes.func,
   hashtags: PropTypes.array
 }
