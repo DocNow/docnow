@@ -5,6 +5,7 @@ import { getHashtags } from '../actions/search'
 
 const mapStateToProps = (state) => {
   return {
+    id: state.search.id,
     hashtags: state.search.hashtags || [],
   }
 }

@@ -1,10 +1,15 @@
 import {
   SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS, SET_TWITTER_SEARCH_USERS,
-  SET_TWITTER_SEARCH_HASHTAGS, SET_TWITTER_SEARCH_SUMMARY, RESET_SEARCH
+  SET_TWITTER_SEARCH_HASHTAGS
 } from '../actions/search'
 
 const initialState = {
-  searchInfo: {},
+  id: '',
+  creator: '',
+  query: '',
+  created: '',
+  minDate: '',
+  maxDate: '',
   tweets: [],
   users: [],
   hashtags: []
@@ -16,16 +21,7 @@ export default function user(state = initialState, action) {
     case SET_TWITTER_SEARCH: {
       return {
         ...state,
-        searchInfo: action.searchInfo
-      }
-    }
-
-    case RESET_SEARCH: {
-      return {
-        searchInfo: {},
-        tweets: [],
-        users: [],
-        hashtags: []
+        ...action.search
       }
     }
 
@@ -47,13 +43,6 @@ export default function user(state = initialState, action) {
       return {
         ...state,
         hashtags: action.hashtags
-      }
-    }
-
-    case SET_TWITTER_SEARCH_SUMMARY: {
-      return {
-        ...state,
-        searchInfo: action.summary
       }
     }
 

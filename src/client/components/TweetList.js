@@ -7,6 +7,7 @@ import style from '../styles/Tweets.css'
 export default class TweetList extends Component {
 
   componentDidMount() {
+    console.log('search id: ' + this.props.id)
     this.tick()
     this.timerId = setInterval(() => {
       this.tick()
@@ -18,8 +19,8 @@ export default class TweetList extends Component {
   }
 
   tick() {
-    if (this.props.endpoint) {
-      this.props.getTweets(this.props.endpoint)
+    if (this.props.id) {
+      this.props.getTweets(this.props.id)
     }
   }
 
@@ -40,7 +41,7 @@ export default class TweetList extends Component {
 }
 
 TweetList.propTypes = {
-  endpoint: PropTypes.string,
+  id: PropTypes.string,
   getTweets: PropTypes.func,
   tweets: PropTypes.array
 }

@@ -18,8 +18,8 @@ export default class TweetList extends Component {
   }
 
   tick() {
-    if (this.props.endpoint) {
-      this.props.getUsers(this.props.endpoint)
+    if (this.props.id) {
+      this.props.getUsers(this.props.id)
     }
   }
 
@@ -40,7 +40,7 @@ export default class TweetList extends Component {
 }
 
 TweetList.propTypes = {
-  endpoint: PropTypes.string,
+  id: PropTypes.string,
   getUsers: PropTypes.func,
   users: PropTypes.array
 }

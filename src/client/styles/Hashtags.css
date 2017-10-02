@@ -1,0 +1,15 @@
+.HashtagsCard {
+  height: 264px;
+  background-color: #C8D2D3;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.Hashtags {
+  background-color: #ffffff;
+  margin: 5px;
+  padding: 5px;
+  font-size: 10px;
+  border: 1px solid #CCCCCC;
+  border-radius: 3px;
+}

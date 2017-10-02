@@ -6,8 +6,8 @@ import Medium from './Medium'
 export default class Media extends Component {
 
   componentDidUpdate() {
-    if (this.props.endpoint && this.props.tweets.length === 0) {
-      this.props.getTweets(this.props.endpoint)
+    if (this.props.id && this.props.tweets.length === 0) {
+      this.props.getTweets(this.props.id)
     }
   }
 
@@ -30,7 +30,7 @@ export default class Media extends Component {
 }
 
 Media.propTypes = {
-  endpoint: PropTypes.string,
+  id: PropTypes.string,
   getTweets: PropTypes.func,
   tweets: PropTypes.array
 }

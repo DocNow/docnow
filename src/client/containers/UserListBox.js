@@ -5,6 +5,7 @@ import { getUsers } from '../actions/search'
 
 const mapStateToProps = (state) => {
   return {
+    id: state.search.id,
     users: state.search.users || [],
   }
 }

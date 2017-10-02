@@ -5,6 +5,7 @@ import { getTweets } from '../actions/search'
 
 const mapStateToProps = (state) => {
   return {
+    id: state.search.id,
     tweets: state.search.tweets || [],
   }
 }

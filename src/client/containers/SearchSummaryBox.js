@@ -1,18 +1,17 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import SearchSummary from '../components/SearchSummary'
-import { getSearchSummary } from '../actions/search'
+import { getSearch } from '../actions/search'
 
 const mapStateToProps = (state) => {
   return {
-    minDate: state.search.searchInfo.minDate,
-    maxDate: state.search.searchInfo.maxDate,
-    count: state.search.searchInfo.count,
-    id: state.search.searchInfo.id,
-    endpoint: state.search.searchInfo.url
+    id: state.search.id,
+    count: state.search.count,
+    minDate: state.search.minDate,
+    maxDate: state.search.maxDate,
   }
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators({getSearchSummary}, dispatch)
+const mapDispatchToProps = (dispatch) => bindActionCreators({getSearch}, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(SearchSummary)

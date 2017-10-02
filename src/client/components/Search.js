@@ -56,26 +56,26 @@ export default class Search extends Component {
           </div>
         </div>
 
-        <SearchSummaryBox endpoint={this.props.searchInfo.id}/>
+        <SearchSummaryBox />
 
         <div className={card.CardHolder}>
 
           <div className={card.Card}>
-            <TweetListBox endpoint={this.props.searchInfo.tweets}/>
+            <TweetListBox />
             <div className={card.CardTitle}>
               <h2>Tweets</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <UserListBox endpoint={this.props.searchInfo.users}/>
+            <UserListBox />
             <div className={card.CardTitle}>
               <h2>Users</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <HashtagsBox endpoint={this.props.searchInfo.hashtags}/>
+            <HashtagsBox />
             <div className={card.CardTitle}>
               <h2>Hashtags</h2>
             </div>
@@ -83,7 +83,7 @@ export default class Search extends Component {
 
           <div className={card.Card}>
             <div className={card.Data}>
-              <MediaBox endpoint={this.props.searchInfo.tweets}/>
+              <MediaBox />
             </div>
             <div className={card.CardTitle}>
               <h2>URLs</h2>
@@ -92,7 +92,7 @@ export default class Search extends Component {
 
           <div className={card.Card}>
             <div className={card.Data}>
-              <MediaBox endpoint={this.props.searchInfo.tweets}/>
+              <MediaBox />
             </div>
             <div className={card.CardTitle}>
               <h2>Images</h2>
@@ -101,7 +101,7 @@ export default class Search extends Component {
 
           <div className={card.Card}>
             <div className={card.Data}>
-              <MediaBox endpoint={this.props.searchInfo.tweets}/>
+              <MediaBox />
             </div>
             <div className={card.CardTitle}>
               <h2>Video</h2>
@@ -115,7 +115,7 @@ export default class Search extends Component {
 }
 
 Search.propTypes = {
-  searchInfo: PropTypes.object,
+  id: PropTypes.string,
   q: PropTypes.string,
-  searchTwitter: PropTypes.func
+  searchTwitter: PropTypes.func,
 }

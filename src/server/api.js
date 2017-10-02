@@ -7,7 +7,6 @@ import log from './logger'
 
 const app = express()
 const db = new Database()
-const version = '1'
 
 db.startTrendsWatcher({interval: 60 * 1000})
 
@@ -144,14 +143,7 @@ app.get('/search/:searchId', (req, res) => {
   if (req.user) {
     db.getSearch(req.params.searchId).then((search) => {
       db.getSearchSummary(search).then((summ) => {
-        res.json({
-          ...summ,
-          url: `/api/v${version}/search/${search.id}`,
-          tweets: `/api/v${version}/search/${search.id}/tweets`,
-          users: `/api/v${version}/search/${search.id}/users`,
-          hashtags: `/api/v${version}/search/${search.id}/hashtags`,
-          media: `/api/v${version}/search/${search.id}/media`
-        })
+        res.json(summ)
       })
     })
   }
