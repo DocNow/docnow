@@ -25,7 +25,6 @@ export default class Search extends Component {
     this.setState({
       searchTerm: this.props.q
     })
-    this.tick()
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)

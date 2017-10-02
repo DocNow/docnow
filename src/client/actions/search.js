@@ -2,6 +2,7 @@ export const SET_TWITTER_SEARCH = 'SET_TWITTER_SEARCH'
 export const SET_TWITTER_SEARCH_TWEETS = 'SET_TWITTER_SEARCH_TWEETS'
 export const SET_TWITTER_SEARCH_USERS = 'SET_TWITTER_SEARCH_USERS'
 export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
+export const RESET_TWITTER_SEARCH = 'RESET_TWITTER_SEARCH'
 
 const setTwitterSearch = (search) => {
   return {
@@ -31,8 +32,15 @@ const setTwitterSearchHashtags = (hashtags) => {
   }
 }
 
+const resetTwitterSearch = () => {
+  return {
+    type: RESET_TWITTER_SEARCH
+  }
+}
+
 export const searchTwitter = (q) => {
   return (dispatch, getState) => {
+    dispatch(resetTwitterSearch())
     const { user } = getState()
     const body = { user, q }
     const opts = {
@@ -52,7 +60,6 @@ export const searchTwitter = (q) => {
 }
 
 export const getTweets = (id) => {
-  console.log('getTweets ' + id)
   return (dispatch) => {
     fetch('/api/v1/search/' + id + '/tweets', {credentials: 'same-origin'})
       .then((resp) => resp.json())
