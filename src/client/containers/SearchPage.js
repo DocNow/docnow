@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Search from '../components/Search'
-import { searchTwitter, resetSearch } from '../actions/search'
+import { searchTwitter } from '../actions/search'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -12,7 +12,6 @@ const mapStateToProps = (state, ownProps) => {
 
 const actions = {
   searchTwitter,
-  resetSearch
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
