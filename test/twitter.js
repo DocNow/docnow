@@ -31,45 +31,58 @@ describe('twitter', () => {
     t.getPlaces().then((places) => {
       ok(places.length > 100)
       ok(places[0].id)
-      ok(places[0].name)
+        ok(places[0].name)
       done()
     })
   })
 
   it('should get search results', (done) => {
-    t.search({q: 'obama'}).then((tweets) => {
-      ok(tweets.length > 0, 'number of tweets')
-      const t = tweets[0]
-      ok(t.text.match(/obama/i), 'text')
-      ok(t.id, 'id')
-      ok(t.user.id, 'user.id')
-      ok(t.user.screenName, 'user.screenName')
-      ok(t.user.followersCount >= 0, 'user.followersCount')
-      ok(t.user.friendsCount >= 0, 'user.friendsCount')
-      ok(t.user.tweetsCount >= 0, 'user.tweetsCount')
-      ok(t.user.avatarUrl, 'user.avatarUrl')
-      ok(t.user.created, 'user.created')
-      ok(t.created, 'created')
-      ok(t.twitterUrl, 'twitterUrl')
-      ok(t.likeCount >= 0, 'likeCount')
-      ok(t.retweetCount >= 0, 'retweetCount')
-      ok(t.client, 'client')
-      ok('videos' in t, 'videos')
-      ok('photos' in t, 'photos')
-      ok('animatedGifs' in t, 'animatedGifs')
+    t.search({q: 'obama'}, (err, tweets) => {
+      ok(err === null)
+      if (tweets.length == 0) {
+        done()
+      } else {
+        const t = tweets[0]
+        ok(t.text.match(/obama/i), 'text')
+        ok(t.id, 'id')
+        ok(t.user.id, 'user.id')
+        ok(t.user.screenName, 'user.screenName')
+        ok(t.user.followersCount >= 0, 'user.followersCount')
+        ok(t.user.friendsCount >= 0, 'user.friendsCount')
+        ok(t.user.tweetsCount >= 0, 'user.tweetsCount')
+        ok(t.user.avatarUrl, 'user.avatarUrl')
+        ok(t.user.created, 'user.created')
+        ok(t.created, 'created')
+        ok(t.twitterUrl, 'twitterUrl')
+        ok(t.likeCount >= 0, 'likeCount')
+        ok(t.retweetCount >= 0, 'retweetCount')
+        ok(t.client, 'client')
+        ok('videos' in t, 'videos')
+        ok('photos' in t, 'photos')
+        ok('animatedGifs' in t, 'animatedGifs')
 
-      ok('retweet' in t, 'retweet')
-      if (t.retweet) {
-        ok(t.retweet.id, 'retweet.id')
+        ok('retweet' in t, 'retweet')
+        if (t.retweet) {
+          ok(t.retweet.id, 'retweet.id')
+        }
+
+        ok('quote' in t, 'quote')
+        if (t.quote) {
+          ok(t.quote.id, 'quote.id')
+        }
       }
-
-      ok('quote' in t, 'quote')
-      if (t.quote) {
-        ok(t.quote.id, 'quote.id')
-      }
-
-      done()
     })
   })
 
+  it('should get > 100 search results', (done) => {
+    let callbackCount = 0
+    t.search({q: 'obama', count: 300}, (err, tweets) => {
+      callbackCount += 1
+      if (callbackCount === 3) {
+        done()
+      } else if (tweets.length > 0) {
+        ok(tweets[0].id, 'check id')
+      }
+    })
+  })
 })

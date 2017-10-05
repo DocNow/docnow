@@ -503,11 +503,17 @@ export class Database {
   }
 
   importFromSearch(search) {
+    let count = 0
     return new Promise((resolve, reject) => {
       this.getTwitterClientForUser(search.creator)
         .then((twtr) => {
-          twtr.search({q: search.query})
-            .then((results) => {
+          twtr.search({q: search.query}, (err, results) => {
+            if (err) {
+              reject(err)
+            } else if (results.length === 0) {
+              resolve(count)
+            } else {
+              count += results.length
               const bulk = []
               const seenUsers = new Set()
               for (const tweet of results) {
@@ -538,8 +544,6 @@ export class Database {
                 }
               }
               this.es.bulk({
-                // index: tweet.esTweetIndex,
-                // type: 'tweet',
                 body: bulk
               }).then((resp) => {
                 if (resp.errors) {
@@ -547,11 +551,12 @@ export class Database {
                 } else {
                   resolve(results)
                 }
-              }).catch((err) => {
-                log.error(err.message)
-                reject(err.message)
+              }).catch((elasticErr) => {
+                log.error(elasticErr.message)
+                reject(elasticErr.message)
               })
-            })
+            }
+          })
         })
     })
   }

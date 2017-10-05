@@ -188,8 +188,8 @@ describe('database', function() {
 
   it('should import from search', function(done) {
     db.importFromSearch(testSearch)
-      .then((tweets) => {
-        ok(tweets.length > 0, 'search found tweets')
+      .then((num) => {
+        ok(num > 0, 'search found tweets')
         done()
       })
       .catch((err) => {
@@ -199,6 +199,7 @@ describe('database', function() {
 
   it('should get tweets', (done) => {
     // wait for indices to sync before querying
+    setTimeout(() => {
     db.es.indices.refresh({index: '_all'})
       .then(() => {
         db.getTweets(testSearch).then((tweets) => {
@@ -207,6 +208,7 @@ describe('database', function() {
           done()
         })
       })
+    }, 200)
   })
 
   it('should get summary', (done) => {

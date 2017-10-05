@@ -63,28 +63,37 @@ export class Twitter {
     )
   }
 
-  search(opts) {
-    const params = {
+  search(opts, cb) {
+    const count = opts.count || 100
+    const params =  {
       q: opts.q,
       tweet_mode: 'extended',
       result_type: opts.resultType || 'recent',
-      count: opts.count || 100,
+      count: 100,
       since_id: opts.sinceId,
-      max_id: opts.maxId,
       include_entities: true
     }
-    return new Promise(
-      (resolve) => {
-        this.twit.get('search/tweets', params)
-          .then((resp) => {
-            const tweets = []
-            for (const t of resp.data.statuses) {
-              tweets.push(this.extractTweet(t))
-            }
-            resolve(tweets)
-          })
-      }
-    )
+
+    const recurse = (maxId, total) => {
+      const newParams = Object.assign({max_id: maxId}, params)
+      this.twit.get('search/tweets', newParams).then((resp) => {
+        if (resp.data.errors) {
+          cb(resp.data.errors[0], null)
+        } else {
+          const tweets = resp.data.statuses
+          const newTotal = total + tweets.length
+          cb(null, tweets.map((s) => {return this.extractTweet(s)}))
+          if (tweets.length > 0 && newTotal < count) {
+            const newMaxId = tweets[tweets.length - 1].id_str
+            recurse(newMaxId, newTotal)
+          } else {
+            cb(null, [])
+          }
+        }
+      })
+    }
+
+    recurse(opts.maxId, 0)
   }
 
   extractTweet(t) {
