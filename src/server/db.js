@@ -504,10 +504,11 @@ export class Database {
 
   importFromSearch(search) {
     let count = 0
+    // let maxId = null
     return new Promise((resolve, reject) => {
       this.getTwitterClientForUser(search.creator)
         .then((twtr) => {
-          twtr.search({q: search.query}, (err, results) => {
+          twtr.search({q: search.query, count: 1000}, (err, results) => {
             if (err) {
               reject(err)
             } else if (results.length === 0) {
