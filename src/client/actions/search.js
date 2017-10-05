@@ -1,20 +1,13 @@
 export const SET_TWITTER_SEARCH = 'SET_TWITTER_SEARCH'
-export const RESET_SEARCH = 'RESET_SEARCH'
 export const SET_TWITTER_SEARCH_TWEETS = 'SET_TWITTER_SEARCH_TWEETS'
 export const SET_TWITTER_SEARCH_USERS = 'SET_TWITTER_SEARCH_USERS'
 export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
-export const SET_TWITTER_SEARCH_SUMMARY = 'SET_TWITTER_SEARCH_SUMMARY'
+export const RESET_TWITTER_SEARCH = 'RESET_TWITTER_SEARCH'
 
-const setTwitterSearch = (searchInfo) => {
+const setTwitterSearch = (search) => {
   return {
     type: SET_TWITTER_SEARCH,
-    searchInfo
-  }
-}
-
-const resetSearch = () => {
-  return {
-    type: RESET_SEARCH,
+    search
   }
 }
 
@@ -39,16 +32,15 @@ const setTwitterSearchHashtags = (hashtags) => {
   }
 }
 
-const setTwitterSearchSummary = (summary) => {
+const resetTwitterSearch = () => {
   return {
-    type: SET_TWITTER_SEARCH_SUMMARY,
-    summary
+    type: RESET_TWITTER_SEARCH
   }
 }
 
 export const searchTwitter = (q) => {
   return (dispatch, getState) => {
-    dispatch(resetSearch())
+    dispatch(resetTwitterSearch())
     const { user } = getState()
     const body = { user, q }
     const opts = {
@@ -67,9 +59,9 @@ export const searchTwitter = (q) => {
   }
 }
 
-export const getTweets = (endpoint) => {
+export const getTweets = (id) => {
   return (dispatch) => {
-    fetch(endpoint, {credentials: 'same-origin'})
+    fetch('/api/v1/search/' + id + '/tweets', {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchTweets(result))
@@ -77,9 +69,9 @@ export const getTweets = (endpoint) => {
   }
 }
 
-export const getUsers = (endpoint) => {
+export const getUsers = (id) => {
   return (dispatch) => {
-    fetch(endpoint, {credentials: 'same-origin'})
+    fetch('/api/v1/search/' + id + '/users', {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchUsers(result))
@@ -87,9 +79,9 @@ export const getUsers = (endpoint) => {
   }
 }
 
-export const getHashtags = (endpoint) => {
+export const getHashtags = (id) => {
   return (dispatch) => {
-    fetch(endpoint, {credentials: 'same-origin'})
+    fetch('/api/v1/search/' + id + '/hashtags', {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchHashtags(result))
@@ -97,12 +89,13 @@ export const getHashtags = (endpoint) => {
   }
 }
 
-export const getSearchSummary = (endpoint) => {
+export const getSearch = (searchId) => {
   return (dispatch) => {
-    fetch(endpoint, {credentials: 'same-origin'})
+    const url = '/api/v1/search/' + searchId
+    fetch(url, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
-        dispatch(setTwitterSearchSummary(result))
+        dispatch(setTwitterSearch(result))
       })
   }
 }

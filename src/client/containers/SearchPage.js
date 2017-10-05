@@ -1,18 +1,27 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import Search from '../components/Search'
-import { searchTwitter, resetSearch } from '../actions/search'
+import { searchTwitter, getSearch, getTweets, getUsers, getHashtags } from '../actions/search'
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    searchInfo: state.search.searchInfo || {},
-    q: ownProps.match.params.q
+    q: ownProps.match.params.q,
+    id: state.search.id,
+    tweets: state.search.tweets,
+    hashtags: state.search.hashtags,
+    users: state.search.users,
+    maxDate: state.search.maxDate,
+    minDate: state.search.minDate,
+    count: state.search.count
   }
 }
 
 const actions = {
   searchTwitter,
-  resetSearch
+  getSearch,
+  getTweets,
+  getUsers,
+  getHashtags
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)

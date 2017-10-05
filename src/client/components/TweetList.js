@@ -6,23 +6,6 @@ import style from '../styles/Tweets.css'
 
 export default class TweetList extends Component {
 
-  componentDidMount() {
-    this.tick()
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 3000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-  }
-
-  tick() {
-    if (this.props.endpoint) {
-      this.props.getTweets(this.props.endpoint)
-    }
-  }
-
   render() {
     let loader = null
     if (this.props.tweets.length === 0) {
@@ -40,7 +23,5 @@ export default class TweetList extends Component {
 }
 
 TweetList.propTypes = {
-  endpoint: PropTypes.string,
-  getTweets: PropTypes.func,
   tweets: PropTypes.array
 }

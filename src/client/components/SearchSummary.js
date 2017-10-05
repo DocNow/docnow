@@ -5,27 +5,6 @@ import style from '../styles/Intro.css'
 
 export default class SearchSummary extends Component {
 
-  constructor(props) {
-    super(props)
-    this.intervalId = null
-  }
-
-  componentDidUpdate() {
-    if (this.props.endpoint && this.intervalId === null) {
-      this.props.getSearchSummary(this.props.endpoint)
-      this.intervalId = setInterval(() => {
-        this.props.getSearchSummary(this.props.endpoint)
-      }, 3000)
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId)
-    }
-    this.intervalId = null
-  }
-
   render() {
     let message = 'Loading...'
     if (this.props.count > 0) {
@@ -41,9 +20,7 @@ export default class SearchSummary extends Component {
 }
 
 SearchSummary.propTypes = {
-  maxDate: PropTypes.instanceOf(Date),
-  minDate: PropTypes.instanceOf(Date),
+  maxDate: PropTypes.string,
+  minDate: PropTypes.string,
   count: PropTypes.number,
-  endpoint: PropTypes.string,
-  getSearchSummary: PropTypes.func
 }
