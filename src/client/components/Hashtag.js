@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import style from '../styles/Hashtags.css'
 
 export default class Hashtag extends Component {
 
@@ -13,7 +14,7 @@ export default class Hashtag extends Component {
 
   render() {
     return (
-      <div style={{border: '1px solid black'}}>
+      <div className={style.Hashtags}>
         #{this.props.data.hashtag} <strong>{this.props.data.count}</strong>
         &nbsp; <a href={this.addHastag(window.location.href, this.props.data.hashtag)}>click to add</a>
       </div>

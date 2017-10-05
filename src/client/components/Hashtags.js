@@ -1,26 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from '../styles/Search.css'
 import Hashtag from './Hashtag'
+import styles from '../styles/Hashtags.css'
 
 export default class Hashtags extends Component {
-
-  componentDidMount() {
-    this.tick()
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 3000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-  }
-
-  tick() {
-    if (this.props.endpoint) {
-      this.props.getHashtags(this.props.endpoint)
-    }
-  }
 
   render() {
     let loader = null
@@ -28,7 +11,7 @@ export default class Hashtags extends Component {
       loader = 'Loading...'
     }
     return (
-        <div className={style.Box}>
+        <div className={styles.HashtagsCard}>
           {loader}
           {this.props.hashtags.map(ht => (
             <Hashtag key={ht.hashtag} data={ht}/>
@@ -39,7 +22,5 @@ export default class Hashtags extends Component {
 }
 
 Hashtags.propTypes = {
-  endpoint: PropTypes.string,
-  getHashtags: PropTypes.func,
   hashtags: PropTypes.array
 }
