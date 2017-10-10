@@ -24,11 +24,11 @@
 }
 
 .Intro button {
-  margin: -25px 0px 20px 0px;
+  margin-top: 0px;
 }
 
 @media screen and (min-width: 1180px) {
-  .Login button {
-    margin-top: -25px;
+  .Intro button {
+    margin-top: -40px;
   }
 }

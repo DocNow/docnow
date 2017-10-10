@@ -12,7 +12,7 @@ export default class SearchSummary extends Component {
     }
     return (
       <div className={style.Intro}>
-        <div>{message}</div>
+        <p>{message}</p>
         <button>Update</button>
       </div>
     )
