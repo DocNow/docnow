@@ -38,10 +38,10 @@ export default class Trends extends MediaQueryComponent {
     if (!loggedIn) {
       introElement = (
         <div className={this.state.mediaStyle}>
-          <div>
+          <p>
             Welcome to DocNow, an app built to appraise social media content for potential collection.
             <a href="http://docnow.io">Learn more.</a>
-          </div>
+          </p>
           <button onClick={() => {window.location = '/auth/twitter'; return false}}>
             <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
           </button>
