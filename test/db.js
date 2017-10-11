@@ -197,25 +197,38 @@ describe('database', function() {
       })
   })
 
+  it('should import more from search', function(done) {
+    // test assumes someone will tweet about obama aggregations
+    // 5 seconds from now...
+    setTimeout(() => {
+      db.importFromSearch(testSearch)
+        .then((num) => {
+          ok(num > 0)
+          done()
+        })
+      }, 5000)
+  })
+
   it('should get tweets', (done) => {
     // wait for indices to sync before querying
     setTimeout(() => {
-    db.es.indices.refresh({index: '_all'})
-      .then(() => {
-        db.getTweets(testSearch).then((tweets) => {
-          ok(tweets.length > 0, 'tweets.length')
-          ok(tweets[0].id, 'tweets[0].id')
-          done()
+      db.es.indices.refresh({index: '_all'})
+        .then(() => {
+          db.getTweets(testSearch).then((tweets) => {
+            ok(tweets.length > 0, 'tweets.length')
+            ok(tweets[0].id, 'tweets[0].id')
+            done()
+          })
         })
-      })
-    }, 200)
+      }, 200)
   })
 
   it('should get summary', (done) => {
     db.getSearchSummary(testSearch).then((summ) => {
-      ok(summ.count > 100, '.count')
-      ok(summ.maxDate, '.maxDate')
-      ok(summ.minDate, '.minDate')
+      ok(summ.count > 100, 'count')
+      ok(summ.maxDate, 'maxDate')
+      ok(summ.minDate, 'minDate')
+      ok(summ.maxTweetId, 'maxTweetId')
       done()
     })
   })
@@ -230,7 +243,7 @@ describe('database', function() {
     })
   })
 
-  it('shoud get hashtags', (done) => {
+  it('should get hashtags', (done) => {
     db.getHashtags(testSearch).then((hashtags) => {
       // hopefully the test search pulled in some tweets with hashtags?
       if (hashtags.length > 0) {

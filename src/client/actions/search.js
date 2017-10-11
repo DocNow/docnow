@@ -59,6 +59,22 @@ export const searchTwitter = (q) => {
   }
 }
 
+export const updateSearch = (search) => {
+  return (dispatch) => {
+    const opts = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(search),
+      credentials: 'same-origin'
+    }
+    return fetch('/api/v1/search/' + search.id, opts)
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTwitterSearch(result))
+      })
+  }
+}
+
 export const getTweets = (id) => {
   return (dispatch) => {
     fetch('/api/v1/search/' + id + '/tweets', {credentials: 'same-origin'})

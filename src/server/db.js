@@ -437,7 +437,8 @@ export class Database {
         id: 'search:' + uuid(),
         creator: userId,
         query: q,
-        created: new Date().toISOString()
+        created: new Date().toISOString(),
+        maxTweetId: null
       }
       this.es.create({
         index: this.esTweetIndex,
@@ -467,6 +468,17 @@ export class Database {
       }).catch((err) => {
         reject(err)
       })
+    })
+  }
+
+  updateSearch(search) {
+    return this.es.update({
+      index: this.esTweetIndex,
+      type: 'search',
+      id: search.id,
+      body: {
+        doc: search
+      }
     })
   }
 
@@ -504,17 +516,22 @@ export class Database {
 
   importFromSearch(search) {
     let count = 0
-    // let maxId = null
+    let maxTweetId = null
     return new Promise((resolve, reject) => {
       this.getTwitterClientForUser(search.creator)
         .then((twtr) => {
-          twtr.search({q: search.query, count: 1000}, (err, results) => {
+          twtr.search({q: search.query, sinceId: search.maxTweetId, count: 1000}, (err, results) => {
             if (err) {
               reject(err)
             } else if (results.length === 0) {
-              resolve(count)
+              search.maxTweetId = maxTweetId
+              this.updateSearch(search)
+                .then(() => {resolve(count)})
             } else {
               count += results.length
+              if (maxTweetId === null) {
+                maxTweetId = results[0].id
+              }
               const bulk = []
               const seenUsers = new Set()
               for (const tweet of results) {

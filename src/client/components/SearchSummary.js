@@ -5,6 +5,11 @@ import style from '../styles/Intro.css'
 
 export default class SearchSummary extends Component {
 
+  update() {
+    console.log(this.props)
+    this.props.updateSearch({id: this.props.id})
+  }
+
   render() {
     let message = 'Loading...'
     if (this.props.count > 0) {
@@ -13,7 +18,7 @@ export default class SearchSummary extends Component {
     return (
       <div className={style.Intro}>
         <p>{message}</p>
-        <button>Update</button>
+        <button onClick={() => {this.update()}}>Update</button>
       </div>
     )
   }
@@ -23,4 +28,6 @@ SearchSummary.propTypes = {
   maxDate: PropTypes.string,
   minDate: PropTypes.string,
   count: PropTypes.number,
+  id: PropTypes.string,
+  updateSearch: PropTypes.func,
 }

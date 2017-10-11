@@ -68,7 +68,6 @@ app.get('/world', (req, res) => {
 })
 
 app.get('/trends', (req, res) => {
-  // when a user isn't logged in they get the super users's trends
   let lookup = null
   if (req.user) {
     lookup = db.getUserTrends(req.user.id)
@@ -124,6 +123,11 @@ app.post('/searches', (req, res) => {
         db.importFromSearch(search)
         res.redirect(303, `/api/v1/search/${search.id}`)
       })
+      .catch((e) => {
+        const msg = 'unable to createSearch: ' + e
+        console.log(msg)
+        res.error(msg)
+      })
   }
 })
 
@@ -145,6 +149,21 @@ app.get('/search/:searchId', (req, res) => {
       db.getSearchSummary(search).then((summ) => {
         res.json(summ)
       })
+    })
+  }
+})
+
+app.put('/search/:searchId', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.body.id).then((search) => {
+      db.importFromSearch(search)
+        .then(() => {
+          res.json(search)
+        })
+        .catch((e) => {
+          console.log(e)
+          res.json(search)
+        })
     })
   }
 })

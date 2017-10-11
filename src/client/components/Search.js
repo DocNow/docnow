@@ -72,9 +72,12 @@ export default class Search extends Component {
         </div>
 
         <SearchSummary
+          id={this.props.id}
           maxDate={this.props.maxDate}
           minDate={this.props.minDate}
-          count={this.props.count} />
+          count={this.props.count}
+          updateSearch={this.props.updateSearch}/>
+
 
         <div className={card.CardHolder}>
 
@@ -145,5 +148,6 @@ Search.propTypes = {
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,
   getHashtags: PropTypes.func,
-  getUsers: PropTypes.func
+  getUsers: PropTypes.func,
+  updateSearch: PropTypes.func,
 }

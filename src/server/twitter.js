@@ -83,7 +83,7 @@ export class Twitter {
           const tweets = resp.data.statuses
           const newTotal = total + tweets.length
           cb(null, tweets.map((s) => {return this.extractTweet(s)}))
-          if (tweets.length > 0 && newTotal < count) {
+          if (tweets.length > 1 && newTotal < count) {
             const newMaxId = tweets[tweets.length - 1].id_str
             recurse(newMaxId, newTotal)
           } else {
@@ -164,7 +164,7 @@ export class Twitter {
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
-      client: t.source.match(/>(.+?)</)[1],
+      client: t.source ? t.source.match(/>(.+?)</)[1] : null,
       user: {
         id: t.user.id_str,
         screenName: t.user.screen_name,
