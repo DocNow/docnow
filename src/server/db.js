@@ -549,8 +549,6 @@ export class Database {
               }).then((resp) => {
                 if (resp.errors) {
                   reject('indexing error check elasticsearch log')
-                } else {
-                  resolve(results)
                 }
               }).catch((elasticErr) => {
                 log.error(elasticErr.message)

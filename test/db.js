@@ -213,7 +213,7 @@ describe('database', function() {
 
   it('should get summary', (done) => {
     db.getSearchSummary(testSearch).then((summ) => {
-      equal(summ.count, 100, '.count')
+      ok(summ.count > 100, '.count')
       ok(summ.maxDate, '.maxDate')
       ok(summ.minDate, '.minDate')
       done()
