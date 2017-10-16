@@ -33,7 +33,9 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(cookieSession({secret: 'ABCD', resave: true, saveUninitialized: true}))
 app.use(passport.initialize())
+
 app.use(passport.session())
+
 app.use(morgan('combined'))
 
 app.use('/api/v1', api)

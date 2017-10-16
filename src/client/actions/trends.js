@@ -5,6 +5,8 @@ export const REMOVE_TREND = 'REMOVE_TREND'
 export const SAVE_TRENDS = 'SAVE_TRENDS'
 export const SET_WORLD = 'SET_WORLD'
 
+import { getUser } from './user'
+
 export const setTrends = (trends) => {
   return {
     type: SET_TRENDS,
@@ -55,6 +57,7 @@ export const saveTrends = (placeId) => {
       .then(() => {
         dispatch(updateNewTrend(''))
         dispatch(getTrends())
+        dispatch(getUser())
       })
   }
 }

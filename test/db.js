@@ -6,34 +6,31 @@ const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 
 describe('database', function() {
 
-  let testUserId = null
+  let testUser = null
   let testSearch = null
-
-  it('should have elasticsearch prefix set', () => {
-    equal(db.esPrefix, 'test')
-    equal(db.esTweetIndex, 'test:tweets')
-  })
 
   it('should clear', (done) => {
     db.clear()
       .then(done)
-      .catch((msg) => {log.error(msg)})
+      .catch(console.log)
   })
 
   it('should add settings', (done) => {
     db.addSettings({
       appKey: process.env.CONSUMER_KEY,
       appSecret: process.env.CONSUMER_SECRET
-    }).then(done())
+    })
+    .then(done())
   })
 
   it('should get settings', (done) => {
-    db.getSettings()
-      .then((settings) => {
+    setTimeout(() => {
+      db.getSettings().then((settings) => {
         equal(settings.appKey, process.env.CONSUMER_KEY)
         equal(settings.appSecret, process.env.CONSUMER_SECRET)
         done()
       })
+    }, 1000)
   })
 
   it('should add user', (done) => {
@@ -46,49 +43,37 @@ describe('database', function() {
       twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET
     }
     db.addUser(user)
-      .then((userId) => {
-        if (userId) {
-          testUserId = userId
+      .then((user) => {
+        if (user) {
+          testUser = user
           done()
         }
-    })
+      })
+      .catch((msg) => {
+        console.log(msg)
+      })
   })
 
   it('should get user by id', (done) => {
-    db.getUser(testUserId)
+    db.getUser(testUser.id)
       .then((user) => {
-        equal(user.id, testUserId)
+        equal(user.id, testUser.id)
         equal(user.name, 'Ed Summers')
         equal(user.twitterScreenName, 'edsu')
         equal(user.twitterUserId, '1234')
         equal(user.location, 'Silver Spring, MD')
         equal(user.twitterAccessToken, process.env.ACCESS_TOKEN)
         equal(user.twitterAccessTokenSecret, process.env.ACCESS_TOKEN_SECRET)
+        equal(user.places.length, 0)
         ok(user.isSuperUser)
         done()
       })
   })
 
   it('should look up by twitter user id', (done) => {
-    db.getUserByTwitterUserId('twitterUser:1234')
-      .then((user) => {
-        equal(user.id, testUserId)
-        done()
-      })
-  })
-
-  it('should look up twitter user id without prefix', (done) => {
     db.getUserByTwitterUserId('1234')
       .then((user) => {
-        equal(user.id, testUserId)
-        done()
-      })
-  })
-
-  it('should handle missing user', (done) => {
-    db.getUser('foo')
-      .then((user) => {
-        equal(user, null)
+        equal(user.id, testUser.id)
         done()
       })
   })
@@ -104,18 +89,44 @@ describe('database', function() {
   it('should lookup by superUser', (done) => {
     db.getSuperUser()
       .then((user) => {
-        equal(user.id, testUserId)
+        equal(user.id, testUser.id)
         done()
       })
   })
 
-  it('should set/get places', (done) => {
-    db.setUserPlaces(testUserId, [1,2459115,23424819]).then(() => {
-      db.getUserPlaces(testUserId).then((places) => {
-        equal(places.length, 3)
-        ok(places[0].match(/^place:\d+$/))
-        done()
-      })
+  it('should load all places', (done) => {
+    db.loadPlaces().then((places) => {
+      ok(places.length > 0, 'places.length')
+      ok(places[0].id.match(/place-\d+/), 'places[0].id')
+      done()
+    })
+  })
+
+  it('should get place', (done) => {
+    db.getPlace('place-2514815').then((place) => {
+      ok(place.name, 'Washington')
+      done()
+    })
+  })
+
+  it('should get places', (done) => {
+    db.getPlaces().then((places) => {
+      ok(places.length > 0, 'places.length')
+      done()
+    })
+  })
+
+  it('should add user places', (done) => {
+    testUser.places = ['place-1', 'place-2459115', 'place-23424819']
+    db.updateUser(testUser).then(() => {
+      done()
+    })
+  })
+
+  it('should get user places', (done) => {
+    db.getUser(testUser.id).then((u) => {
+      ok(u.places.length === 3)
+      done()
     })
   })
 
@@ -123,52 +134,24 @@ describe('database', function() {
     db.importLatestTrends()
       .then((result) => {
         equal(result.length, 3)
-        db.getTrends(1).then((result) => {
-          ok(result.trends.length > 0)
-          ok(result.trends[0].name)
-          ok(result.trends[0].tweets)
-          done()
-        })
-      })
-  })
-
-  it('should load all places', (done) => {
-    db.loadPlaces()
-      .then((result) => {
-        db.getPlace('2514815').then((place) => {
-          ok(place.name, 'Washington')
-          db.getPlaces().then((places) => {
-            ok(places)
-            equal(places['place:90036018']['name'], 'Okayama')
-            done()
-          })
-        })
-      })
-  })
-
-  it('should load user trends', (done) => {
-    db.getUserTrends(testUserId)
-      .then((result) => {
-        ok(result.length === 3)
-        ok(result[0].trends.length > 0)
-        ok(result[0].name)
         done()
       })
+      .catch(console.log)
   })
 
-  it('should add prefix', () => {
-    equal(db.addPrefix('123', 'user'), 'user:123')
-    equal(db.addPrefix('user:123', 'user'), 'user:123')
-    deepEqual(db.addPrefixes(['1', '2'], 'user'), ['user:1', 'user:2'])
-  })
-
-  it('should strip prefix', () => {
-    equal(db.stripPrefix('foo:bar'), 'bar')
-    equal(db.stripPrefix('foobar'), 'foobar')
+  it('should get trends for place', (done) => {
+    db.getTrendsForPlace('place-1')
+      .then((result) => {
+        ok(result.trends.length > 0)
+        ok(result.trends[0].name)
+        ok(result.trends[0].tweets)
+        done()
+      })
+      .catch(console.log)
   })
 
   it('should create search', (done) => {
-    db.createSearch(testUserId, 'obama')
+    db.createSearch(testUser, 'obama')
       .then((search) => {
         ok(search.id, 'search.id')
         testSearch = search
@@ -180,7 +163,7 @@ describe('database', function() {
     db.getSearch(testSearch.id).then((search) => {
       equal(search.id, testSearch.id, 'search.id')
       equal(search.query, 'obama', 'search.query')
-      equal(search.creator, testUserId, 'search.user')
+      equal(search.creator, testUser.id, 'search.user')
       ok(search.created, 'search.created')
       done()
     })
@@ -233,8 +216,8 @@ describe('database', function() {
     })
   })
 
-  it('should get users', (done) => {
-    db.getUsers(testSearch).then((users) => {
+  it('should get twitter users', (done) => {
+    db.getTwitterUsers(testSearch).then((users) => {
       ok(users.length > 0, 'users.length')
       ok(users[0].screenName, 'users[0].screenName')
       ok(users[0].tweetsInSearch > 0, 'users[0].tweetsInSearch')
@@ -250,6 +233,12 @@ describe('database', function() {
         ok(hashtags[0].hashtag, '.hashtag text')
         ok(hashtags[0].count > 0, 'hashtag count')
       }
+      done()
+    })
+  })
+
+  it('should get urls', (done) => {
+    db.getUrls(testSearch).then((urls) => {
       done()
     })
   })
