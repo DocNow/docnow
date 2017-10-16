@@ -8,7 +8,8 @@
     "wtest": "better-npm-run wtest",
     "repl": "babel-node",
     "eslint:server": "eslint server.js src/server/*",
-    "reset": "node src/commands/reset.js"
+    "reset": "node src/commands/reset.js",
+    "load-places": "node src/commands/load-places.js"
   },
   "betterScripts": {
     "build": {
