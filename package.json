@@ -39,6 +39,7 @@
   },
   "dependencies": {
     "better-npm-run": "0.0.15",
+    "big-integer": "^1.6.25",
     "body-parser": "^1.17.2",
     "cookie-parser": "^1.4.3",
     "cookie-session": "^2.0.0-beta.2",

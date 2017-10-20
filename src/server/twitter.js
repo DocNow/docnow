@@ -1,6 +1,7 @@
 import url from 'url'
 import Twit from 'twit'
 import log from './logger'
+import bigInt from 'big-integer'
 import emojiRegex from 'emoji-regex'
 
 const emojiMatch = emojiRegex()
@@ -76,6 +77,7 @@ export class Twitter {
 
     const recurse = (maxId, total) => {
       const newParams = Object.assign({max_id: maxId}, params)
+      log.info('searching twitter', {params: newParams})
       this.twit.get('search/tweets', newParams).then((resp) => {
         if (resp.data.errors) {
           cb(resp.data.errors[0], null)
@@ -84,7 +86,7 @@ export class Twitter {
           const newTotal = total + tweets.length
           cb(null, tweets.map((s) => {return this.extractTweet(s)}))
           if (tweets.length > 0 && newTotal < count) {
-            const newMaxId = tweets[tweets.length - 1].id_str - 1
+            const newMaxId = String(bigInt(tweets[tweets.length - 1].id_str).minus(1))
             recurse(newMaxId, newTotal)
           } else {
             cb(null, [])

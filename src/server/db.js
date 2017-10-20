@@ -144,7 +144,7 @@ export class Database {
   addUser(user) {
     user.id = uuid()
     user.places = []
-    log.info(`creating user: ${user}`)
+    log.info('creating user: ', {user: user})
     return new Promise((resolve) => {
       this.getSuperUser()
         .then((u) => {
@@ -206,7 +206,7 @@ export class Database {
           if (placeIds.length === 0) {
             resolve([])
           } else {
-            log.info('importing trends for ' + placeIds)
+            log.info('importing trends for ', {placeIds: placeIds})
             Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
               .then(this.saveTrends.bind(this))
               .then(resolve)
@@ -345,7 +345,7 @@ export class Database {
   }
 
   setupIndexes() {
-    this.es.indices.exists({index: this.getIndex(TWEET)})
+    return this.es.indices.exists({index: this.getIndex(TWEET)})
       .then((exists) => {
         if (! exists) {
           log.info('adding indexes')
