@@ -2,7 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import TweetList from './TweetList'
 import UserList from './UserList'
-import Hashtags from './Hashtags'
+import HashtagList from './HashtagList'
+import UrlList from './UrlList'
 import Media from './Media'
 import SearchSummary from './SearchSummary'
 
@@ -39,6 +40,7 @@ export default class Search extends Component {
       this.props.getTweets(this.props.id)
       this.props.getHashtags(this.props.id)
       this.props.getUsers(this.props.id)
+      this.props.getUrls(this.props.id)
     }
   }
 
@@ -96,16 +98,14 @@ export default class Search extends Component {
           </div>
 
           <div className={card.Card}>
-            <Hashtags hashtags={this.props.hashtags}/>
+            <HashtagList hashtags={this.props.hashtags}/>
             <div className={card.CardTitle}>
               <h2>Hashtags</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <div className={card.Data}>
-              <Media tweets={this.props.tweets}/>
-            </div>
+            <UrlList urls={this.props.urls}/>
             <div className={card.CardTitle}>
               <h2>URLs</h2>
             </div>
@@ -144,10 +144,12 @@ Search.propTypes = {
   tweets: PropTypes.array,
   users: PropTypes.array,
   hashtags: PropTypes.array,
+  urls: PropTypes.array,
   searchTwitter: PropTypes.func,
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,
   getHashtags: PropTypes.func,
   getUsers: PropTypes.func,
+  getUrls: PropTypes.func,
   updateSearch: PropTypes.func,
 }

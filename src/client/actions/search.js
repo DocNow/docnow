@@ -2,6 +2,7 @@ export const SET_TWITTER_SEARCH = 'SET_TWITTER_SEARCH'
 export const SET_TWITTER_SEARCH_TWEETS = 'SET_TWITTER_SEARCH_TWEETS'
 export const SET_TWITTER_SEARCH_USERS = 'SET_TWITTER_SEARCH_USERS'
 export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
+export const SET_TWITTER_SEARCH_URLS = 'SET_TWITTER_SEARCH_URLS'
 export const RESET_TWITTER_SEARCH = 'RESET_TWITTER_SEARCH'
 
 const setTwitterSearch = (search) => {
@@ -29,6 +30,13 @@ const setTwitterSearchHashtags = (hashtags) => {
   return {
     type: SET_TWITTER_SEARCH_HASHTAGS,
     hashtags
+  }
+}
+
+const setTwitterSearchUrls = (urls) => {
+  return {
+    type: SET_TWITTER_SEARCH_URLS,
+    urls
   }
 }
 
@@ -101,6 +109,16 @@ export const getHashtags = (id) => {
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchHashtags(result))
+      })
+  }
+}
+
+export const getUrls = (id) => {
+  return (dispatch) => {
+    fetch('/api/v1/search/' + id + '/urls', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTwitterSearchUrls(result))
       })
   }
 }

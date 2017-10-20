@@ -1,6 +1,7 @@
 import {
   SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS, SET_TWITTER_SEARCH_USERS,
-  SET_TWITTER_SEARCH_HASHTAGS, RESET_TWITTER_SEARCH
+  SET_TWITTER_SEARCH_HASHTAGS, SET_TWITTER_SEARCH_URLS,
+  RESET_TWITTER_SEARCH
 } from '../actions/search'
 
 const initialState = {
@@ -12,7 +13,8 @@ const initialState = {
   maxDate: '',
   tweets: [],
   users: [],
-  hashtags: []
+  hashtags: [],
+  urls: []
 }
 
 export default function user(state = initialState, action) {
@@ -47,6 +49,13 @@ export default function user(state = initialState, action) {
       return {
         ...state,
         hashtags: action.hashtags
+      }
+    }
+
+    case SET_TWITTER_SEARCH_URLS: {
+      return {
+        ...state,
+        urls: action.urls
       }
     }
 

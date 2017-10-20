@@ -10,9 +10,11 @@ describe('database', function() {
   let testSearch = null
 
   it('should clear', (done) => {
-    db.clear()
-      .then(done)
-      .catch(console.log)
+    db.clear().then(done)
+  })
+
+  it('should setup indexes', (done) => {
+    db.setupIndexes().then(done)
   })
 
   it('should add settings', (done) => {
@@ -239,6 +241,9 @@ describe('database', function() {
 
   it('should get urls', (done) => {
     db.getUrls(testSearch).then((urls) => {
+      ok(urls.length > 0)
+      ok(urls[0].url.match(/^http/))
+      ok(urls[0].count > 0)
       done()
     })
   })

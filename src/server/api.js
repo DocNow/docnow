@@ -9,6 +9,7 @@ const app = express()
 
 const db = new Database()
 
+db.setupIndexes()
 db.startTrendsWatcher({interval: 60 * 1000})
 
 app.get('/setup', (req, res) => {
@@ -96,7 +97,6 @@ app.put('/trends', (req, res) => {
   db.getUser(req.user.id)
     .then((user) => {
       user.places = req.body
-      console.log('xxx', user.places)
       db.updateUser(user)
         .then(() => {
           db.importLatestTrendsForUser(user)
@@ -207,6 +207,18 @@ app.get('/search/:searchId/hashtags', (req, res) => {
         db.getHashtags(search)
           .then((hashtags) => {
             res.json(hashtags)
+          })
+      })
+  }
+})
+
+app.get('/search/:searchId/urls', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.params.searchId)
+      .then((search) => {
+        db.getUrls(search)
+          .then((urls) => {
+            res.json(urls)
           })
       })
   }

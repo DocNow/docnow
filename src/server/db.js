@@ -35,8 +35,6 @@ export class Database {
     log.info('connecting to elasticsearch: ' + esOpts)
     this.esPrefix = esOpts.prefix || 'docnow'
     this.es = new elasticsearch.Client(esOpts)
-    log.info('setting up index')
-    this.setupIndexes()
   }
 
   getIndex(type) {
@@ -44,13 +42,16 @@ export class Database {
       case USER:
       case SETTINGS:
       case PLACE:
+      case TREND:
       case SEARCH:
-        return this.esPrefix + ':admin'
+        return this.esPrefix + '-admin'
       case TWEET:
       case TWUSER:
-        return this.esPrefix + ':tweets'
+        return this.esPrefix + '-tweets'
       default:
-        return this.esPrefix + ':admin'
+        const msg = `unable to determine index for type ${type}`
+        log.error(msg)
+        throw msg
     }
   }
 
@@ -64,7 +65,6 @@ export class Database {
         .then((didSucceed) => {
           if (didSucceed === 'OK') {
             this.deleteIndexes()
-              .then(() => {this.addIndexes()})
               .then(resolve)
               .catch(reject)
           } else {
@@ -144,6 +144,7 @@ export class Database {
   addUser(user) {
     user.id = uuid()
     user.places = []
+    log.info(`creating user: ${user}`)
     return new Promise((resolve) => {
       this.getSuperUser()
         .then((u) => {
@@ -188,6 +189,10 @@ export class Database {
           for (const user of users) {
             this.importLatestTrendsForUser(user).then(resolve)
           }
+        })
+        .catch(() => {
+          log.info('no users to import trends for')
+          resolve()
         })
     })
   }
@@ -245,7 +250,7 @@ export class Database {
   }
 
   getUserTrends(user) {
-    if (user.places) {
+    if (user && user.places) {
       return Promise.all(user.places.map(this.getTrendsForPlace, this))
     }
   }
@@ -291,6 +296,8 @@ export class Database {
                 const body = []
                 for (const place of places) {
                   place.id = addPrefix('place', place.id)
+                  place.parentId = addPrefix('place', place.parent)
+                  delete place.parent
                   body.push({
                     index: {
                       _index: this.getIndex(PLACE),
@@ -360,25 +367,27 @@ export class Database {
   }
 
   addAdminIndex() {
+    const index = this.getIndex(SETTINGS)
+    log.info(`creating admin index: ${index}`)
     return this.es.indices.create({
-      index: this.getIndex(SETTINGS),
+      index: index,
       body: {
         mappings: {
 
-          SETTINGS: {
+          settings: {
             properties: {
               appKey: {type: 'keyword'},
               appSecret: {type: 'keyword'}
             }
           },
 
-          USER: {
+          user: {
             properties: {
               places: {type: 'keyword'}
             }
           },
 
-          SEARCH: {
+          search: {
             properties: {
               id: {type: 'keyword'},
               created: {type: 'date', format: 'date_time'},
@@ -388,7 +397,18 @@ export class Database {
             }
           },
 
-          TREND: {
+          place: {
+            properties: {
+              id: {type: 'keyword'},
+              name: {type: 'text'},
+              type: {type: 'keyword'},
+              country: {type: 'text'},
+              countryCode: {type: 'keyword'},
+              parentId: {type: 'keyword'}
+            }
+          },
+
+          trend: {
             properties: {
               id: {type: 'keyword'},
               'trends.name': {type: 'keyword'},
@@ -402,21 +422,23 @@ export class Database {
   }
 
   addTweetIndex() {
+    const index = this.getIndex(TWEET)
+    log.info(`creating tweet index: ${index}`)
     return this.es.indices.create({
       index: this.getIndex(TWEET),
       body: {
         mappings: {
 
-          TWUSER: {
+          twuser: {
             properties: {
               id: {type: 'keyword'},
               screenName: {type: 'keyword'},
               created: {type: 'date', format: 'date_time'},
-              updated: {type: 'date', format: 'date_time'},
+              updated: {type: 'date', format: 'date_time'}
             }
           },
 
-          TWEET: {
+          tweet: {
             properties: {
               id: {type: 'keyword'},
               search: {type: 'keyword'},
@@ -426,18 +448,18 @@ export class Database {
               client: {type: 'keyword'},
               hashtags: {type: 'keyword'},
               mentions: {type: 'keyword'},
-              geo: {type: 'geo_point'},
+              geo: {type: 'geo_shape'},
               videos: {type: 'keyword'},
               photos: {type: 'keyword'},
               animatedGifs: {type: 'keyword'},
               emojis: {type: 'keyword'},
-              'place.id': {type: 'keyword'},
-              'place.name': {type: 'keyword'},
-              'place.boundingBox': {type: 'geo_shape'},
-              'place.country': {type: 'keyword'},
-              'place.countryCode': {type: 'keyword'},
+
+              country: {type: 'keyword'},
+              countryCode: {type: 'keyword'},
+              boundingBox: {type: 'geo_shape'},
+
               'urls.short': {type: 'keyword'},
-              'urls.full': {type: 'keyword'},
+              'urls.long': {type: 'keyword'},
               'urls.hostname': {type: 'keyword'},
               'user.screenName': {type: 'keyword'},
               'quote.user.screenName': {type: 'keyword'},
@@ -450,17 +472,15 @@ export class Database {
   }
 
   deleteIndexes() {
+    log.info('deleting all elasticsearch indexes')
     return new Promise((resolve) => {
-      const indexes = this.esPrefix + ':*'
-      this.es.indices.delete({index: indexes})
+      this.es.indices.delete({index: this.esPrefix + '*'})
         .then(() => {
-          log.info('deleted indexes: ' + indexes)
+          log.info('deleted indexes')
           resolve()
         })
         .catch((err) => {
           log.warn('indexes delete failed: ' + err)
-          // if any of the indexes aren't there this will fail
-          // but that's ok because we're deleting them
           resolve()
         })
     })
@@ -714,10 +734,26 @@ export class Database {
     })
   }
 
-  getUrls(searchId) {
-    log.debug(searchId)
-    return new Promise((resolve) => {
-      resolve()
+  getUrls(search) {
+    const body = {
+      size: 0,
+      query: {match: {search: search.id}},
+      aggregations: {urls: {terms: {field: 'urls.long', size: 100}}}
+    }
+    return new Promise((resolve, reject) => {
+      this.es.search({
+        index: this.getIndex(TWEET),
+        type: TWEET,
+        body: body
+      }).then((response) => {
+        const urls = response.aggregations.urls.buckets.map((u) => {
+          return {url: u.key, count: u.doc_count}
+        })
+        resolve(urls)
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
     })
   }
 

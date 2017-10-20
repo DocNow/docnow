@@ -83,8 +83,8 @@ export class Twitter {
           const tweets = resp.data.statuses
           const newTotal = total + tweets.length
           cb(null, tweets.map((s) => {return this.extractTweet(s)}))
-          if (tweets.length > 1 && newTotal < count) {
-            const newMaxId = tweets[tweets.length - 1].id_str
+          if (tweets.length > 0 && newTotal < count) {
+            const newMaxId = tweets[tweets.length - 1].id_str - 1
             recurse(newMaxId, newTotal)
           } else {
             cb(null, [])
@@ -101,7 +101,12 @@ export class Twitter {
     const userCreated = new Date(t.user.created_at)
     const hashtags = t.entities.hashtags.map((ht) => {return ht.text.toLowerCase()})
     const mentions = t.entities.user_mentions.map((m) => {return m.screen_name})
-    const geo = t.coordinates ? t.coordinates.coordinates : null
+
+    let geo = null
+    if (t.coordinates) {
+      geo = t.coordinates
+    }
+
     const emojis = emojiMatch.exec(t.full_text)
 
     let retweet = null
@@ -122,7 +127,7 @@ export class Twitter {
         id: t.place.id,
         country: t.place.country,
         countryCode: t.place.country_code,
-        boundingBox: t.place.bounding_box[0]
+        boundingBox: t.place.bounding_box
       }
     }
 
@@ -130,6 +135,11 @@ export class Twitter {
     if (t.entities.urls) {
       for (const e of t.entities.urls) {
         const u = url.parse(e.expanded_url)
+        // not interested in pointers back to Twitter which
+        // happens during quoting
+        if (u.hostname === 'twitter.com') {
+          continue
+        }
         urls.push({
           short: e.url,
           long: e.expanded_url,
