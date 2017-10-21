@@ -782,10 +782,26 @@ export class Database {
     })
   }
 
-  getVideos(searchId) {
-    log.debug(searchId)
-    return new Promise((resolve) => {
-      resolve()
+  getVideos(search) {
+    const body = {
+      size: 0,
+      query: {match: {search: search.id}},
+      aggregations: {videos: {terms: {field: 'videos', size: 100}}}
+    }
+    return new Promise((resolve, reject) => {
+      this.es.search({
+        index: this.getIndex(TWEET),
+        type: TWEET,
+        body: body
+      }).then((response) => {
+        const videos = response.aggregations.videos.buckets.map((u) => {
+          return {url: u.key, count: u.doc_count}
+        })
+        resolve(videos)
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
     })
   }
 

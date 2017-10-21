@@ -253,14 +253,18 @@ describe('database', function() {
     })
   })
 
-  it('should get videos', (done) => {
-    db.getVideos(testSearch).then((hashtags) => {
+  it('should get images', (done) => {
+    db.getImages(testSearch).then((images) => {
+      ok(images.length > 0)
+      ok(images[0].url)
       done()
     })
   })
 
-  it('should get images', (done) => {
-    db.getImages(testSearch).then((images) => {
+  it('should get videos', (done) => {
+    db.getVideos(testSearch).then((videos) => {
+      ok(videos.length > 0)
+      ok(videos[0].url)
       done()
     })
   })

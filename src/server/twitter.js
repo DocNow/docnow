@@ -163,7 +163,17 @@ export class Twitter {
         if (e.type === 'photo') {
           images.push(e.media_url_https)
         } else if (e.type === 'video') {
-          videos.push(e.media_url_https)
+          let maxBitRate = 0
+          let videoUrl = null
+          for (const v of e.video_info.variants) {
+            if (v.content_type === 'video/mp4' && v.bitrate > maxBitRate) {
+              videoUrl = v.url
+              maxBitRate = v.bitrate
+            }
+          }
+          if (videoUrl) {
+            videos.push(videoUrl)
+          }
         } else if (e.type === 'animated_gif') {
           animatedGifs.push(e.media_url_https)
         }
