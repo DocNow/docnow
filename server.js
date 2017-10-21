@@ -56,5 +56,10 @@ if (isDevelopment) {
   app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
 }
 
+// log additional information about unhandled promises so they can be debugged
+process.on('unhandledRejection', (reason, p) => {
+  log.warn('Unhandled Rejection at:', p, 'reason:', reason)
+})
+
 log.info('starting app')
 app.listen(app.get('port'))

@@ -493,7 +493,8 @@ export class Database {
         creator: user.id,
         query: q,
         created: new Date().toISOString(),
-        maxTweetId: null
+        maxTweetId: null,
+        active: true
       }
       this.es.create({
         index: this.getIndex(SEARCH),
@@ -527,14 +528,7 @@ export class Database {
   }
 
   updateSearch(search) {
-    return this.es.update({
-      index: this.getIndex('search'),
-      type: 'search',
-      id: search.id,
-      body: {
-        doc: search
-      }
-    })
+    return this.add(SEARCH, search.id, search)
   }
 
   getSearchSummary(search) {
@@ -574,61 +568,69 @@ export class Database {
     let maxTweetId = null
     return new Promise((resolve, reject) => {
       this.getUser(search.creator).then((user) => {
-        this.getTwitterClientForUser(user)
-          .then((twtr) => {
-            twtr.search({q: search.query, sinceId: search.maxTweetId, count: 1000}, (err, results) => {
-              if (err) {
-                reject(err)
-              } else if (results.length === 0) {
-                search.maxTweetId = maxTweetId
-                this.updateSearch(search)
-                  .then(() => {resolve(count)})
-              } else {
-                count += results.length
-                if (maxTweetId === null) {
-                  maxTweetId = results[0].id
-                }
-                const bulk = []
-                const seenUsers = new Set()
-                for (const tweet of results) {
-                  tweet.search = search.id
-                  const id = search.id + ':' + tweet.id
-                  bulk.push(
-                    {
-                      index: {
-                        _index: this.getIndex(TWEET),
-                        _type: TWEET,
-                        _id: id
+        this.updateSearch({...search, active: true})
+          .then((newSearch) => {
+            this.getTwitterClientForUser(user)
+              .then((twtr) => {
+                twtr.search({q: search.query, sinceId: search.maxTweetId, count: 1000}, (err, results) => {
+                  if (err) {
+                    reject(err)
+                  } else if (results.length === 0) {
+                    newSearch.maxTweetId = maxTweetId
+                    newSearch.active = false
+                    this.updateSearch(newSearch)
+                      .then(() => {resolve(count)})
+                  } else {
+                    count += results.length
+                    if (maxTweetId === null) {
+                      maxTweetId = results[0].id
+                    }
+                    const bulk = []
+                    const seenUsers = new Set()
+                    for (const tweet of results) {
+                      tweet.search = search.id
+                      const id = search.id + ':' + tweet.id
+                      bulk.push(
+                        {
+                          index: {
+                            _index: this.getIndex(TWEET),
+                            _type: TWEET,
+                            _id: id
+                          }
+                        },
+                        tweet
+                      )
+                      if (! seenUsers.has(tweet.user.id)) {
+                        bulk.push(
+                          {
+                            index: {
+                              _index: this.getIndex(TWUSER),
+                              _type: TWUSER,
+                              _id: tweet.user.id,
+                            }
+                          },
+                          tweet.user
+                        )
+                        seenUsers.add(tweet.user.id)
                       }
-                    },
-                    tweet
-                  )
-                  if (! seenUsers.has(tweet.user.id)) {
-                    bulk.push(
-                      {
-                        index: {
-                          _index: this.getIndex(TWUSER),
-                          _type: TWUSER,
-                          _id: tweet.user.id,
-                        }
-                      },
-                      tweet.user
-                    )
-                    seenUsers.add(tweet.user.id)
+                    }
+                    this.es.bulk({
+                      body: bulk,
+                      refresh: 'wait_for'
+                    }).then((resp) => {
+                      if (resp.errors) {
+                        reject('indexing error check elasticsearch log')
+                      }
+                    }).catch((elasticErr) => {
+                      log.error(elasticErr.message)
+                      reject(elasticErr.message)
+                    })
                   }
-                }
-                this.es.bulk({
-                  body: bulk
-                }).then((resp) => {
-                  if (resp.errors) {
-                    reject('indexing error check elasticsearch log')
-                  }
-                }).catch((elasticErr) => {
-                  log.error(elasticErr.message)
-                  reject(elasticErr.message)
                 })
-              }
-            })
+              })
+          })
+          .catch((e) => {
+            log.error('unable to update search: ', e)
           })
       })
     })
@@ -757,10 +759,26 @@ export class Database {
     })
   }
 
-  getPhotos(searchId) {
-    log.debug(searchId)
-    return new Promise((resolve) => {
-      resolve()
+  getPhotos(search) {
+    const body = {
+      size: 0,
+      query: {match: {search: search.id}},
+      aggregations: {photos: {terms: {field: 'photos', size: 100}}}
+    }
+    return new Promise((resolve, reject) => {
+      this.es.search({
+        index: this.getIndex(TWEET),
+        type: TWEET,
+        body: body
+      }).then((response) => {
+        const photos = response.aggregations.photos.buckets.map((u) => {
+          return {url: u.key, count: u.doc_count}
+        })
+        resolve(photos)
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
     })
   }
 

@@ -41,3 +41,9 @@
   color: #4a4a4a;
   outline: none;
 }
+
+time, .Count  {
+  font-weight: bold;
+  padding: 5px;
+  background-color: #efefef;
+}

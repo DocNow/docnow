@@ -224,4 +224,16 @@ app.get('/search/:searchId/urls', (req, res) => {
   }
 })
 
+app.get('/search/:searchId/photos', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.params.searchId)
+      .then((search) => {
+        db.getPhotos(search)
+          .then((photos) => {
+            res.json(photos)
+          })
+      })
+  }
+})
+
 module.exports = app

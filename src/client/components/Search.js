@@ -35,12 +35,13 @@ export default class Search extends Component {
   }
 
   tick() {
-    if (this.props.id) {
+    if (this.props.id && this.props.active) {
       this.props.getSearch(this.props.id)
       this.props.getTweets(this.props.id)
       this.props.getHashtags(this.props.id)
       this.props.getUsers(this.props.id)
       this.props.getUrls(this.props.id)
+      this.props.getPhotos(this.props.id)
     }
   }
 
@@ -78,6 +79,7 @@ export default class Search extends Component {
           maxDate={this.props.maxDate}
           minDate={this.props.minDate}
           count={this.props.count}
+          active={this.props.active}
           updateSearch={this.props.updateSearch}/>
 
 
@@ -145,11 +147,13 @@ Search.propTypes = {
   users: PropTypes.array,
   hashtags: PropTypes.array,
   urls: PropTypes.array,
+  active: PropTypes.bool,
   searchTwitter: PropTypes.func,
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,
   getHashtags: PropTypes.func,
   getUsers: PropTypes.func,
   getUrls: PropTypes.func,
+  getPhotos: PropTypes.func,
   updateSearch: PropTypes.func,
 }

@@ -3,7 +3,9 @@ export const SET_TWITTER_SEARCH_TWEETS = 'SET_TWITTER_SEARCH_TWEETS'
 export const SET_TWITTER_SEARCH_USERS = 'SET_TWITTER_SEARCH_USERS'
 export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
 export const SET_TWITTER_SEARCH_URLS = 'SET_TWITTER_SEARCH_URLS'
+export const SET_TWITTER_SEARCH_PHOTOS = 'SET_TWITTER_SEARCH_PHOTOS'
 export const RESET_TWITTER_SEARCH = 'RESET_TWITTER_SEARCH'
+export const ACTIVATE_SEARCH = 'ACTIVATE_SEARCH'
 
 const setTwitterSearch = (search) => {
   return {
@@ -40,9 +42,22 @@ const setTwitterSearchUrls = (urls) => {
   }
 }
 
+const setTwitterSearchPhotos = (photos) => {
+  return {
+    type: SET_TWITTER_SEARCH_PHOTOS,
+    photos
+  }
+}
+
 const resetTwitterSearch = () => {
   return {
     type: RESET_TWITTER_SEARCH
+  }
+}
+
+export const activateSearch = () => {
+  return {
+    type: ACTIVATE_SEARCH
   }
 }
 
@@ -69,6 +84,7 @@ export const searchTwitter = (q) => {
 
 export const updateSearch = (search) => {
   return (dispatch) => {
+    dispatch(activateSearch())
     const opts = {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
@@ -119,6 +135,16 @@ export const getUrls = (id) => {
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchUrls(result))
+      })
+  }
+}
+
+export const getPhotos = (id) => {
+  return (dispatch) => {
+    fetch('/api/v1/search/' + id + '/photos', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTwitterSearchPhotos(result))
       })
   }
 }
