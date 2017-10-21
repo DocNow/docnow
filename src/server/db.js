@@ -450,7 +450,7 @@ export class Database {
               mentions: {type: 'keyword'},
               geo: {type: 'geo_shape'},
               videos: {type: 'keyword'},
-              photos: {type: 'keyword'},
+              images: {type: 'keyword'},
               animatedGifs: {type: 'keyword'},
               emojis: {type: 'keyword'},
 
@@ -759,11 +759,11 @@ export class Database {
     })
   }
 
-  getPhotos(search) {
+  getImages(search) {
     const body = {
       size: 0,
       query: {match: {search: search.id}},
-      aggregations: {photos: {terms: {field: 'photos', size: 100}}}
+      aggregations: {images: {terms: {field: 'images', size: 100}}}
     }
     return new Promise((resolve, reject) => {
       this.es.search({
@@ -771,10 +771,10 @@ export class Database {
         type: TWEET,
         body: body
       }).then((response) => {
-        const photos = response.aggregations.photos.buckets.map((u) => {
+        const images = response.aggregations.images.buckets.map((u) => {
           return {url: u.key, count: u.doc_count}
         })
-        resolve(photos)
+        resolve(images)
       }).catch((err) => {
         log.error(err)
         reject(err)

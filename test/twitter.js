@@ -58,7 +58,7 @@ describe('twitter', () => {
         ok(t.retweetCount >= 0, 'retweetCount')
         ok(t.client, 'client')
         ok('videos' in t, 'videos')
-        ok('photos' in t, 'photos')
+        ok('images' in t, 'images')
         ok('animatedGifs' in t, 'animatedGifs')
 
         ok('retweet' in t, 'retweet')

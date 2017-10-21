@@ -45,6 +45,6 @@ SearchSummary.propTypes = {
   minDate: PropTypes.string,
   count: PropTypes.number,
   id: PropTypes.string,
-  active: PropTypes.boolean,
+  active: PropTypes.bool,
   updateSearch: PropTypes.func,
 }

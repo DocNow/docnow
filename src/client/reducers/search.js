@@ -1,6 +1,6 @@
 import {
   SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS, SET_TWITTER_SEARCH_USERS,
-  SET_TWITTER_SEARCH_HASHTAGS, SET_TWITTER_SEARCH_URLS, SET_TWITTER_SEARCH_PHOTOS,
+  SET_TWITTER_SEARCH_HASHTAGS, SET_TWITTER_SEARCH_URLS, SET_TWITTER_SEARCH_IMAGES,
   RESET_TWITTER_SEARCH, ACTIVATE_SEARCH
 } from '../actions/search'
 
@@ -15,7 +15,7 @@ const initialState = {
   tweets: [],
   users: [],
   hashtags: [],
-  photos: [],
+  images: [],
   urls: []
 }
 
@@ -61,10 +61,10 @@ export default function user(state = initialState, action) {
       }
     }
 
-    case SET_TWITTER_SEARCH_PHOTOS: {
+    case SET_TWITTER_SEARCH_IMAGES: {
       return {
         ...state,
-        photos: action.photos
+        images: action.images
       }
     }
 

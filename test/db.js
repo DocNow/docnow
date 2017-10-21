@@ -166,7 +166,10 @@ describe('database', function() {
       equal(search.id, testSearch.id, 'search.id')
       equal(search.query, 'obama', 'search.query')
       equal(search.creator, testUser.id, 'search.user')
+      equal(search.active, true, 'search.active')
+      equal(search.maxTweetId, null, 'search.maxTweetId')
       ok(search.created, 'search.created')
+      testSearch = search
       done()
     })
   })
@@ -185,13 +188,13 @@ describe('database', function() {
   it('should import more from search', function(done) {
     // test assumes someone will tweet about obama aggregations
     // 5 seconds from now...
-    setTimeout(() => {
-      db.importFromSearch(testSearch)
+    db.getSearch(testSearch.id).then((search) => {
+      db.importFromSearch(search)
         .then((num) => {
           ok(num > 0)
           done()
         })
-      }, 5000)
+      })
   })
 
   it('should get tweets', (done) => {
@@ -209,12 +212,14 @@ describe('database', function() {
   })
 
   it('should get summary', (done) => {
-    db.getSearchSummary(testSearch).then((summ) => {
-      ok(summ.count > 100, 'count')
-      ok(summ.maxDate, 'maxDate')
-      ok(summ.minDate, 'minDate')
-      ok(summ.maxTweetId, 'maxTweetId')
-      done()
+    db.getSearch(testSearch.id).then((search) => {
+      db.getSearchSummary(search).then((summ) => {
+        ok(summ.count > 100, 'count')
+        ok(summ.maxDate, 'maxDate')
+        ok(summ.minDate, 'minDate')
+        ok(summ.maxTweetId, 'maxTweetId')
+        done()
+      })
     })
   })
 
@@ -254,8 +259,8 @@ describe('database', function() {
     })
   })
 
-  it('should get photos', (done) => {
-    db.getPhotos(testSearch).then((photos) => {
+  it('should get images', (done) => {
+    db.getImages(testSearch).then((images) => {
       done()
     })
   })

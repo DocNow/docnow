@@ -25,13 +25,13 @@
       }
     },
     "wtest": {
-      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 10000 --require babel-register test/*'",
+      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 20000 --require babel-register test/*'",
       "env": {
         "NODE_ENV": "test"
       }
     },
     "test": {
-      "command": "npm run eslint:server && mocha --timeout 10000 --require babel-register test/*",
+      "command": "npm run eslint:server && mocha --timeout 20000 --require babel-register test/*",
       "env": {
         "NODE_ENV": "test"
       }

@@ -4,6 +4,7 @@ import TweetList from './TweetList'
 import UserList from './UserList'
 import HashtagList from './HashtagList'
 import UrlList from './UrlList'
+import ImageList from './ImageList'
 import Media from './Media'
 import SearchSummary from './SearchSummary'
 
@@ -41,7 +42,7 @@ export default class Search extends Component {
       this.props.getHashtags(this.props.id)
       this.props.getUsers(this.props.id)
       this.props.getUrls(this.props.id)
-      this.props.getPhotos(this.props.id)
+      this.props.getImages(this.props.id)
     }
   }
 
@@ -114,9 +115,7 @@ export default class Search extends Component {
           </div>
 
           <div className={card.Card}>
-            <div className={card.Data}>
-              <Media tweets={this.props.tweets}/>
-            </div>
+            <ImageList images={this.props.images}/>
             <div className={card.CardTitle}>
               <h2>Images</h2>
             </div>
@@ -147,6 +146,7 @@ Search.propTypes = {
   users: PropTypes.array,
   hashtags: PropTypes.array,
   urls: PropTypes.array,
+  images: PropTypes.array,
   active: PropTypes.bool,
   searchTwitter: PropTypes.func,
   getSearch: PropTypes.func,
@@ -154,6 +154,6 @@ Search.propTypes = {
   getHashtags: PropTypes.func,
   getUsers: PropTypes.func,
   getUrls: PropTypes.func,
-  getPhotos: PropTypes.func,
+  getImages: PropTypes.func,
   updateSearch: PropTypes.func,
 }

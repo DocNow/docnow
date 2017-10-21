@@ -3,7 +3,7 @@ export const SET_TWITTER_SEARCH_TWEETS = 'SET_TWITTER_SEARCH_TWEETS'
 export const SET_TWITTER_SEARCH_USERS = 'SET_TWITTER_SEARCH_USERS'
 export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
 export const SET_TWITTER_SEARCH_URLS = 'SET_TWITTER_SEARCH_URLS'
-export const SET_TWITTER_SEARCH_PHOTOS = 'SET_TWITTER_SEARCH_PHOTOS'
+export const SET_TWITTER_SEARCH_IMAGES = 'SET_TWITTER_SEARCH_IMAGES'
 export const RESET_TWITTER_SEARCH = 'RESET_TWITTER_SEARCH'
 export const ACTIVATE_SEARCH = 'ACTIVATE_SEARCH'
 
@@ -42,10 +42,10 @@ const setTwitterSearchUrls = (urls) => {
   }
 }
 
-const setTwitterSearchPhotos = (photos) => {
+const setTwitterSearchImages = (images) => {
   return {
-    type: SET_TWITTER_SEARCH_PHOTOS,
-    photos
+    type: SET_TWITTER_SEARCH_IMAGES,
+    images
   }
 }
 
@@ -139,12 +139,12 @@ export const getUrls = (id) => {
   }
 }
 
-export const getPhotos = (id) => {
+export const getImages = (id) => {
   return (dispatch) => {
-    fetch('/api/v1/search/' + id + '/photos', {credentials: 'same-origin'})
+    fetch('/api/v1/search/' + id + '/images', {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
-        dispatch(setTwitterSearchPhotos(result))
+        dispatch(setTwitterSearchImages(result))
       })
   }
 }

@@ -155,13 +155,13 @@ export class Twitter {
       userUrl = t.user.entities.url.urls[0].expanded_url
     }
 
-    const photos = []
+    const images = []
     const videos = []
     const animatedGifs = []
     if (t.extended_entities && t.extended_entities.media) {
       for (const e of t.extended_entities.media) {
         if (e.type === 'photo') {
-          photos.push(e.media_url_https)
+          images.push(e.media_url_https)
         } else if (e.type === 'video') {
           videos.push(e.media_url_https)
         } else if (e.type === 'animated_gif') {
@@ -196,7 +196,7 @@ export class Twitter {
       geo,
       place,
       urls,
-      photos,
+      images,
       videos,
       animatedGifs,
       emojis,
