@@ -8,7 +8,6 @@ import searchStyle from '../styles/Search.css'
 export default class SearchSummary extends Component {
 
   update() {
-    console.log(this.props)
     this.props.updateSearch({id: this.props.id})
   }
 
