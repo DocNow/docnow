@@ -13,7 +13,7 @@ export default class ImageList extends Component {
       <div className={style.ImagesCard}>
         {loader}
         {this.props.images.map((image) => (
-          <figure className={style.Image}>
+          <figure key={image.url} className={style.Image}>
             <img src={image.url} />
             <figcaption>{image.count} shares</figcaption>
           </figure>

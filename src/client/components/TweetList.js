@@ -15,7 +15,7 @@ export default class TweetList extends Component {
       <div className={ style.TweetsCard }>
         {loader}
         {this.props.tweets.map(tweet => (
-          <Tweet key={tweet.id} data={tweet}/>
+          <Tweet key={tweet.id} data={tweet} />
         ))}
       </div>
     )
