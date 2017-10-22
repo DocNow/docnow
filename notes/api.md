@@ -44,3 +44,11 @@ Top users in a given search.
 ### /search/{search-id}/hashtags *(GET)*
 
 Top hashtags in a given search.
+
+### /search/{search-id}/images *(GET)*
+
+Top images in a given search.
+
+### /search/{search-id}/videos *(GET)*
+
+Top videos in a given search.
