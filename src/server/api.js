@@ -6,8 +6,10 @@ import { activateKeys } from './auth'
 import log from './logger'
 
 const app = express()
+
 const db = new Database()
 
+db.setupIndexes()
 db.startTrendsWatcher({interval: 60 * 1000})
 
 app.get('/setup', (req, res) => {
@@ -19,11 +21,19 @@ app.get('/setup', (req, res) => {
         res.json(false)
       }
     })
+    .catch(() => {
+      res.json(false)
+    })
 })
 
 app.get('/user', (req, res) => {
   if (req.user) {
-    res.json(req.user)
+    db.getUser(req.user.id)
+      .then((user) => {res.json(user)})
+      .catch(() => {
+        res.status(401)
+        res.json({message: 'no such user'})
+      })
   } else {
     res.status(401)
     res.json({message: 'not logged in'})
@@ -31,7 +41,7 @@ app.get('/user', (req, res) => {
 })
 
 app.put('/user', (req, res) => {
-  db.updateUser(req.user.id, req.body)
+  db.updateUser(req.body)
     .then(() => {
       res.json({status: 'updated'})
     })
@@ -62,29 +72,38 @@ app.put('/settings', (req, res) => {
 })
 
 app.get('/world', (req, res) => {
-  db.getPlaces().then((result) => {
-    res.json(result)
+  db.getPlaces().then((places) => {
+    const world = {}
+    for (const place of places) {
+      world[place.id] = place
+    }
+    res.json(world)
   })
 })
 
 app.get('/trends', (req, res) => {
-  // when a user isn't logged in they get the super users's trends
   let lookup = null
   if (req.user) {
-    lookup = db.getUserTrends(req.user.id)
+    lookup = db.getUserTrends(req.user)
   } else {
     lookup = db.getSuperUser().then((user) => {
-      return db.getUserTrends(user.id)
+      return db.getUserTrends(user)
     })
   }
   lookup.then((result) => { res.json(result) })
 })
 
 app.put('/trends', (req, res) => {
-  db.setUserPlaces(req.user.id, req.body)
-    .then(() => {
-      db.importLatestTrendsForUser(req.user.id)
-        .then(res.json({status: 'updated'}))
+  db.getUser(req.user.id)
+    .then((user) => {
+      user.places = req.body
+      db.updateUser(user)
+        .then(() => {
+          db.importLatestTrendsForUser(user)
+            .then(() => {
+              res.json({status: 'updated'})
+            })
+        })
     })
 })
 
@@ -119,10 +138,15 @@ app.post('/logo', (req, res) => {
 
 app.post('/searches', (req, res) => {
   if (req.user) {
-    db.createSearch(req.user.id, req.body.q)
+    db.createSearch(req.user, req.body.q)
       .then((search) => {
         db.importFromSearch(search)
         res.redirect(303, `/api/v1/search/${search.id}`)
+      })
+      .catch((e) => {
+        const msg = 'unable to createSearch: ' + e
+        console.log(msg)
+        res.error(msg)
       })
   }
 })
@@ -149,11 +173,26 @@ app.get('/search/:searchId', (req, res) => {
   }
 })
 
+app.put('/search/:searchId', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.body.id).then((search) => {
+      db.importFromSearch(search)
+        .then(() => {
+          res.json(search)
+        })
+        .catch((e) => {
+          console.log(e)
+          res.json(search)
+        })
+    })
+  }
+})
+
 app.get('/search/:searchId/users', (req, res) => {
   if (req.user) {
     db.getSearch(req.params.searchId)
       .then((search) => {
-        db.getUsers(search)
+        db.getTwitterUsers(search)
           .then((users) => {
             res.json(users)
           })
@@ -168,6 +207,42 @@ app.get('/search/:searchId/hashtags', (req, res) => {
         db.getHashtags(search)
           .then((hashtags) => {
             res.json(hashtags)
+          })
+      })
+  }
+})
+
+app.get('/search/:searchId/urls', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.params.searchId)
+      .then((search) => {
+        db.getUrls(search)
+          .then((urls) => {
+            res.json(urls)
+          })
+      })
+  }
+})
+
+app.get('/search/:searchId/images', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.params.searchId)
+      .then((search) => {
+        db.getImages(search)
+          .then((images) => {
+            res.json(images)
+          })
+      })
+  }
+})
+
+app.get('/search/:searchId/videos', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.params.searchId)
+      .then((search) => {
+        db.getVideos(search)
+          .then((videos) => {
+            res.json(videos)
           })
       })
   }

@@ -2,7 +2,11 @@ export const SET_TWITTER_SEARCH = 'SET_TWITTER_SEARCH'
 export const SET_TWITTER_SEARCH_TWEETS = 'SET_TWITTER_SEARCH_TWEETS'
 export const SET_TWITTER_SEARCH_USERS = 'SET_TWITTER_SEARCH_USERS'
 export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
+export const SET_TWITTER_SEARCH_URLS = 'SET_TWITTER_SEARCH_URLS'
+export const SET_TWITTER_SEARCH_IMAGES = 'SET_TWITTER_SEARCH_IMAGES'
+export const SET_TWITTER_SEARCH_VIDEOS = 'SET_TWITTER_SEARCH_VIDEOS'
 export const RESET_TWITTER_SEARCH = 'RESET_TWITTER_SEARCH'
+export const ACTIVATE_SEARCH = 'ACTIVATE_SEARCH'
 
 const setTwitterSearch = (search) => {
   return {
@@ -32,9 +36,36 @@ const setTwitterSearchHashtags = (hashtags) => {
   }
 }
 
+const setTwitterSearchUrls = (urls) => {
+  return {
+    type: SET_TWITTER_SEARCH_URLS,
+    urls
+  }
+}
+
+const setTwitterSearchImages = (images) => {
+  return {
+    type: SET_TWITTER_SEARCH_IMAGES,
+    images
+  }
+}
+
+const setTwitterSearchVideos = (videos) => {
+  return {
+    type: SET_TWITTER_SEARCH_VIDEOS,
+    videos
+  }
+}
+
 const resetTwitterSearch = () => {
   return {
     type: RESET_TWITTER_SEARCH
+  }
+}
+
+export const activateSearch = () => {
+  return {
+    type: ACTIVATE_SEARCH
   }
 }
 
@@ -55,6 +86,23 @@ export const searchTwitter = (q) => {
         resp.json().then((result) => {
           dispatch(setTwitterSearch(result))
         })
+      })
+  }
+}
+
+export const updateSearch = (search) => {
+  return (dispatch) => {
+    dispatch(activateSearch())
+    const opts = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(search),
+      credentials: 'same-origin'
+    }
+    return fetch('/api/v1/search/' + search.id, opts)
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTwitterSearch(result))
       })
   }
 }
@@ -85,6 +133,36 @@ export const getHashtags = (id) => {
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchHashtags(result))
+      })
+  }
+}
+
+export const getUrls = (id) => {
+  return (dispatch) => {
+    fetch('/api/v1/search/' + id + '/urls', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTwitterSearchUrls(result))
+      })
+  }
+}
+
+export const getImages = (id) => {
+  return (dispatch) => {
+    fetch('/api/v1/search/' + id + '/images', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTwitterSearchImages(result))
+      })
+  }
+}
+
+export const getVideos = (id) => {
+  return (dispatch) => {
+    fetch('/api/v1/search/' + id + '/videos', {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTwitterSearchVideos(result))
       })
   }
 }

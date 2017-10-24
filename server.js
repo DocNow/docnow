@@ -33,7 +33,9 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(cookieSession({secret: 'ABCD', resave: true, saveUninitialized: true}))
 app.use(passport.initialize())
+
 app.use(passport.session())
+
 app.use(morgan('combined'))
 
 app.use('/api/v1', api)
@@ -53,6 +55,11 @@ if (isDevelopment) {
   app.use(express.static(distDir))
   app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
 }
+
+// log additional information about unhandled promises so they can be debugged
+process.on('unhandledRejection', (reason, p) => {
+  log.warn('Unhandled Rejection at:', p, 'reason:', reason)
+})
 
 log.info('starting app')
 app.listen(app.get('port'))

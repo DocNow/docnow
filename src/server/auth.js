@@ -31,8 +31,8 @@ export const activateKeys = () => {
                 twitterAccessToken: token,
                 twitterAccessTokenSecret: tokenSecret
               }
-              db.addUser(newUser).then((userId) => {
-                return cb(null, userId)
+              db.addUser(newUser).then((u) => {
+                return cb(null, u.id)
               })
             } else {
               return cb(null, user.id)
@@ -51,9 +51,13 @@ passport.serializeUser((userId, done) => {
 })
 
 passport.deserializeUser((userId, done) => {
-  db.getUser(userId).then((user) => {
-    done(null, user)
-  })
+  db.getUser(userId)
+    .then((user) => {
+      done(null, user)
+    })
+    .catch(() => {
+      done(null, false)
+    })
 })
 
 app.use(passport.initialize())

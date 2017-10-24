@@ -1,6 +1,7 @@
 import url from 'url'
 import Twit from 'twit'
 import log from './logger'
+import bigInt from 'big-integer'
 import emojiRegex from 'emoji-regex'
 
 const emojiMatch = emojiRegex()
@@ -76,6 +77,7 @@ export class Twitter {
 
     const recurse = (maxId, total) => {
       const newParams = Object.assign({max_id: maxId}, params)
+      log.info('searching twitter', {params: newParams})
       this.twit.get('search/tweets', newParams).then((resp) => {
         if (resp.data.errors) {
           cb(resp.data.errors[0], null)
@@ -84,7 +86,7 @@ export class Twitter {
           const newTotal = total + tweets.length
           cb(null, tweets.map((s) => {return this.extractTweet(s)}))
           if (tweets.length > 0 && newTotal < count) {
-            const newMaxId = tweets[tweets.length - 1].id_str
+            const newMaxId = String(bigInt(tweets[tweets.length - 1].id_str).minus(1))
             recurse(newMaxId, newTotal)
           } else {
             cb(null, [])
@@ -101,7 +103,12 @@ export class Twitter {
     const userCreated = new Date(t.user.created_at)
     const hashtags = t.entities.hashtags.map((ht) => {return ht.text.toLowerCase()})
     const mentions = t.entities.user_mentions.map((m) => {return m.screen_name})
-    const geo = t.coordinates ? t.coordinates.coordinates : null
+
+    let geo = null
+    if (t.coordinates) {
+      geo = t.coordinates
+    }
+
     const emojis = emojiMatch.exec(t.full_text)
 
     let retweet = null
@@ -122,7 +129,7 @@ export class Twitter {
         id: t.place.id,
         country: t.place.country,
         countryCode: t.place.country_code,
-        boundingBox: t.place.bounding_box[0]
+        boundingBox: t.place.bounding_box
       }
     }
 
@@ -130,6 +137,11 @@ export class Twitter {
     if (t.entities.urls) {
       for (const e of t.entities.urls) {
         const u = url.parse(e.expanded_url)
+        // not interested in pointers back to Twitter which
+        // happens during quoting
+        if (u.hostname === 'twitter.com') {
+          continue
+        }
         urls.push({
           short: e.url,
           long: e.expanded_url,
@@ -143,15 +155,25 @@ export class Twitter {
       userUrl = t.user.entities.url.urls[0].expanded_url
     }
 
-    const photos = []
+    const images = []
     const videos = []
     const animatedGifs = []
     if (t.extended_entities && t.extended_entities.media) {
       for (const e of t.extended_entities.media) {
         if (e.type === 'photo') {
-          photos.push(e.media_url_https)
+          images.push(e.media_url_https)
         } else if (e.type === 'video') {
-          videos.push(e.media_url_https)
+          let maxBitRate = 0
+          let videoUrl = null
+          for (const v of e.video_info.variants) {
+            if (v.content_type === 'video/mp4' && v.bitrate > maxBitRate) {
+              videoUrl = v.url
+              maxBitRate = v.bitrate
+            }
+          }
+          if (videoUrl) {
+            videos.push(videoUrl)
+          }
         } else if (e.type === 'animated_gif') {
           animatedGifs.push(e.media_url_https)
         }
@@ -164,7 +186,7 @@ export class Twitter {
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
-      client: t.source.match(/>(.+?)</)[1],
+      client: t.source ? t.source.match(/>(.+?)</)[1] : null,
       user: {
         id: t.user.id_str,
         screenName: t.user.screen_name,
@@ -184,7 +206,7 @@ export class Twitter {
       geo,
       place,
       urls,
-      photos,
+      images,
       videos,
       animatedGifs,
       emojis,

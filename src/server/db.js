@@ -5,8 +5,20 @@ import elasticsearch from 'elasticsearch'
 
 import log from './logger'
 import { Twitter } from './twitter'
+import { addPrefix, stripPrefix } from './utils'
 
 bluebird.promisifyAll(redis.RedisClient.prototype)
+
+// elasticsearch doc types
+
+const SETTINGS = 'settings'
+const USER = 'user'
+const PLACE = 'place'
+const SEARCH = 'search'
+const TREND = 'trend'
+const TWEET = 'tweet'
+const TWUSER = 'twuser'
+
 
 export class Database {
 
@@ -22,10 +34,25 @@ export class Database {
     esOpts.host = esOpts.host || process.env.ES_HOST || '127.0.0.1:9200'
     log.info('connecting to elasticsearch: ' + esOpts)
     this.esPrefix = esOpts.prefix || 'docnow'
-    this.esTweetIndex = this.esPrefix + ':tweets'
     this.es = new elasticsearch.Client(esOpts)
-    log.info('setting up index')
-    this.setupIndexes()
+  }
+
+  getIndex(type) {
+    switch (type) {
+      case USER:
+      case SETTINGS:
+      case PLACE:
+      case TREND:
+      case SEARCH:
+        return this.esPrefix + '-admin'
+      case TWEET:
+      case TWUSER:
+        return this.esPrefix + '-tweets'
+      default:
+        const msg = `unable to determine index for type ${type}`
+        log.error(msg)
+        throw msg
+    }
   }
 
   close() {
@@ -38,7 +65,6 @@ export class Database {
         .then((didSucceed) => {
           if (didSucceed === 'OK') {
             this.deleteIndexes()
-              .then(() => {this.addIndexes()})
               .then(resolve)
               .catch(reject)
           } else {
@@ -48,130 +74,145 @@ export class Database {
     })
   }
 
-  addSettings(settings) {
-    return this.db.hmsetAsync('settings', settings)
+  add(type, id, doc) {
+    return new Promise((resolve, reject) => {
+      this.es.index({
+        index: this.getIndex(type),
+        type: type,
+        id: id,
+        body: doc,
+        refresh: 'wait_for'
+      })
+      .then(() => {resolve(doc)})
+      .catch(reject)
+    })
   }
 
-  getSettings() {
-    return this.db.hgetallAsync('settings')
-  }
-
-  addUser(user) {
-    return new Promise((resolve) => {
-      const userId = 'user:' + uuid()
-      this.getUserIds().then((userIds) => {
-        const isSuperUser = userIds.length === 0 ? true : false
-        const newUser = {...user, id: userId, isSuperUser}
-        log.info('adding user', {user: newUser})
-        this.db.hmsetAsync(userId, newUser)
-          .then(() => {
-            const twitterId = 'twitterUser:' + user.twitterUserId
-            this.db.setAsync(twitterId, userId)
-              .then(() => {
-                if (isSuperUser) {
-                  this.db.set('superUser', userId)
-                  this.loadPlaces().then(() => {
-                    resolve(userId)
-                  })
-                } else {
-                  resolve(userId)
-                }
-              })
-          })
+  get(type, id) {
+    log.debug(`get type=${type} id=${id}`)
+    return new Promise((resolve, reject) => {
+      this.es.get({
+        index: this.getIndex(type),
+        type: type,
+        id: id
+      }).then((result) => {
+        resolve(result._source)
+      }).catch((err) => {
+        reject(err)
       })
     })
   }
 
-  updateUser(userId, data) {
-    return this.db.hmsetAsync(userId, ['name', data.name, 'email', data.email])
+  search(type, q, first = false) {
+    log.debug('search', type, q, first)
+    const size = first ? 1 : 1000
+    return new Promise((resolve, reject) => {
+      this.es.search({index: this.getIndex(type), type: type, q: q, size: size})
+        .then((result) => {
+          if (result.hits.total > 0) {
+            if (first) {
+              resolve(result.hits.hits[0]._source)
+            } else {
+              resolve(result.hits.hits.map((h) => {return h._source}))
+            }
+          } else if (first) {
+            resolve(null)
+          } else {
+            resolve([])
+          }
+        })
+        .catch(reject)
+    })
+  }
+
+  addSettings(settings) {
+    return this.add(SETTINGS, 'settings', settings)
+  }
+
+  getSettings() {
+    return new Promise((resolve) => {
+      this.get(SETTINGS, 'settings')
+        .then((settings) => {
+          resolve(settings)
+        })
+        .catch(() => {
+          resolve({})
+        })
+    })
+  }
+
+  addUser(user) {
+    user.id = uuid()
+    user.places = []
+    log.info('creating user: ', {user: user})
+    return new Promise((resolve) => {
+      this.getSuperUser()
+        .then((u) => {
+          user.isSuperUser = u ? false : true
+          this.add(USER, user.id, user)
+            .then(() => {
+              if (user.isSuperUser) {
+                this.loadPlaces().then(() => {resolve(user)})
+              } else {
+                resolve(user)
+              }
+            })
+        })
+    })
+  }
+
+  updateUser(user) {
+    return this.add(USER, user.id, user)
   }
 
   getUser(userId) {
-    return new Promise((resolve) => {
-      this.db.hgetallAsync(userId)
-        .then((result) => {
-          if (result) {
-            resolve(result)
-          } else {
-            resolve(null)
-          }
-        })
-    })
+    return this.get(USER, userId)
+  }
+
+  getUsers() {
+    return this.search(USER, '*')
   }
 
   getSuperUser() {
-    return new Promise((resolve) => {
-      this.db.getAsync('superUser')
-        .then((userId) => {
-          resolve(this.getUser(userId))
-        })
-    })
+    return this.search(USER, 'isSuperUser:true', true)
   }
 
   getUserByTwitterUserId(twitterUserId) {
-    const prefixedId = this.addPrefix(twitterUserId, 'twitterUser')
-    return new Promise((resolve) => {
-      this.db.getAsync(prefixedId)
-        .then((userId) => {
-          if (userId) {
-            this.getUser(userId)
-              .then((user) => {
-                resolve(user)
-              })
-          } else {
-            resolve(null)
-          }
-        })
-    })
-  }
-
-  setUserPlaces(userId, placeIds) {
-    return new Promise((resolve) => {
-      const key = this.addPrefix(userId, 'places')
-      this.db.del(key)
-      if (placeIds.length > 0) {
-        this.db.saddAsync(key, this.addPrefixes(placeIds, 'place'))
-          .then(resolve)
-      } else { resolve() }
-    })
-  }
-
-  getUserPlaces(userId) {
-    return new Promise((resolve) => {
-      this.db.smembersAsync('places:' + userId)
-        .then((places) => resolve(places))
-    })
-  }
-
-  getUserIds() {
-    return this.db.keysAsync('user:*')
+    return this.search(USER, `twitterUserId:${twitterUserId}`, true)
   }
 
   importLatestTrends() {
-    log.info('importing trends')
+    log.debug('importing trends')
     return new Promise((resolve) => {
-      this.getUserIds()
-        .then((userIds) => {
-          for (const userId of userIds) {
-            this.importLatestTrendsForUser(userId).then(resolve)
+      this.getUsers()
+        .then((users) => {
+          for (const user of users) {
+            this.importLatestTrendsForUser(user).then(resolve)
           }
+        })
+        .catch(() => {
+          log.info('no users to import trends for')
+          resolve()
         })
     })
   }
 
-  importLatestTrendsForUser(userId) {
-    log.info('importing trends for ' + userId)
-    return new Promise((resolve) => {
-      this.getTwitterClientForUser(userId)
+  importLatestTrendsForUser(user) {
+    log.debug('importing trends', {user: user})
+    return new Promise((resolve, reject) => {
+      this.getTwitterClientForUser(user)
         .then((twtr) => {
-          this.getUserPlaces(userId)
-            .then((placeIds) => {
-              const prefixed = placeIds.map(this.stripPrefix, this)
-              return Promise.all(prefixed.map(twtr.getTrendsAtPlace, twtr))
-            })
-            .then(this.saveTrendsAtPlaces.bind(this))
-            .then(resolve)
+          const placeIds = user.places.map(stripPrefix)
+          if (placeIds.length === 0) {
+            resolve([])
+          } else {
+            log.info('importing trends for ', {placeIds: placeIds})
+            Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
+              .then(this.saveTrends.bind(this))
+              .then(resolve)
+          }
         })
+        .catch(reject)
     })
   }
 
@@ -192,178 +233,160 @@ export class Database {
     }
   }
 
-  getTrends(placeId) {
-    const prefixedPlaceId = this.addPrefix(placeId, 'place')
-    const trendsId = this.addPrefix(prefixedPlaceId, 'trends')
+  getTrendsForPlace(placeId) {
     return new Promise((resolve) => {
-      this.getPlace(placeId).then((place) => {
-        const trends = {
-          id: trendsId,
-          name: place.name,
-          placeId: placeId,
-          trends: []
-        }
-        this.db.zrevrangeAsync(trendsId, 0, -1, 'WITHSCORES')
-          .then((result) => {
-            for (let i = 0; i < result.length; i += 2) {
-              trends.trends.push({name: result[i], tweets: result[i + 1]})
-            }
-            resolve(trends)
+      this.search('trend', `placeId:${placeId}`, true)
+        .then((results) => {
+          const filtered = results.trends.filter((t) => {
+            return t.tweets > 0
           })
-      })
-    })
-  }
-
-  getUserTrends(userId) {
-    return new Promise((resolve) => {
-      this.getUserPlaces(userId)
-        .then((placeIds) => {
-          Promise.all(placeIds.map(this.getTrends, this))
-            .then((result) => {
-              resolve(result)
-            })
+          filtered.sort((a, b) => {
+            return b.tweets - a.tweets
+          })
+          results.trends = filtered
+          resolve(results)
         })
     })
   }
 
-  saveTrendsAtPlaces(trendsAtPlaces) {
-    // build up a list of redis zadd commands to add the trends at each place
-    const m = this.db.multi()
-    for (const trends of trendsAtPlaces) {
-      const placeId = this.addPrefix(trends.id, 'place')
-      const trendId = this.addPrefix(placeId, 'trends')
-      const args = [trendId]
-      for (const trend of trends.trends) {
-        if (trend.tweets > 0) {
-          args.push(trend.tweets, trend.name)
-        }
-      }
-      m.del(trendId)
-      m.zadd(args)
-      m.hmset(placeId, 'name', trends.name)
+  getUserTrends(user) {
+    if (user && user.places) {
+      return Promise.all(user.places.map(this.getTrendsForPlace, this))
     }
+  }
 
-    // return a promise that executes all of the commands and returns trends
+  saveTrends(trends) {
+    const body = []
+    for (const trend of trends) {
+      trend.id = addPrefix('trend', trend.id)
+      trend.placeId = addPrefix('place', stripPrefix(trend.id))
+      body.push(
+        {
+          index: {
+            _index: this.getIndex(TREND),
+            _type: TREND,
+            _id: trend.id
+          },
+          refresh: 'wait_for'
+        },
+        trend
+      )
+    }
     return new Promise((resolve, reject) => {
-      return m.exec((err) => {
-        if (err) {
+      this.es.bulk({body: body, refresh: 'wait_for'})
+        .then(() => {resolve(trends)})
+        .catch((err) => {
+          console.log(err)
           reject(err)
-        } else {
-          resolve(trendsAtPlaces)
-        }
-      })
+        })
     })
   }
 
   loadPlaces() {
-    const addPrefix = this.addPrefix.bind(this)
     return new Promise((resolve, reject) => {
-      this.getUserIds()
-        .then((userIds) => {
-          if (userIds.length > 0) {
-            this.getTwitterClientForUser(userIds[0])
-              .then((t) => {
-                t.getPlaces().then((places) => {
-                  const m = this.db.multi()
-                  for (const place of places) {
-                    place.id = addPrefix(place.id, 'place')
-                    m.hmset(place.id, place)
-                    m.sadd('places', place.id)
-                  }
-                  m.exec((err) => {
-                    if (! err) {
-                      resolve(places)
-                    } else {
-                      reject(err)
+      this.getSuperUser()
+        .then((user) => {
+          this.getTwitterClientForUser(user)
+            .then((t) => {
+              t.getPlaces().then((places) => {
+
+                // bulk insert all the places as separate
+                // documents in elasticsearch
+
+                const body = []
+                for (const place of places) {
+                  place.id = addPrefix('place', place.id)
+                  place.parentId = addPrefix('place', place.parent)
+                  delete place.parent
+                  body.push({
+                    index: {
+                      _index: this.getIndex(PLACE),
+                      _type: PLACE,
+                      _id: place.id
                     }
                   })
-                })
+                  body.push(place)
+                }
+
+                this.es.bulk({body: body, refresh: 'wait_for'})
+                  .then(() => {
+                    resolve(places)
+                  })
+                  .catch(reject)
               })
-          }
+            })
+            .catch(reject)
         })
+        .catch(reject)
     })
   }
 
   getPlace(placeId) {
-    const prefixed = this.addPrefix(placeId, 'place')
-    return this.db.hgetallAsync(prefixed)
+    return this.search(PLACE, placeId, true)
   }
 
   getPlaces() {
-    return new Promise((resolve) => {
-      this.db.smembersAsync('places')
-        .then((placeIds) => {
-          const m = this.db.multi()
-          for (const placeId of placeIds) {
-            m.hgetall(placeId)
-          }
-          m.exec((err, result) => {
-            const places = {}
-            for (const place of result) {
-              places[place.id] = place
-            }
-            resolve(places)
-          })
-        })
-    })
+    return this.search(PLACE, '*')
   }
 
-  getTwitterClientForUser(userId) {
+  getTwitterClientForUser(user) {
     return new Promise((resolve) => {
       this.getSettings().then((settings) => {
-        this.getUser(userId)
-          .then((user) => {
-            resolve(new Twitter({
-              consumerKey: settings.appKey,
-              consumerSecret: settings.appSecret,
-              accessToken: user.twitterAccessToken,
-              accessTokenSecret: user.twitterAccessTokenSecret
-            }))
+        resolve(
+          new Twitter({
+            consumerKey: settings.appKey,
+            consumerSecret: settings.appSecret,
+            accessToken: user.twitterAccessToken,
+            accessTokenSecret: user.twitterAccessTokenSecret
           })
+        )
       })
     })
   }
 
-  addPrefix(id, prefix) {
-    let idString = String(id)
-    if (! idString.match('^' + prefix + ':')) {
-      idString = prefix + ':' + idString
-    }
-    return idString
-  }
-
-  addPrefixes(ids, prefix) {
-    return ids.map((id) => { return this.addPrefix(id, prefix) })
-  }
-
-  stripPrefix(s) {
-    return String(s).replace(/^.+:/, '')
-  }
-
-  /* ElasticSearch */
-
-  /*
-   * setupIndex() will look to see if the ElasticSearch indexes have
-   * been setup. If they haven't then they will be added.
-   */
-
   setupIndexes() {
-    this.es.indices.exists({index: this.esTweetIndex})
+    return this.es.indices.exists({index: this.getIndex(TWEET)})
       .then((exists) => {
         if (! exists) {
           log.info('adding indexes')
           this.addIndexes()
         } else {
-          log.info('indexes already present, not adding')
+          log.warn('indexes already present, not adding')
         }
+      })
+      .catch((e) => {
+        log.error(e)
       })
   }
 
   addIndexes() {
+    return Promise.all([
+      this.addTweetIndex(),
+      this.addAdminIndex(),
+    ])
+  }
+
+  addAdminIndex() {
+    const index = this.getIndex(SETTINGS)
+    log.info(`creating admin index: ${index}`)
     return this.es.indices.create({
-      index: this.esTweetIndex,
+      index: index,
       body: {
         mappings: {
+
+          settings: {
+            properties: {
+              appKey: {type: 'keyword'},
+              appSecret: {type: 'keyword'}
+            }
+          },
+
+          user: {
+            properties: {
+              places: {type: 'keyword'}
+            }
+          },
+
           search: {
             properties: {
               id: {type: 'keyword'},
@@ -373,14 +396,48 @@ export class Database {
               active: {type: 'boolean'},
             }
           },
-          user: {
+
+          place: {
+            properties: {
+              id: {type: 'keyword'},
+              name: {type: 'text'},
+              type: {type: 'keyword'},
+              country: {type: 'text'},
+              countryCode: {type: 'keyword'},
+              parentId: {type: 'keyword'}
+            }
+          },
+
+          trend: {
+            properties: {
+              id: {type: 'keyword'},
+              'trends.name': {type: 'keyword'},
+              'trends.tweets': {type: 'integer'}
+            }
+          }
+
+        }
+      }
+    })
+  }
+
+  addTweetIndex() {
+    const index = this.getIndex(TWEET)
+    log.info(`creating tweet index: ${index}`)
+    return this.es.indices.create({
+      index: this.getIndex(TWEET),
+      body: {
+        mappings: {
+
+          twuser: {
             properties: {
               id: {type: 'keyword'},
               screenName: {type: 'keyword'},
               created: {type: 'date', format: 'date_time'},
-              updated: {type: 'date', format: 'date_time'},
+              updated: {type: 'date', format: 'date_time'}
             }
           },
+
           tweet: {
             properties: {
               id: {type: 'keyword'},
@@ -391,18 +448,18 @@ export class Database {
               client: {type: 'keyword'},
               hashtags: {type: 'keyword'},
               mentions: {type: 'keyword'},
-              geo: {type: 'geo_point'},
+              geo: {type: 'geo_shape'},
               videos: {type: 'keyword'},
-              photos: {type: 'keyword'},
+              images: {type: 'keyword'},
               animatedGifs: {type: 'keyword'},
               emojis: {type: 'keyword'},
-              'place.id': {type: 'keyword'},
-              'place.name': {type: 'keyword'},
-              'place.boundingBox': {type: 'geo_shape'},
-              'place.country': {type: 'keyword'},
-              'place.countryCode': {type: 'keyword'},
+
+              country: {type: 'keyword'},
+              countryCode: {type: 'keyword'},
+              boundingBox: {type: 'geo_shape'},
+
               'urls.short': {type: 'keyword'},
-              'urls.full': {type: 'keyword'},
+              'urls.long': {type: 'keyword'},
               'urls.hostname': {type: 'keyword'},
               'user.screenName': {type: 'keyword'},
               'quote.user.screenName': {type: 'keyword'},
@@ -415,33 +472,33 @@ export class Database {
   }
 
   deleteIndexes() {
+    log.info('deleting all elasticsearch indexes')
     return new Promise((resolve) => {
-      const indexes = this.esPrefix + ':*'
-      this.es.indices.delete({index: indexes})
+      this.es.indices.delete({index: this.esPrefix + '*'})
         .then(() => {
-          log.info('deleted indexes: ' + indexes)
+          log.info('deleted indexes')
           resolve()
         })
         .catch((err) => {
           log.warn('indexes delete failed: ' + err)
-          // if any of the indexes aren't there this will fail
-          // but that's ok because we're deleting them
           resolve()
         })
     })
   }
 
-  createSearch(userId, q) {
+  createSearch(user, q) {
     return new Promise((resolve, reject) => {
       const search = {
         id: 'search:' + uuid(),
-        creator: userId,
+        creator: user.id,
         query: q,
-        created: new Date().toISOString()
+        created: new Date().toISOString(),
+        maxTweetId: null,
+        active: true
       }
       this.es.create({
-        index: this.esTweetIndex,
-        type: 'search',
+        index: this.getIndex(SEARCH),
+        type: SEARCH,
         id: search.id,
         body: search
       }).then((resp) => {
@@ -459,7 +516,7 @@ export class Database {
   getSearch(searchId) {
     return new Promise((resolve, reject) => {
       this.es.get({
-        index: this.esTweetIndex,
+        index: this.getIndex('search'),
         type: 'search',
         id: searchId
       }).then((resp) => {
@@ -468,6 +525,10 @@ export class Database {
         reject(err)
       })
     })
+  }
+
+  updateSearch(search) {
+    return this.add(SEARCH, search.id, search)
   }
 
   getSearchSummary(search) {
@@ -484,8 +545,8 @@ export class Database {
         }
       }
       this.es.search({
-        index: this.esTweetIndex,
-        type: 'tweet',
+        index: this.getIndex(TWEET),
+        type: TWEET,
         body: body
       }).then((resp) => {
         resolve({
@@ -504,61 +565,74 @@ export class Database {
 
   importFromSearch(search) {
     let count = 0
-    // let maxId = null
+    let maxTweetId = null
     return new Promise((resolve, reject) => {
-      this.getTwitterClientForUser(search.creator)
-        .then((twtr) => {
-          twtr.search({q: search.query, count: 1000}, (err, results) => {
-            if (err) {
-              reject(err)
-            } else if (results.length === 0) {
-              resolve(count)
-            } else {
-              count += results.length
-              const bulk = []
-              const seenUsers = new Set()
-              for (const tweet of results) {
-                tweet.search = search.id
-                const id = search.id + ':' + tweet.id
-                bulk.push(
-                  {
-                    index: {
-                      _index: this.esTweetIndex,
-                      _type: 'tweet',
-                      _id: id
+      this.getUser(search.creator).then((user) => {
+        this.updateSearch({...search, active: true})
+          .then((newSearch) => {
+            this.getTwitterClientForUser(user)
+              .then((twtr) => {
+                twtr.search({q: search.query, sinceId: search.maxTweetId, count: 1000}, (err, results) => {
+                  if (err) {
+                    reject(err)
+                  } else if (results.length === 0) {
+                    newSearch.maxTweetId = maxTweetId
+                    newSearch.active = false
+                    this.updateSearch(newSearch)
+                      .then(() => {resolve(count)})
+                  } else {
+                    count += results.length
+                    if (maxTweetId === null) {
+                      maxTweetId = results[0].id
                     }
-                  },
-                  tweet
-                )
-                if (! seenUsers.has(tweet.user.id)) {
-                  bulk.push(
-                    {
-                      index: {
-                        _index: this.esTweetIndex,
-                        _type: 'user',
-                        _id: tweet.user.id,
+                    const bulk = []
+                    const seenUsers = new Set()
+                    for (const tweet of results) {
+                      tweet.search = search.id
+                      const id = search.id + ':' + tweet.id
+                      bulk.push(
+                        {
+                          index: {
+                            _index: this.getIndex(TWEET),
+                            _type: TWEET,
+                            _id: id
+                          }
+                        },
+                        tweet
+                      )
+                      if (! seenUsers.has(tweet.user.id)) {
+                        bulk.push(
+                          {
+                            index: {
+                              _index: this.getIndex(TWUSER),
+                              _type: TWUSER,
+                              _id: tweet.user.id,
+                            }
+                          },
+                          tweet.user
+                        )
+                        seenUsers.add(tweet.user.id)
                       }
-                    },
-                    tweet.user
-                  )
-                  seenUsers.add(tweet.user.id)
-                }
-              }
-              this.es.bulk({
-                body: bulk
-              }).then((resp) => {
-                if (resp.errors) {
-                  reject('indexing error check elasticsearch log')
-                } else {
-                  resolve(results)
-                }
-              }).catch((elasticErr) => {
-                log.error(elasticErr.message)
-                reject(elasticErr.message)
+                    }
+                    this.es.bulk({
+                      body: bulk,
+                      refresh: 'wait_for'
+                    }).then((resp) => {
+                      if (resp.errors) {
+                        reject('indexing error check elasticsearch log')
+                      }
+                    }).catch((elasticErr) => {
+                      log.error(elasticErr.message)
+                      reject(elasticErr.message)
+                    })
+                  }
+                })
               })
-            }
           })
-        })
+          .catch((e) => {
+            log.error('unable to update search: ', e)
+          })
+      })
     })
   }
 
@@ -570,8 +644,8 @@ export class Database {
     }
     return new Promise((resolve, reject) => {
       this.es.search({
-        index: this.esTweetIndex,
-        type: 'tweet',
+        index: this.getIndex(TWEET),
+        type: TWEET,
         body: body
       }).then((response) => {
         resolve(response.hits.hits.map((h) => {return h._source}))
@@ -582,7 +656,7 @@ export class Database {
     })
   }
 
-  getUsers(search) {
+  getTwitterUsers(search) {
 
     // first get the user counts for tweets
 
@@ -592,8 +666,8 @@ export class Database {
     }
     return new Promise((resolve, reject) => {
       this.es.search({
-        index: this.esTweetIndex,
-        type: 'tweet',
+        index: this.getIndex(TWEET),
+        type: TWEET,
         body: body
       }).then((response1) => {
 
@@ -617,8 +691,8 @@ export class Database {
           }
         }
         this.es.search({
-          index: this.esTweetIndex,
-          type: 'user',
+          index: this.getIndex(TWUSER),
+          type: TWUSER,
           body: body
         }).then((response2) => {
           const users = response2.hits.hits.map((h) => {return h._source})
@@ -647,8 +721,8 @@ export class Database {
     }
     return new Promise((resolve, reject) => {
       this.es.search({
-        index: this.esTweetIndex,
-        type: 'tweet',
+        index: this.getIndex(TWEET),
+        type: TWEET,
         body: body
       }).then((response) => {
         const hashtags = response.aggregations.hashtags.buckets.map((ht) => {
@@ -662,17 +736,72 @@ export class Database {
     })
   }
 
-  getPhotos(searchId) {
-    log.debug(searchId)
-    return new Promise((resolve) => {
-      resolve()
+  getUrls(search) {
+    const body = {
+      size: 0,
+      query: {match: {search: search.id}},
+      aggregations: {urls: {terms: {field: 'urls.long', size: 100}}}
+    }
+    return new Promise((resolve, reject) => {
+      this.es.search({
+        index: this.getIndex(TWEET),
+        type: TWEET,
+        body: body
+      }).then((response) => {
+        const urls = response.aggregations.urls.buckets.map((u) => {
+          return {url: u.key, count: u.doc_count}
+        })
+        resolve(urls)
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
     })
   }
 
-  getVideos(searchId) {
-    log.debug(searchId)
-    return new Promise((resolve) => {
-      resolve()
+  getImages(search) {
+    const body = {
+      size: 0,
+      query: {match: {search: search.id}},
+      aggregations: {images: {terms: {field: 'images', size: 100}}}
+    }
+    return new Promise((resolve, reject) => {
+      this.es.search({
+        index: this.getIndex(TWEET),
+        type: TWEET,
+        body: body
+      }).then((response) => {
+        const images = response.aggregations.images.buckets.map((u) => {
+          return {url: u.key, count: u.doc_count}
+        })
+        resolve(images)
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
+    })
+  }
+
+  getVideos(search) {
+    const body = {
+      size: 0,
+      query: {match: {search: search.id}},
+      aggregations: {videos: {terms: {field: 'videos', size: 100}}}
+    }
+    return new Promise((resolve, reject) => {
+      this.es.search({
+        index: this.getIndex(TWEET),
+        type: TWEET,
+        body: body
+      }).then((response) => {
+        const videos = response.aggregations.videos.buckets.map((u) => {
+          return {url: u.key, count: u.doc_count}
+        })
+        resolve(videos)
+      }).catch((err) => {
+        log.error(err)
+        reject(err)
+      })
     })
   }
 
