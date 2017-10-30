@@ -1,38 +1,68 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-// import Hashtag from './Hashtag'
 import styles from '../styles/Hashtags.css'
-import { scaleLinear, max } from 'd3'
+
+import 'd3-transition'
+import { max } from 'd3-array'
+import { select } from 'd3-selection'
+import { scaleLinear } from 'd3-scale'
 
 export default class Hashtags extends Component {
 
-  render() {
+  componentDidMount() {
+    this.createBarChart()
+  }
+
+  componentDidUpdate() {
+    this.createBarChart()
+  }
+
+  createBarChart() {
+    const node = this.node
 
     const maxX = max(this.props.hashtags.map((ht) => {return ht.count}))
-    const scaleX = scaleLinear()
-          .domain([0, maxX])
-          .range([0, 300])
+    const xScale = scaleLinear()
+      .domain([0, maxX])
+      .range([0, 300])
 
+    const key = (d) => {
+      return `hashtag-${d.hashtag}`
+    }
+
+    const bars = select(node)
+      .selectAll('rect')
+      .data(this.props.hashtags, key)
+
+    bars
+      .exit()
+        .remove()
+
+    bars
+      .enter()
+        .append('rect')
+        .attr('x', 0)
+        .attr('y', (d, i) => i * 25)
+        .attr('width', (d) => {return xScale(d.count)})
+        .attr('height', 20)
+      .merge(bars)
+        .transition()
+        .duration(750)
+        .attr('y', (d, i) => i * 25)
+        .attr('width', d => {return xScale(d.count)})
+
+  }
+
+  render() {
     let loader = null
     if (this.props.hashtags.length === 0) {
       loader = 'Loading...'
     }
 
     return (
-        <div className={styles.HashtagsCard}>
-          {loader}
-          <svg height={800}>
-          {this.props.hashtags.map((ht, i) => (
-            <rect
-              className={styles.HashtagBar}
-              x={0}
-              y={i * 25}
-              key={'hashtag-' + i}
-              height={20}
-              width={scaleX(ht.count)} />
-          ))}
-          </svg>
-        </div>
+      <div className={styles.HashtagsCard}>
+        {loader}
+        <svg ref={node => this.node = node} height={800} />
+      </div>
     )
   }
 }
