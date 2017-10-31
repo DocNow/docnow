@@ -4,15 +4,8 @@
   overflow-x: hidden;
 }
 
-.Hashtags {
-  background-color: #ffffff;
-  margin: 5px;
-  padding: 5px;
-  font-size: 10px;
-  border: 1px solid #CCCCCC;
-  border-radius: 3px;
-}
-
 rect {
   fill: lightblue;
+  stroke: gray;
+  stroke-width: 1;
 }

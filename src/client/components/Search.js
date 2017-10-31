@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import TweetList from './TweetList'
 import UserList from './UserList'
-import HashtagList from './HashtagList'
+import HashtagChart from './HashtagChart'
 import UrlList from './UrlList'
 import ImageList from './ImageList'
 import VideoList from './VideoList'
@@ -102,7 +102,7 @@ export default class Search extends Component {
           </div>
 
           <div className={card.Card}>
-            <HashtagList hashtags={this.props.hashtags}/>
+            <HashtagChart hashtags={this.props.hashtags}/>
             <div className={card.CardTitle}>
               <h2>Hashtags</h2>
             </div>
