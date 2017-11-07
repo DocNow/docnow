@@ -1,15 +1,22 @@
 .UrlsCard {
-  height: 264px;
+  height: 274px;
   background-color: #C8D2D3;
   overflow-y: scroll;
   overflow-x: hidden;
+}
+
+.URLsCard a {
+  color: #1E77B6;
 }
 
 .Urls {
   background-color: #ffffff;
   margin: 5px;
   padding: 5px;
-  font-size: 10px;
+  font-size: 11pt;
   border: 1px solid #CCCCCC;
   border-radius: 3px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

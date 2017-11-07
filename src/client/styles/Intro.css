@@ -1,19 +1,19 @@
 .Intro {
   display: flex;
   flex-direction: column;
-  margin-right: 50px !important;
   align-items: flex-end;
+  margin-right: 50px !important;
   margin-top: 20px;
   margin-bottom: 20px;
 }
 
 .Intro p {
   font-size: 20px;
+  align-self: flex-start;
   font-weight: 200 !important;
   color: #666666;
-  margin-top:20px;
+  margin-top: 10px;
   margin-left: 20px;
-  align-self: flex-start;
 }
 
 .Intro a {
@@ -30,4 +30,14 @@
   .Intro button {
     margin-top: -40px;
   }
+}
+
+.IntroButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: -40px;
+}
+
+.IntroButtons button {
+  margin: 20 10 0 0;
 }
