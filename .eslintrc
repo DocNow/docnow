@@ -99,7 +99,6 @@
     "no-param-reassign": 2,          // http://eslint.org/docs/rules/no-param-reassign
     "no-proto": 2,                   // http://eslint.org/docs/rules/no-proto
     "no-redeclare": 2,               // http://eslint.org/docs/rules/no-redeclare
-    "no-return-assign": 2,           // http://eslint.org/docs/rules/no-return-assign
     "no-script-url": 2,              // http://eslint.org/docs/rules/no-script-url
     "no-self-compare": 2,            // http://eslint.org/docs/rules/no-self-compare
     "no-sequences": 2,               // http://eslint.org/docs/rules/no-sequences
