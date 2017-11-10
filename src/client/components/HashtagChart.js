@@ -5,7 +5,7 @@ import styles from '../styles/Hashtags.css'
 import 'd3-transition'
 import { max } from 'd3-array'
 import { select } from 'd3-selection'
-import { scaleLinear } from 'd3-scale'
+import { scalePow } from 'd3-scale'
 
 export default class Hashtags extends Component {
 
@@ -21,7 +21,8 @@ export default class Hashtags extends Component {
     const node = this.node
 
     const maxX = max(this.props.hashtags.map((ht) => {return ht.count}))
-    const xScale = scaleLinear()
+    const xScale = scalePow()
+      .exponent(0.5)
       .domain([0, maxX])
       .range([0, 275])
 
