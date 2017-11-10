@@ -12,12 +12,25 @@ export default class Place extends Component {
       remove = (
         <a href="#" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}}><i className="fa fa-minus" aria-hidden="true"/></a>
       )
-      trends = this.props.trends.slice(0, 8).map(trend => <li key={ trend.name + trend.text }><Link to={'/search/' + encodeURIComponent(trend.name)}>{ trend.name }</Link> { trend.tweets }</li>
-      )
+      trends = this.props.trends.slice(0, 8).map(trend => {
+        return (
+          <li key={ trend.name + trend.text }>
+            <Link to={'/search/' + encodeURIComponent(trend.name)}>{ trend.name }</Link>
+            &nbsp;
+            <bdo>{ trend.tweets }</bdo>
+          </li>
+        )
+      })
     } else {
-      trends = this.props.trends.slice(0, 8).map(trend =>
-        <li key={ trend.name + trend.text }>{ trend.name } { trend.tweets }</li>
-      )
+      trends = this.props.trends.slice(0, 8).map(trend => {
+        return (
+          <li key={ trend.name + trend.text }>
+            <span>{ trend.name }</span>
+            &nbsp;
+            <bdo>{ trend.tweets }</bdo>
+          </li>
+        )
+      })
     }
 
     return (
