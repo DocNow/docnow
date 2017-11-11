@@ -1,10 +1,16 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import FlipMove from 'react-flip-move'
-import { Link } from 'react-router-dom'
 import card from '../styles/Card.css'
+import SearchTerm from './SearchTerm'
 
 export default class Place extends Component {
+
+  createSearch(e) {
+    const type = e.target.getAttribute('data-type')
+    console.log(type)
+  }
+
   render() {
     let trends = null
     let remove = null
@@ -15,11 +21,9 @@ export default class Place extends Component {
       trends = this.props.trends.slice(0, 8).map(trend => {
         return (
           <li key={ trend.name + trend.text }>
-            <Link
-              title={'Click to search for ' + trend.name}
-              to={'/search/' + encodeURIComponent(trend.name)}>
-              { trend.name }
-            </Link>
+            <SearchTerm
+              action={(e) => {this.createSearch(e)}}
+              value={trend.name} />
             &nbsp;
             <bdo title={trend.name + ' tweets in the last 24 hours'}>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
           </li>

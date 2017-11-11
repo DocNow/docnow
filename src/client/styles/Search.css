@@ -47,3 +47,26 @@ time, .Count  {
   padding: 5px;
   background-color: #efefef;
 }
+
+.SearchTerm {
+  padding: 3px;
+  border-radius: 4px;
+}
+
+.SearchTerm:hover {
+  font-weight: bold;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+.Hashtag {
+  background-color: #eecccc;
+}
+
+.Phrase {
+  background-color: #cceecc;
+}
+
+.Keyword {
+  background-color: #ccccee;
+}
