@@ -15,9 +15,13 @@ export default class Place extends Component {
       trends = this.props.trends.slice(0, 8).map(trend => {
         return (
           <li key={ trend.name + trend.text }>
-            <Link to={'/search/' + encodeURIComponent(trend.name)}>{ trend.name }</Link>
+            <Link
+              title={'Click to search for ' + trend.name}
+              to={'/search/' + encodeURIComponent(trend.name)}>
+              { trend.name }
+            </Link>
             &nbsp;
-            <bdo>{ trend.tweets }</bdo>
+            <bdo title={trend.name + ' tweets in the last 24 hours'}>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
           </li>
         )
       })
@@ -27,7 +31,7 @@ export default class Place extends Component {
           <li key={ trend.name + trend.text }>
             <span>{ trend.name }</span>
             &nbsp;
-            <bdo>{ trend.tweets }</bdo>
+            <bdo title="foo">{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
           </li>
         )
       })
