@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import moment from 'moment'
 import style from '../styles/Tweets.css'
 
 export default class Tweet extends Component {
   render() {
+    const created = moment(this.props.data.created).fromNow()
     return (
       <div className={style.Tweets}>
         <div className={style.TweetsProfile}>
@@ -15,7 +17,7 @@ export default class Tweet extends Component {
             </a>
           </div>
           <hr />
-          <a href={this.props.data.link}>{this.props.data.created}</a>
+          <a href={this.props.data.twitterUrl}>{created}</a>
         </div>
         <p>{this.props.data.text}</p>
         <div className={style.Inline}><i className="fa fa-comment-o" />{this.props.data.replyCount}</div>
