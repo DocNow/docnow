@@ -5,7 +5,7 @@
   overflow-x: hidden;
 }
 
-.Users {
+.User {
   background-color: #ffffff;
   margin: 5px;
   padding: 5px;
@@ -14,24 +14,29 @@
   border-radius: 3px;
 }
 
-.Users img {
+.User:hover {
+  background-color: lightyellow;
+  cursor: pointer;
+}
+
+.User img {
   display: inline-block;
   width: 20px;
   height: 20px;
   padding: 3px;
 }
 
-.Users a {
+.User a {
   color: #1E77B6;
 }
 
-.UsersProfile {
+.UserProfile {
   display: flex;
   align-items: center;
   justify-content: flex-start;
 }
 
-.UsersName {
+.UserName {
   font-weight: bold;
   padding-left: 5px;
   padding-right: 10px;
@@ -42,7 +47,7 @@
   padding-left: 5px;
 }
 
-.Users p {
+.User p {
   margin: 5px;
   font-size: 10pt;
 }

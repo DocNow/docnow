@@ -7,8 +7,8 @@ import SearchTerm from './SearchTerm'
 export default class Place extends Component {
 
   createSearch(e) {
-    const type = e.target.getAttribute('data-type')
-    console.log(type)
+    // const type = e.target.getAttribute('data-type')
+    this.props.createSearch(e.target.innerText)
   }
 
   render() {
@@ -66,5 +66,6 @@ Place.propTypes = {
   name: PropTypes.string,
   placeId: PropTypes.string,
   username: PropTypes.string,
-  deleteTrend: PropTypes.func
+  deleteTrend: PropTypes.func,
+  createSearch: PropTypes.func
 }

@@ -3,13 +3,19 @@ import PropTypes from 'prop-types'
 
 import style from '../styles/Users.css'
 
+
 export default class User extends Component {
+
+  addUser() {
+    this.props.addToSearchQuery({type: 'user', value: this.props.data.screenName})
+  }
+
   render() {
     return (
-      <div className={style.Users}>
-        <div className={style.UsersProfile}>
+      <div onClick={() => {this.addUser()}} className={style.User}>
+        <div className={style.UserProfile}>
           <img src={this.props.data.avatarUrl} />
-          <div className={style.UsersName}>
+          <div className={style.UserName}>
             {this.props.data.name}
           </div>
           <div>
@@ -38,8 +44,10 @@ export default class User extends Component {
       </div>
     )
   }
+
 }
 
 User.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
+  addToSearchQuery: PropTypes.func
 }

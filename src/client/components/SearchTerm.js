@@ -35,7 +35,7 @@ export default class SearchTerm extends Component {
         onClick={this.props.action}
         data-type={type}
         className={style.SearchTerm + ' ' + cssClass}
-        title={'Click to search for ' + this.props.value}>
+        title={`${type} ${this.props.value}`}>
         { this.props.value }
       </span>
     )

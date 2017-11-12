@@ -7,6 +7,7 @@ import UrlList from './UrlList'
 import ImageList from './ImageList'
 import VideoList from './VideoList'
 import SearchSummary from './SearchSummary'
+import SearchTerm from './SearchTerm'
 
 import styles from '../styles/Search.css'
 import card from '../styles/Card.css'
@@ -15,17 +16,10 @@ export default class Search extends Component {
 
   constructor(props) {
     super(props)
-    this.state = {searchTerm: ''}
     this.timerId = null
-    this.setSearchTerm = this.setSearchTerm.bind(this)
-    this.searchNewTerm = this.searchNewTerm.bind(this)
   }
 
   componentDidMount() {
-    this.props.searchTwitter(this.props.q)
-    this.setState({
-      searchTerm: this.props.q
-    })
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
@@ -35,55 +29,67 @@ export default class Search extends Component {
     clearInterval(this.timerId)
   }
 
-  tick() {
-    if (this.props.id && this.props.active) {
-      this.props.getSearch(this.props.id)
-      this.props.getTweets(this.props.id)
-      this.props.getHashtags(this.props.id)
-      this.props.getUsers(this.props.id)
-      this.props.getUrls(this.props.id)
-      this.props.getImages(this.props.id)
-      this.props.getVideos(this.props.id)
+  search() {
+    this.props.createSearch('food')
+  }
+
+  update() {
+    if (this.props.active === false) {
+      this.props.updateSearch({id: this.props.searchId})
+      this.tick()
     }
   }
 
-  setSearchTerm(e) {
-    this.setState({
-      searchTerm: encodeURIComponent(e.target.value)
-    })
-  }
-
-  searchNewTerm() {
-    window.location = `/search/${this.state.searchTerm}`
+  tick() {
+    console.log('tick', this.props.searchId, this.props.active, 'x')
+    if (this.props.searchId && this.props.active) {
+      this.props.getSearch(this.props.searchId)
+      this.props.getTweets(this.props.searchId)
+      this.props.getHashtags(this.props.searchId)
+      this.props.getUsers(this.props.searchId)
+      this.props.getUrls(this.props.searchId)
+      this.props.getImages(this.props.searchId)
+      this.props.getVideos(this.props.searchId)
+    }
   }
 
   render() {
+    const spin = this.props.active ? 'fa-spin' : ''
     return (
       <div>
         <div className={styles.SearchBar}>
-          <div className={styles.Form}>
-            <input
-              required
-              type="text"
-              value={decodeURIComponent(this.state.searchTerm)}
-              placeholder="#hashtag"
-              onChange={this.setSearchTerm} />
-            <button
-              onClick={this.searchNewTerm}>
-              <i className="fa fa-search" aria-hidden="true"/>
-            </button>
-            <a href="#">Search tips</a>
+
+          <div className={styles.Search}>
+            <div contentEditable className={styles.SearchBox}>
+              <SearchTerm value={this.props.query} />
+            </div>
           </div>
+
+          <div className={styles.Controls}>
+
+          <button title="Redo search" onClick={() => {this.search()}}>
+            <i className="fa fa-search" />
+          </button>
+
+          <button title="Refresh this search" onClick={() => {this.update()}}>
+            <i className={'fa fa-refresh ' + spin} aria-hidden="true" />
+          </button>
+
+          <button title="Save this search" onClick={() => {this.create()}}>
+            <i className="fa fa-plus" aria-hidden="true" />
+          </button>
+
+          </div>
+
+          <SearchSummary
+            id={this.props.searchId}
+            maxDate={this.props.maxDate}
+            minDate={this.props.minDate}
+            count={this.props.count}
+            hashtagCount={this.props.hashtags.length}
+            active={this.props.active} />
+
         </div>
-
-        <SearchSummary
-          id={this.props.id}
-          maxDate={this.props.maxDate}
-          minDate={this.props.minDate}
-          count={this.props.count}
-          active={this.props.active}
-          updateSearch={this.props.updateSearch}/>
-
 
         <div className={card.CardHolder}>
 
@@ -95,35 +101,39 @@ export default class Search extends Component {
           </div>
 
           <div className={card.Card}>
-            <UserList users={this.props.users}/>
+            <UserList
+              addToSearchQuery={this.props.addToSearchQuery}
+              users={this.props.users}/>
             <div className={card.CardTitle}>
               <h2>Users</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <HashtagChart hashtags={this.props.hashtags}/>
+            <HashtagChart
+              addToSearchQuery={this.props.addToSearchQuery}
+              hashtags={this.props.hashtags}/>
             <div className={card.CardTitle}>
               <h2>Hashtags</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <UrlList urls={this.props.urls}/>
+            <UrlList urls={this.props.urls} />
             <div className={card.CardTitle}>
               <h2>URLs</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <ImageList images={this.props.images}/>
+            <ImageList images={this.props.images} />
             <div className={card.CardTitle}>
               <h2>Images</h2>
             </div>
           </div>
 
           <div className={card.Card}>
-            <VideoList videos={this.props.videos}/>
+            <VideoList videos={this.props.videos} />
             <div className={card.CardTitle}>
               <h2>Video</h2>
             </div>
@@ -136,8 +146,8 @@ export default class Search extends Component {
 }
 
 Search.propTypes = {
-  id: PropTypes.string,
-  q: PropTypes.string,
+  searchId: PropTypes.string,
+  query: PropTypes.string,
   maxDate: PropTypes.string,
   minDate: PropTypes.string,
   count: PropTypes.number,
@@ -148,7 +158,6 @@ Search.propTypes = {
   images: PropTypes.array,
   videos: PropTypes.array,
   active: PropTypes.bool,
-  searchTwitter: PropTypes.func,
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,
   getHashtags: PropTypes.func,
@@ -157,4 +166,6 @@ Search.propTypes = {
   getImages: PropTypes.func,
   getVideos: PropTypes.func,
   updateSearch: PropTypes.func,
+  createSearch: PropTypes.func,
+  addToSearchQuery: PropTypes.func,
 }

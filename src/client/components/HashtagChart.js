@@ -19,6 +19,7 @@ export default class Hashtags extends Component {
 
   createBarChart() {
     const node = this.node
+    const component = this
 
     const maxX = max(this.props.hashtags.map((ht) => {return ht.count}))
     const xScale = scalePow()
@@ -49,8 +50,18 @@ export default class Hashtags extends Component {
 
     const gEnter = g.enter()
       .append('g')
+      .attr('class', 'bar')
       .attr('transform', function(d, i) {
         return 'translate(0,' + i * 25 + ')'
+      })
+      .on('mouseover', function() {
+        select(this).classed(styles.Active, true)
+      })
+      .on('mouseout', function() {
+        select(this).classed(styles.Active, false)
+      })
+      .on('click', function(d) {
+        component.props.addToSearchQuery({type: 'hashtag', value: d.hashtag})
       })
 
     gEnter.append('rect')
@@ -89,5 +100,6 @@ export default class Hashtags extends Component {
 }
 
 Hashtags.propTypes = {
-  hashtags: PropTypes.array
+  hashtags: PropTypes.array,
+  addToSearchQuery: PropTypes.func
 }

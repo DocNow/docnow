@@ -4,7 +4,7 @@ import User from './User'
 
 import style from '../styles/Users.css'
 
-export default class TweetList extends Component {
+export default class UserList extends Component {
 
   render() {
     let loader = null
@@ -14,14 +14,20 @@ export default class TweetList extends Component {
     return (
       <div className={ style.UsersCard }>
         {loader}
-        {this.props.users.map(user => (
-          <User key={user.handle} data={user}/>
-        ))}
+        {this.props.users.map(user => {
+          return (
+            <User
+              key={user.handle}
+              addToSearchQuery={this.props.addToSearchQuery}
+              data={user}/>
+          )
+        })}
       </div>
     )
   }
 }
 
-TweetList.propTypes = {
-  users: PropTypes.array
+UserList.propTypes = {
+  users: PropTypes.array,
+  addToSearchQuery: PropTypes.func
 }

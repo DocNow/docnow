@@ -1,7 +1,8 @@
 import {
   SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS, SET_TWITTER_SEARCH_USERS,
   SET_TWITTER_SEARCH_HASHTAGS, SET_TWITTER_SEARCH_URLS, SET_TWITTER_SEARCH_IMAGES,
-  SET_TWITTER_SEARCH_VIDEOS, RESET_TWITTER_SEARCH, ACTIVATE_SEARCH
+  SET_TWITTER_SEARCH_VIDEOS, RESET_TWITTER_SEARCH, ACTIVATE_SEARCH,
+  ADD_TO_SEARCH_QUERY
 } from '../actions/search'
 
 const initialState = {
@@ -81,6 +82,11 @@ export default function user(state = initialState, action) {
         ...state,
         active: true
       }
+    }
+
+    case ADD_TO_SEARCH_QUERY: {
+      console.log(action.term)
+      return state
     }
 
     default: {

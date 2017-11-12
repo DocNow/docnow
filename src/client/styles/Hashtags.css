@@ -13,3 +13,13 @@ rect {
 text {
   font-size: 11pt;
 }
+
+.Active rect {
+  cursor: pointer;
+  fill: lightyellow;
+}
+
+.Active text {
+  cursor: pointer;
+  font-weight: bold;
+}
