@@ -138,7 +138,7 @@ app.post('/logo', (req, res) => {
 
 app.post('/searches', (req, res) => {
   if (req.user) {
-    db.createSearch(req.user, req.body.q)
+    db.createSearch(req.user, req.body.query)
       .then((search) => {
         db.importFromSearch(search)
         res.redirect(303, `/api/v1/search/${search.id}`)

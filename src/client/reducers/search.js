@@ -2,13 +2,13 @@ import {
   SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS, SET_TWITTER_SEARCH_USERS,
   SET_TWITTER_SEARCH_HASHTAGS, SET_TWITTER_SEARCH_URLS, SET_TWITTER_SEARCH_IMAGES,
   SET_TWITTER_SEARCH_VIDEOS, RESET_TWITTER_SEARCH, ACTIVATE_SEARCH,
-  ADD_TO_SEARCH_QUERY
+  UPDATE_SEARCH_TERM, REMOVE_SEARCH_TERM, ADD_SEARCH_TERM
 } from '../actions/search'
 
 const initialState = {
   id: '',
   creator: '',
-  query: '',
+  query: [],
   created: '',
   minDate: '',
   maxDate: '',
@@ -84,9 +84,50 @@ export default function user(state = initialState, action) {
       }
     }
 
-    case ADD_TO_SEARCH_QUERY: {
-      console.log(action.term)
-      return state
+    case UPDATE_SEARCH_TERM: {
+      console.log('update')
+      const newQuery = []
+      state.query.forEach((term, pos) => {
+        if (action.term.pos === pos) {
+          newQuery.push({
+            type: action.term.type,
+            value: action.term.value,
+          })
+        } else {
+          newQuery.push({...term})
+        }
+      })
+      return {
+        ...state,
+        query: newQuery
+      }
+    }
+
+    case REMOVE_SEARCH_TERM: {
+      const newQuery = []
+      state.query.forEach((term, pos) => {
+        if (action.term.pos !== pos)  {
+          newQuery.push({
+            type: term.type,
+            value: term.value,
+            pos: pos
+          })
+        }
+      })
+      return {
+        ...state,
+        query: newQuery
+      }
+    }
+
+    case ADD_SEARCH_TERM: {
+      return {
+        ...state,
+        query: [
+          ...state.query,
+          action.term
+        ]
+      }
     }
 
     default: {

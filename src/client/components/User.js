@@ -7,7 +7,14 @@ import style from '../styles/Users.css'
 export default class User extends Component {
 
   addUser() {
-    this.props.addToSearchQuery({type: 'user', value: this.props.data.screenName})
+    let screenName = this.props.data.screenName
+    if (! screenName.startsWith('@')) {
+      screenName = '@' + screenName
+    }
+    this.props.addSearchTerm({
+      type: 'user',
+      value: screenName
+    })
   }
 
   render() {
@@ -49,5 +56,5 @@ export default class User extends Component {
 
 User.propTypes = {
   data: PropTypes.object,
-  addToSearchQuery: PropTypes.func
+  addSearchTerm: PropTypes.func
 }

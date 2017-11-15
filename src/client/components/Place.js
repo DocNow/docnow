@@ -7,8 +7,10 @@ import SearchTerm from './SearchTerm'
 export default class Place extends Component {
 
   createSearch(e) {
-    // const type = e.target.getAttribute('data-type')
-    this.props.createSearch(e.target.innerText)
+    this.props.createSearch([{
+      type: e.target.getAttribute('data-type'),
+      value: e.target.innerText
+    }])
   }
 
   render() {
@@ -18,11 +20,12 @@ export default class Place extends Component {
       remove = (
         <a href="#" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}}><i className="fa fa-minus" aria-hidden="true"/></a>
       )
-      trends = this.props.trends.slice(0, 8).map(trend => {
+      trends = this.props.trends.slice(0, 8).map((trend, i) => {
         return (
           <li key={ trend.name + trend.text }>
             <SearchTerm
-              action={(e) => {this.createSearch(e)}}
+              key={`t-${i}`}
+              onClick={(e) => {this.createSearch(e)}}
               value={trend.name} />
             &nbsp;
             <bdo title={trend.name + ' tweets in the last 24 hours'}>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>

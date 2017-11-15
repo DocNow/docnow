@@ -392,7 +392,8 @@ export class Database {
               id: {type: 'keyword'},
               created: {type: 'date', format: 'date_time'},
               creator: {type: 'keyword'},
-              query: {type: 'text'},
+              'query.type': {type: 'keyword'},
+              'query.value': {type: 'keyword'},
               active: {type: 'boolean'},
             }
           },
@@ -486,12 +487,12 @@ export class Database {
     })
   }
 
-  createSearch(user, q) {
+  createSearch(user, query) {
     return new Promise((resolve, reject) => {
       const search = {
         id: 'search:' + uuid(),
         creator: user.id,
-        query: q,
+        query: query,
         created: new Date().toISOString(),
         maxTweetId: null,
         active: true
@@ -566,13 +567,28 @@ export class Database {
   importFromSearch(search) {
     let count = 0
     let maxTweetId = null
+
+    const queryParts = []
+    for (const term of search.query) {
+      if (term.type === 'keyword') {
+        queryParts.push(term.value)
+      } else if (term.type === 'user') {
+        queryParts.push('@' + term.value)
+      } else if (term.type === 'phrase') {
+        queryParts.push(`"${term.value}"`)
+      } else if (term.type === 'hashtag') {
+        queryParts.push(term.value)
+      }
+    }
+    const q = queryParts.join(' OR ')
+
     return new Promise((resolve, reject) => {
       this.getUser(search.creator).then((user) => {
         this.updateSearch({...search, active: true})
           .then((newSearch) => {
             this.getTwitterClientForUser(user)
               .then((twtr) => {
-                twtr.search({q: search.query, sinceId: search.maxTweetId, count: 1000}, (err, results) => {
+                twtr.search({q: q, sinceId: search.maxTweetId, count: 1000}, (err, results) => {
                   if (err) {
                     reject(err)
                   } else if (results.length === 0) {

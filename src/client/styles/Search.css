@@ -1,26 +1,23 @@
 .SearchBar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   margin-top: 20px;
   padding-left: 20px;
-  display: inline-flex;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: center;
 }
 
-.SearchBar button i {
-  padding-left: 0px !important;
-}
-
-.Search {
-}
-
-.SearchBox {
+.SearchQuery {
+  align-self: flex-start;
   overflow: hidden;
   font-family: 'Roboto Medium', sans-serif;
-  min-width: 340px;
+  line-height: 30px;
+  width: 340px;
   background: transparent;
   padding: 10px;
   margin-right: 10px;
+  margin-bottom: 10px;
   text-decoration: none;
   user-select: none;
   border: thin solid gray;
@@ -28,23 +25,26 @@
   -webkit-appearance: none;
 }
 
-.SearchBar:focus {
-  color: #4a4a4a;
-  outline: none;
-}
-
 .Controls {
+  margin-bottom: 10px;
 }
 
-.SearchBar button {
-  margin-top: 5px;
-  margin-bottom: 5px;
+.Controls button {
+  margin-left: 10px;
   margin-right: 10px;
 }
 
+.Controls button i {
+  padding-left: 0px !important;
+  padding-right: 0px;
+}
+
 .Summary {
-  padding: 10px;
+  width: 340px;
+  min-height: 30px;
+  margin-left: 10px;
   align-self: flex-start;
+  padding: 10px;
   margin-right: 10px;
   border: thin solid gray;
   box-shadow: 1px 2px 3px 1px rgba(30, 119,182,0.2), 0px 2px 3px 0px rgba(0,0,0,0.1);
@@ -56,12 +56,19 @@ time, .Count  {
 
 .SearchTerm {
   padding: 3px;
-  border-radius: 6px;
+  margin: 3px;
+  border-radius: 4px;
+  background-color: #C8D2D3;
 }
 
 .SearchTerm:hover {
-  border: 1px solid black;
+  margin-right: 2px;
+  border: 1px solid gray;
   cursor: pointer;
+}
+
+.SearchTerm:focus {
+  outline: none;
 }
 
 .Hashtag {
@@ -74,4 +81,8 @@ time, .Count  {
 
 .Keyword {
   background-color: #ccccee;
+}
+
+.User {
+  background-color: lightpink;
 }

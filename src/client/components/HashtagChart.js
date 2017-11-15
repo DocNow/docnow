@@ -61,7 +61,10 @@ export default class Hashtags extends Component {
         select(this).classed(styles.Active, false)
       })
       .on('click', function(d) {
-        component.props.addToSearchQuery({type: 'hashtag', value: d.hashtag})
+        component.props.addSearchTerm({
+          type: 'hashtag',
+          value: '#' + d.hashtag
+        })
       })
 
     gEnter.append('rect')
@@ -101,5 +104,5 @@ export default class Hashtags extends Component {
 
 Hashtags.propTypes = {
   hashtags: PropTypes.array,
-  addToSearchQuery: PropTypes.func
+  addSearchTerm: PropTypes.func
 }

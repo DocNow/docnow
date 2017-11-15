@@ -17,8 +17,8 @@ export default class UserList extends Component {
         {this.props.users.map(user => {
           return (
             <User
-              key={user.handle}
-              addToSearchQuery={this.props.addToSearchQuery}
+              key={user.screenName}
+              addSearchTerm={this.props.addSearchTerm}
               data={user}/>
           )
         })}
@@ -29,5 +29,5 @@ export default class UserList extends Component {
 
 UserList.propTypes = {
   users: PropTypes.array,
-  addToSearchQuery: PropTypes.func
+  addSearchTerm: PropTypes.func
 }

@@ -44,7 +44,7 @@ export default class TabBar extends Component {
             <a className={`${styles.Tab} ${savedsearchesActive}`} href="/savedsearches">
               <i className="fa fa-archive" aria-hidden="true"/>
               &nbsp;
-              Saved TweetSets
+              Saved Searches
             </a>
           </li>
         </ul>

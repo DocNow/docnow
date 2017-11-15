@@ -7,7 +7,9 @@ export const SET_TWITTER_SEARCH_IMAGES = 'SET_TWITTER_SEARCH_IMAGES'
 export const SET_TWITTER_SEARCH_VIDEOS = 'SET_TWITTER_SEARCH_VIDEOS'
 export const RESET_TWITTER_SEARCH = 'RESET_TWITTER_SEARCH'
 export const ACTIVATE_SEARCH = 'ACTIVATE_SEARCH'
-export const ADD_TO_SEARCH_QUERY = 'ADD_TO_SEARCH_QUERY'
+export const UPDATE_SEARCH_TERM = 'UPDATE_SEARCH_TERM'
+export const REMOVE_SEARCH_TERM = 'REMOVE_SEARCH_TERM'
+export const ADD_SEARCH_TERM = 'ADD_SEARCH_TERM'
 
 import { push } from 'react-router-redux'
 
@@ -72,18 +74,32 @@ export const activateSearch = () => {
   }
 }
 
-export const addToSearchQuery = (term) => {
+export const updateSearchTerm = (term) => {
+  if (term.value === '') {
+    return {
+      type: REMOVE_SEARCH_TERM,
+      term
+    }
+  } else {
+    return {
+      type: UPDATE_SEARCH_TERM,
+      term
+    }
+  }
+}
+
+export const addSearchTerm = (term) => {
   return {
-    type: ADD_TO_SEARCH_QUERY,
+    type: ADD_SEARCH_TERM,
     term
   }
 }
 
-export const createSearch = (q) => {
+export const createSearch = (query) => {
   return (dispatch, getState) => {
     dispatch(resetTwitterSearch())
     const { user } = getState()
-    const body = { user, q }
+    const body = {user, query}
     const opts = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},

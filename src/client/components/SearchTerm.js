@@ -4,6 +4,42 @@ import style from '../styles/Search.css'
 
 export default class SearchTerm extends Component {
 
+  constructor(props) {
+    super(props)
+    this.value = props.value
+  }
+
+  componentDidMount() {
+    this.span.focus()
+  }
+
+  shouldComponentUpdate(nextProps) {
+    // prevent cursor jumping around when react updates component
+    // after it has already been edited
+    if (nextProps.value !== this.value) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  update(e) {
+    const newValue = e.target.innerText
+    this.value = newValue
+    this.props.onInput({
+      type: this.props.type,
+      value: newValue,
+      pos: this.props.pos
+    })
+  }
+
+  click(e) {
+    e.stopPropagation()
+    if (this.props.onClick) {
+      this.props.onClick(e)
+    }
+  }
+
   guessType() {
     if (this.props.value.startsWith('#')) {
       return 'hashtag'
@@ -22,6 +58,8 @@ export default class SearchTerm extends Component {
         return style.Hashtag
       case 'phrase':
         return style.Phrase
+      case 'user':
+        return style.User
       default:
         return style.Keyword
     }
@@ -30,20 +68,27 @@ export default class SearchTerm extends Component {
   render() {
     const type = this.props.type || this.guessType()
     const cssClass = this.cssClass(type)
+    const editable = this.props.onInput ? true : false
     return (
       <span
-        onClick={this.props.action}
+        contentEditable={editable}
+        suppressContentEditableWarning={editable}
+        onClick={(e) => {this.click(e)}}
+        onInput={(e) => {this.update(e)}}
         data-type={type}
         className={style.SearchTerm + ' ' + cssClass}
+        ref={(span) => {this.span = span}}
         title={`${type} ${this.props.value}`}>
-        { this.props.value }
+        { this.props.value + ' ' }
       </span>
     )
   }
 }
 
 SearchTerm.propTypes = {
+  pos: PropTypes.number,
   type: PropTypes.string,
   value: PropTypes.string,
-  action: PropTypes.func
+  onInput: PropTypes.func,
+  onClick: PropTypes.func
 }

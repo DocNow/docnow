@@ -7,7 +7,7 @@ import UrlList from './UrlList'
 import ImageList from './ImageList'
 import VideoList from './VideoList'
 import SearchSummary from './SearchSummary'
-import SearchTerm from './SearchTerm'
+import SearchQuery from './SearchQuery'
 
 import styles from '../styles/Search.css'
 import card from '../styles/Card.css'
@@ -30,7 +30,7 @@ export default class Search extends Component {
   }
 
   search() {
-    this.props.createSearch('food')
+    this.props.createSearch(this.props.query)
   }
 
   update() {
@@ -41,7 +41,6 @@ export default class Search extends Component {
   }
 
   tick() {
-    console.log('tick', this.props.searchId, this.props.active, 'x')
     if (this.props.searchId && this.props.active) {
       this.props.getSearch(this.props.searchId)
       this.props.getTweets(this.props.searchId)
@@ -54,25 +53,24 @@ export default class Search extends Component {
   }
 
   render() {
-    const spin = this.props.active ? 'fa-spin' : ''
+    const spin = this.props.active ? ' fa-spin' : ''
     return (
       <div>
         <div className={styles.SearchBar}>
 
-          <div className={styles.Search}>
-            <div contentEditable className={styles.SearchBox}>
-              <SearchTerm value={this.props.query} />
-            </div>
-          </div>
+          <SearchQuery
+            updateSearchTerm={this.props.updateSearchTerm}
+            addSearchTerm={this.props.addSearchTerm}
+            query={this.props.query} />
 
           <div className={styles.Controls}>
 
           <button title="Redo search" onClick={() => {this.search()}}>
-            <i className="fa fa-search" />
+            <i className="fa fa-search" aria-hidden="true" />
           </button>
 
-          <button title="Refresh this search" onClick={() => {this.update()}}>
-            <i className={'fa fa-refresh ' + spin} aria-hidden="true" />
+          <button title="Update this search" onClick={() => {this.update()}}>
+            <i className={'fa fa-refresh' + spin} aria-hidden="true" />
           </button>
 
           <button title="Save this search" onClick={() => {this.create()}}>
@@ -102,7 +100,7 @@ export default class Search extends Component {
 
           <div className={card.Card}>
             <UserList
-              addToSearchQuery={this.props.addToSearchQuery}
+              addSearchTerm={this.props.addSearchTerm}
               users={this.props.users}/>
             <div className={card.CardTitle}>
               <h2>Users</h2>
@@ -111,7 +109,7 @@ export default class Search extends Component {
 
           <div className={card.Card}>
             <HashtagChart
-              addToSearchQuery={this.props.addToSearchQuery}
+              addSearchTerm={this.props.addSearchTerm}
               hashtags={this.props.hashtags}/>
             <div className={card.CardTitle}>
               <h2>Hashtags</h2>
@@ -147,7 +145,7 @@ export default class Search extends Component {
 
 Search.propTypes = {
   searchId: PropTypes.string,
-  query: PropTypes.string,
+  query: PropTypes.array,
   maxDate: PropTypes.string,
   minDate: PropTypes.string,
   count: PropTypes.number,
@@ -167,5 +165,6 @@ Search.propTypes = {
   getVideos: PropTypes.func,
   updateSearch: PropTypes.func,
   createSearch: PropTypes.func,
-  addToSearchQuery: PropTypes.func,
+  updateSearchTerm: PropTypes.func,
+  addSearchTerm: PropTypes.func,
 }
