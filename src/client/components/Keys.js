@@ -5,14 +5,17 @@ export default class Keys extends Component {
 
   render() {
     return (
-        <p>
-          <label htmlFor="appKey">Consumer Key </label>
-          <input onChange={this.props.updateSettings}
-                 id="appKey" name="appKey" type="text" value={this.props.appKey} />
-          <label htmlFor="appSecret">Consumer Secret </label>
-          <input onChange={this.props.updateSettings}
-                 id="appSecret" name="appSecret" type="text" value={this.props.appSecret} />
-        </p>
+      <p>
+        <label htmlFor="appKey">Consumer Key</label>
+        <input onChange={this.props.updateSettings}
+               id="appKey" name="appKey" type="text" value={this.props.appKey} />
+        <br />
+        <br />
+        <br />
+        <label htmlFor="appSecret">Consumer Secret</label>
+        <input onChange={this.props.updateSettings}
+               id="appSecret" name="appSecret" type="text" value={this.props.appSecret} />
+      </p>
     )
   }
 }
