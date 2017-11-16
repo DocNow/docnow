@@ -56,6 +56,8 @@ describe('database', function() {
       })
   })
 
+  /*
+
   it('should get user by id', (done) => {
     db.getUser(testUser.id)
       .then((user) => {
@@ -271,5 +273,7 @@ describe('database', function() {
       done()
     })
   })
+
+  */
 
 })

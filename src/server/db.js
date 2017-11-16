@@ -38,21 +38,7 @@ export class Database {
   }
 
   getIndex(type) {
-    switch (type) {
-      case USER:
-      case SETTINGS:
-      case PLACE:
-      case TREND:
-      case SEARCH:
-        return this.esPrefix + '-admin'
-      case TWEET:
-      case TWUSER:
-        return this.esPrefix + '-tweets'
-      default:
-        const msg = `unable to determine index for type ${type}`
-        log.error(msg)
-        throw msg
-    }
+    return this.esPrefix + '-' + type
   }
 
   close() {
@@ -264,7 +250,6 @@ export class Database {
         {
           index: {
             _index: this.getIndex(TREND),
-            _type: TREND,
             _id: trend.id
           },
           refresh: 'wait_for'
@@ -301,7 +286,6 @@ export class Database {
                   body.push({
                     index: {
                       _index: this.getIndex(PLACE),
-                      _type: PLACE,
                       _id: place.id
                     }
                   })
@@ -341,149 +325,6 @@ export class Database {
           })
         )
       })
-    })
-  }
-
-  setupIndexes() {
-    return this.es.indices.exists({index: this.getIndex(TWEET)})
-      .then((exists) => {
-        if (! exists) {
-          log.info('adding indexes')
-          this.addIndexes()
-        } else {
-          log.warn('indexes already present, not adding')
-        }
-      })
-      .catch((e) => {
-        log.error(e)
-      })
-  }
-
-  addIndexes() {
-    return Promise.all([
-      this.addTweetIndex(),
-      this.addAdminIndex(),
-    ])
-  }
-
-  addAdminIndex() {
-    const index = this.getIndex(SETTINGS)
-    log.info(`creating admin index: ${index}`)
-    return this.es.indices.create({
-      index: index,
-      body: {
-        mappings: {
-
-          settings: {
-            properties: {
-              appKey: {type: 'keyword'},
-              appSecret: {type: 'keyword'}
-            }
-          },
-
-          user: {
-            properties: {
-              places: {type: 'keyword'}
-            }
-          },
-
-          search: {
-            properties: {
-              id: {type: 'keyword'},
-              created: {type: 'date', format: 'date_time'},
-              creator: {type: 'keyword'},
-              'query.type': {type: 'keyword'},
-              'query.value': {type: 'keyword'},
-              active: {type: 'boolean'},
-            }
-          },
-
-          place: {
-            properties: {
-              id: {type: 'keyword'},
-              name: {type: 'text'},
-              type: {type: 'keyword'},
-              country: {type: 'text'},
-              countryCode: {type: 'keyword'},
-              parentId: {type: 'keyword'}
-            }
-          },
-
-          trend: {
-            properties: {
-              id: {type: 'keyword'},
-              'trends.name': {type: 'keyword'},
-              'trends.tweets': {type: 'integer'}
-            }
-          }
-
-        }
-      }
-    })
-  }
-
-  addTweetIndex() {
-    const index = this.getIndex(TWEET)
-    log.info(`creating tweet index: ${index}`)
-    return this.es.indices.create({
-      index: this.getIndex(TWEET),
-      body: {
-        mappings: {
-
-          twuser: {
-            properties: {
-              id: {type: 'keyword'},
-              screenName: {type: 'keyword'},
-              created: {type: 'date', format: 'date_time'},
-              updated: {type: 'date', format: 'date_time'}
-            }
-          },
-
-          tweet: {
-            properties: {
-              id: {type: 'keyword'},
-              search: {type: 'keyword'},
-              retweetCount: {type: 'integer'},
-              likeCount: {type: 'integer'},
-              created: {type: 'date', format: 'date_time'},
-              client: {type: 'keyword'},
-              hashtags: {type: 'keyword'},
-              mentions: {type: 'keyword'},
-              geo: {type: 'geo_shape'},
-              videos: {type: 'keyword'},
-              images: {type: 'keyword'},
-              animatedGifs: {type: 'keyword'},
-              emojis: {type: 'keyword'},
-
-              country: {type: 'keyword'},
-              countryCode: {type: 'keyword'},
-              boundingBox: {type: 'geo_shape'},
-
-              'urls.short': {type: 'keyword'},
-              'urls.long': {type: 'keyword'},
-              'urls.hostname': {type: 'keyword'},
-              'user.screenName': {type: 'keyword'},
-              'quote.user.screenName': {type: 'keyword'},
-              'retweet.user.screenName': {type: 'keyword'}
-            }
-          }
-        }
-      }
-    })
-  }
-
-  deleteIndexes() {
-    log.info('deleting all elasticsearch indexes')
-    return new Promise((resolve) => {
-      this.es.indices.delete({index: this.esPrefix + '*'})
-        .then(() => {
-          log.info('deleted indexes')
-          resolve()
-        })
-        .catch((err) => {
-          log.warn('indexes delete failed: ' + err)
-          resolve()
-        })
     })
   }
 
@@ -610,7 +451,6 @@ export class Database {
                         {
                           index: {
                             _index: this.getIndex(TWEET),
-                            _type: TWEET,
                             _id: id
                           }
                         },
@@ -621,7 +461,6 @@ export class Database {
                           {
                             index: {
                               _index: this.getIndex(TWUSER),
-                              _type: TWUSER,
                               _id: tweet.user.id,
                             }
                           },
@@ -819,6 +658,148 @@ export class Database {
         reject(err)
       })
     })
+  }
+
+  setupIndexes() {
+    return this.es.indices.exists({index: this.getIndex(TWEET)})
+      .then((exists) => {
+        if (! exists) {
+          log.info('adding indexes')
+          this.addIndexes()
+        } else {
+          log.warn('indexes already present, not adding')
+        }
+      })
+      .catch((e) => {
+        log.error(e)
+      })
+  }
+
+  addIndexes() {
+    const indexMappings = this.getIndexMappings()
+    const promises = []
+    for (const name of Object.keys(indexMappings)) {
+      promises.push(this.addIndex(name, indexMappings[name]))
+    }
+    return Promise.all(promises)
+  }
+
+  addIndex(name, map) {
+    const prefixedName = this.getIndex(name)
+    const body = {mappings: {}}
+    body.mappings[name] = map
+    log.info(`creating index: ${prefixedName}`)
+    return this.es.indices.create({
+      index: prefixedName,
+      body: body
+    })
+  }
+
+  deleteIndexes() {
+    log.info('deleting all elasticsearch indexes')
+    return new Promise((resolve) => {
+      this.es.indices.delete({index: this.esPrefix + '*'})
+        .then(() => {
+          log.info('deleted indexes')
+          resolve()
+        })
+        .catch((err) => {
+          log.warn('indexes delete failed: ' + err)
+          resolve()
+        })
+    })
+  }
+
+  getIndexMappings() {
+    return {
+
+      settings: {
+        properties: {
+          type: {type: 'keyword'},
+          appKey: {type: 'keyword'},
+          appSecret: {type: 'keyword'}
+        }
+      },
+
+      user: {
+        properties: {
+          type: {type: 'keyword'},
+          places: {type: 'keyword'}
+        }
+      },
+
+      search: {
+        properties: {
+          id: {type: 'keyword'},
+          type: {type: 'keyword'},
+          created: {type: 'date', format: 'date_time'},
+          creator: {type: 'keyword'},
+          'query.type': {type: 'keyword'},
+          'query.value': {type: 'keyword'},
+          active: {type: 'boolean'},
+        }
+      },
+
+      place: {
+        properties: {
+          id: {type: 'keyword'},
+          type: {type: 'keyword'},
+          name: {type: 'text'},
+          country: {type: 'text'},
+          countryCode: {type: 'keyword'},
+          parentId: {type: 'keyword'}
+        }
+      },
+
+      trend: {
+        properties: {
+          id: {type: 'keyword'},
+          type: {type: 'keyword'},
+          'trends.name': {type: 'keyword'},
+          'trends.tweets': {type: 'integer'}
+        }
+      },
+
+      twuser: {
+        properties: {
+          id: {type: 'keyword'},
+          type: {type: 'keyword'},
+          screenName: {type: 'keyword'},
+          created: {type: 'date', format: 'date_time'},
+          updated: {type: 'date', format: 'date_time'}
+        }
+      },
+
+      tweet: {
+        properties: {
+          id: {type: 'keyword'},
+          type: {type: 'keyword'},
+          search: {type: 'keyword'},
+          retweetCount: {type: 'integer'},
+          likeCount: {type: 'integer'},
+          created: {type: 'date', format: 'date_time'},
+          client: {type: 'keyword'},
+          hashtags: {type: 'keyword'},
+          mentions: {type: 'keyword'},
+          geo: {type: 'geo_shape'},
+          videos: {type: 'keyword'},
+          images: {type: 'keyword'},
+          animatedGifs: {type: 'keyword'},
+          emojis: {type: 'keyword'},
+
+          country: {type: 'keyword'},
+          countryCode: {type: 'keyword'},
+          boundingBox: {type: 'geo_shape'},
+
+          'urls.short': {type: 'keyword'},
+          'urls.long': {type: 'keyword'},
+          'urls.hostname': {type: 'keyword'},
+          'user.screenName': {type: 'keyword'},
+          'quote.user.screenName': {type: 'keyword'},
+          'retweet.user.screenName': {type: 'keyword'}
+        }
+      }
+    }
   }
 
 }
