@@ -1,3 +1,5 @@
+require('babel-polyfill')
+
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
 import log from '../src/server/logger'
@@ -258,18 +260,33 @@ describe('database', function() {
 
   it('should get images', (done) => {
     db.getImages(testSearch).then((images) => {
-      ok(images.length > 0)
-      ok(images[0].url)
+      if (images.length > 0) {
+        ok(images[0].url, 'image.url')
+      }
       done()
     })
   })
 
   it('should get videos', (done) => {
     db.getVideos(testSearch).then((videos) => {
-      ok(videos.length > 0)
-      ok(videos[0].url)
+      if (videos.length > 0) {
+        ok(videos[0].url, 'video.url')
+      }
       done()
     })
+  })
+
+  it('should add url to search', async () => {
+    db.startUrlFetcher()
+    await db.addUrl(testSearch, 'http://bit.ly/2AP2zvF')
+  })
+
+  it('should get urls in search', async () => {
+    const pages = await db.getWebPages(testSearch)
+    ok(pages.length, 1, 'urls.length')
+    const page = pages[0]
+    ok(page.url, 'https://en.wikipedia.org/wiki/Twitter', 'page.url')
+    ok(page.title, 'Twitter', 'page.title')
   })
 
 })

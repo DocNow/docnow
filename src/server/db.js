@@ -27,7 +27,7 @@ export class Database {
     const redisOpts = opts.redis || {}
     redisOpts.host = redisOpts.host || process.env.REDIS_HOST || '127.0.0.1'
     log.info('connecting to redis: ' + redisOpts)
-    this.db = redis.createClient(redisOpts)
+    this.redis = redis.createClient(redisOpts)
 
     // setup elasticsearch
     const esOpts = opts.es || {}
@@ -42,12 +42,12 @@ export class Database {
   }
 
   close() {
-    this.db.quit()
+    this.redis.quit()
   }
 
   clear() {
     return new Promise((resolve, reject) => {
-      this.db.flushdbAsync()
+      this.redis.flushdbAsync()
         .then((didSucceed) => {
           if (didSucceed === 'OK') {
             this.deleteIndexes()
@@ -803,6 +803,40 @@ export class Database {
         }
       }
     }
+  }
+
+  startUrlFetcher() {
+  }
+
+  addUrl(search, url) {
+    const job = {url, search}
+    return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
+  }
+
+  processUrl() {
+    return new Promise((resolve, reject) => {
+      this.redis.blpopAsync('urlqueue', 0)
+        .then((result) => {
+          const job = JSON.parse(result[1])
+          resolve({
+            url: job.url,
+            title: 'Twitter'
+          })
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
+
+  getWebPages(search) {
+    console.log(`fetching webapges for ${search.id}`)
+    return [
+      {
+        url: 'https://en.wikipedia.org/wiki/Twitter',
+        title: 'Twitter'
+      }
+    ]
   }
 
 }
