@@ -10,6 +10,7 @@ export default class Url extends Component {
         <a target="_new" href={this.props.url}>
           {this.props.url}
         </a>
+        &nbsp;
         <strong>{this.props.count}</strong>
       </div>
     )

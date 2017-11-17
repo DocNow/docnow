@@ -3,11 +3,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 80vh;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
-  font-size: 20pt;
+  font-size: 16pt;
 }
 
 .Settings p {

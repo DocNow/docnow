@@ -250,6 +250,7 @@ export class Database {
         {
           index: {
             _index: this.getIndex(TREND),
+            _type: 'trend',
             _id: trend.id
           },
           refresh: 'wait_for'
@@ -286,6 +287,7 @@ export class Database {
                   body.push({
                     index: {
                       _index: this.getIndex(PLACE),
+                      _type: 'place',
                       _id: place.id
                     }
                   })
@@ -343,12 +345,8 @@ export class Database {
         type: SEARCH,
         id: search.id,
         body: search
-      }).then((resp) => {
-        if (resp.created) {
-          resolve(search)
-        } else {
-          reject('search not created!')
-        }
+      }).then(() => {
+        resolve(search)
       }).catch((err) => {
         reject(err)
       })
@@ -419,6 +417,9 @@ export class Database {
         queryParts.push(`"${term.value}"`)
       } else if (term.type === 'hashtag') {
         queryParts.push(term.value)
+      } else {
+        log.warn('search is missing a type: ', search)
+        queryParts.push(term.value)
       }
     }
     const q = queryParts.join(' OR ')
@@ -451,6 +452,7 @@ export class Database {
                         {
                           index: {
                             _index: this.getIndex(TWEET),
+                            _type: 'tweet',
                             _id: id
                           }
                         },
@@ -461,6 +463,7 @@ export class Database {
                           {
                             index: {
                               _index: this.getIndex(TWUSER),
+                              _type: 'twuser',
                               _id: tweet.user.id,
                             }
                           },
