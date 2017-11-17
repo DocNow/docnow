@@ -32,7 +32,7 @@ describe('database', function() {
         equal(settings.appSecret, process.env.CONSUMER_SECRET)
         done()
       })
-    }, 1000)
+    }, 2000)
   })
 
   it('should add user', (done) => {
