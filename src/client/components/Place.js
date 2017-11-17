@@ -20,7 +20,7 @@ export default class Place extends Component {
       remove = (
         <a href="#" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}}><i className="fa fa-minus" aria-hidden="true"/></a>
       )
-      trends = this.props.trends.slice(0, 8).map((trend, i) => {
+      trends = this.props.trends.map((trend, i) => {
         return (
           <li key={ trend.name + trend.text }>
             <SearchTerm

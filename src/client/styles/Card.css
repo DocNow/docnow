@@ -54,6 +54,9 @@
 .Data {
   padding-top: 20px;
   text-align: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
 }
 
 .Data ul {
