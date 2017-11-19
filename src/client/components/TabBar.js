@@ -9,16 +9,16 @@ export default class TabBar extends Component {
   render() {
     let trendsActive = null
     let searchActive = null
-    let savedsearchesActive = null
+    let searchlistActive = null
     switch (this.props.location) {
       case '/':
         trendsActive = styles.Active
         break
-      case '/search':
+      case '/search/':
         searchActive = styles.Active
         break
-      case '/savedsearches':
-        savedsearchesActive = styles.Active
+      case '/searches/':
+        searchlistActive = styles.Active
         break
       default:
         break
@@ -41,7 +41,7 @@ export default class TabBar extends Component {
             </Link>
           </li>
           <li>
-            <a className={`${styles.Tab} ${savedsearchesActive}`} href="/savedsearches">
+            <a className={`${styles.Tab} ${searchlistActive}`} href="/searches/">
               <i className="fa fa-archive" aria-hidden="true"/>
               &nbsp;
               Saved Searches

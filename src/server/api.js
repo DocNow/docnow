@@ -146,9 +146,34 @@ app.post('/searches', (req, res) => {
       })
       .catch((e) => {
         const msg = 'unable to createSearch: ' + e
-        console.log(msg)
+        log.error(msg)
         res.error(msg)
       })
+  }
+})
+
+
+app.get('/search/:searchId', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.params.searchId).then((search) => {
+      db.getSearchSummary(search).then((summ) => {
+        res.json(summ)
+      })
+    })
+  }
+})
+
+app.put('/search/:searchId', (req, res) => {
+  if (req.user) {
+    let newSearch = req.body
+    db.getSearch(newSearch.id).then((search) => {
+      newSearch = {...search, ...newSearch}
+      db.updateSearch(newSearch)
+      if (req.query.refreshTweets) {
+        db.importFromSearch(search)
+      }
+      res.json(newSearch)
+    })
   }
 })
 
@@ -164,27 +189,22 @@ app.get('/search/:searchId/tweets', (req, res) => {
   }
 })
 
-app.get('/search/:searchId', (req, res) => {
-  if (req.user) {
-    db.getSearch(req.params.searchId).then((search) => {
-      db.getSearchSummary(search).then((summ) => {
-        res.json(summ)
-      })
-    })
-  }
-})
-
 app.put('/search/:searchId', (req, res) => {
   if (req.user) {
-    db.getSearch(req.body.id).then((search) => {
-      db.importFromSearch(search)
-        .then(() => {
-          res.json(search)
-        })
-        .catch((e) => {
-          console.log(e)
-          res.json(search)
-        })
+    db.getSearch(req.body.id).then( async (search) => {
+      await db.updateSearch(search)
+      if (req.query.refreshTweets) {
+        db.importFromSearch(search)
+          .then(() => {
+            res.json(search)
+          })
+          .catch((e) => {
+            log.error('search failed', e)
+            res.json(search)
+          })
+      } else {
+        res.json(search)
+      }
     })
   }
 })

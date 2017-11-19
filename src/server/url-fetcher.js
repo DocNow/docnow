@@ -62,7 +62,7 @@ export class UrlFetcher {
           await this.saveMetadata(job, metadata)
         }
       } catch (error) {
-        log.error('metaweb.get error', error)
+        log.error(`metaweb.get error for ${job.url}`, error.message)
       }
     }
 

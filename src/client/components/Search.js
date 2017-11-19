@@ -35,9 +35,13 @@ export default class Search extends Component {
 
   update() {
     if (this.props.active === false) {
-      this.props.updateSearch({id: this.props.searchId})
+      this.props.refreshSearch({id: this.props.searchId})
       this.tick()
     }
+  }
+
+  save() {
+    this.props.updateSearch({id: this.props.searchId, saved: true})
   }
 
   tick() {
@@ -73,7 +77,7 @@ export default class Search extends Component {
             <i className={'fa fa-refresh' + spin} aria-hidden="true" />
           </button>
 
-          <button title="Save this search" onClick={() => {this.create()}}>
+          <button title="Save this search" onClick={() => {this.save()}}>
             <i className="fa fa-plus" aria-hidden="true" />
           </button>
 
@@ -163,8 +167,9 @@ Search.propTypes = {
   getUrls: PropTypes.func,
   getImages: PropTypes.func,
   getVideos: PropTypes.func,
-  updateSearch: PropTypes.func,
   createSearch: PropTypes.func,
+  refreshSearch: PropTypes.func,
+  updateSearch: PropTypes.func,
   updateSearchTerm: PropTypes.func,
   addSearchTerm: PropTypes.func,
 }

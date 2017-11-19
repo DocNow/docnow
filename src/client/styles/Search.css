@@ -13,6 +13,7 @@
   overflow: hidden;
   font-family: 'Roboto Medium', sans-serif;
   line-height: 30px;
+  min-height: 30px;
   width: 340px;
   background: transparent;
   padding: 10px;

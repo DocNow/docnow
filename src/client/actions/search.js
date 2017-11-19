@@ -126,7 +126,26 @@ export const updateSearch = (search) => {
       body: JSON.stringify(search),
       credentials: 'same-origin'
     }
-    return fetch('/api/v1/search/' + search.id, opts)
+    const url = `/api/v1/search/${search.id}`
+    return fetch(url, opts)
+      .then((resp) => resp.json())
+      .then(() => {
+        dispatch(push('/search/' + search.id))
+      })
+  }
+}
+
+export const refreshSearch = (search) => {
+  return (dispatch) => {
+    dispatch(activateSearch())
+    const opts = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(search),
+      credentials: 'same-origin'
+    }
+    const url = `/api/v1/search/${search.id}` + '?refreshTweets'
+    return fetch(url, opts)
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearch(result))

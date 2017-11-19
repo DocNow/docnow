@@ -57,6 +57,7 @@ export class Database {
   }
 
   add(type, id, doc) {
+    log.debug(`update ${type} ${id}`, doc)
     return new Promise((resolve, reject) => {
       this.es.index({
         index: this.getIndex(type),
@@ -258,7 +259,7 @@ export class Database {
       this.es.bulk({body: body, refresh: 'wait_for'})
         .then(() => {resolve(trends)})
         .catch((err) => {
-          console.log(err)
+          log.error('bulk insert failed', err)
           reject(err)
         })
     })
@@ -350,17 +351,7 @@ export class Database {
   }
 
   getSearch(searchId) {
-    return new Promise((resolve, reject) => {
-      this.es.get({
-        index: this.getIndex('search'),
-        type: 'search',
-        id: searchId
-      }).then((resp) => {
-        resolve(resp._source)
-      }).catch((err) => {
-        reject(err)
-      })
-    })
+    return this.get(SEARCH, searchId)
   }
 
   updateSearch(search) {
