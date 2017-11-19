@@ -1,13 +1,11 @@
-import redis from 'redis'
 import uuid from 'uuid/v4'
-import bluebird from 'bluebird'
+import getRedis from './redis'
 import elasticsearch from 'elasticsearch'
 
 import log from './logger'
 import { Twitter } from './twitter'
+import { UrlFetcher } from './url-fetcher'
 import { addPrefix, stripPrefix } from './utils'
-
-bluebird.promisifyAll(redis.RedisClient.prototype)
 
 // elasticsearch doc types
 
@@ -19,20 +17,18 @@ const TREND = 'trend'
 const TWEET = 'tweet'
 const TWUSER = 'twuser'
 
+const urlFetcher = new UrlFetcher()
 
 export class Database {
 
   constructor(opts = {}) {
     // setup redis
-    const redisOpts = opts.redis || {}
-    redisOpts.host = redisOpts.host || process.env.REDIS_HOST || '127.0.0.1'
-    log.info('connecting to redis: ' + redisOpts)
-    this.redis = redis.createClient(redisOpts)
+    this.redis = getRedis()
 
     // setup elasticsearch
     const esOpts = opts.es || {}
     esOpts.host = esOpts.host || process.env.ES_HOST || '127.0.0.1:9200'
-    log.info('connecting to elasticsearch: ' + esOpts)
+    log.info('connecting to elasticsearch:', esOpts)
     this.esPrefix = esOpts.prefix || 'docnow'
     this.es = new elasticsearch.Client(esOpts)
   }
@@ -333,7 +329,7 @@ export class Database {
   createSearch(user, query) {
     return new Promise((resolve, reject) => {
       const search = {
-        id: 'search:' + uuid(),
+        id: uuid(),
         creator: user.id,
         query: query,
         created: new Date().toISOString(),
@@ -403,7 +399,7 @@ export class Database {
     })
   }
 
-  importFromSearch(search) {
+  importFromSearch(search, maxTweets = 1000) {
     let count = 0
     let maxTweetId = null
 
@@ -430,7 +426,7 @@ export class Database {
           .then((newSearch) => {
             this.getTwitterClientForUser(user)
               .then((twtr) => {
-                twtr.search({q: q, sinceId: search.maxTweetId, count: 1000}, (err, results) => {
+                twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, (err, results) => {
                   if (err) {
                     reject(err)
                   } else if (results.length === 0) {
@@ -446,6 +442,9 @@ export class Database {
                     const bulk = []
                     const seenUsers = new Set()
                     for (const tweet of results) {
+                      for (const url of tweet.urls) {
+                        urlFetcher.add(search, url.long)
+                      }
                       tweet.search = search.id
                       const id = search.id + ':' + tweet.id
                       bulk.push(
@@ -829,14 +828,8 @@ export class Database {
     })
   }
 
-  getWebPages(search) {
-    console.log(`fetching webapges for ${search.id}`)
-    return [
-      {
-        url: 'https://en.wikipedia.org/wiki/Twitter',
-        title: 'Twitter'
-      }
-    ]
+  async getWebPages(search) {
+    return await urlFetcher.getWebPages(search)
   }
 
 }

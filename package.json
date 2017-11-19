@@ -1,4 +1,6 @@
 {
+  "name": "docnow",
+  "repository": "https://github.com/docnow/docnow",
   "scripts": {
     "start": "better-npm-run start",
     "build:client": "webpack --optimize-minimize --config webpack.prod.config.js",
@@ -9,7 +11,9 @@
     "repl": "babel-node",
     "eslint:server": "eslint server.js src/server/*",
     "reset": "node src/commands/reset.js",
-    "load-places": "node src/commands/load-places.js"
+    "load-places": "node src/commands/load-places.js",
+    "url-fetcher": "NODE_ENV=production node --require babel-polyfill --require babel-register src/commands/url-fetcher.js",
+    "url-fetcher:dev": "NODE_ENV=development nodemon src/commands/url-fetcher.js --exec 'node --require babel-polyfill --require babel-register'"
   },
   "betterScripts": {
     "build": {
@@ -19,19 +23,25 @@
       }
     },
     "start": {
-      "command": "nodemon server.js --exec 'npm run eslint:server && node' --ignore src/client",
+      "command": "nodemon server.js --exec 'npm run eslint:server && node --require babel-register --require babel-polyfill' --ignore src/client",
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    "url-fetcher": {
+      "command": "node --require babel-polyfill --require babel-register  src/commands/url-fetcher.js",
       "env": {
         "NODE_ENV": "development"
       }
     },
     "wtest": {
-      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 20000 --require babel-register test/*'",
+      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 20000 --require babel-polyfill --require babel-register test/*'",
       "env": {
         "NODE_ENV": "test"
       }
     },
     "test": {
-      "command": "npm run eslint:server && mocha --timeout 20000 --require babel-register test/*",
+      "command": "npm run eslint:server && mocha --timeout 20000 --require babel-register --require babel-polyfill test/*",
       "env": {
         "NODE_ENV": "test"
       }
@@ -49,6 +59,7 @@
     "express": "^4.15.2",
     "express-session": "^1.15.3",
     "font-awesome": "^4.7.0",
+    "metaweb": "0.0.4",
     "mocha": "^3.4.2",
     "moment": "^2.19.1",
     "morgan": "^1.8.2",

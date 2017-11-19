@@ -1,9 +1,10 @@
 import express from 'express'
 import multiparty from 'multiparty'
 import * as fs from 'fs'
+import log from './logger'
+
 import { Database } from './db'
 import { activateKeys } from './auth'
-import log from './logger'
 
 const app = express()
 
@@ -245,6 +246,14 @@ app.get('/search/:searchId/videos', (req, res) => {
             res.json(videos)
           })
       })
+  }
+})
+
+app.get('/search/:searchId/webpages', async (req, res) => {
+  if (req.user) {
+    const search = await db.getSearch(req.params.searchId)
+    const webpages = await db.getWebPages(search)
+    res.json(webpages)
   }
 })
 

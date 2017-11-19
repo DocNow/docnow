@@ -1,5 +1,3 @@
-require('babel-polyfill')
-
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
 import log from '../src/server/logger'
@@ -180,7 +178,7 @@ describe('database', function() {
   })
 
   it('should import from search', function(done) {
-    db.importFromSearch(testSearch)
+    db.importFromSearch(testSearch, 200)
       .then((num) => {
         ok(num > 0, 'search found tweets')
         done()
@@ -274,19 +272,6 @@ describe('database', function() {
       }
       done()
     })
-  })
-
-  it('should add url to search', async () => {
-    db.startUrlFetcher()
-    await db.addUrl(testSearch, 'http://bit.ly/2AP2zvF')
-  })
-
-  it('should get urls in search', async () => {
-    const pages = await db.getWebPages(testSearch)
-    ok(pages.length, 1, 'urls.length')
-    const page = pages[0]
-    ok(page.url, 'https://en.wikipedia.org/wiki/Twitter', 'page.url')
-    ok(page.title, 'Twitter', 'page.title')
   })
 
 })
