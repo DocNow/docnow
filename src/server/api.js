@@ -137,6 +137,14 @@ app.post('/logo', (req, res) => {
   }
 })
 
+app.get('/searches', (req, res) => {
+  if (req.user) {
+    db.getUserSearches(req.user).then((searches) => {
+      res.json(searches)
+    })
+  }
+})
+
 app.post('/searches', (req, res) => {
   if (req.user) {
     db.createSearch(req.user, req.body.query)
@@ -169,6 +177,7 @@ app.put('/search/:searchId', (req, res) => {
     db.getSearch(newSearch.id).then((search) => {
       newSearch = {...search, ...newSearch}
       db.updateSearch(newSearch)
+      console.log('xxx', req.query.refreshTweets)
       if (req.query.refreshTweets) {
         db.importFromSearch(search)
       }

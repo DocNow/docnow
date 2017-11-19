@@ -350,6 +350,27 @@ export class Database {
     })
   }
 
+  async getUserSearches(user) {
+    // const body = {query: {match: {creator: user.id, saved: true}}}
+    const body = {
+      query: {
+        bool: {
+          must: [
+            {match: {creator: user.id}},
+            {match: {saved: true}}
+          ]
+        }
+      },
+      sort: [{created: 'desc'}]
+    }
+    const resp = await this.es.search({
+      index: this.getIndex(SEARCH),
+      type: SEARCH,
+      body: body
+    })
+    return resp.hits.hits.map((h) => {return h._source})
+  }
+
   getSearch(searchId) {
     return this.get(SEARCH, searchId)
   }
@@ -392,6 +413,7 @@ export class Database {
 
   importFromSearch(search, maxTweets = 1000) {
     let count = 0
+    let totalCount = search.count || 0
     let maxTweetId = null
 
     const queryParts = []
@@ -421,12 +443,14 @@ export class Database {
                   if (err) {
                     reject(err)
                   } else if (results.length === 0) {
+                    newSearch.count = totalCount
                     newSearch.maxTweetId = maxTweetId
                     newSearch.active = false
                     this.updateSearch(newSearch)
                       .then(() => {resolve(count)})
                   } else {
                     count += results.length
+                    totalCount += results.length
                     if (maxTweetId === null) {
                       maxTweetId = results[0].id
                     }
@@ -725,11 +749,13 @@ export class Database {
         properties: {
           id: {type: 'keyword'},
           type: {type: 'keyword'},
+          title: {type: 'text'},
           created: {type: 'date', format: 'date_time'},
           creator: {type: 'keyword'},
+          active: {type: 'boolean'},
+          saved: {type: 'boolean'},
           'query.type': {type: 'keyword'},
           'query.value': {type: 'keyword'},
-          active: {type: 'boolean'},
         }
       },
 

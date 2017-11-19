@@ -41,11 +41,11 @@ export default class TabBar extends Component {
             </Link>
           </li>
           <li>
-            <a className={`${styles.Tab} ${searchlistActive}`} href="/searches/">
+            <Link className={`${styles.Tab} ${searchlistActive}`} to="/searches/">
               <i className="fa fa-archive" aria-hidden="true"/>
               &nbsp;
               Saved Searches
-            </a>
+            </Link>
           </li>
         </ul>
       </div>

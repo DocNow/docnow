@@ -5,7 +5,7 @@ import style from '../styles/SearchList.css'
 export default class SearchList extends Component {
   render() {
     return (
-      <h1 className={style.Header}>Search List</h1>
+      <h1 className={style.Header}>Saved Search</h1>
     )
   }
 }

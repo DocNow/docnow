@@ -35,13 +35,24 @@ export default class Search extends Component {
 
   update() {
     if (this.props.active === false) {
-      this.props.refreshSearch({id: this.props.searchId})
+      this.props.refreshSearch({
+        id: this.props.searchId,
+        active: true
+      })
       this.tick()
     }
   }
 
   save() {
-    this.props.updateSearch({id: this.props.searchId, saved: true})
+    // create a temporary title based on the query
+    const values = this.props.query.map((q) => {return q.value})
+    const title = values.join(' ')
+    this.props.updateSearch({
+      id: this.props.searchId,
+      title: title,
+      saved: true
+    })
+    this.props.resetTwitterSearch()
   }
 
   tick() {
@@ -161,6 +172,7 @@ Search.propTypes = {
   videos: PropTypes.array,
   active: PropTypes.bool,
   getSearch: PropTypes.func,
+  resetTwitterSearch: PropTypes.func,
   getTweets: PropTypes.func,
   getHashtags: PropTypes.func,
   getUsers: PropTypes.func,

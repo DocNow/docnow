@@ -62,7 +62,7 @@ const setTwitterSearchVideos = (videos) => {
   }
 }
 
-const resetTwitterSearch = () => {
+export const resetTwitterSearch = () => {
   return {
     type: RESET_TWITTER_SEARCH
   }
@@ -94,6 +94,7 @@ export const addSearchTerm = (term) => {
     term
   }
 }
+
 
 export const createSearch = (query) => {
   return (dispatch, getState) => {
@@ -144,7 +145,7 @@ export const refreshSearch = (search) => {
       body: JSON.stringify(search),
       credentials: 'same-origin'
     }
-    const url = `/api/v1/search/${search.id}` + '?refreshTweets'
+    const url = `/api/v1/search/${search.id}` + '?refreshTweets=true'
     return fetch(url, opts)
       .then((resp) => resp.json())
       .then((result) => {
