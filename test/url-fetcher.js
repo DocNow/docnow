@@ -1,4 +1,4 @@
-import { ok, equal } from 'assert'
+import { ok, equal, deepEqual } from 'assert'
 import { UrlFetcher } from '../src/server/url-fetcher'
 
 describe('url-fetcher', () => {
@@ -46,11 +46,13 @@ describe('url-fetcher', () => {
     }, 10000)
   })
 
-  it('should stop', (done) => {
-    setTimeout(() => {
-      uf.stop()
-      done()
-    }, 5000)
+  it('should return queue stats', async () => {
+    const stats = await uf.queueStats(search)
+    deepEqual({total: 5, remaining: 0}, stats)
+  })
+
+  it('should stop', async () => {
+    await uf.stop()
   })
 
 })

@@ -5,8 +5,9 @@ import Webpage from './Webpage'
 
 export default class SavedSearch extends Component {
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.getWebpages(this.props.searchId)
+    this.props.getQueueStats(this.props.searchId)
   }
 
   render() {
@@ -30,5 +31,6 @@ export default class SavedSearch extends Component {
 SavedSearch.propTypes = {
   'searchId': PropTypes.string,
   'webpages': PropTypes.array,
-  'getWebpages': PropTypes.func
+  'getWebpages': PropTypes.func,
+  'getQueueStats': PropTypes.func
 }

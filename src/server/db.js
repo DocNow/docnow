@@ -822,9 +822,6 @@ export class Database {
     }
   }
 
-  startUrlFetcher() {
-  }
-
   addUrl(search, url) {
     const job = {url, search}
     return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
@@ -848,6 +845,10 @@ export class Database {
 
   async getWebpages(search) {
     return await urlFetcher.getWebpages(search)
+  }
+
+  async queueStats(search) {
+    return await urlFetcher.queueStats(search)
   }
 
 }

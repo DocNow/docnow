@@ -6,6 +6,7 @@ import trends from './trends'
 import search from './search'
 import searches from './searches'
 import webpages from './webpages'
+import queue from './queue'
 
 const rootReducer = combineReducers({
   settings,
@@ -14,6 +15,7 @@ const rootReducer = combineReducers({
   search,
   searches,
   webpages,
+  queue,
   router: routerReducer
 })
 

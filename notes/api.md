@@ -52,3 +52,11 @@ Top images in a given search.
 ### /search/{search-id}/videos *(GET)*
 
 Top videos in a given search.
+
+### /search/{search-id}/webpages *(GET)*
+
+Metadata for webpages referenced in a given search.
+
+### /search/{search-id}/queue *(GET)*
+
+Statistics for the url fetching queue for a search.

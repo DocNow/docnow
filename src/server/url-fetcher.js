@@ -2,12 +2,20 @@ import getRedis from './redis'
 import metaweb from 'metaweb'
 import log from './logger'
 
-// helper functions for normalizing redis key names
-
+// redis key for url to url mappings
 const urlKey = (url) => {return `url:${url}`}
+
+// redis key for url metadata
 const metadataKey = (url) => {return `metadata:${url}`}
-const searchUrlsKey = (search) => {return `search:urls:${search.id}`}
-const searchQueueCount = (job) => {return `search:queue:${job.search.id}`}
+
+// redis key for a search's sorted set of url counts
+const urlsKey = (search) => {return `urls:${search.id}`}
+
+// redis key for the number of urls yet to be fetched for a search
+const queueCountKey = (search) => {return `queue:${search.id}`}
+
+// redis key for the total number of urls to be checked in a search
+const urlsCountKey = (search) => {return `urlscount:${search.id}`}
 
 export class UrlFetcher {
 
@@ -33,7 +41,8 @@ export class UrlFetcher {
 
   add(search, url) {
     const job = {search, url}
-    this.incrSearchQueue(job)
+    this.incrSearchQueue(search)
+    this.incrUrlsCount(search)
     return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
   }
 
@@ -78,7 +87,7 @@ export class UrlFetcher {
       await this.tally(job, metadata)
     }
 
-    this.decrSearchQueue(job)
+    this.decrSearchQueue(job.search)
     return metadata
   }
 
@@ -112,21 +121,34 @@ export class UrlFetcher {
   }
 
   async tally(job, metadata) {
-    const key = searchUrlsKey(job.search)
+    const key = urlsKey(job.search)
     log.info('tallying', key, metadata.url)
     await this.redis.zincrbyAsync(key, 1, metadata.url)
   }
 
-  incrSearchQueue(job) {
-    this.redis.incr(searchQueueCount(job))
+  async queueStats(search) {
+    const total = await this.redis.getAsync(urlsCountKey(search))
+    const remaining = await this.redis.getAsync(queueCountKey(search))
+    return {
+      total: parseInt(total, 10),
+      remaining: parseInt(remaining, 10)
+    }
   }
 
-  decrSearchQueue(job) {
-    this.redis.decr(searchQueueCount(job))
+  incrUrlsCount(search) {
+    this.redis.incr(urlsCountKey(search))
+  }
+
+  incrSearchQueue(search) {
+    this.redis.incr(queueCountKey(search))
+  }
+
+  decrSearchQueue(search) {
+    this.redis.decr(queueCountKey(search))
   }
 
   async getWebpages(search, start = 0, limit = 100) {
-    const key = searchUrlsKey(search)
+    const key = urlsKey(search)
 
     // get the list of urls and their counts while building up
     // a list of redis commands to get metadata for the urls

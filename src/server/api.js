@@ -286,4 +286,12 @@ app.get('/search/:searchId/webpages', async (req, res) => {
   }
 })
 
+app.get('/search/:searchId/queue', async (req, res) => {
+  if (req.user) {
+    const search = await db.getSearch(req.params.searchId)
+    const result = await db.queueStats(search)
+    res.json(result)
+  }
+})
+
 module.exports = app
