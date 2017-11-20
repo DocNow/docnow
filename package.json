@@ -59,7 +59,7 @@
     "express": "^4.15.2",
     "express-session": "^1.15.3",
     "font-awesome": "^4.7.0",
-    "metaweb": "0.0.4",
+    "metaweb": "0.0.5",
     "mocha": "^3.4.2",
     "moment": "^2.19.1",
     "morgan": "^1.8.2",

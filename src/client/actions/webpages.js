@@ -16,7 +16,6 @@ export const resetWebpages = () => {
 
 export const getWebpages = (searchId) => {
   return (dispatch) => {
-    dispatch(resetWebpages())
     fetch(`/api/v1/search/${searchId}/webpages`, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
