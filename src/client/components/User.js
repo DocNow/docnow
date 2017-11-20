@@ -3,13 +3,26 @@ import PropTypes from 'prop-types'
 
 import style from '../styles/Users.css'
 
+
 export default class User extends Component {
+
+  addUser() {
+    let screenName = this.props.data.screenName
+    if (! screenName.startsWith('@')) {
+      screenName = '@' + screenName
+    }
+    this.props.addSearchTerm({
+      type: 'user',
+      value: screenName
+    })
+  }
+
   render() {
     return (
-      <div className={style.Users}>
-        <div className={style.UsersProfile}>
+      <div onClick={() => {this.addUser()}} className={style.User}>
+        <div className={style.UserProfile}>
           <img src={this.props.data.avatarUrl} />
-          <div className={style.UsersName}>
+          <div className={style.UserName}>
             {this.props.data.name}
           </div>
           <div>
@@ -38,8 +51,10 @@ export default class User extends Component {
       </div>
     )
   }
+
 }
 
 User.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
+  addSearchTerm: PropTypes.func
 }

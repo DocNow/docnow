@@ -75,7 +75,8 @@ export default class Trends extends MediaQueryComponent {
                 name={place.name}
                 world={this.props.world}
                 deleteTrend={this.props.deleteTrend}
-                username={this.props.username} />
+                username={this.props.username}
+                createSearch={this.props.createSearch}/>
             ))}
             {newLocation}
           </div>
@@ -94,5 +95,5 @@ Trends.propTypes = {
   newPlace: PropTypes.string,
   placeLabelToId: PropTypes.func,
   deleteTrend: PropTypes.func,
-  saveTrends: PropTypes.func
+  createSearch: PropTypes.func
 }

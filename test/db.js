@@ -32,7 +32,7 @@ describe('database', function() {
         equal(settings.appSecret, process.env.CONSUMER_SECRET)
         done()
       })
-    }, 1000)
+    }, 2000)
   })
 
   it('should add user', (done) => {
@@ -153,18 +153,21 @@ describe('database', function() {
   })
 
   it('should create search', (done) => {
-    db.createSearch(testUser, 'obama')
+    db.createSearch(testUser, [{type: 'keyword', value: 'obama'}])
       .then((search) => {
         ok(search.id, 'search.id')
         testSearch = search
         done()
+      })
+      .catch((err) => {
+        console.log(err)
       })
   })
 
   it('should get search', (done) => {
     db.getSearch(testSearch.id).then((search) => {
       equal(search.id, testSearch.id, 'search.id')
-      equal(search.query, 'obama', 'search.query')
+      deepEqual(search.query, [{type: 'keyword', value: 'obama'}], 'search.query')
       equal(search.creator, testUser.id, 'search.user')
       equal(search.active, true, 'search.active')
       equal(search.maxTweetId, null, 'search.maxTweetId')

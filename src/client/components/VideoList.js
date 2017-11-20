@@ -13,7 +13,7 @@ export default class VideoList extends Component {
       <div className={style.VideosCard}>
         {loader}
         {this.props.videos.map((video) => (
-          <div className={style.Video}>
+          <div key={video.url} className={style.Video}>
             <video controls src={video.url} />
             <div>
               {video.count} shares

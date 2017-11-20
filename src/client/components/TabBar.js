@@ -26,12 +26,27 @@ export default class TabBar extends Component {
     return (
       <div className={styles.TabBar}>
         <ul>
-          <li><Link className={`${styles.Tab} ${trendsActive}`} to="/">
-          <i className="fa fa-area-chart" aria-hidden="true"/> Trending</Link></li>
-          <li><Link className={`${styles.Tab} ${searchActive}`} to="/search">
-          <i className="fa fa-search" aria-hidden="true"/> Search</Link></li>
-          <li><a className={`${styles.Tab} ${savedsearchesActive}`} href="/savedsearches">
-          <i className="fa fa-archive" aria-hidden="true"/> Saved TweetSets</a></li>
+          <li>
+            <Link className={`${styles.Tab} ${trendsActive}`} to="/">
+              <i className="fa fa-area-chart" aria-hidden="true"/>
+              &nbsp;
+              Trending
+            </Link>
+          </li>
+          <li>
+            <Link className={`${styles.Tab} ${searchActive}`} to="/search/">
+              <i className="fa fa-search" aria-hidden="true"/>
+              &nbsp;
+              Search
+            </Link>
+          </li>
+          <li>
+            <a className={`${styles.Tab} ${savedsearchesActive}`} href="/savedsearches">
+              <i className="fa fa-archive" aria-hidden="true"/>
+              &nbsp;
+              Saved Searches
+            </a>
+          </li>
         </ul>
       </div>
     )

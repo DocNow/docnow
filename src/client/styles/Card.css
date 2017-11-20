@@ -8,7 +8,7 @@
 .Card {
   display: flex;
   flex-direction: column;
-  justify-content:  space-between;
+  justify-content: space-between;
   padding: 0;
   box-sizing: border-box;
   border-radius: 2px;
@@ -54,6 +54,9 @@
 .Data {
   padding-top: 20px;
   text-align: center;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
 }
 
 .Data ul {

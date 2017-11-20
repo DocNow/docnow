@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Keys from './Keys'
-import textfield from '../styles/Textfield.css'
+import style from '../styles/Settings.css'
 
 export default class Settings extends Component {
 
@@ -11,13 +11,23 @@ export default class Settings extends Component {
 
   render() {
     return (
-      <div className={textfield.Textfield}>
-        <p>Welcome! To use DocNow, you need to obtain a Consumer Key and Consumer Key from Twitter (learn more)</p>
+      <div className={style.Settings}>
+        <h1>Welcome!</h1>
+        <p>
+          To setup DocNow, you will need to create a
+          <em>Twitter application</em> and configure DocNow to use
+          your <em>Consumer Key</em> and <em>Consumer Secret</em> keys
+          from Twitter.
+        </p>
+        <p>
+          Please visit <a href="https://apps.twitter.com">apps.twitter.com</a> to
+          to create your application, and let us know if you
+          have any difficulties at info@docnow.io.
+        </p>
         <Keys
           appKey={this.props.appKey}
           appSecret={this.props.appSecret}
-          updateSettings={this.props.updateSettings}
-        />
+          updateSettings={this.props.updateSettings} />
         <p>
           <button onClick={()=>{
             this.props.saveSettings().then(() => {

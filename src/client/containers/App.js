@@ -45,7 +45,7 @@ class App extends MediaQueryComponent {
           <Route exact path="/" component={TrendsPage} />
           <Route exact path="/settings/" component={SettingsPage} />
           <Route exact path="/profile/" component={ProfilePage} />
-          <Route exact path="/search/:q" component={SearchPage} />
+          <Route exact path="/search/:searchId?" component={SearchPage} />
         </main>
       </div>
     )

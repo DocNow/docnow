@@ -9,7 +9,8 @@ export default class Url extends Component {
       <div className={style.Urls}>
         <a target="_new" href={this.props.url}>
           {this.props.url}
-        </a> &nbsp;
+        </a>
+        &nbsp;
         <strong>{this.props.count}</strong>
       </div>
     )

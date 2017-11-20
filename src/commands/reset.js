@@ -8,9 +8,12 @@ db.getSettings()
   .then((settings) => {
     db.clear()
       .then(() => {
-        db.addSettings(settings) 
-          .then(() => {db.close})
-          .catch((e) => {console.log(e)})
+        db.setupIndexes()
+          .then(() => {
+            db.addSettings(settings) 
+              .then(() => {db.close()})
+              .catch((e) => {console.log(e)})
+          })
       })
       .catch((e) => {console.log(e)})
   })
