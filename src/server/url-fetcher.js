@@ -39,19 +39,22 @@ export class UrlFetcher {
 
   async fetchJob() {
     // wait 10 seconds for a new job
+    let result = null
     const item = await this.redisBlocking.blpopAsync('urlqueue', 10)
     if (item) {
       const job = JSON.parse(item[1])
       log.info('got job', job)
-      this.processJob(job)
+      result = await this.processJob(job)
     }
-    return item
+    return result
   }
 
   async processJob(job) {
-    let metadata = await this.getMetadata(job.url)
 
-    // first time we've seen the url so get it and save metadata
+    // see if we have metadata for this url already. if we don't
+    // have it got out to the web to fetch it
+
+    let metadata = await this.getMetadata(job.url)
     if (metadata) {
       log.info('found cached metadata', job.url)
     } else {
@@ -59,6 +62,11 @@ export class UrlFetcher {
       try {
         metadata = await metaweb.get(job.url)
         if (metadata) {
+
+          // use the canonical url if it is present
+          metadata.url = metadata.canonical || metadata.url
+          delete metadata.canonical
+
           await this.saveMetadata(job, metadata)
         }
       } catch (error) {
@@ -87,23 +95,26 @@ export class UrlFetcher {
   }
 
   async saveMetadata(job, metadata) {
+    const url = metadata.url
 
-    // save lookups for urls
-    const url = metadata.canonical || metadata.url
+    // key/value lookups for determining the url that
+    // metadata is stored under
+
     await this.redis.setAsync(urlKey(job.url), url)
     await this.redis.setAsync(urlKey(url), url)
 
-    // save metadata
-    await this.redis.setAsync(metadataKey(url), JSON.stringify(metadata))
+    // save the metadata
 
-    return metadata
+    await this.redis.setAsync(
+      metadataKey(url),
+      JSON.stringify(metadata)
+    )
   }
 
   async tally(job, metadata) {
-    const url = metadata.canonical || metadata.url
     const key = searchUrlsKey(job.search)
-    log.info('tallying', key, url)
-    await this.redis.zincrbyAsync(key, 1, url)
+    log.info('tallying', key, metadata.url)
+    await this.redis.zincrbyAsync(key, 1, metadata.url)
   }
 
   incrSearchQueue(job) {
@@ -114,7 +125,7 @@ export class UrlFetcher {
     this.redis.decr(searchQueueCount(job))
   }
 
-  async getWebPages(search, start = 0, limit = 100) {
+  async getWebpages(search, start = 0, limit = 100) {
     const key = searchUrlsKey(search)
 
     // get the list of urls and their counts while building up
@@ -125,7 +136,7 @@ export class UrlFetcher {
     const urlCounts = await this.redis.zrevrangeAsync(key, start, limit, 'withscores')
     for (let i = 0; i < urlCounts.length; i += 2) {
       const url = urlCounts[i]
-      const count = urlCounts[i + 1]
+      const count = parseInt(urlCounts[i + 1], 10)
       counts[url] = count
       commands.push(['get', metadataKey(url)])
     }

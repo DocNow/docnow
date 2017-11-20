@@ -39,6 +39,7 @@ export class Database {
 
   close() {
     this.redis.quit()
+    urlFetcher.stop()
   }
 
   clear() {
@@ -845,8 +846,8 @@ export class Database {
     })
   }
 
-  async getWebPages(search) {
-    return await urlFetcher.getWebPages(search)
+  async getWebpages(search) {
+    return await urlFetcher.getWebpages(search)
   }
 
 }

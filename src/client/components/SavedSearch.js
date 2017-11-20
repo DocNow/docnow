@@ -1,15 +1,34 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from '../styles/SearchList.css'
+import style from '../styles/Card.css'
+import Webpage from './Webpage'
 
-export default class SearchList extends Component {
+export default class SavedSearch extends Component {
+
+  componentDidMount() {
+    this.props.getWebpages(this.props.searchId)
+  }
+
   render() {
     return (
-      <h1 className={style.Header}>Saved Search</h1>
+      <div className={style.CardHolder}>
+      {this.props.webpages.map((w) => (
+        <Webpage
+          key={w.url}
+          url={w.url}
+          title={w.title}
+          image={w.image}
+          count={w.count}
+          description={w.description}
+          keywords={w.keywords} />
+      ))}
+      </div>
     )
   }
 }
 
-SearchList.propTypes = {
-  'searchId': PropTypes.string
+SavedSearch.propTypes = {
+  'searchId': PropTypes.string,
+  'webpages': PropTypes.array,
+  'getWebpages': PropTypes.func
 }

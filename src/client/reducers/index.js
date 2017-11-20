@@ -5,6 +5,7 @@ import user from './user'
 import trends from './trends'
 import search from './search'
 import searches from './searches'
+import webpages from './webpages'
 
 const rootReducer = combineReducers({
   settings,
@@ -12,6 +13,7 @@ const rootReducer = combineReducers({
   trends,
   search,
   searches,
+  webpages,
   router: routerReducer
 })
 

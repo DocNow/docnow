@@ -281,7 +281,7 @@ app.get('/search/:searchId/videos', (req, res) => {
 app.get('/search/:searchId/webpages', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.params.searchId)
-    const webpages = await db.getWebPages(search)
+    const webpages = await db.getWebpages(search)
     res.json(webpages)
   }
 })

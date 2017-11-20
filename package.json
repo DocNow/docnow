@@ -10,7 +10,7 @@
     "wtest": "better-npm-run wtest",
     "repl": "babel-node",
     "eslint:server": "eslint server.js src/server/*",
-    "reset": "node src/commands/reset.js",
+    "reset": "node --require babel-polyfill --require babel-register src/commands/reset.js",
     "load-places": "node src/commands/load-places.js",
     "url-fetcher": "NODE_ENV=production node --require babel-polyfill --require babel-register src/commands/url-fetcher.js",
     "url-fetcher:dev": "NODE_ENV=development nodemon src/commands/url-fetcher.js --exec 'node --require babel-polyfill --require babel-register'"
