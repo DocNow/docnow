@@ -1,14 +1,15 @@
 [![Build Status](https://travis-ci.org/DocNow/docnow.svg?branch=master)](https://travis-ci.org/DocNow/docnow)
 
-This is a work in progress. When it becomes more fleshed out details about how
-to run in production will be found at
-[docnow-ansible](https://github.com/DocNow/docnow-ansible)
+## Production
+
+If you are running Docker in production you probably will want to check out
+[docnow-ansible](https://github.com/DocNow/docnow-ansible).
 
 ## Development
 
-To set up a development environment you will need to install [Git] and [Docker].
-Once you've got them installed open a terminal window and follow these
-instructions:
+To set up DocNow on your workstation you will need to install [Git] and
+[Docker].  Once you've got them installed open a terminal window and follow
+these instructions:
 
 1. git clone https://github.com/docnow/docnow
 1. cd docnow
