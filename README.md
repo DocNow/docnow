@@ -16,5 +16,9 @@ instructions:
 1. make some ☕️
 1. open http://localhost:3000
 
+If you run into an error above
+
+1. sh clean-up.sh
+
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/
