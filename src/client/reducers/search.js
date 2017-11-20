@@ -85,7 +85,6 @@ export default function user(state = initialState, action) {
     }
 
     case UPDATE_SEARCH_TERM: {
-      console.log('update')
       const newQuery = []
       state.query.forEach((term, pos) => {
         if (action.term.pos === pos) {

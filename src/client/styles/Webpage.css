@@ -1,0 +1,65 @@
+.Webpage {
+  width: 350px;
+  height: 300px;
+  border: thin solid gray;
+  margin: 20px;
+  padding: 10px;
+  text-align: center;
+  font-size: 11pt;
+}
+
+.Image {
+  background-color: #eee;
+  text-align: center;
+}
+
+.Image img {
+  max-width: 350px;
+  max-height: 200px;
+  margin-left: auto;
+  margin-right: auto;
+  border: thin solid gray;
+}
+
+.Title {
+  font-style: italic;
+  font-weight: bold;
+  text-align: left;
+}
+
+.Description {
+  text-align: left;
+  overflow: hidden;
+}
+
+.Title a {
+  color: black;
+  text-decoration: none;
+}
+
+.Stats {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  background-color: #eee;
+}
+
+.Count {
+}
+
+.WebsiteName {
+  padding-left: 10px;
+}
+
+.WebsiteName a {
+  text-decoration: none;
+  color: blue;
+}
+
+.Queue {
+  margin-top: 10px;
+  text-align: right;
+  margin-right: 70px;
+}

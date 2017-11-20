@@ -1,0 +1,98 @@
+.Grid {
+  border: none;
+  margin: 20px 60px 20px 60px;
+  color: #444444;
+}
+
+.Grid a {
+  color: #1E77B6;
+  text-decoration: none;
+}
+
+.GridRow {
+  display: flex;
+}
+
+.GridRowGray {
+  display: flex;
+  background-color: #eeeeee;
+}
+
+.GridRowInner {
+  display: flex;
+}
+
+.GridRowGrayInner {
+  display: flex;
+}
+
+
+.GridItem {
+  flex: 1;
+  padding: 12px;
+  border: none;
+}
+
+.GridTitle {
+  flex: 1;
+  padding: 12px;
+  border: none;
+}
+
+.GridCount {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-size: 14pt;
+  font-weight: 500;
+}
+
+.GridActivity {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  color: #777777;
+  font-size: 10pt;
+}
+
+.GridActions {
+  flex: 1;
+  padding: 12px;
+  border: none;
+}
+
+.GridActionsInner {
+  padding-right: 25px;
+  border: none;
+}
+
+.GridActionsInner i {
+  font-size: 20px;
+}
+
+.fa-pause-circle-o {
+  color: orange;
+}
+
+.fa-stop-circle-o {
+  color: red;
+}
+
+.fa-angle-double-up {
+  color: green;
+}
+
+.InnerGrid {
+  border: solid .5px #eeeeee;
+}
+
+@media all and ( max-width: 480px ) {
+
+  .GridRow, .GridRowGray {
+     flex-direction: column;
+  }
+
+  .GridItem {
+    display:none;
+  }
+}

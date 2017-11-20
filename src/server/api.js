@@ -1,9 +1,10 @@
 import express from 'express'
 import multiparty from 'multiparty'
 import * as fs from 'fs'
+import log from './logger'
+
 import { Database } from './db'
 import { activateKeys } from './auth'
-import log from './logger'
 
 const app = express()
 
@@ -136,6 +137,14 @@ app.post('/logo', (req, res) => {
   }
 })
 
+app.get('/searches', (req, res) => {
+  if (req.user) {
+    db.getUserSearches(req.user).then((searches) => {
+      res.json(searches)
+    })
+  }
+})
+
 app.post('/searches', (req, res) => {
   if (req.user) {
     db.createSearch(req.user, req.body.query)
@@ -145,9 +154,35 @@ app.post('/searches', (req, res) => {
       })
       .catch((e) => {
         const msg = 'unable to createSearch: ' + e
-        console.log(msg)
+        log.error(msg)
         res.error(msg)
       })
+  }
+})
+
+
+app.get('/search/:searchId', (req, res) => {
+  if (req.user) {
+    db.getSearch(req.params.searchId).then((search) => {
+      db.getSearchSummary(search).then((summ) => {
+        res.json(summ)
+      })
+    })
+  }
+})
+
+app.put('/search/:searchId', (req, res) => {
+  if (req.user) {
+    let newSearch = req.body
+    db.getSearch(newSearch.id).then((search) => {
+      newSearch = {...search, ...newSearch}
+      db.updateSearch(newSearch)
+      console.log('xxx', req.query.refreshTweets)
+      if (req.query.refreshTweets) {
+        db.importFromSearch(search)
+      }
+      res.json(newSearch)
+    })
   }
 })
 
@@ -163,27 +198,22 @@ app.get('/search/:searchId/tweets', (req, res) => {
   }
 })
 
-app.get('/search/:searchId', (req, res) => {
-  if (req.user) {
-    db.getSearch(req.params.searchId).then((search) => {
-      db.getSearchSummary(search).then((summ) => {
-        res.json(summ)
-      })
-    })
-  }
-})
-
 app.put('/search/:searchId', (req, res) => {
   if (req.user) {
-    db.getSearch(req.body.id).then((search) => {
-      db.importFromSearch(search)
-        .then(() => {
-          res.json(search)
-        })
-        .catch((e) => {
-          console.log(e)
-          res.json(search)
-        })
+    db.getSearch(req.body.id).then( async (search) => {
+      await db.updateSearch(search)
+      if (req.query.refreshTweets) {
+        db.importFromSearch(search)
+          .then(() => {
+            res.json(search)
+          })
+          .catch((e) => {
+            log.error('search failed', e)
+            res.json(search)
+          })
+      } else {
+        res.json(search)
+      }
     })
   }
 })
@@ -245,6 +275,22 @@ app.get('/search/:searchId/videos', (req, res) => {
             res.json(videos)
           })
       })
+  }
+})
+
+app.get('/search/:searchId/webpages', async (req, res) => {
+  if (req.user) {
+    const search = await db.getSearch(req.params.searchId)
+    const webpages = await db.getWebpages(search)
+    res.json(webpages)
+  }
+})
+
+app.get('/search/:searchId/queue', async (req, res) => {
+  if (req.user) {
+    const search = await db.getSearch(req.params.searchId)
+    const result = await db.queueStats(search)
+    res.json(result)
   }
 })
 

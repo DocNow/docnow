@@ -10,9 +10,11 @@ db.getSettings()
       .then(() => {
         db.setupIndexes()
           .then(() => {
-            db.addSettings(settings) 
+            db.addSettings(settings)
               .then(() => {db.close()})
-              .catch((e) => {console.log(e)})
+              .catch((e) => {
+                console.log(e)
+              })
           })
       })
       .catch((e) => {console.log(e)})

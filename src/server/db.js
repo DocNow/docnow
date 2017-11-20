@@ -1,13 +1,11 @@
-import redis from 'redis'
 import uuid from 'uuid/v4'
-import bluebird from 'bluebird'
+import getRedis from './redis'
 import elasticsearch from 'elasticsearch'
 
 import log from './logger'
 import { Twitter } from './twitter'
+import { UrlFetcher } from './url-fetcher'
 import { addPrefix, stripPrefix } from './utils'
-
-bluebird.promisifyAll(redis.RedisClient.prototype)
 
 // elasticsearch doc types
 
@@ -19,20 +17,18 @@ const TREND = 'trend'
 const TWEET = 'tweet'
 const TWUSER = 'twuser'
 
+const urlFetcher = new UrlFetcher()
 
 export class Database {
 
   constructor(opts = {}) {
     // setup redis
-    const redisOpts = opts.redis || {}
-    redisOpts.host = redisOpts.host || process.env.REDIS_HOST || '127.0.0.1'
-    log.info('connecting to redis: ' + redisOpts)
-    this.db = redis.createClient(redisOpts)
+    this.redis = getRedis()
 
     // setup elasticsearch
     const esOpts = opts.es || {}
     esOpts.host = esOpts.host || process.env.ES_HOST || '127.0.0.1:9200'
-    log.info('connecting to elasticsearch: ' + esOpts)
+    log.info('connecting to elasticsearch:', esOpts)
     this.esPrefix = esOpts.prefix || 'docnow'
     this.es = new elasticsearch.Client(esOpts)
   }
@@ -42,12 +38,13 @@ export class Database {
   }
 
   close() {
-    this.db.quit()
+    this.redis.quit()
+    urlFetcher.stop()
   }
 
   clear() {
     return new Promise((resolve, reject) => {
-      this.db.flushdbAsync()
+      this.redis.flushdbAsync()
         .then((didSucceed) => {
           if (didSucceed === 'OK') {
             this.deleteIndexes()
@@ -61,6 +58,7 @@ export class Database {
   }
 
   add(type, id, doc) {
+    log.debug(`update ${type} ${id}`, doc)
     return new Promise((resolve, reject) => {
       this.es.index({
         index: this.getIndex(type),
@@ -262,7 +260,7 @@ export class Database {
       this.es.bulk({body: body, refresh: 'wait_for'})
         .then(() => {resolve(trends)})
         .catch((err) => {
-          console.log(err)
+          log.error('bulk insert failed', err)
           reject(err)
         })
     })
@@ -333,7 +331,7 @@ export class Database {
   createSearch(user, query) {
     return new Promise((resolve, reject) => {
       const search = {
-        id: 'search:' + uuid(),
+        id: uuid(),
         creator: user.id,
         query: query,
         created: new Date().toISOString(),
@@ -353,18 +351,29 @@ export class Database {
     })
   }
 
-  getSearch(searchId) {
-    return new Promise((resolve, reject) => {
-      this.es.get({
-        index: this.getIndex('search'),
-        type: 'search',
-        id: searchId
-      }).then((resp) => {
-        resolve(resp._source)
-      }).catch((err) => {
-        reject(err)
-      })
+  async getUserSearches(user) {
+    // const body = {query: {match: {creator: user.id, saved: true}}}
+    const body = {
+      query: {
+        bool: {
+          must: [
+            {match: {creator: user.id}},
+            {match: {saved: true}}
+          ]
+        }
+      },
+      sort: [{created: 'desc'}]
+    }
+    const resp = await this.es.search({
+      index: this.getIndex(SEARCH),
+      type: SEARCH,
+      body: body
     })
+    return resp.hits.hits.map((h) => {return h._source})
+  }
+
+  getSearch(searchId) {
+    return this.get(SEARCH, searchId)
   }
 
   updateSearch(search) {
@@ -403,8 +412,9 @@ export class Database {
     })
   }
 
-  importFromSearch(search) {
+  importFromSearch(search, maxTweets = 1000) {
     let count = 0
+    let totalCount = search.count || 0
     let maxTweetId = null
 
     const queryParts = []
@@ -430,22 +440,27 @@ export class Database {
           .then((newSearch) => {
             this.getTwitterClientForUser(user)
               .then((twtr) => {
-                twtr.search({q: q, sinceId: search.maxTweetId, count: 1000}, (err, results) => {
+                twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, (err, results) => {
                   if (err) {
                     reject(err)
                   } else if (results.length === 0) {
+                    newSearch.count = totalCount
                     newSearch.maxTweetId = maxTweetId
                     newSearch.active = false
                     this.updateSearch(newSearch)
                       .then(() => {resolve(count)})
                   } else {
                     count += results.length
+                    totalCount += results.length
                     if (maxTweetId === null) {
                       maxTweetId = results[0].id
                     }
                     const bulk = []
                     const seenUsers = new Set()
                     for (const tweet of results) {
+                      for (const url of tweet.urls) {
+                        urlFetcher.add(search, url.long)
+                      }
                       tweet.search = search.id
                       const id = search.id + ':' + tweet.id
                       bulk.push(
@@ -735,11 +750,13 @@ export class Database {
         properties: {
           id: {type: 'keyword'},
           type: {type: 'keyword'},
+          title: {type: 'text'},
           created: {type: 'date', format: 'date_time'},
           creator: {type: 'keyword'},
+          active: {type: 'boolean'},
+          saved: {type: 'boolean'},
           'query.type': {type: 'keyword'},
           'query.value': {type: 'keyword'},
-          active: {type: 'boolean'},
         }
       },
 
@@ -803,6 +820,35 @@ export class Database {
         }
       }
     }
+  }
+
+  addUrl(search, url) {
+    const job = {url, search}
+    return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
+  }
+
+  processUrl() {
+    return new Promise((resolve, reject) => {
+      this.redis.blpopAsync('urlqueue', 0)
+        .then((result) => {
+          const job = JSON.parse(result[1])
+          resolve({
+            url: job.url,
+            title: 'Twitter'
+          })
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
+
+  async getWebpages(search) {
+    return await urlFetcher.getWebpages(search)
+  }
+
+  async queueStats(search) {
+    return await urlFetcher.queueStats(search)
   }
 
 }

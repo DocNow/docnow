@@ -43,7 +43,7 @@ describe('twitter', () => {
         done()
       } else {
         const t = tweets[0]
-        ok(t.text.match(/obama/i), 'text')
+        ok(t.text, 'text')
         ok(t.id, 'id')
         ok(t.user.id, 'user.id')
         ok(t.user.screenName, 'user.screenName')

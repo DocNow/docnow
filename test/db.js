@@ -178,7 +178,7 @@ describe('database', function() {
   })
 
   it('should import from search', function(done) {
-    db.importFromSearch(testSearch)
+    db.importFromSearch(testSearch, 200)
       .then((num) => {
         ok(num > 0, 'search found tweets')
         done()
@@ -258,16 +258,18 @@ describe('database', function() {
 
   it('should get images', (done) => {
     db.getImages(testSearch).then((images) => {
-      ok(images.length > 0)
-      ok(images[0].url)
+      if (images.length > 0) {
+        ok(images[0].url, 'image.url')
+      }
       done()
     })
   })
 
   it('should get videos', (done) => {
     db.getVideos(testSearch).then((videos) => {
-      ok(videos.length > 0)
-      ok(videos[0].url)
+      if (videos.length > 0) {
+        ok(videos[0].url, 'video.url')
+      }
       done()
     })
   })

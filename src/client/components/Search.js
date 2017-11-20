@@ -35,9 +35,24 @@ export default class Search extends Component {
 
   update() {
     if (this.props.active === false) {
-      this.props.updateSearch({id: this.props.searchId})
+      this.props.refreshSearch({
+        id: this.props.searchId,
+        active: true
+      })
       this.tick()
     }
+  }
+
+  save() {
+    // create a temporary title based on the query
+    const values = this.props.query.map((q) => {return q.value})
+    const title = values.join(' ')
+    this.props.updateSearch({
+      id: this.props.searchId,
+      title: title,
+      saved: true
+    })
+    this.props.resetTwitterSearch()
   }
 
   tick() {
@@ -73,7 +88,7 @@ export default class Search extends Component {
             <i className={'fa fa-refresh' + spin} aria-hidden="true" />
           </button>
 
-          <button title="Save this search" onClick={() => {this.create()}}>
+          <button title="Save this search" onClick={() => {this.save()}}>
             <i className="fa fa-plus" aria-hidden="true" />
           </button>
 
@@ -157,14 +172,16 @@ Search.propTypes = {
   videos: PropTypes.array,
   active: PropTypes.bool,
   getSearch: PropTypes.func,
+  resetTwitterSearch: PropTypes.func,
   getTweets: PropTypes.func,
   getHashtags: PropTypes.func,
   getUsers: PropTypes.func,
   getUrls: PropTypes.func,
   getImages: PropTypes.func,
   getVideos: PropTypes.func,
-  updateSearch: PropTypes.func,
   createSearch: PropTypes.func,
+  refreshSearch: PropTypes.func,
+  updateSearch: PropTypes.func,
   updateSearchTerm: PropTypes.func,
   addSearchTerm: PropTypes.func,
 }
