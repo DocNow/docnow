@@ -19,7 +19,6 @@ export default class Tweet extends Component {
           <hr />
           <a href={this.props.data.twitterUrl}>{created}</a>
         </div>
-        <hr />
         <p>{this.props.data.text}</p>
         <div className={style.Inline}><i className="fa fa-comment-o" />{this.props.data.replyCount}</div>
         <div className={style.Inline}><i className="fa fa-retweet" />{this.props.data.retweetCount}</div>
