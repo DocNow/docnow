@@ -19,8 +19,9 @@ const urlsCountKey = (search) => {return `urlscount:${search.id}`}
 
 export class UrlFetcher {
 
-  constructor(opts = {}) {
-    this.redis = getRedis(opts)
+  constructor(concurrency = 5) {
+    this.concurrency = concurrency
+    this.redis = getRedis()
     this.redisBlocking = this.redis.duplicate()
     this.active = false
   }
@@ -28,7 +29,12 @@ export class UrlFetcher {
   async start() {
     this.active = true
     while (this.active) {
-      await this.fetchJob()
+      const promises = []
+      for (let i = 0; i < this.concurrency; i++) {
+        promises.push(this.fetchJob())
+      }
+      log.info('waiting to process ' + this.concurrency + ' urls')
+      await Promise.all(promises)
     }
     return true
   }
