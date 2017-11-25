@@ -190,10 +190,17 @@ app.get('/search/:searchId/tweets', (req, res) => {
   if (req.user) {
     db.getSearch(req.params.searchId)
       .then((search) => {
-        db.getTweets(search)
-          .then((tweets) => {
-            res.json(tweets)
-          })
+        if (req.query.url) {
+          db.getTweetsForUrl(search, req.query.url)
+            .then((tweets) => {
+              res.json(tweets)
+            })
+        } else {
+          db.getTweets(search)
+            .then((tweets) => {
+              res.json(tweets)
+            })
+        }
       })
   }
 })

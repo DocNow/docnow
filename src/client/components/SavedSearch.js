@@ -43,7 +43,8 @@ export default class SavedSearch extends Component {
             image={w.image}
             count={w.count}
             description={w.description}
-            keywords={w.keywords} />
+            keywords={w.keywords}
+            searchId={this.props.searchId} />
           ))}
         </div>
       </div>

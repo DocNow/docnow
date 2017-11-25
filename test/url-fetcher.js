@@ -18,13 +18,13 @@ describe('url-fetcher', () => {
     // load up some URLs for url-fetcher to fetcher
 
     // these three point to the same wikipedia articlej
-    await uf.add(search, 'http://bit.ly/2AP2zvF')
-    await uf.add(search, 'https://en.wikipedia.org/wiki/Twitter')
-    await uf.add(search, 'https://is.gd/drV7bJ')
+    await uf.add(search, 'http://bit.ly/2AP2zvF', '123')
+    await uf.add(search, 'https://en.wikipedia.org/wiki/Twitter', '456')
+    await uf.add(search, 'https://is.gd/drV7bJ', '789')
 
     // this should result in the stats being recorded for the same canonical url
-    await uf.add(search, 'http://www.nytimes.com/1994/05/07/business/new-venture-in-cyberspace-by-silicon-graphics-founder.html?utm=foobar')
-    await uf.add(search, 'http://www.nytimes.com/1994/05/07/business/new-venture-in-cyberspace-by-silicon-graphics-founder.html?utm=barbaz')
+    await uf.add(search, 'http://www.nytimes.com/1994/05/07/business/new-venture-in-cyberspace-by-silicon-graphics-founder.html?utm=foobar', '111')
+    await uf.add(search, 'http://www.nytimes.com/1994/05/07/business/new-venture-in-cyberspace-by-silicon-graphics-founder.html?utm=barbaz', '111')
   })
 
   it('should get webpages in search', (done) => {
@@ -44,6 +44,11 @@ describe('url-fetcher', () => {
 
       done()
     }, 10000)
+  })
+
+  it('should return tweet identifiers for a url', async () => {
+    let tweetIds = await uf.getTweetIdentifiers(search, 'https://en.wikipedia.org/wiki/Twitter')
+    deepEqual(tweetIds, ['123', '456', '789'])
   })
 
   it('should return queue stats', async () => {

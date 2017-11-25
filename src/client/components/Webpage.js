@@ -29,7 +29,9 @@ export default class Webpage extends Component {
         <div className={style.Stats}>
           <div className={style.Count}>
             <i className="fa fa-twitter" />&nbsp;
-            {this.props.count}
+            <a target="_new" href={`/api/v1/search/${this.props.searchId}/tweets?url=${this.props.url}`}>
+              {this.props.count}
+            </a>
           </div>
           <div className={style.WebsiteName}>
             <a href={this.props.url} target="_new">{website}</a>
@@ -47,4 +49,5 @@ Webpage.propTypes = {
   description: PropTypes.string,
   keywords: PropTypes.array,
   count: PropTypes.number,
+  searchId: PropTypes.string
 }

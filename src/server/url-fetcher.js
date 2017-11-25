@@ -17,6 +17,9 @@ const queueCountKey = (search) => {return `queue:${search.id}`}
 // redis key for the total number of urls to be checked in a search
 const urlsCountKey = (search) => {return `urlscount:${search.id}`}
 
+// redis key for the set of tweet ids that mention a url in a search
+const tweetsKey = (search, url) => {return `tweets:${url}:${search.id}`}
+
 export class UrlFetcher {
 
   constructor(concurrency = 5) {
@@ -45,8 +48,8 @@ export class UrlFetcher {
     this.redisBlocking.quit()
   }
 
-  add(search, url) {
-    const job = {search, url}
+  add(search, url, tweetId) {
+    const job = {search, url, tweetId}
     this.incrSearchQueue(search)
     this.incrUrlsCount(search)
     return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
@@ -127,9 +130,10 @@ export class UrlFetcher {
   }
 
   async tally(job, metadata) {
-    const key = urlsKey(job.search)
-    log.info('tallying', key, metadata.url)
-    await this.redis.zincrbyAsync(key, 1, metadata.url)
+    // increment the number of times we've seen the url in this search
+    await this.redis.zincrbyAsync(urlsKey(job.search), 1, metadata.url)
+    // remember the tweet
+    await this.redis.saddAsync(tweetsKey(job.search, metadata.url), job.tweetId)
   }
 
   async queueStats(search) {
@@ -185,6 +189,10 @@ export class UrlFetcher {
       })
     })
 
+  }
+
+  async getTweetIdentifiers(search, url) {
+    return await this.redis.smembersAsync(tweetsKey(search, url))
   }
 
 }
