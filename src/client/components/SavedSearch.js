@@ -3,16 +3,19 @@ import PropTypes from 'prop-types'
 import cardStyle from '../styles/Card.css'
 import webpageStyle from '../styles/Webpage.css'
 import Webpage from './Webpage'
+import TweetsModal from './TweetsModal'
 
 export default class SavedSearch extends Component {
 
   constructor(props) {
     super(props)
     this.timerId = null
+    this.modalOpen = true
   }
 
   componentWillMount() {
     this.props.resetWebpages()
+    this.props.resetTweets()
     this.tick()
     this.timerId = setInterval(() => {
       this.tick()
@@ -28,12 +31,25 @@ export default class SavedSearch extends Component {
     this.props.getQueueStats(this.props.searchId)
   }
 
+  closeModal() {
+    this.props.resetTweets()
+  }
+
   render() {
+    const modalOpen = this.props.tweets.length > 0
+
     return (
       <div>
+
+        <TweetsModal
+          isOpen={modalOpen}
+          close={() => {this.closeModal()}}
+          tweets={this.props.tweets} />
+
         <div className={webpageStyle.Queue}>
           URLs Checked: {this.props.total - this.props.remaining}/{this.props.total}
         </div>
+
         <div className={cardStyle.CardHolder}>
           {this.props.webpages.map((w) => (
           <Webpage
@@ -44,9 +60,11 @@ export default class SavedSearch extends Component {
             count={w.count}
             description={w.description}
             keywords={w.keywords}
-            searchId={this.props.searchId} />
+            searchId={this.props.searchId}
+            getTweetsForUrl={this.props.getTweetsForUrl} />
           ))}
         </div>
+
       </div>
     )
   }
@@ -58,6 +76,9 @@ SavedSearch.propTypes = {
   getWebpages: PropTypes.func,
   resetWebpages: PropTypes.func,
   getQueueStats: PropTypes.func,
+  getTweetsForUrl: PropTypes.func,
+  resetTweets: PropTypes.func,
   total: PropTypes.number,
-  remaining: PropTypes.number
+  remaining: PropTypes.number,
+  tweets: PropTypes.array
 }

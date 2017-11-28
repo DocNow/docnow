@@ -6,6 +6,10 @@ import doc from '../images/doc.png'
 
 export default class Webpage extends Component {
 
+  showTweets() {
+    this.props.getTweetsForUrl(this.props.searchId, this.props.url)
+  }
+
   render() {
     let website = new URL(this.props.url).host
     website = website.replace(/^www\./, '')
@@ -27,11 +31,12 @@ export default class Webpage extends Component {
           {this.props.description}
         </div>
         <div className={style.Stats}>
-          <div className={style.Count}>
-            <i className="fa fa-twitter" />&nbsp;
-            <a target="_new" href={`/api/v1/search/${this.props.searchId}/tweets?url=${this.props.url}`}>
-              {this.props.count}
-            </a>
+          <div
+            className={style.Count}
+            onClick={() => {this.showTweets()}}>
+            <i className="fa fa-twitter" />
+            &nbsp;
+            {this.props.count}
           </div>
           <div className={style.WebsiteName}>
             <a href={this.props.url} target="_new">{website}</a>
@@ -49,5 +54,6 @@ Webpage.propTypes = {
   description: PropTypes.string,
   keywords: PropTypes.array,
   count: PropTypes.number,
-  searchId: PropTypes.string
+  searchId: PropTypes.string,
+  getTweetsForUrl: PropTypes.func
 }

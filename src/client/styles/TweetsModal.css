@@ -1,0 +1,40 @@
+.Retweet {
+  padding: 5px;
+  margin-bottom: 10px;
+  background-color: #efefef;
+}
+
+.UserProfile {
+  display: flex;
+  flex-direction: row;
+  font-family: Helvetica, Roboto;
+}
+
+.UserProfile img {
+  height: 36px;
+  width: 36px;
+  margin-right: 15px;
+  border-radius: 50%;
+}
+
+.UserProfile i {
+  font-size: 36px;
+  margin-right: 15px;
+}
+
+.UserProfile a {
+  font-weight: 700;
+  color: rgb(28, 32, 34);
+  text-decoration: none;
+}
+
+.UserProfile a:hover {
+  color: rgb(59, 148, 217);
+}
+
+.ScreenName {
+  color: rgb(105, 120, 130)
+}
+
+.Tweet {
+}
