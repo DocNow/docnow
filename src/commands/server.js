@@ -13,14 +13,15 @@ const passport = require('passport')
 const webpackDevMiddleware = require('webpack-dev-middleware')
 const webpackHotMiddleware = require('webpack-hot-middleware')
 
-const api = require('./src/server/api')
-const auth = require('./src/server/auth')
-const log = require('./src/server/logger')
-const config = require('./webpack.dev.config.js')
+const api = require('../server/api')
+const auth = require('../server/auth')
+const log = require('../server/logger')
+const config = require('../../webpack.dev.config.js')
 
-const distDir = path.join(__dirname, 'dist', 'client')
-const staticAssets = path.join(__dirname, 'userData')
-const htmlFile = path.join(distDir, 'index.html')
+const projectDir = path.join(__dirname, '..', '..')
+const clientDir = path.join(projectDir, 'dist', 'client')
+const staticAssets = path.join(projectDir, 'userData')
+const htmlFile = path.join(clientDir, 'index.html')
 const isDevelopment = process.env.NODE_ENV !== 'production'
 const defaultPort = 3000
 const compiler = webpack(config)
@@ -52,8 +53,8 @@ if (isDevelopment) {
     res.end()
   })
 } else {
-  app.use(express.static(distDir))
-  app.get('*', (req, res) => res.sendFile(path.join(distDir, 'index.html')))
+  app.use(express.static(clientDir))
+  app.get('*', (req, res) => res.sendFile(path.join(clientDir, 'index.html')))
 }
 
 // log additional information about unhandled promises so they can be debugged

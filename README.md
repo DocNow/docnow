@@ -1,9 +1,33 @@
 [![Build Status](https://travis-ci.org/DocNow/docnow.svg?branch=master)](https://travis-ci.org/DocNow/docnow)
 
+DocNow is an appraisal tool for web archiving efforts. Appraisal is a somewhat
+loose term for the many processes by which archivists identify records of
+enduring value for preservation in an archive.
+
+The web is a big and rapidly changing place, so it can be challenging to
+discover what resources related to a particular event or topic are in need of
+archiving.
+
+DocNow allows archivists to tap into conversations in Twitter to help them
+discover what web resources are in need of archiving. Its goal is to help ensure
+ethical practices in web archiving by building conversations between archivists
+and the communities they are documenting.
+
+## Architecture
+
+This repository houses the complete DocNow application which is comprised of a
+few components:
+
+* a client side application (React)
+* a server side REST API (Node)
+* a document database (ElasticSearch)
+* a messaging queue and stats database (Redis)
+
 ## Production
 
-If you are running Docker in production you probably will want to check out
-[docnow-ansible](https://github.com/DocNow/docnow-ansible).
+If you are running DocNow in production you probably will want to check out
+[docnow-ansible](https://github.com/DocNow/docnow-ansible) which allows you to
+provision and configure DocNow in the cloud.
 
 ## Development
 

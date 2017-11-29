@@ -3,6 +3,7 @@
   "repository": "https://github.com/docnow/docnow",
   "scripts": {
     "start": "better-npm-run start",
+    "start:dev": "better-npm-run start:dev",
     "build:client": "webpack --optimize-minimize --config webpack.prod.config.js",
     "build:server": "npx babel src/server --out-dir dist/server",
     "build:commands": "npx babel src/commands --out-dir dist/commands",
@@ -23,13 +24,13 @@
       }
     },
     "start": {
-      "command": "nodemon server.js --exec 'npm run eslint:server && node --require babel-register --require babel-polyfill' --ignore src/client",
+      "command": "node dist/commands/server",
       "env": {
-        "NODE_ENV": "development"
+        "NODE_ENV": "production"
       }
     },
-    "url-fetcher": {
-      "command": "node --require babel-polyfill --require babel-register  src/commands/url-fetcher.js",
+    "start:dev": {
+      "command": "nodemon src/commands/server.js --exec 'npm run eslint:server && node --require babel-register --require babel-polyfill' --ignore src/client",
       "env": {
         "NODE_ENV": "development"
       }
