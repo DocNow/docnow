@@ -18,7 +18,7 @@ const auth = require('./src/server/auth')
 const log = require('./src/server/logger')
 const config = require('./webpack.dev.config.js')
 
-const distDir = path.join(__dirname, 'dist')
+const distDir = path.join(__dirname, 'dist', 'client')
 const staticAssets = path.join(__dirname, 'userData')
 const htmlFile = path.join(distDir, 'index.html')
 const isDevelopment = process.env.NODE_ENV !== 'production'

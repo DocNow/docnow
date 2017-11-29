@@ -29,13 +29,15 @@ the trending locations are updated to use those places.
 
 Post a query as JSON and get a redirect to a URL for the search result.
 
-### /search/{search-id} *(GET)*
+### /search/{search-id} *(GET, PUT)*
 
-Get the current results of a search.
+Get or updated the current results of a search.
 
-### /search/{search-id}/tweets *(GET)*
+### /search/{search-id}/tweets *(GET, PUT)*
 
-Recent tweets in a given search.
+Get the recent tweets in a given search. If the *url* parameter is used then
+only tweets that reference that URL in the given search will be returned. When
+issuing a PUT more tweets matching the query will be fetched.
 
 ### /search/{search-id}/users *(GET)*
 

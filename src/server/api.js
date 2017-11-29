@@ -177,7 +177,6 @@ app.put('/search/:searchId', (req, res) => {
     db.getSearch(newSearch.id).then((search) => {
       newSearch = {...search, ...newSearch}
       db.updateSearch(newSearch)
-      console.log('xxx', req.query.refreshTweets)
       if (req.query.refreshTweets) {
         db.importFromSearch(search)
       }
