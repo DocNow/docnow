@@ -1,21 +1,19 @@
-require('babel-register')()
+import { Database } from '../server/db'
 
-const Database = require('../server/db').Database
+async function main() {
+  const db = new Database()
+  const places = await db.loadPlaces()
 
-const db = new Database()
-
-db.loadPlaces()
-  .then((places) => {
-    for (const place of places) {
-      if (place.type == 'Town') {
-        log.info(`added ${place.name}, ${place.country}`)
-      } else {
-        log.info(`added ${place.name}`)
-      }
+  for (const place of places) {
+    if (place.type == 'Town') {
+      console.log(`added ${place.name}, ${place.country}`)
+    } else {
+      console.log(`added ${place.name}`)
     }
-    log.info('loaded ' + places.length + ' places.')
-    db.close()
-  })
-  .catch((err) => {
-    log.error('unable to load places: ', err)
-  })
+  }
+
+  console.log('loaded ' + places.length + ' places.')
+  await db.close()
+}
+
+main()
