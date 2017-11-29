@@ -1,22 +1,13 @@
-require('babel-register')()
-
-const Database = require('../server/db').Database
+import { Database } from '../server/db'
 
 const db = new Database()
 
-db.getSettings()
-  .then((settings) => {
-    db.clear()
-      .then(() => {
-        db.setupIndexes()
-          .then(() => {
-            db.addSettings(settings)
-              .then(() => {db.close()})
-              .catch((e) => {
-                console.log(e)
-              })
-          })
-      })
-      .catch((e) => {console.log(e)})
-  })
-  .catch((e) => {console.log(e)})
+async function main() {
+  const settings = await db.getSettings()
+  await db.clear()
+  await db.setupIndexes()
+  await db.addSettings(settings)
+  db.close()
+}
+
+main()
