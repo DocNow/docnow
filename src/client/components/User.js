@@ -25,22 +25,22 @@ export default class User extends Component {
           <div className={style.UserName}>
             {this.props.data.name}
           </div>
-          <div>
+          <div className={style.UserHandle}>
             <a href={'https://twitter.com/' + this.props.data.screenName}>
               @{this.props.data.screenName}
             </a>
           </div>
         </div>
         <div className={style.Inline}>
-          {this.props.data.followersCount} followers
+          <b>{this.props.data.followersCount}</b> <br /> followers
         </div>
         <div className={style.Inline}>
-          {this.props.data.friendsCount} following
+          <b>{this.props.data.friendsCount}</b> <br /> following
         </div>
         <div className={style.Inline}>
-          {this.props.data.tweetsCount} tweets
+          <b>{this.props.data.tweetsCount}</b> <br /> tweets
         </div>
-        <div className={style.Inline}>
+        <div className={style.UserCount}>
           {this.props.data.tweetsInSearch}
         </div>
         <hr />

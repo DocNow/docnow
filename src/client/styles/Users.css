@@ -1,16 +1,15 @@
 .UsersCard {
   height: 274px;
-  background-color: #C8D2D3;
   overflow-y: scroll;
   overflow-x: hidden;
 }
 
 .User {
   background-color: #ffffff;
-  margin: 5px;
-  padding: 5px;
-  font-size: 10px;
-  border: 1px solid #CCCCCC;
+  margin: 2px;
+  padding: 1px;
+  font-size: 10pt;
+  border: 2px solid #CCCCCC;
   border-radius: 3px;
 }
 
@@ -21,8 +20,8 @@
 
 .User img {
   display: inline-block;
-  width: 20px;
-  height: 20px;
+  width: 30px;
+  height: 30px;
   padding: 3px;
 }
 
@@ -34,20 +33,32 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  margin-bottom: 5px;
 }
 
 .UserName {
-  font-weight: bold;
-  padding-left: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.UserHandle {
   padding-right: 10px;
 }
 
 .Inline {
   display: inline-block;
+  text-align: center;
   padding-left: 5px;
 }
 
 .User p {
   margin: 5px;
   font-size: 10pt;
+}
+
+.UserCount {
+  display: inline-block;
+  font-size: 18pt;
+  font-weight: bold;
+  padding-left:20px;
 }
