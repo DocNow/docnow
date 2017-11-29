@@ -2,7 +2,7 @@
 
 The web is a big and rapidly changing place, so it can be challenging to
 discover what resources related to a particular event or topic are in need of
-archiving. Appraisal is a somewhat loose term for the many processes by which
+archiving. [Appraisal] is an umbrella term for the many processes by which
 archivists identify records of enduring value for preservation in an archive.
 DocNow is an appraisal tool for the web.
 
@@ -45,3 +45,4 @@ If you run into an error above
 
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/
+[Appraisal]: https://www2.archivists.org/glossary/terms/a/appraisal
