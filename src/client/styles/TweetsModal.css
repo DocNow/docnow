@@ -1,7 +1,16 @@
+.Tweet, .Retweet {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
 .Retweet {
   padding: 5px;
   margin-bottom: 10px;
   background-color: #efefef;
+}
+
+.Conversation {
+  margin-top: 45px;
 }
 
 .UserProfile {
@@ -36,5 +45,16 @@
   color: rgb(105, 120, 130)
 }
 
-.Tweet {
+
+.CloseModal {
+  background-color: #efefef;
+  margin-bottom: 10px;
+  text-align: right;
+  padding: 5px;
+  position: fixed;
+  width: 390px;
+}
+
+.CloseModal i {
+  font-size: 1.5em;
 }

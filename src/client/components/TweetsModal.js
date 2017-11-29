@@ -9,6 +9,7 @@ export default class TweetsModal extends Component {
   render() {
     const modalStyle = {
       content: {
+        padding: '0px',
         marginLeft: 'auto',
         marginRight: 'auto',
         maxWidth: '400px'
@@ -16,14 +17,13 @@ export default class TweetsModal extends Component {
     }
     return (
       <Modal isOpen={this.props.isOpen} style={modalStyle}>
-        <div>
-          <button onClick={() => {this.props.close()}}>
-            Close
-          </button>
+        <div className={style.CloseModal}>
+          <i className="fa fa-window-close" onClick={() => {this.props.close()}} />
         </div>
+        <div className={style.Conversation}>
         { this.props.tweets.map((tweet) => {
 
-          let className = tweet.Tweet
+          let className = style.Tweet
           let userInfo = null
           if (tweet.retweet) {
             className = style.Retweet
@@ -53,6 +53,7 @@ export default class TweetsModal extends Component {
             </div>
           )
         })}
+        </div>
       </Modal>
     )
   }
