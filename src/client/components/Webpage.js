@@ -18,6 +18,11 @@ export default class Webpage extends Component {
     return (
       <div className={card.Card}>
         <div className={style.Image}>
+          <div className={style.Controls}>
+            <i className={style.Add + ' fa fa-plus'} />
+            &nbsp;
+            <i className={style.Remove + ' fa fa-minus'}/>
+          </div>
           <a href={this.props.url} target="_new">
             <img src={img} />
           </a>

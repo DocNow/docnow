@@ -8,9 +8,32 @@
   font-size: 11pt;
 }
 
+div.Controls {
+  left: 270px;
+  top: 10px;
+  position: absolute;
+}
+
+div.Controls i {
+  background-color: #efefef;
+  padding: 5px;
+  opacity: .7;
+  border: thin solid gray;
+}
+
+.Add {
+  color: green;
+}
+
+.Remove {
+  color: red;
+}
+
 .Image {
+  border: thin solid pink;
   background-color: #eee;
   text-align: center;
+  position: relative;
 }
 
 .Image img {
@@ -29,7 +52,7 @@
 
 .Description {
   text-align: left;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .Title a {
