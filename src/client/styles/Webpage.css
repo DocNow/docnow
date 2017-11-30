@@ -15,18 +15,18 @@ div.Controls {
 }
 
 div.Controls i {
-  background-color: #efefef;
   padding: 5px;
-  opacity: .7;
-  border: thin solid gray;
+  color: white;
+  border-radius: 30%;
+  cursor: pointer;
 }
 
 .Add {
-  color: green;
+  background-color: green;
 }
 
 .Remove {
-  color: red;
+  background-color: red;
 }
 
 .Image {
