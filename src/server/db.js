@@ -719,13 +719,13 @@ export class Database {
     })
   }
 
-  async getWebpages(search) {
-    return await urlFetcher.getWebpages(search)
+  getWebpages(search) {
+    return urlFetcher.getWebpages(search)
   }
 
 
-  async queueStats(search) {
-    return await urlFetcher.queueStats(search)
+  queueStats(search) {
+    return urlFetcher.queueStats(search)
   }
 
   setupIndexes() {

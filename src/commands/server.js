@@ -2,21 +2,21 @@
 
 require('babel-register')()
 
-const path = require('path')
-const morgan = require('morgan')
-const webpack = require('webpack')
-const express = require('express')
-const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser')
-const cookieSession = require('cookie-session')
-const passport = require('passport')
-const webpackDevMiddleware = require('webpack-dev-middleware')
-const webpackHotMiddleware = require('webpack-hot-middleware')
+import path from 'path'
+import morgan from 'morgan'
+import webpack from 'webpack'
+import express from 'express'
+import bodyParser from 'body-parser'
+import cookieParser from 'cookie-parser'
+import cookieSession from 'cookie-session'
+import passport from 'passport'
+import webpackDevMiddleware from 'webpack-dev-middleware'
+import webpackHotMiddleware from 'webpack-hot-middleware'
 
-const api = require('../server/api')
-const auth = require('../server/auth')
-const log = require('../server/logger')
-const config = require('../../webpack.dev.config.js')
+import api from '../server/api'
+import auth from '../server/auth'
+import log from '../server/logger'
+import config from '../../webpack.dev.config.js'
 
 const projectDir = path.join(__dirname, '..', '..')
 const clientDir = path.join(projectDir, 'dist', 'client')
@@ -34,9 +34,7 @@ app.use(cookieParser())
 app.use(bodyParser.json())
 app.use(cookieSession({secret: 'ABCD', resave: true, saveUninitialized: true}))
 app.use(passport.initialize())
-
 app.use(passport.session())
-
 app.use(morgan('combined'))
 
 app.use('/api/v1', api)
