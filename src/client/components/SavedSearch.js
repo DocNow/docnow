@@ -26,9 +26,15 @@ export default class SavedSearch extends Component {
     clearInterval(this.timerId)
   }
 
+  scrolledUp() {
+    return document.documentElement.scrollTop === 0
+  }
+
   tick() {
-    this.props.getWebpages(this.props.searchId)
     this.props.getQueueStats(this.props.searchId)
+    if (this.props.webpages.length === 0 || this.scrolledUp()) {
+      this.props.getWebpages(this.props.searchId)
+    }
   }
 
   closeModal() {

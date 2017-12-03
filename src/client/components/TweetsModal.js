@@ -15,8 +15,9 @@ export default class TweetsModal extends Component {
         maxWidth: '400px'
       }
     }
+    const app = document.getElementById('App')
     return (
-      <Modal isOpen={this.props.isOpen} style={modalStyle}>
+      <Modal isOpen={this.props.isOpen} style={modalStyle} appElement={app}>
         <div className={style.CloseModal}>
           <i className="fa fa-window-close" onClick={() => {this.props.close()}} />
         </div>
