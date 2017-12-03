@@ -9,16 +9,22 @@
 }
 
 .Unselected {
-  border: 5px solid #eee;
-  background-color: #eee;
 }
 
 .Selected {
-  border: 5px groove lightgreen;
+  box-shadow: 1px 4px 8px 1px lightgreen;
+}
+
+.Selected:hover {
+  box-shadow: 0 8px 16px 0 lightgreen;
 }
 
 .Deselected {
-  border: 5px groove pink;
+  box-shadow: 1px 4px 8px 1px pink;
+}
+
+.Deselected:hover {
+  box-shadow: 0 8px 16px 0 pink;
 }
 
 div.Controls {
