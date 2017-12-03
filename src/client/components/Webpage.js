@@ -10,18 +10,36 @@ export default class Webpage extends Component {
     this.props.getTweetsForUrl(this.props.searchId, this.props.url)
   }
 
+  select() {
+    this.props.selectWebpage(this.props.searchId, this.props.url)
+  }
+
+  deselect() {
+    this.props.deselectWebpage(this.props.searchId, this.props.url)
+  }
+
   render() {
     let website = new URL(this.props.url).host
     website = website.replace(/^www\./, '')
 
     const img = this.props.image || doc
+
+    let selectedStyle = style.Unselected
+    if (this.props.selected === true) {
+      console.log('yyy')
+      selectedStyle = style.Selected
+    } else if (this.props.deselected === true) {
+      console.log('xxx')
+      selectedStyle = style.Deselected
+    }
+
     return (
-      <div className={card.Card}>
+      <div className={card.Card + ' ' +  selectedStyle}>
         <div className={style.Image}>
           <div className={style.Controls}>
-            <i className={style.Add + ' fa fa-plus'} />
+            <i onClick={() => {this.select()}} className={style.Add + ' fa fa-plus'} />
             &nbsp;
-            <i className={style.Remove + ' fa fa-minus'}/>
+            <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-minus'}/>
           </div>
           <a href={this.props.url} target="_new">
             <img src={img} />
@@ -59,6 +77,10 @@ Webpage.propTypes = {
   description: PropTypes.string,
   keywords: PropTypes.array,
   count: PropTypes.number,
+  selected: PropTypes.bool,
+  deselected: PropTypes.bool,
   searchId: PropTypes.string,
-  getTweetsForUrl: PropTypes.func
+  getTweetsForUrl: PropTypes.func,
+  selectWebpage: PropTypes.func,
+  deselectWebpage: PropTypes.func
 }

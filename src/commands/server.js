@@ -17,6 +17,7 @@ import api from '../server/api'
 import auth from '../server/auth'
 import log from '../server/logger'
 import config from '../../webpack.dev.config.js'
+import { UrlFetcher } from '../server/url-fetcher'
 
 const projectDir = path.join(__dirname, '..', '..')
 const clientDir = path.join(projectDir, 'dist', 'client')
@@ -59,6 +60,13 @@ if (isDevelopment) {
 process.on('unhandledRejection', (reason, p) => {
   log.warn('Unhandled Rejection at:', p, 'reason:', reason)
 })
+
+// maybe it's a bad idea to have the server fetching urls
+// by default, but it doesn't seem problematic to have one
+// worker running by default, more can be started up if needed
+
+const urlFetcher = new UrlFetcher()
+urlFetcher.start()
 
 log.info('starting app')
 app.listen(app.get('port'))

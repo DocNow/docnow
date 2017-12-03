@@ -292,6 +292,20 @@ app.get('/search/:searchId/webpages', async (req, res) => {
   }
 })
 
+app.put('/search/:searchId/webpages', async (req, res) => {
+  if (req.user) {
+    const search = await db.getSearch(req.params.searchId)
+    const url = req.body.url
+
+    if (req.body.selected === true) {
+      await db.selectWebpage(search, url)
+    } else if (req.body.deselected === true) {
+      await db.deselectWebpage(search, url)
+    }
+    res.json({status: 'updated'})
+  }
+})
+
 app.get('/search/:searchId/queue', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.params.searchId)

@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { getWebpages, resetWebpages } from '../actions/webpages'
+import { getWebpages, resetWebpages, selectWebpage, deselectWebpage } from '../actions/webpages'
 import { getQueueStats } from '../actions/queue'
 import { getTweetsForUrl, resetTweets } from '../actions/tweets'
 import SavedSearch from '../components/SavedSearch'
@@ -20,7 +20,9 @@ const actions = {
   resetWebpages,
   getQueueStats,
   getTweetsForUrl,
-  resetTweets
+  resetTweets,
+  selectWebpage,
+  deselectWebpage
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)

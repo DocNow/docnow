@@ -60,8 +60,12 @@ export default class SavedSearch extends Component {
             count={w.count}
             description={w.description}
             keywords={w.keywords}
+            selected={w.selected}
+            deselected={w.deselected}
             searchId={this.props.searchId}
-            getTweetsForUrl={this.props.getTweetsForUrl} />
+            getTweetsForUrl={this.props.getTweetsForUrl}
+            selectWebpage={this.props.selectWebpage}
+            deselectWebpage={this.props.deselectWebpage} />
           ))}
         </div>
 
@@ -80,5 +84,7 @@ SavedSearch.propTypes = {
   resetTweets: PropTypes.func,
   total: PropTypes.number,
   remaining: PropTypes.number,
-  tweets: PropTypes.array
+  tweets: PropTypes.array,
+  selectWebpage: PropTypes.func,
+  deselectWebpage: PropTypes.func
 }

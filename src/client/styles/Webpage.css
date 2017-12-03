@@ -8,32 +8,46 @@
   font-size: 11pt;
 }
 
+.Unselected {
+  border: none;
+  background-color: #eee;
+}
+
+.Selected {
+  background-color: lightgreen;
+}
+
+.Deselected {
+  background-color: pink;
+}
+
 div.Controls {
-  left: 270px;
+  left: 235px;
   top: 10px;
   position: absolute;
 }
 
 div.Controls i {
-  padding: 5px;
-  color: white;
-  border-radius: 30%;
+  padding: 10px;
+  color: black;
+  border-radius: 50%;
   cursor: pointer;
+  font-size: 20pt;
 }
 
 .Add {
-  background-color: green;
+  background-color: lightgreen;
 }
 
 .Remove {
-  background-color: red;
+  background-color: pink;
 }
 
 .Image {
   border: thin solid pink;
-  background-color: #eee;
   text-align: center;
   position: relative;
+  min-height: 200px;
 }
 
 .Image img {
@@ -41,7 +55,6 @@ div.Controls i {
   max-height: 200px;
   margin-left: auto;
   margin-right: auto;
-  border: thin solid gray;
 }
 
 .Title {
@@ -50,9 +63,17 @@ div.Controls i {
   text-align: left;
 }
 
+.Unselected .Title {
+  background-color: white;
+}
+
 .Description {
   text-align: left;
   overflow: auto;
+}
+
+.Unselected .Description {
+  background-color: white;
 }
 
 .Title a {
@@ -66,7 +87,6 @@ div.Controls i {
   align-items: center;
   justify-content: center;
   padding: 2px;
-  background-color: #eee;
   cursor: pointer;
 }
 

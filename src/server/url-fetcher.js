@@ -20,6 +20,12 @@ const urlsCountKey = (search) => {return `urlscount:${search.id}`}
 // redis key for the set of tweet ids that mention a url in a search
 const tweetsKey = (search, url) => {return `tweets:${url}:${search.id}`}
 
+// redis key for the selected urls in a search
+const selectedUrlsKey = (search) => {return `urlsselected:${search.id}`}
+
+// redis key for the deselected urls in a search
+const deselectedUrlsKey = (search) => {return `urlsdeselected:${search.id}`}
+
 export class UrlFetcher {
 
   constructor(concurrency = 5) {
@@ -146,26 +152,26 @@ export class UrlFetcher {
   }
 
   incrUrlsCount(search) {
-    this.redis.incr(urlsCountKey(search))
+    return this.redis.incrAsync(urlsCountKey(search))
   }
 
   incrSearchQueue(search) {
-    this.redis.incr(queueCountKey(search))
+    return this.redis.incrAsync(queueCountKey(search))
   }
 
   decrSearchQueue(search) {
-    this.redis.decr(queueCountKey(search))
+    return this.redis.decrAsync(queueCountKey(search))
   }
 
   async getWebpages(search, start = 0, limit = 100) {
     const key = urlsKey(search)
 
-    // get the list of urls and their counts while building up
-    // a list of redis commands to get metadata for the urls
+    const urlCounts = await this.redis.zrevrangeAsync(key, start, limit, 'withscores')
+    const selected = await this.redis.smembersAsync(selectedUrlsKey(search))
+    const deselected = await this.redis.smembersAsync(deselectedUrlsKey(search))
 
     const counts = {}
     const commands = []
-    const urlCounts = await this.redis.zrevrangeAsync(key, start, limit, 'withscores')
     for (let i = 0; i < urlCounts.length; i += 2) {
       const url = urlCounts[i]
       const count = parseInt(urlCounts[i + 1], 10)
@@ -183,6 +189,8 @@ export class UrlFetcher {
         for (const json of urlMetadata) {
           const metadata = JSON.parse(json)
           metadata.count = counts[metadata.url]
+          metadata.selected = selected.indexOf(metadata.url) >= 0
+          metadata.deselected = deselected.indexOf(metadata.url) >= 0
           webpages.push(metadata)
         }
         resolve(webpages)
@@ -191,8 +199,33 @@ export class UrlFetcher {
 
   }
 
-  async getTweetIdentifiers(search, url) {
-    return await this.redis.smembersAsync(tweetsKey(search, url))
+  async getWebpage(search, url) {
+    const json = await this.redis.getAsync(metadataKey(url))
+    const metadata = JSON.parse(json)
+
+    metadata.count = await this.redis.zscoreAsync(urlsKey(search), url)
+
+    const selected = await this.redis.smembersAsync(selectedUrlsKey(search))
+    metadata.selected = selected.indexOf(url) >= 0
+
+    const deselected = await this.redis.smembersAsync(deselectedUrlsKey(search))
+    metadata.deselected = deselected.indexOf(url) >= 0
+
+    return metadata
+  }
+
+  async selectWebpage(search, url) {
+    await this.redis.sremAsync(deselectedUrlsKey(search), url)
+    return this.redis.saddAsync(selectedUrlsKey(search), url)
+  }
+
+  async deselectWebpage(search, url) {
+    await this.redis.sremAsync(selectedUrlsKey(search), url)
+    return this.redis.saddAsync(deselectedUrlsKey(search), url)
+  }
+
+  getTweetIdentifiers(search, url) {
+    return this.redis.smembersAsync(tweetsKey(search, url))
   }
 
 }

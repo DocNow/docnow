@@ -46,6 +46,33 @@ describe('url-fetcher', () => {
     }, 10000)
   })
 
+  /*
+  it('should get a webpage', async () => {
+    const webpages = await uf.getWebpages(search)
+    const url = webpages[0].url
+    const count = webpages[0].count
+    const webpage = await uf.getWebpage(search, url)
+    equal(webpage.url, url)
+    equal(webpage.count, count)
+  })
+  */
+
+  it('should select a webpage', async () => {
+    const webpages = await uf.getWebpages(search)
+    const url = webpages[0].url
+    await uf.selectWebpage(search, url)
+    const w = await uf.getWebpage(search, url)
+    equal(w.selected, true)
+  })
+
+  it('should deselect a webpage', async () => {
+    const webpages = await uf.getWebpages(search)
+    const url = webpages[0].url
+    await uf.deselectWebpage(search, url)
+    const w = await uf.getWebpage(search, url)
+    equal(w.deselected, true)
+  })
+
   it('should return tweet identifiers for a url', async () => {
     let tweetIds = await uf.getTweetIdentifiers(search, 'https://en.wikipedia.org/wiki/Twitter')
     deepEqual(tweetIds, ['123', '456', '789'])

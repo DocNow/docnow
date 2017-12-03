@@ -723,10 +723,19 @@ export class Database {
     return urlFetcher.getWebpages(search)
   }
 
-
   queueStats(search) {
     return urlFetcher.queueStats(search)
   }
+
+  selectWebpage(search, url) {
+    return urlFetcher.selectWebpage(search, url)
+  }
+
+  deselectWebpage(search, url) {
+    return urlFetcher.deselectWebpage(search, url)
+  }
+
+  /* elastic search index management */
 
   setupIndexes() {
     return this.es.indices.exists({index: this.getIndex(TWEET)})
