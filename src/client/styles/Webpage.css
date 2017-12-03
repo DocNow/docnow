@@ -9,42 +9,52 @@
 }
 
 .Unselected {
-  border: none;
+  border: 5px solid #eee;
   background-color: #eee;
 }
 
 .Selected {
-  background-color: lightgreen;
+  border: 5px groove lightgreen;
 }
 
 .Deselected {
-  background-color: pink;
+  border: 5px groove pink;
 }
 
 div.Controls {
-  left: 235px;
+  left: 200px;
   top: 10px;
   position: absolute;
 }
 
 div.Controls i {
   padding: 10px;
+  margin-right: 10px;
   color: black;
+  background-color: #eee;
+  border: thin solid black;
   border-radius: 50%;
   cursor: pointer;
   font-size: 20pt;
 }
 
-.Add {
+.Selected i.Add {
   background-color: lightgreen;
 }
 
-.Remove {
+i.Add:hover {
+  background-color: lightgreen;
+}
+
+.Deselected i.Remove {
+  background-color: pink;
+}
+
+i.Remove:hover {
   background-color: pink;
 }
 
 .Image {
-  border: thin solid pink;
   text-align: center;
   position: relative;
   min-height: 200px;

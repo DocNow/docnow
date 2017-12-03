@@ -26,10 +26,8 @@ export default class Webpage extends Component {
 
     let selectedStyle = style.Unselected
     if (this.props.selected === true) {
-      console.log('yyy')
       selectedStyle = style.Selected
     } else if (this.props.deselected === true) {
-      console.log('xxx')
       selectedStyle = style.Deselected
     }
 
@@ -37,9 +35,9 @@ export default class Webpage extends Component {
       <div className={card.Card + ' ' +  selectedStyle}>
         <div className={style.Image}>
           <div className={style.Controls}>
-            <i onClick={() => {this.select()}} className={style.Add + ' fa fa-plus'} />
+            <i onClick={() => {this.select()}} className={style.Add + ' fa fa-thumbs-up'} />
             &nbsp;
-            <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-minus'}/>
+            <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-thumbs-down'}/>
           </div>
           <a href={this.props.url} target="_new">
             <img src={img} />
