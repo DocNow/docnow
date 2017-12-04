@@ -2,6 +2,7 @@ import express from 'express'
 import multiparty from 'multiparty'
 import * as fs from 'fs'
 import log from './logger'
+import wayback from './wayback'
 
 import { Database } from './db'
 import { activateKeys } from './auth'
@@ -310,6 +311,13 @@ app.get('/search/:searchId/queue', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.params.searchId)
     const result = await db.queueStats(search)
+    res.json(result)
+  }
+})
+
+app.get('/wayback/', async (req, res) => {
+  if (req.user) {
+    const result = await wayback.closest(req.query.url)
     res.json(result)
   }
 })

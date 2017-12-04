@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import LazyLoad from 'react-lazy-load'
+import Wayback from './Wayback'
 import style from '../styles/Webpage.css'
 import card from '../styles/Card.css'
 import doc from '../images/doc.png'
@@ -62,6 +64,12 @@ export default class Webpage extends Component {
           <div className={style.WebsiteName}>
             <a href={this.props.url} target="_new">{website}</a>
           </div>
+          <LazyLoad offsetVertical={800}>
+            <Wayback
+              url={this.props.url}
+              archive={this.props.archive}
+              checkArchive={this.props.checkArchive}/>
+          </LazyLoad>
         </div>
       </div>
     )
@@ -78,7 +86,9 @@ Webpage.propTypes = {
   selected: PropTypes.bool,
   deselected: PropTypes.bool,
   searchId: PropTypes.string,
+  archive: PropTypes.object,
   getTweetsForUrl: PropTypes.func,
   selectWebpage: PropTypes.func,
-  deselectWebpage: PropTypes.func
+  deselectWebpage: PropTypes.func,
+  checkArchive: PropTypes.func,
 }
