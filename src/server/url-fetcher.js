@@ -1,30 +1,17 @@
-import getRedis from './redis'
 import metaweb from 'metaweb'
 import log from './logger'
 
-// redis key for url to url mappings
-const urlKey = (url) => {return `url:${url}`}
-
-// redis key for url metadata
-const metadataKey = (url) => {return `metadata:${url}`}
-
-// redis key for a search's sorted set of url counts
-const urlsKey = (search) => {return `urls:${search.id}`}
-
-// redis key for the number of urls yet to be fetched for a search
-const queueCountKey = (search) => {return `queue:${search.id}`}
-
-// redis key for the total number of urls to be checked in a search
-const urlsCountKey = (search) => {return `urlscount:${search.id}`}
-
-// redis key for the set of tweet ids that mention a url in a search
-const tweetsKey = (search, url) => {return `tweets:${url}:${search.id}`}
-
-// redis key for the selected urls in a search
-const selectedUrlsKey = (search) => {return `urlsselected:${search.id}`}
-
-// redis key for the deselected urls in a search
-const deselectedUrlsKey = (search) => {return `urlsdeselected:${search.id}`}
+import {
+  getRedis,
+  urlKey,
+  metadataKey,
+  urlsKey,
+  queueCountKey,
+  urlsCountKey,
+  tweetsKey,
+  selectedUrlsKey,
+  deselectedUrlsKey
+} from './redis'
 
 export class UrlFetcher {
 

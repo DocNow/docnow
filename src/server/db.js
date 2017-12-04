@@ -1,5 +1,5 @@
 import uuid from 'uuid/v4'
-import getRedis from './redis'
+import { getRedis } from './redis'
 import elasticsearch from 'elasticsearch'
 
 import log from './logger'
