@@ -40,13 +40,14 @@ describe('url-fetcher', () => {
       w = webpages[1]
       equal(w.url, 'http://www.nytimes.com/1994/05/07/business/new-venture-in-cyberspace-by-silicon-graphics-founder.html', 'tally should use canonical url')
       equal(w.title, 'New Venture in Cyberspace By Silicon Graphics Founder - NYTimes.com')
-      equal(w.count, 2, 'tally uses canonical url')
+      equal(w.count, 2, 'tally uses canoanical url')
+
+      equal(w.archive, null)
 
       done()
     }, 10000)
   })
 
-  /*
   it('should get a webpage', async () => {
     const webpages = await uf.getWebpages(search)
     const url = webpages[0].url
@@ -54,8 +55,8 @@ describe('url-fetcher', () => {
     const webpage = await uf.getWebpage(search, url)
     equal(webpage.url, url)
     equal(webpage.count, count)
+    equal(webpage.archive, null)
   })
-  */
 
   it('should select a webpage', async () => {
     const webpages = await uf.getWebpages(search)

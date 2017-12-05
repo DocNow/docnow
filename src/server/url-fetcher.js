@@ -10,7 +10,8 @@ import {
   urlsCountKey,
   tweetsKey,
   selectedUrlsKey,
-  deselectedUrlsKey
+  deselectedUrlsKey,
+  waybackKey
 } from './redis'
 
 export class UrlFetcher {
@@ -164,6 +165,7 @@ export class UrlFetcher {
       const count = parseInt(urlCounts[i + 1], 10)
       counts[url] = count
       commands.push(['get', metadataKey(url)])
+      commands.push(['get', waybackKey(url)])
     }
 
     // redis does not have a multiAsync command so we return a Promise
@@ -171,13 +173,15 @@ export class UrlFetcher {
     // of webpage metadata annotated with the counts we collected above
 
     return new Promise((resolve) => {
-      this.redis.multi(commands).exec((err, urlMetadata) => {
+      this.redis.multi(commands).exec((err, results) => {
         const webpages = []
-        for (const json of urlMetadata) {
-          const metadata = JSON.parse(json)
+        for (let i = 0; i < results.length; i += 2) {
+          const metadata = JSON.parse(results[i])
           metadata.count = counts[metadata.url]
           metadata.selected = selected.indexOf(metadata.url) >= 0
           metadata.deselected = deselected.indexOf(metadata.url) >= 0
+          metadata.archive = JSON.parse(results[i + 1])
+
           webpages.push(metadata)
         }
         resolve(webpages)
@@ -197,6 +201,8 @@ export class UrlFetcher {
 
     const deselected = await this.redis.smembersAsync(deselectedUrlsKey(search))
     metadata.deselected = deselected.indexOf(url) >= 0
+
+    metadata.archive = JSON.parse(await this.redis.getAsync(waybackKey(url)))
 
     return metadata
   }

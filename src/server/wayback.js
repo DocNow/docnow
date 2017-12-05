@@ -4,7 +4,7 @@ import request from 'request-promise'
 import log from './logger'
 import { getRedis, waybackKey } from './redis'
 
-const pool = new http.Agent({keepAlive: true, maxSockets: 5})
+const pool = new http.Agent({keepAlive: true, maxSockets: 1})
 const redis = getRedis()
 
 /**
