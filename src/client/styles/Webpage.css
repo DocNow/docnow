@@ -8,9 +8,62 @@
   font-size: 11pt;
 }
 
-.Image {
+.Unselected {
+}
+
+.Selected {
+  box-shadow: 1px 4px 8px 1px lightgreen;
+}
+
+.Selected:hover {
+  box-shadow: 0 8px 16px 0 lightgreen;
+}
+
+.Deselected {
+  box-shadow: 1px 4px 8px 1px pink;
+}
+
+.Deselected:hover {
+  box-shadow: 0 8px 16px 0 pink;
+}
+
+div.Controls {
+  left: 200px;
+  top: 10px;
+  position: absolute;
+}
+
+div.Controls i {
+  padding: 10px;
+  margin-right: 10px;
+  color: black;
   background-color: #eee;
+  border: thin solid black;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20pt;
+}
+
+.Selected i.Add {
+  background-color: lightgreen;
+}
+
+i.Add:hover {
+  background-color: lightgreen;
+}
+
+.Deselected i.Remove {
+  background-color: pink;
+}
+
+i.Remove:hover {
+  background-color: pink;
+}
+
+.Image {
   text-align: center;
+  position: relative;
+  min-height: 200px;
 }
 
 .Image img {
@@ -18,7 +71,6 @@
   max-height: 200px;
   margin-left: auto;
   margin-right: auto;
-  border: thin solid gray;
 }
 
 .Title {
@@ -27,9 +79,17 @@
   text-align: left;
 }
 
+.Unselected .Title {
+  background-color: white;
+}
+
 .Description {
   text-align: left;
-  overflow: hidden;
+  overflow: auto;
+}
+
+.Unselected .Description {
+  background-color: white;
 }
 
 .Title a {
@@ -43,7 +103,7 @@
   align-items: center;
   justify-content: center;
   padding: 2px;
-  background-color: #eee;
+  cursor: pointer;
 }
 
 .Count {
@@ -51,6 +111,7 @@
 
 .WebsiteName {
   padding-left: 10px;
+  padding-right: 10px;
 }
 
 .WebsiteName a {

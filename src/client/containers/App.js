@@ -41,7 +41,7 @@ class App extends MediaQueryComponent {
 
   render() {
     return (
-      <div className={this.state.mediaStyle}>
+      <div id="App" className={this.state.mediaStyle}>
         <Header />
         <main>
           <Route exact path="/" component={TrendsPage} />

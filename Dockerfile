@@ -3,4 +3,4 @@ RUN mkdir /code
 WORKDIR /code
 ADD . /code/
 RUN npm install
-CMD npm run start
+CMD npm run start:dev

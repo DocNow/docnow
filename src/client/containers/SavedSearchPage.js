@@ -1,7 +1,9 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { getWebpages, resetWebpages } from '../actions/webpages'
+import { getWebpages, resetWebpages, selectWebpage, deselectWebpage,
+         checkArchive } from '../actions/webpages'
 import { getQueueStats } from '../actions/queue'
+import { getTweetsForUrl, resetTweets } from '../actions/tweets'
 import SavedSearch from '../components/SavedSearch'
 
 const mapStateToProps = (state, ownProps) => {
@@ -9,14 +11,20 @@ const mapStateToProps = (state, ownProps) => {
     searchId: ownProps.match.params.searchId,
     webpages: state.webpages,
     total: state.queue.total,
-    remaining: state.queue.remaining
+    remaining: state.queue.remaining,
+    tweets: state.tweets,
   }
 }
 
 const actions = {
   getWebpages,
   resetWebpages,
-  getQueueStats
+  getQueueStats,
+  getTweetsForUrl,
+  resetTweets,
+  selectWebpage,
+  deselectWebpage,
+  checkArchive
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)

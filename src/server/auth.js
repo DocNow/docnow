@@ -5,9 +5,9 @@ import { Database } from './db'
 
 const db = new Database()
 
-export const app = express()
+const app = express()
 
-export const activateKeys = () => {
+const activateKeys = () => {
   db.getSettings().then((settings) => {
     if (settings && settings.appKey && settings.appSecret) {
       passport.use(new twitter.Strategy(
@@ -80,3 +80,5 @@ app.get('/logout', (req, res) => {
 app.get('/user', (req, res) => {
   res.json({user: req.user})
 })
+
+module.exports = {app, activateKeys}

@@ -2,6 +2,7 @@ import express from 'express'
 import multiparty from 'multiparty'
 import * as fs from 'fs'
 import log from './logger'
+import wayback from './wayback'
 
 import { Database } from './db'
 import { activateKeys } from './auth'
@@ -177,7 +178,6 @@ app.put('/search/:searchId', (req, res) => {
     db.getSearch(newSearch.id).then((search) => {
       newSearch = {...search, ...newSearch}
       db.updateSearch(newSearch)
-      console.log('xxx', req.query.refreshTweets)
       if (req.query.refreshTweets) {
         db.importFromSearch(search)
       }
@@ -190,10 +190,17 @@ app.get('/search/:searchId/tweets', (req, res) => {
   if (req.user) {
     db.getSearch(req.params.searchId)
       .then((search) => {
-        db.getTweets(search)
-          .then((tweets) => {
-            res.json(tweets)
-          })
+        if (req.query.url) {
+          db.getTweetsForUrl(search, req.query.url)
+            .then((tweets) => {
+              res.json(tweets)
+            })
+        } else {
+          db.getTweets(search)
+            .then((tweets) => {
+              res.json(tweets)
+            })
+        }
       })
   }
 })
@@ -286,10 +293,31 @@ app.get('/search/:searchId/webpages', async (req, res) => {
   }
 })
 
+app.put('/search/:searchId/webpages', async (req, res) => {
+  if (req.user) {
+    const search = await db.getSearch(req.params.searchId)
+    const url = req.body.url
+
+    if (req.body.selected === true) {
+      await db.selectWebpage(search, url)
+    } else if (req.body.deselected === true) {
+      await db.deselectWebpage(search, url)
+    }
+    res.json({status: 'updated'})
+  }
+})
+
 app.get('/search/:searchId/queue', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.params.searchId)
     const result = await db.queueStats(search)
+    res.json(result)
+  }
+})
+
+app.get('/wayback/', async (req, res) => {
+  if (req.user) {
+    const result = await wayback.closest(req.query.url)
     res.json(result)
   }
 })

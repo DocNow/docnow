@@ -1,5 +1,5 @@
 import uuid from 'uuid/v4'
-import getRedis from './redis'
+import { getRedis } from './redis'
 import elasticsearch from 'elasticsearch'
 
 import log from './logger'
@@ -459,7 +459,7 @@ export class Database {
                     const seenUsers = new Set()
                     for (const tweet of results) {
                       for (const url of tweet.urls) {
-                        urlFetcher.add(search, url.long)
+                        urlFetcher.add(search, url.long, tweet.id)
                       }
                       tweet.search = search.id
                       const id = search.id + ':' + tweet.id
@@ -527,6 +527,26 @@ export class Database {
         reject(err)
       })
     })
+  }
+
+  async getTweetsForUrl(search, url) {
+    const ids = await urlFetcher.getTweetIdentifiers(search, url)
+    const body = {
+      size: 100,
+      query: {
+        bool: {
+          must: [{match: {search: search.id}}],
+          filter: {terms: {id: ids}}
+        }
+      },
+      sort: [{id: 'desc'}]
+    }
+    const resp = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: body
+    })
+    return resp.hits.hits.map((h) => {return h._source})
   }
 
   getTwitterUsers(search) {
@@ -678,6 +698,45 @@ export class Database {
     })
   }
 
+  addUrl(search, url) {
+    const job = {url, search}
+    return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
+  }
+
+  processUrl() {
+    return new Promise((resolve, reject) => {
+      this.redis.blpopAsync('urlqueue', 0)
+        .then((result) => {
+          const job = JSON.parse(result[1])
+          resolve({
+            url: job.url,
+            title: 'Twitter'
+          })
+        })
+        .catch((err) => {
+          reject(err)
+        })
+    })
+  }
+
+  getWebpages(search) {
+    return urlFetcher.getWebpages(search)
+  }
+
+  queueStats(search) {
+    return urlFetcher.queueStats(search)
+  }
+
+  selectWebpage(search, url) {
+    return urlFetcher.selectWebpage(search, url)
+  }
+
+  deselectWebpage(search, url) {
+    return urlFetcher.deselectWebpage(search, url)
+  }
+
+  /* elastic search index management */
+
   setupIndexes() {
     return this.es.indices.exists({index: this.getIndex(TWEET)})
       .then((exists) => {
@@ -820,35 +879,6 @@ export class Database {
         }
       }
     }
-  }
-
-  addUrl(search, url) {
-    const job = {url, search}
-    return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
-  }
-
-  processUrl() {
-    return new Promise((resolve, reject) => {
-      this.redis.blpopAsync('urlqueue', 0)
-        .then((result) => {
-          const job = JSON.parse(result[1])
-          resolve({
-            url: job.url,
-            title: 'Twitter'
-          })
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    })
-  }
-
-  async getWebpages(search) {
-    return await urlFetcher.getWebpages(search)
-  }
-
-  async queueStats(search) {
-    return await urlFetcher.queueStats(search)
   }
 
 }

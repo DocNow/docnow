@@ -1,26 +1,24 @@
-import getRedis from './redis'
 import metaweb from 'metaweb'
 import log from './logger'
 
-// redis key for url to url mappings
-const urlKey = (url) => {return `url:${url}`}
-
-// redis key for url metadata
-const metadataKey = (url) => {return `metadata:${url}`}
-
-// redis key for a search's sorted set of url counts
-const urlsKey = (search) => {return `urls:${search.id}`}
-
-// redis key for the number of urls yet to be fetched for a search
-const queueCountKey = (search) => {return `queue:${search.id}`}
-
-// redis key for the total number of urls to be checked in a search
-const urlsCountKey = (search) => {return `urlscount:${search.id}`}
+import {
+  getRedis,
+  urlKey,
+  metadataKey,
+  urlsKey,
+  queueCountKey,
+  urlsCountKey,
+  tweetsKey,
+  selectedUrlsKey,
+  deselectedUrlsKey,
+  waybackKey
+} from './redis'
 
 export class UrlFetcher {
 
-  constructor(opts = {}) {
-    this.redis = getRedis(opts)
+  constructor(concurrency = 5) {
+    this.concurrency = concurrency
+    this.redis = getRedis()
     this.redisBlocking = this.redis.duplicate()
     this.active = false
   }
@@ -28,7 +26,12 @@ export class UrlFetcher {
   async start() {
     this.active = true
     while (this.active) {
-      await this.fetchJob()
+      const promises = []
+      for (let i = 0; i < this.concurrency; i++) {
+        promises.push(this.fetchJob())
+      }
+      log.info('waiting to process ' + this.concurrency + ' urls')
+      await Promise.all(promises)
     }
     return true
   }
@@ -39,8 +42,8 @@ export class UrlFetcher {
     this.redisBlocking.quit()
   }
 
-  add(search, url) {
-    const job = {search, url}
+  add(search, url, tweetId) {
+    const job = {search, url, tweetId}
     this.incrSearchQueue(search)
     this.incrUrlsCount(search)
     return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
@@ -121,9 +124,10 @@ export class UrlFetcher {
   }
 
   async tally(job, metadata) {
-    const key = urlsKey(job.search)
-    log.info('tallying', key, metadata.url)
-    await this.redis.zincrbyAsync(key, 1, metadata.url)
+    // increment the number of times we've seen the url in this search
+    await this.redis.zincrbyAsync(urlsKey(job.search), 1, metadata.url)
+    // remember the tweet
+    await this.redis.saddAsync(tweetsKey(job.search, metadata.url), job.tweetId)
   }
 
   async queueStats(search) {
@@ -136,31 +140,32 @@ export class UrlFetcher {
   }
 
   incrUrlsCount(search) {
-    this.redis.incr(urlsCountKey(search))
+    return this.redis.incrAsync(urlsCountKey(search))
   }
 
   incrSearchQueue(search) {
-    this.redis.incr(queueCountKey(search))
+    return this.redis.incrAsync(queueCountKey(search))
   }
 
   decrSearchQueue(search) {
-    this.redis.decr(queueCountKey(search))
+    return this.redis.decrAsync(queueCountKey(search))
   }
 
   async getWebpages(search, start = 0, limit = 100) {
     const key = urlsKey(search)
 
-    // get the list of urls and their counts while building up
-    // a list of redis commands to get metadata for the urls
+    const urlCounts = await this.redis.zrevrangeAsync(key, start, limit, 'withscores')
+    const selected = await this.redis.smembersAsync(selectedUrlsKey(search))
+    const deselected = await this.redis.smembersAsync(deselectedUrlsKey(search))
 
     const counts = {}
     const commands = []
-    const urlCounts = await this.redis.zrevrangeAsync(key, start, limit, 'withscores')
     for (let i = 0; i < urlCounts.length; i += 2) {
       const url = urlCounts[i]
       const count = parseInt(urlCounts[i + 1], 10)
       counts[url] = count
       commands.push(['get', metadataKey(url)])
+      commands.push(['get', waybackKey(url)])
     }
 
     // redis does not have a multiAsync command so we return a Promise
@@ -168,17 +173,52 @@ export class UrlFetcher {
     // of webpage metadata annotated with the counts we collected above
 
     return new Promise((resolve) => {
-      this.redis.multi(commands).exec((err, urlMetadata) => {
+      this.redis.multi(commands).exec((err, results) => {
         const webpages = []
-        for (const json of urlMetadata) {
-          const metadata = JSON.parse(json)
+        for (let i = 0; i < results.length; i += 2) {
+          const metadata = JSON.parse(results[i])
           metadata.count = counts[metadata.url]
+          metadata.selected = selected.indexOf(metadata.url) >= 0
+          metadata.deselected = deselected.indexOf(metadata.url) >= 0
+          metadata.archive = JSON.parse(results[i + 1])
+
           webpages.push(metadata)
         }
         resolve(webpages)
       })
     })
 
+  }
+
+  async getWebpage(search, url) {
+    const json = await this.redis.getAsync(metadataKey(url))
+    const metadata = JSON.parse(json)
+
+    metadata.count = await this.redis.zscoreAsync(urlsKey(search), url)
+
+    const selected = await this.redis.smembersAsync(selectedUrlsKey(search))
+    metadata.selected = selected.indexOf(url) >= 0
+
+    const deselected = await this.redis.smembersAsync(deselectedUrlsKey(search))
+    metadata.deselected = deselected.indexOf(url) >= 0
+
+    metadata.archive = JSON.parse(await this.redis.getAsync(waybackKey(url)))
+
+    return metadata
+  }
+
+  async selectWebpage(search, url) {
+    await this.redis.sremAsync(deselectedUrlsKey(search), url)
+    return this.redis.saddAsync(selectedUrlsKey(search), url)
+  }
+
+  async deselectWebpage(search, url) {
+    await this.redis.sremAsync(selectedUrlsKey(search), url)
+    return this.redis.saddAsync(deselectedUrlsKey(search), url)
+  }
+
+  getTweetIdentifiers(search, url) {
+    return this.redis.smembersAsync(tweetsKey(search, url))
   }
 
 }

@@ -2,11 +2,11 @@ var path = require('path'),
     webpack = require('webpack'),
     HtmlWebpackPlugin = require('html-webpack-plugin')
 
-var DIST_DIR   = path.join(__dirname, 'dist'),
-    CLIENT_DIR = path.join(__dirname, 'src/client')
+var DIST_DIR   = path.join(__dirname, 'dist/client'),
+    SRC_DIR = path.join(__dirname, 'src/client')
 
 module.exports = {
-  context: CLIENT_DIR,
+  context: SRC_DIR,
 
   entry: ['./index'],
 
