@@ -41,16 +41,16 @@ async function get(url) {
 
 async function saveArchive(url) {
   const saveUrl = `https://web.archive.org/save/` + url
-  const resp = await request.get({url: saveUrl, resolveWithFullResponse: true})
-  const location = resp.headers['content-location']
-  if (location) {
+  try {
+    const resp = await request.get({url: saveUrl, resolveWithFullResponse: true})
+    const location = resp.headers['content-location']
     const iaUrl = 'https://wayback.archive.org/' + location
     const time = moment(location.split('/')[2] + 'Z', 'YYYYMMDDhhmmssZ').toDate()
     const metadata = {url: iaUrl, time: time}
     save(url, metadata)
     return metadata
-  } else {
-    log.warn('missing content-location for ' + saveUrl)
+  } catch (e) {
+    log.warn(`got error when fetching ${saveUrl}`, e.response.statusCode)
     return null
   }
 }

@@ -3,6 +3,7 @@ export const RESET_WEBPAGES = 'RESET_WEBPAGES'
 export const SELECT_WEBPAGE = 'SELECT_WEBPAGE'
 export const DESELECT_WEBPAGE = 'DESELECT_WEBPAGE'
 export const SET_WEBPAGE_ARCHIVE = 'SET_WEBPAGE_ARCHIVE'
+export const ARCHIVE_ERROR = 'ARCHIVE_ERROR'
 
 export const setWebpages = (webpages) => {
   return {
@@ -84,12 +85,18 @@ export const saveArchive = (url) => {
     const apiUrl = '/api/v1/wayback/' + encodeURIComponent(url)
     const resp = await fetch(apiUrl, {credentials: 'same-origin', method: 'PUT'})
     const result = await resp.json()
-    console.log(result)
-    dispatch({
-      type: SET_WEBPAGE_ARCHIVE,
-      url: url,
-      archiveUrl: result.url,
-      archiveTime: result.time
-    })
+    if (result) {
+      dispatch({
+        type: SET_WEBPAGE_ARCHIVE,
+        url: url,
+        archiveUrl: result.url,
+        archiveTime: result.time
+      })
+    } else {
+      dispatch({
+        type: ARCHIVE_ERROR,
+        url: url
+      })
+    }
   }
 }

@@ -11,12 +11,11 @@ export default class Wayback extends Component {
   }
 
   saveArchive() {
-    console.log('saving ' + this.props.url)
     this.props.saveArchive(this.props.url)
   }
 
   render() {
-    if (this.props.archive) {
+    if (this.props.archive && this.props.archive.url) {
       const elapsed = moment(this.props.archive.time).fromNow()
       const title = `Last archived ${elapsed}`
       return (
@@ -25,6 +24,13 @@ export default class Wayback extends Component {
           target="_new">
           <img title={title} alt={title} src={ia} />
         </a>
+      )
+    } else if (this.props.archive && this.props.archive.error) {
+      const title = 'Internet Archive cannot archive!'
+      return (
+        <span className={style.Wayback + ' ' + style.WaybackError}>
+          <img onClick={() => {this.saveArchive()}} title={title} alt={title} src={ia} />
+        </span>
       )
     } else {
       const title = 'Click to archive at Internet Archive'
