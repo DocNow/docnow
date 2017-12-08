@@ -10,6 +10,11 @@ export default class Wayback extends Component {
     this.props.checkArchive(this.props.url)
   }
 
+  saveArchive() {
+    console.log('saving ' + this.props.url)
+    this.props.saveArchive(this.props.url)
+  }
+
   render() {
     if (this.props.archive) {
       const elapsed = moment(this.props.archive.time).fromNow()
@@ -25,7 +30,7 @@ export default class Wayback extends Component {
       const title = 'Click to archive at Internet Archive'
       return (
         <span className={style.Wayback}>
-          <img title={title} alt={title} src={ia} />
+          <img onClick={() => {this.saveArchive()}} title={title} alt={title} src={ia} />
         </span>
       )
     }
@@ -37,4 +42,5 @@ Wayback.propTypes = {
   url: PropTypes.string,
   archive: PropTypes.object,
   checkArchive: PropTypes.func,
+  saveArchive: PropTypes.func,
 }

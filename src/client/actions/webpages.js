@@ -63,7 +63,7 @@ export const deselectWebpage = (searchId, url) => {
 
 export const checkArchive = (url) => {
   return (dispatch) => {
-    const apiUrl = '/api/v1/wayback?url=' + encodeURIComponent(url)
+    const apiUrl = '/api/v1/wayback/' + encodeURIComponent(url)
     fetch(apiUrl, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
@@ -76,5 +76,20 @@ export const checkArchive = (url) => {
           })
         }
       })
+  }
+}
+
+export const saveArchive = (url) => {
+  return async (dispatch) => {
+    const apiUrl = '/api/v1/wayback/' + encodeURIComponent(url)
+    const resp = await fetch(apiUrl, {credentials: 'same-origin', method: 'PUT'})
+    const result = await resp.json()
+    console.log(result)
+    dispatch({
+      type: SET_WEBPAGE_ARCHIVE,
+      url: url,
+      archiveUrl: result.url,
+      archiveTime: result.time
+    })
   }
 }

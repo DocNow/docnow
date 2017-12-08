@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-require('babel-register')()
-
 import path from 'path'
 import morgan from 'morgan'
 import webpack from 'webpack'

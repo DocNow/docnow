@@ -20,6 +20,10 @@ export default class Webpage extends Component {
     this.props.deselectWebpage(this.props.searchId, this.props.url)
   }
 
+  archive() {
+    this.props.archive(this.props.url)
+  }
+
   render() {
     let website = new URL(this.props.url).host
     website = website.replace(/^www\./, '')
@@ -68,7 +72,8 @@ export default class Webpage extends Component {
             <Wayback
               url={this.props.url}
               archive={this.props.archive}
-              checkArchive={this.props.checkArchive}/>
+              checkArchive={this.props.checkArchive}
+              saveArchive={this.props.saveArchive}/>
           </LazyLoad>
         </div>
       </div>
@@ -91,4 +96,5 @@ Webpage.propTypes = {
   selectWebpage: PropTypes.func,
   deselectWebpage: PropTypes.func,
   checkArchive: PropTypes.func,
+  saveArchive: PropTypes.func,
 }

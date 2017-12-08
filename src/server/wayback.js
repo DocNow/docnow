@@ -34,6 +34,28 @@ async function get(url) {
 }
 
 /**
+ * Tells Wayback Machine to archive a URL.
+ * @param {string} a URL string
+ * @returns {object} an object
+ */
+
+async function saveArchive(url) {
+  const saveUrl = `https://web.archive.org/save/` + url
+  const resp = await request.get({url: saveUrl, resolveWithFullResponse: true})
+  const location = resp.headers['content-location']
+  if (location) {
+    const iaUrl = 'https://wayback.archive.org/' + location
+    const time = moment(location.split('/')[2] + 'Z', 'YYYYMMDDhhmmssZ').toDate()
+    const metadata = {url: iaUrl, time: time}
+    save(url, metadata)
+    return metadata
+  } else {
+    log.warn('missing content-location for ' + saveUrl)
+    return null
+  }
+}
+
+/**
  * Fetch metadata for archival snapshots at the Internet Archive.
  * @param {string} the URL you want to search for.
  * @returns {array} a list of link objects
@@ -101,4 +123,4 @@ async function closest(url, refresh = false) {
   }
 }
 
-module.exports = { memento, closest }
+module.exports = { memento, closest, saveArchive, get }

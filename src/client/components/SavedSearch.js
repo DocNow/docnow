@@ -70,6 +70,7 @@ export default class SavedSearch extends Component {
             deselected={w.deselected}
             archive={w.archive}
             checkArchive={this.props.checkArchive}
+            saveArchive={this.props.saveArchive}
             searchId={this.props.searchId}
             getTweetsForUrl={this.props.getTweetsForUrl}
             selectWebpage={this.props.selectWebpage}
@@ -96,4 +97,5 @@ SavedSearch.propTypes = {
   selectWebpage: PropTypes.func,
   deselectWebpage: PropTypes.func,
   checkArchive: PropTypes.func,
+  saveArchive: PropTypes.func,
 }
