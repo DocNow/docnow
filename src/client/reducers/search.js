@@ -103,6 +103,7 @@ export default function user(state = initialState, action) {
       })
       return {
         ...state,
+        queryUpdated: true,
         query: newQuery
       }
     }
@@ -120,6 +121,7 @@ export default function user(state = initialState, action) {
       })
       return {
         ...state,
+        queryUpdated: true,
         query: newQuery
       }
     }

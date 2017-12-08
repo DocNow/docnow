@@ -106,6 +106,8 @@ export const createSearch = (query) => {
     if (value === '') {
       continue
     } else if (value[0] === '@') {
+      type = 'user'
+    } else if (value[0] === '#') {
       type = 'hashtag'
     } else if (value.match(/ /)) {
       type = 'phrase'
@@ -117,6 +119,7 @@ export const createSearch = (query) => {
 
   return (dispatch, getState) => {
     dispatch(resetTwitterSearch())
+    dispatch(activateSearch())
     const { user } = getState()
     const body = {user, query: newQuery}
     const opts = {

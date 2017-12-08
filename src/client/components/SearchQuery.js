@@ -10,9 +10,20 @@ export default class SearchQuery extends Component {
   }
 
   render() {
+    let placeHolder = <span>&nbsp;</span>
+    if (this.props.query.length === 0 && ! this.props.active) {
+      placeHolder = (
+        <div>
+          enter a <span className={styles.SearchTerm + ' ' + styles.Keyword}>keyword</span>
+          <span className={styles.SearchTerm + ' ' + styles.Phrase}>a phrase</span>
+          <span className={styles.SearchTerm + ' ' + styles.Hashtag}>#hashtag</span>
+          <span className={styles.SearchTerm + ' ' + styles.User}>@user</span>
+        </div>
+      )
+    }
     return (
       <div onClick={(e) => {this.onClick(e)}} className={styles.SearchQuery}>
-        &nbsp;
+        {placeHolder}
         {this.props.query.map((term, i) => (
           <SearchTerm
             key={`t${i}`}
@@ -31,4 +42,5 @@ SearchQuery.propTypes = {
   query: PropTypes.array,
   updateSearchTerm: PropTypes.func,
   addSearchTerm: PropTypes.func,
+  active: PropTypes.bool,
 }

@@ -70,6 +70,9 @@ export default class Search extends Component {
 
   render() {
     const spin = this.props.active ? ' fa-spin' : ''
+    const style = this.props.tweets.length === 0 ? {display: 'none'} : {}
+    const disabled = this.props.query.length === 0
+
     return (
       <div>
         <div className={styles.SearchBar}>
@@ -77,19 +80,20 @@ export default class Search extends Component {
           <SearchQuery
             updateSearchTerm={this.props.updateSearchTerm}
             addSearchTerm={this.props.addSearchTerm}
-            query={this.props.query} />
+            query={this.props.query}
+            active={this.props.active} />
 
           <div className={styles.Controls}>
 
-          <button title="Redo search" onClick={() => {this.search()}}>
+          <button title="Search" disabled={disabled} onClick={() => {this.search()}}>
             <i className="fa fa-search" aria-hidden="true" />
           </button>
 
-          <button title="Update this search" onClick={() => {this.update()}}>
+          <button title="Update Search" disabled={disabled} onClick={() => {this.update()}}>
             <i className={'fa fa-refresh' + spin} aria-hidden="true" />
           </button>
 
-          <button title="Save this search" onClick={() => {this.save()}}>
+          <button title="Save Search" onClick={() => {this.save()}}>
             <i className="fa fa-plus" aria-hidden="true" />
           </button>
 
@@ -105,7 +109,7 @@ export default class Search extends Component {
 
         </div>
 
-        <div className={card.CardHolder}>
+        <div className={card.CardHolder} style={style}>
 
           <div className={card.Card}>
             <TweetList tweets={this.props.tweets} />
