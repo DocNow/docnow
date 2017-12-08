@@ -26,6 +26,7 @@ export default class Search extends Component {
   }
 
   componentWillUnmount() {
+    this.props.resetTwitterSearch()
     clearInterval(this.timerId)
   }
 

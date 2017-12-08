@@ -97,10 +97,28 @@ export const addSearchTerm = (term) => {
 
 
 export const createSearch = (query) => {
+
+  // clean up any new input in the query
+  const newQuery = []
+  for (const term of query) {
+    const value = term.value.trim()
+    let type = null
+    if (value === '') {
+      continue
+    } else if (value[0] === '@') {
+      type = 'hashtag'
+    } else if (value.match(/ /)) {
+      type = 'phrase'
+    } else {
+      type = 'keyword'
+    }
+    newQuery.push({value, type})
+  }
+
   return (dispatch, getState) => {
     dispatch(resetTwitterSearch())
     const { user } = getState()
-    const body = {user, query}
+    const body = {user, query: newQuery}
     const opts = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},

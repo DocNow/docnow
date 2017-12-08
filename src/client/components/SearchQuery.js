@@ -6,12 +6,13 @@ import styles from '../styles/Search.css'
 export default class SearchQuery extends Component {
 
   onClick() {
-    this.props.addSearchTerm({value: ''})
+    this.props.addSearchTerm({value: '', type: 'input'})
   }
 
   render() {
     return (
       <div onClick={(e) => {this.onClick(e)}} className={styles.SearchQuery}>
+        &nbsp;
         {this.props.query.map((term, i) => (
           <SearchTerm
             key={`t${i}`}

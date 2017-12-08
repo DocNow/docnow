@@ -14,12 +14,11 @@ export default class SearchTerm extends Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    // prevent cursor jumping around when react updates component
-    // after it has already been edited
-    if (nextProps.value !== this.value) {
-      return true
-    } else {
+    // prevent cursor from jumping around when editing
+    if (nextProps.value === this.value) {
       return false
+    } else {
+      return true
     }
   }
 
@@ -60,8 +59,10 @@ export default class SearchTerm extends Component {
         return style.Phrase
       case 'user':
         return style.User
+      case 'input':
+        return style.Input
       default:
-        return style.Keyword
+        return ''
     }
   }
 

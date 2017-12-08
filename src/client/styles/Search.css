@@ -87,3 +87,11 @@ time, .Count  {
 .User {
   background-color: lightpink;
 }
+
+.Input {
+  background-color: white;
+  border: none;
+  border-radius: none;
+  margin: 0px;
+  padding: 0px;
+}

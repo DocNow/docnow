@@ -18,13 +18,18 @@ const initialState = {
   hashtags: [],
   images: [],
   videos: [],
-  urls: []
+  urls: [],
+  queryUpdated: false
 }
 
 export default function user(state = initialState, action) {
   switch (action.type) {
 
     case SET_TWITTER_SEARCH: {
+      if (state.queryUpdated) {
+        action.search.queryUpdated = true
+        action.search.query = state.query
+      }
       return {
         ...state,
         ...action.search
@@ -122,6 +127,7 @@ export default function user(state = initialState, action) {
     case ADD_SEARCH_TERM: {
       return {
         ...state,
+        queryUpdated: true,
         query: [
           ...state.query,
           action.term
