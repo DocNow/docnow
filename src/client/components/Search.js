@@ -48,12 +48,12 @@ export default class Search extends Component {
     // create a temporary title based on the query
     const values = this.props.query.map((q) => {return q.value})
     const title = values.join(' ')
+    this.props.activateSearch()
     this.props.updateSearch({
       id: this.props.searchId,
       title: title,
       saved: true
     })
-    this.props.resetTwitterSearch()
   }
 
   tick() {
@@ -185,6 +185,7 @@ Search.propTypes = {
   getImages: PropTypes.func,
   getVideos: PropTypes.func,
   createSearch: PropTypes.func,
+  activateSearch: PropTypes.func,
   refreshSearch: PropTypes.func,
   updateSearch: PropTypes.func,
   updateSearchTerm: PropTypes.func,

@@ -46,7 +46,7 @@ export default class Webpage extends Component {
             <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-thumbs-down'}/>
           </div>
           <a href={this.props.url} target="_new">
-            <img src={img} />
+            <img rel="noreferrer" src={img} />
           </a>
         </div>
         <div className={style.Title}>

@@ -56,6 +56,7 @@ time, .Count  {
 }
 
 .SearchTerm {
+  min-width: 5px;
   padding: 3px;
   margin: 3px;
   border-radius: 4px;

@@ -10,7 +10,7 @@ export default class SearchTerm extends Component {
   }
 
   componentDidMount() {
-    this.span.focus()
+    this.refs.span.focus()
   }
 
   shouldComponentUpdate(nextProps) {
@@ -72,15 +72,16 @@ export default class SearchTerm extends Component {
     const editable = this.props.onInput ? true : false
     return (
       <span
+        spellCheck={false}
         contentEditable={editable}
         suppressContentEditableWarning={editable}
         onClick={(e) => {this.click(e)}}
         onInput={(e) => {this.update(e)}}
         data-type={type}
         className={style.SearchTerm + ' ' + cssClass}
-        ref={(span) => {this.span = span}}
+        ref="span"
         title={`${type} ${this.props.value}`}>
-        { this.props.value + ' ' }
+        { this.props.value }
       </span>
     )
   }

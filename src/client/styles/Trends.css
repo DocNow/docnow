@@ -30,7 +30,7 @@
   padding: 10px;
 }
 
-input {
+.Trends input {
   border-style: none;
   padding: 2px 2px 2px 2px;
   font-size: 16pt;
@@ -38,11 +38,11 @@ input {
   text-align: center;
 }
 
-input option {
+.Trends input option {
   padding: 2px 2px 2px 2px;
   font-size: 14px;
 }
 
-input:disabled {
+.Trends input:disabled {
   color: #666666;
 }
