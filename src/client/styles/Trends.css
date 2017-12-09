@@ -1,6 +1,5 @@
 .Trends {
-  position: relative;
-  height: 800px;
+  min-height: 80vh;
   margin: 20px 0px 20px 0px;
    /* Location of the image */
   background-image: url("../images/mapbg.png");
