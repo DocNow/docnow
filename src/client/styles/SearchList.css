@@ -1,12 +1,21 @@
 .Grid {
   border: none;
   margin: 20px 60px 20px 60px;
-  color: #444444;
+  color: #000000;
 }
 
 .Grid a {
-  color: #1E77B6;
+  color: #1da1f2;
   text-decoration: none;
+}
+
+.Grid a:hover {
+  cursor: pointer;
+  color: #0f1282;
+}
+
+.Grid a::after {
+  color:#0f1282;
 }
 
 .GridRow {
@@ -22,10 +31,62 @@
   display: flex;
 }
 
-.GridRowGrayInner {
-  display: flex;
+/* The switch - the box around the slider */
+.Switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 24px;
 }
 
+/* Hide default HTML checkbox */
+.Switch input {display:none;}
+
+/* The slider */
+.Slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 24px;
+}
+
+.Slider:before {
+  position: absolute;
+  content: "";
+  height: 17px;
+  width: 17px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .Slider {
+  background-color: #000000;
+}
+
+input:focus + .Slider {
+  box-shadow: 0 0 1px #000000;
+}
+
+input:checked + .Slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+.GridRowGrayInner {
+  display: flex;
+  background-color: #eeeeee;
+}
 
 .GridItem {
   flex: 1;
@@ -51,7 +112,7 @@
   flex: 1;
   padding: 12px;
   border: none;
-  color: #777777;
+  color: #000000;
   font-size: 10pt;
 }
 
@@ -70,16 +131,8 @@
   font-size: 20px;
 }
 
-.fa-pause-circle-o {
-  color: orange;
-}
-
-.fa-stop-circle-o {
+.Trash {
   color: red;
-}
-
-.fa-angle-double-up {
-  color: green;
 }
 
 .InnerGrid {

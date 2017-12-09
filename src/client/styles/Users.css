@@ -2,15 +2,25 @@
   height: 274px;
   overflow-y: scroll;
   overflow-x: hidden;
+  background-color: #000000
+}
+
+.UsersCard::-webkit-scrollbar {
+  width: 15px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.UsersCard::-webkit-scrollbar-thumb {
+  background-color: #0f1282;
 }
 
 .User {
   background-color: #ffffff;
-  margin: 2px;
-  padding: 1px;
+  margin-top: 4px;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  padding: 2px;
   font-size: 10pt;
-  border: 2px solid #CCCCCC;
-  border-radius: 3px;
 }
 
 .User:hover {
@@ -26,7 +36,7 @@
 }
 
 .User a {
-  color: #1E77B6;
+  color: #1da1f2;
 }
 
 .UserProfile {

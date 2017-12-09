@@ -39,13 +39,23 @@ export default class SavedSearch extends Component {
               <div className={style.GridActivity}>
                 Created {created}
               </div>
+
               <div className={style.GridActions}>
                 <div className={style.GridRowGrayInner}>
-                  <div className={style.GridActionsInner} title="pause"><a href=""><i className="fa fa-pause-circle-o" aria-hidden="true" /></a></div>
-                  <div className={style.GridActionsInner} title="stop"><a href=""><i className="fa fa-stop-circle-o" aria-hidden="true" /></a></div>
-                  <div className={style.GridActionsInner} title="turbo boost"><a href=""><i className="fa fa-angle-double-up" aria-hidden="true" /></a></div>
+                  <div className={style.GridActionsInner}>
+                    <label className={style.Switch}>
+                      <input type="checkbox" />
+                      <span className={style.Slider + ' ' + style.Round} />
+                    </label>
+                  </div>
+                  <div className={style.GridActionsInner} title="delete">
+                    <a href="">
+                      <i className={style.Trash + ' fa fa-trash'} aria-hidden="true" />
+                    </a>
+                  </div>
                 </div>
               </div>
+
             </div>
           )
         })}

@@ -4,6 +4,11 @@
   padding: 0;
 }
 
+.App p {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
 .App div {
   position: relative;
 }
@@ -12,9 +17,11 @@
   position: relative;
   text-transform: uppercase;
   color: #444444;
-  font-size: 14pt;
+  font-size: 16pt;
   font-stretch: expanded;
   font-weight: 500;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .App ul {
@@ -28,17 +35,16 @@
 }
 
 .App button {
-  color: #1E77B6;
+  color: #ffffff;
   display: inline-block;
   position: relative;
   height: 36px;
   padding: 0 16px;
   border: none;
-  border-radius: 2px;
-  outline: solid 1px;
-  background: transparent;
+  border-radius: 8px;
+  background-color: #1da1f2;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: .04em;
   line-height: 36px;
   text-align: center;
@@ -52,15 +58,19 @@
   -webkit-appearance: none;
 }
 
-.App button i {
-  padding-left: 5px;
-}
-
 .App button:hover {
   cursor: pointer;
   color: #ffffff !important;
   outline: none !important;
-  background-color: #1e77b6;
+  background-color: #0f1282;
+}
+
+.App button i {
+  padding-left: 5px;
+}
+
+.App h1 a:hover {
+  color: #0f1282
 }
 
 .AppUnder780px li {

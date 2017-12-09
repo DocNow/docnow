@@ -12,13 +12,13 @@ export default class TabBar extends Component {
     let searchlistActive = null
     switch (this.props.location) {
       case '/':
-        trendsActive = styles.Active
+        trendsActive = styles.TabActive
         break
       case '/search/':
-        searchActive = styles.Active
+        searchActive = styles.TabActive
         break
       case '/searches/':
-        searchlistActive = styles.Active
+        searchlistActive = styles.TabActive
         break
       default:
         break
