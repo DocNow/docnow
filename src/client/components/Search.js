@@ -158,6 +158,10 @@ export default class Search extends Component {
           </div>
         </div>
 
+        <br />
+        <br />
+        <br />
+
       </div>
     )
   }

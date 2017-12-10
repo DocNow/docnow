@@ -16,7 +16,7 @@
 .App h2 {
   position: relative;
   text-transform: uppercase;
-  color: #444444;
+  color: #444; 
   font-size: 16pt;
   font-stretch: expanded;
   font-weight: 500;
@@ -24,11 +24,17 @@
   margin-bottom: 5px;
 }
 
+.App h1 {
+  text-transform: uppercase;
+}
+
+/*
 .App ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
+*/
 
 .App li {
   display: inline;
@@ -39,7 +45,8 @@
   display: inline-block;
   position: relative;
   height: 36px;
-  padding: 0 16px;
+  padding: 0px 16px;
+  /* margin: 20px 5px 20px 5px; */
   border: none;
   border-radius: 8px;
   background-color: #1da1f2;

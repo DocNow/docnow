@@ -1,6 +1,7 @@
 .UrlsCard {
   height: 274px;
   overflow-y: scroll;
+  background-color: #000000;
 }
 
 .UrlsCard::-webkit-scrollbar {
