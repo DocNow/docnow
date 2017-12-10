@@ -28,13 +28,11 @@
   text-transform: uppercase;
 }
 
-/*
 .App ul {
   list-style-type: none;
   margin: 0;
   padding: 0;
 }
-*/
 
 .App li {
   display: inline;
