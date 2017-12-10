@@ -28,14 +28,16 @@ describe('internet-archive', function() {
 
     const result1 = await saveArchive(url)
     // sometimes saving to IA fails, and this can return null
-    if (result !== null) {
+    if (result1 !== null) {
       ok(result1.url, 'result.url')
       ok(result1.time, 'result.time')
     }
 
     const result2 = await get(url)
-    equal(result2.url, result1.url)
-    equal(result2.time, result2.time)
+    if (result1 !== null && result2 !== null) {
+      equal(result2.url, result1.url)
+      equal(result2.time, result2.time)
+    }
   })
 
 })
