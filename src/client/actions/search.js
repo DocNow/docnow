@@ -133,7 +133,7 @@ export const createSearch = (query) => {
       .then((resp) => {
         resp.json().then((result) => {
           dispatch(setTwitterSearch(result))
-          dispatch(push('/search/'))
+          dispatch(push('/explore/'))
         })
       })
   }

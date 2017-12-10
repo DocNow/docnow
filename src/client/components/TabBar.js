@@ -14,7 +14,7 @@ export default class TabBar extends Component {
       case '/':
         trendsActive = styles.TabActive
         break
-      case '/search/':
+      case '/explore/':
         searchActive = styles.TabActive
         break
       case '/searches/':
@@ -34,10 +34,10 @@ export default class TabBar extends Component {
             </Link>
           </li>
           <li>
-            <Link className={`${styles.Tab} ${searchActive}`} to="/search/">
+            <Link className={`${styles.Tab} ${searchActive}`} to="/explore/">
               <i className="fa fa-search" aria-hidden="true"/>
               &nbsp;
-              Search
+              Explore
             </Link>
           </li>
           <li>
