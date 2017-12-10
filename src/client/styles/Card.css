@@ -32,10 +32,7 @@
 /* Add some padding inside the card container */
 .CardTitle {
   background-color: #000000;
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  padding: 2px 16px;
+  text-align: center;
 }
 
 .Card .CardTitle h2 {
