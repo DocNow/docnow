@@ -48,6 +48,7 @@ export default class Place extends Component {
       <div className={card.Card}>
         <div className={card.Data}>
           <FlipMove
+            typeName="ul"
             duration={2000}
             enterAnimation="elevator"
             leaveAnimation="fade">
