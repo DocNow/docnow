@@ -9,7 +9,7 @@ import TrendsPage from './TrendsPage'
 import SettingsPage from './SettingsPage'
 import ProfilePage from './ProfilePage'
 import SearchPage from './SearchPage'
-import SavedSearchPage from './SavedSearchPage'
+import WebpagesPage from './WebpagesPage'
 import SearchListPage from './SearchListPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
@@ -48,7 +48,7 @@ class App extends MediaQueryComponent {
           <Route exact path="/settings/" component={SettingsPage} />
           <Route exact path="/profile/$" component={ProfilePage} />
           <Route exact path="/explore/" component={SearchPage} />
-          <Route exact path="/search/:searchId" component={SavedSearchPage} />
+          <Route exact path="/search/:searchId/webpages" component={WebpagesPage} />
           <Route exact path="/searches/" component={SearchListPage} />
         </main>
       </div>

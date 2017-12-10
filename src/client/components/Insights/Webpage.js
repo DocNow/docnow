@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import LazyLoad from 'react-lazy-load'
 import Wayback from './Wayback'
-import style from '../styles/Webpage.css'
-import card from '../styles/Card.css'
-import doc from '../images/doc.png'
+import style from '../../styles/Webpage.css'
+import card from '../../styles/Card.css'
+import doc from '../../images/doc.png'
 
 export default class Webpage extends Component {
 

@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import cardStyle from '../styles/Card.css'
-import webpageStyle from '../styles/Webpage.css'
 import Webpage from './Webpage'
 import TweetsModal from './TweetsModal'
+import cardStyle from '../../styles/Card.css'
+import webpageStyle from '../../styles/Webpage.css'
 
-export default class SavedSearch extends Component {
+export default class Webpages extends Component {
 
   constructor(props) {
     super(props)
@@ -83,7 +83,7 @@ export default class SavedSearch extends Component {
   }
 }
 
-SavedSearch.propTypes = {
+Webpages.propTypes = {
   searchId: PropTypes.string,
   webpages: PropTypes.array,
   getWebpages: PropTypes.func,

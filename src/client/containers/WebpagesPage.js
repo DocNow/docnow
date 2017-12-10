@@ -4,7 +4,7 @@ import { getWebpages, resetWebpages, selectWebpage, deselectWebpage,
          checkArchive, saveArchive } from '../actions/webpages'
 import { getQueueStats } from '../actions/queue'
 import { getTweetsForUrl, resetTweets } from '../actions/tweets'
-import SavedSearch from '../components/SavedSearch'
+import Webpages from '../components/insights/Webpages'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -30,4 +30,4 @@ const actions = {
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
 
-export default connect(mapStateToProps, mapDispatchToProps)(SavedSearch)
+export default connect(mapStateToProps, mapDispatchToProps)(Webpages)

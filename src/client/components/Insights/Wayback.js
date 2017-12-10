@@ -1,8 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-import ia from '../images/ia.png'
-import style from '../styles/Wayback.css'
+import ia from '../../images/ia.png'
+import style from '../../styles/Wayback.css'
 
 export default class Wayback extends Component {
 
