@@ -30,7 +30,9 @@ export default class SearchQuery extends Component {
             pos={i}
             type={term.type}
             onInput={this.props.updateSearchTerm}
-            value={term.value} />
+            value={term.value}
+            createSearch={this.props.createSearch}
+            query={this.props.query} />
         ))}
       </div>
     )
@@ -43,4 +45,5 @@ SearchQuery.propTypes = {
   updateSearchTerm: PropTypes.func,
   addSearchTerm: PropTypes.func,
   active: PropTypes.bool,
+  createSearch: PropTypes.func,
 }

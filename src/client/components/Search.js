@@ -81,7 +81,8 @@ export default class Search extends Component {
             updateSearchTerm={this.props.updateSearchTerm}
             addSearchTerm={this.props.addSearchTerm}
             query={this.props.query}
-            active={this.props.active} />
+            active={this.props.active}
+            createSearch={this.props.createSearch} />
 
           <div className={styles.Controls}>
 

@@ -22,6 +22,13 @@ export default class SearchTerm extends Component {
     }
   }
 
+  keyDown(e) {
+    if (e.key === 'Enter') {
+      this.props.createSearch(this.props.query)
+      e.stopPropagation()
+    }
+  }
+
   update(e) {
     const newValue = e.target.innerText
     this.value = newValue
@@ -75,6 +82,7 @@ export default class SearchTerm extends Component {
         spellCheck={false}
         contentEditable={editable}
         suppressContentEditableWarning={editable}
+        onKeyDown={(e) => {this.keyDown(e)}}
         onClick={(e) => {this.click(e)}}
         onInput={(e) => {this.update(e)}}
         data-type={type}
@@ -92,5 +100,7 @@ SearchTerm.propTypes = {
   type: PropTypes.string,
   value: PropTypes.string,
   onInput: PropTypes.func,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  createSearch: PropTypes.func,
+  query: PropTypes.array,
 }
