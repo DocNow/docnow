@@ -1,6 +1,7 @@
 import uuid from 'uuid/v4'
-import { getRedis } from './redis'
 import elasticsearch from 'elasticsearch'
+import { getRedis, userCountsKey, videoCountsKey, imageCountsKey,
+         tweetCountKey } from './redis'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -458,9 +459,13 @@ export class Database {
                     const bulk = []
                     const seenUsers = new Set()
                     for (const tweet of results) {
+
+                      this.tallyTweet(search, tweet)
+
                       for (const url of tweet.urls) {
                         urlFetcher.add(search, url.long, tweet.id)
                       }
+
                       tweet.search = search.id
                       const id = search.id + ':' + tweet.id
                       bulk.push(
@@ -507,6 +512,17 @@ export class Database {
           })
       })
     })
+  }
+
+  tallyTweet(search, tweet) {
+    this.redis.incr(tweetCountKey(search))
+    this.redis.zincrby(userCountsKey(search), 1, tweet.user.screenName)
+    for (const video of tweet.videos) {
+      this.redis.zincrby(videoCountsKey(search), 1, video)
+    }
+    for (const image of tweet.images) {
+      this.redis.zincrby(imageCountsKey(search), 1, image)
+    }
   }
 
   getTweets(search) {
@@ -564,6 +580,9 @@ export class Database {
         body: body
       }).then((response1) => {
 
+        const total = response1.aggregations.users.buckets
+        console.log()
+
         // with the list of users get the user information for them
 
         const counts = new Map()
@@ -598,6 +617,8 @@ export class Database {
           // sort them by their counts
           users.sort((a, b) => {return b.tweetsInSearch - a.tweetsInSearch})
           resolve(users)
+          console.log(total)
+          // resolve({total: total, users: users})
         })
       }).catch((err) => {
         log.error(err)
