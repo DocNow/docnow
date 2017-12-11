@@ -27,7 +27,7 @@ export default class SavedSearch extends Component {
           return (
             <div key={search.id} className={rowClass}>
               <div className={style.GridTitle}>
-                <Link to={`/search/${search.id}`}>
+                <Link to={`/search/${search.id}/`}>
                   {search.title}
                 </Link>
               </div>

@@ -152,7 +152,7 @@ export const updateSearch = (search) => {
     return fetch(url, opts)
       .then((resp) => resp.json())
       .then(() => {
-        dispatch(push('/search/' + search.id + '/webpages/'))
+        dispatch(push('/search/' + search.id + '/'))
       })
   }
 }
