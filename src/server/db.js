@@ -381,36 +381,38 @@ export class Database {
     return this.add(SEARCH, search.id, search)
   }
 
-  getSearchSummary(search) {
-    return new Promise((resolve, reject) => {
-      const body = {
-        query: {
-          match: {
-            search: search.id
-          }
-        },
-        aggregations: {
-          minDate: {min: {field: 'created'}},
-          maxDate: {max: {field: 'created'}}
+  async getSearchSummary(search) {
+    const body = {
+      query: {
+        match: {
+          search: search.id
         }
+      },
+      aggregations: {
+        minDate: {min: {field: 'created'}},
+        maxDate: {max: {field: 'created'}}
       }
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((resp) => {
-        resolve({
-          ...search,
-          minDate: new Date(resp.aggregations.minDate.value),
-          maxDate: new Date(resp.aggregations.maxDate.value),
-          count: resp.hits.total
-        })
-      })
-      .catch((err) => {
-        log.error(err)
-        reject(err)
-      })
+    }
+
+    const resp = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: body
     })
+
+    const userCount = await this.redis.zcardAsync(userCountsKey(search))
+    const videoCount = await this.redis.zcardAsync(videoCountsKey(search))
+    const imageCount = await this.redis.zcardAsync(imageCountsKey(search))
+
+    return {
+      ...search,
+      minDate: new Date(resp.aggregations.minDate.value),
+      maxDate: new Date(resp.aggregations.maxDate.value),
+      count: resp.hits.total,
+      imageCount: imageCount,
+      videoCount: videoCount,
+      userCount: userCount
+    }
   }
 
   importFromSearch(search, maxTweets = 1000) {
