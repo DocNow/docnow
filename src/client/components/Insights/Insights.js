@@ -1,38 +1,67 @@
 import React, { Component } from 'react'
-// import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import style from '../../styles/SavedSearchInfo.css'
+import SearchInfo from './SearchInfo'
+import TweetEmbed from 'react-tweet-embed'
 import card from '../../styles/Card.css'
 import download from '../../styles/DownloadOptions.css'
 import ttb from '../../styles/TweetTabBar.css'
-import sl from '../../styles/SearchList.css'
 
 export default class Insights extends Component {
+
+  componentDidMount() {
+    this.props.resetTwitterSearch()
+    this.tick()
+    this.props.getUsers(this.props.searchId)
+    this.props.getTweets(this.props.searchId)
+    this.props.getImages(this.props.searchId)
+    this.props.getVideos(this.props.searchId)
+    this.props.getWebpages(this.props.searchId)
+    this.timerId = setInterval(() => {
+      this.tick()
+    }, 3000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId)
+    this.props.resetTwitterSearch()
+  }
+
+  tick() {
+    this.props.getSearch(this.props.searchId)
+  }
+
   render() {
+
+    let webpageImageUrl = ''
+    if (this.props.webpages.length > 0) {
+      webpageImageUrl = this.props.webpages[0].image
+    }
+
+    let imageUrl = ''
+    if (this.props.search.images.length > 0) {
+      imageUrl = this.props.search.images[0].url
+    }
+
+    let videoUrl = ''
+    if (this.props.search.videos.length > 0) {
+      videoUrl = this.props.search.videos[0].url
+    }
+
+    let tweetIds = []
+    if (this.props.search.tweets.length > 0) {
+      tweetIds = this.props.search.tweets.map((t) => {return t.id})
+    }
+
     return (
       <div>
-        <div className={style.SavedSearchInfo}>
-          <div className={style.SavedSearchText}>
-            <h2>Title of Saved Search <i className="fa fa-edit" aria-hidden="true" /></h2>
-            <p>Here is the description of the collection. This will be pretty short most likely and can be edited in situ. <i className="fa fa-edit" aria-hidden="true" /><br />
-              Search started on XX/XX/XX, last updated on XX/XX/XX at XX:XX:XX</p>
-          </div>
 
-          <div className={style.SavedSearchButtons}>
-            <div className={sl.GridActionsInner}>
-              <label className={sl.Switch}>
-                <input type="checkbox" />
-                <span className={sl.Slider + ' ' + sl.Round} />
-              </label>
-              <div className={sl.GridActionsInner} title="delete">
-                <a href="">
-                  <i className="fa fa-trash" className={sl.Trash + ' fa fa-trash'} aria-hidden="true" />
-                </a>
-              </div>
-            </div>
-          </div>
+        <SearchInfo
+          title={this.props.search.title}
+          description={this.props.search.description}
+          search={this.props.search}
+          updateSearch={this.props.updateSearch} />
 
-        </div>
         <div className={ttb.TweetTabBar}>
           <ul>
             <li><a className={ttb.TweetTab + ' ' + ttb.TweetTabActive} href="/"><i className="fa fa-archive" aria-hidden="true" /> All</a></li>
@@ -40,43 +69,59 @@ export default class Insights extends Component {
             <li><a  className={ttb.TweetTab} href="exampleannotated.html"><i className="fa fa-comment" aria-hidden="true" /> Annotated</a></li>
           </ul>
         </div>
-          <div className={card.CardHolder}>
-            <div className={card.SavedShortCard}>
-              <h1><a href="/">24,861<br />tweets</a></h1>
-           </div>
-           <div className={card.SavedLongCard}>
-             <img src="images/exampletimeline.png" style={{height: '280px'}} />
-           </div>
-         </div>
-         <div className={card.CardHolder}>
-           <div className={card.SavedShortCard}>
-             <h1><a href="/">542<br />users</a></h1>
-           </div>
-           <div className={card.SavedShortGraphCard}>
-              <img src="images/exampleuserchart.png" style={{height: '280px'}} />
-           </div>
-           <div className={card.SavedShortGraphCard}>
-             <img src="images/examplenetwork.png" style={{height: '280px'}} />
-           </div>
-         </div>
-         <div className={card.CardHolder}>
-           <div className={card.SavedImageCard}>
-             <img src="images/examplewebsite.png" />
-             <h1><a href="/">42<br />URLs</a></h1>
-           </div>
-           <div className={card.SavedImageCard}>
-             <img src="images/image.png" />
-             <h1><a href="/">98<br />images</a></h1>
-           </div>
-           <div className={card.SavedImageCard}>
-             <img src="images/image.png" />
-             <h1><a href="/">17<br />videos</a></h1>
-           </div>
-         </div>
-         <div className={download.DownloadOptions}j>
-           <button type="button">Download Full Data</button>
-           <button type="button">Download Selected</button>
+
+        <div className={card.CardHolder}>
+          <div className={card.SavedShortCard}>
+            <h1><a href="/">{this.props.search.userCount.toLocaleString()}<br />users</a></h1>
+          </div>
+          <div className={card.SavedLongCard}>
+           {this.props.search.users.slice(0, 78).map((u) => {
+             return (
+               <a key={u.screenName} href={`https://twitter.com/${u.screenName}`} target="_new">
+                 <img src={u.avatarUrl} />
+               </a>
+             )
+           })}
+          </div>
         </div>
+
+        <div className={card.CardHolder}>
+          <div className={card.SavedShortCard}>
+            <h1><a href="/">{parseInt(this.props.search.tweetCount, 10).toLocaleString()}<br />tweets</a></h1>
+          </div>
+          <div className={card.SavedLongCard}>
+            <TweetEmbed
+              id={tweetIds[0]}
+              joptions={{cards: 'hidden'}} />
+          </div>
+        </div>
+
+        <div className={card.CardHolder}>
+          <div className={card.SavedImageCard}>
+            <img src={webpageImageUrl} />
+            <h1>
+              <Link to={`/search/${this.props.searchId}/webpages/`}>
+                {parseInt(this.props.search.urlCount, 10).toLocaleString()}
+                <br />
+                Webpages
+              </Link>
+            </h1>
+          </div>
+          <div className={card.SavedImageCard}>
+            <img src={imageUrl} />
+              <h1><a href="/">{parseInt(this.props.search.imageCount, 10).toLocaleString()}<br />images</a></h1>
+          </div>
+          <div className={card.SavedImageCard}>
+            <video src={videoUrl} />
+            <h1><a href="/">{parseInt(this.props.search.videoCount, 10).toLocaleString()}<br />videos</a></h1>
+          </div>
+        </div>
+
+        <div className={download.DownloadOptions}>
+          <button type="button">Download Full Data</button>
+          <button type="button">Download Selected</button>
+        </div>
+
       </div>
     )
   }
@@ -84,4 +129,14 @@ export default class Insights extends Component {
 
 Insights.propTypes = {
   searchId: PropTypes.string,
+  search: PropTypes.object,
+  webpages: PropTypes.array,
+  getSearch: PropTypes.func,
+  getTweets: PropTypes.func,
+  getUsers: PropTypes.func,
+  getVideos: PropTypes.func,
+  getImages: PropTypes.func,
+  getWebpages: PropTypes.func,
+  resetTwitterSearch: PropTypes.func,
+  updateSearch: PropTypes.func,
 }

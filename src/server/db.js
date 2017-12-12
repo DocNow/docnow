@@ -1,7 +1,7 @@
 import uuid from 'uuid/v4'
 import elasticsearch from 'elasticsearch'
-import { getRedis, userCountsKey, videoCountsKey, imageCountsKey,
-         tweetCountKey } from './redis'
+import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
+         tweetsCountKey, urlsKey } from './redis'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -336,6 +336,7 @@ export class Database {
         creator: user.id,
         query: query,
         created: new Date().toISOString(),
+        updated: new Date(),
         maxTweetId: null,
         active: true
       }
@@ -378,6 +379,7 @@ export class Database {
   }
 
   updateSearch(search) {
+    search.updated = new Date()
     return this.add(SEARCH, search.id, search)
   }
 
@@ -400,18 +402,20 @@ export class Database {
       body: body
     })
 
-    const userCount = await this.redis.zcardAsync(userCountsKey(search))
-    const videoCount = await this.redis.zcardAsync(videoCountsKey(search))
-    const imageCount = await this.redis.zcardAsync(imageCountsKey(search))
+    const userCount = await this.redis.zcardAsync(usersCountKey(search))
+    const videoCount = await this.redis.zcardAsync(videosCountKey(search))
+    const imageCount = await this.redis.zcardAsync(imagesCountKey(search))
+    const urlCount = await this.redis.zcardAsync(urlsKey(search))
 
     return {
       ...search,
       minDate: new Date(resp.aggregations.minDate.value),
       maxDate: new Date(resp.aggregations.maxDate.value),
-      count: resp.hits.total,
+      tweetCount: resp.hits.total,
       imageCount: imageCount,
       videoCount: videoCount,
-      userCount: userCount
+      userCount: userCount,
+      urlCount: urlCount
     }
   }
 
@@ -517,13 +521,13 @@ export class Database {
   }
 
   tallyTweet(search, tweet) {
-    this.redis.incr(tweetCountKey(search))
-    this.redis.zincrby(userCountsKey(search), 1, tweet.user.screenName)
+    this.redis.incr(tweetsCountKey(search))
+    this.redis.zincrby(usersCountKey(search), 1, tweet.user.screenName)
     for (const video of tweet.videos) {
-      this.redis.zincrby(videoCountsKey(search), 1, video)
+      this.redis.zincrby(videosCountKey(search), 1, video)
     }
     for (const image of tweet.images) {
-      this.redis.zincrby(imageCountsKey(search), 1, image)
+      this.redis.zincrby(imagesCountKey(search), 1, image)
     }
   }
 
@@ -582,11 +586,7 @@ export class Database {
         body: body
       }).then((response1) => {
 
-        const total = response1.aggregations.users.buckets
-        console.log()
-
         // with the list of users get the user information for them
-
         const counts = new Map()
         const buckets = response1.aggregations.users.buckets
         buckets.map((c) => {counts.set(c.key, c.doc_count)})
@@ -619,8 +619,6 @@ export class Database {
           // sort them by their counts
           users.sort((a, b) => {return b.tweetsInSearch - a.tweetsInSearch})
           resolve(users)
-          console.log(total)
-          // resolve({total: total, users: users})
         })
       }).catch((err) => {
         log.error(err)
@@ -833,6 +831,7 @@ export class Database {
           id: {type: 'keyword'},
           type: {type: 'keyword'},
           title: {type: 'text'},
+          description: {type: 'text'},
           created: {type: 'date', format: 'date_time'},
           creator: {type: 'keyword'},
           active: {type: 'boolean'},

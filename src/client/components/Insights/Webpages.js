@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Webpage from './Webpage'
 import TweetsModal from './TweetsModal'
+import SearchInfo from './SearchInfo'
 import cardStyle from '../../styles/Card.css'
 import webpageStyle from '../../styles/Webpage.css'
 
@@ -14,6 +15,7 @@ export default class Webpages extends Component {
   }
 
   componentWillMount() {
+    this.tick()
     this.props.resetWebpages()
     this.props.resetTweets()
     this.tick()
@@ -31,6 +33,7 @@ export default class Webpages extends Component {
   }
 
   tick() {
+    this.props.getSearch(this.props.searchId)
     if (this.props.webpages.length === 0 || this.scrolledUp()) {
       this.props.getQueueStats(this.props.searchId)
       this.props.getWebpages(this.props.searchId)
@@ -55,6 +58,12 @@ export default class Webpages extends Component {
         <div className={webpageStyle.Queue}>
           URLs Checked: {this.props.total - this.props.remaining}/{this.props.total}
         </div>
+
+        <SearchInfo
+          title={this.props.search.title}
+          description={this.props.search.description}
+          search={this.props.search}
+          updateSearch={this.props.updateSearch} />
 
         <div className={cardStyle.CardHolder}>
           {this.props.webpages.map((w) => (
@@ -85,6 +94,7 @@ export default class Webpages extends Component {
 
 Webpages.propTypes = {
   searchId: PropTypes.string,
+  search: PropTypes.object,
   webpages: PropTypes.array,
   getWebpages: PropTypes.func,
   resetWebpages: PropTypes.func,
@@ -98,4 +108,6 @@ Webpages.propTypes = {
   deselectWebpage: PropTypes.func,
   checkArchive: PropTypes.func,
   saveArchive: PropTypes.func,
+  getSearch: PropTypes.func,
+  updateSearch: PropTypes.func,
 }
