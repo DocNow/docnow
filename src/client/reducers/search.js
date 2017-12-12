@@ -8,6 +8,8 @@ import {
 const initialState = {
   id: '',
   creator: '',
+  title: '',
+  description: '',
   query: [],
   created: '',
   minDate: '',
@@ -19,7 +21,12 @@ const initialState = {
   images: [],
   videos: [],
   urls: [],
-  queryUpdated: false
+  queryUpdated: false,
+  tweetCount: 0,
+  userCount: 0,
+  videoCount: 0,
+  imageCount: 0,
+  urlCount: 0
 }
 
 export default function user(state = initialState, action) {

@@ -175,6 +175,7 @@ app.get('/search/:searchId', (req, res) => {
 app.put('/search/:searchId', (req, res) => {
   if (req.user) {
     let newSearch = req.body
+    console.log(req.body)
     db.getSearch(newSearch.id).then((search) => {
       newSearch = {...search, ...newSearch}
       db.updateSearch(newSearch)

@@ -49,7 +49,7 @@ export default class Search extends Component {
     const values = this.props.query.map((q) => {return q.value})
     const title = values.join(' ')
     this.props.activateSearch()
-    this.props.updateSearch({
+    this.props.saveSearch({
       id: this.props.searchId,
       title: title,
       saved: true
@@ -195,4 +195,5 @@ Search.propTypes = {
   updateSearch: PropTypes.func,
   updateSearchTerm: PropTypes.func,
   addSearchTerm: PropTypes.func,
+  saveSearch: PropTypes.func,
 }

@@ -40,7 +40,9 @@
 }
 
 /* Hide default HTML checkbox */
-.Switch input {display:none;}
+.Switch input {
+  display:none;
+}
 
 /* The slider */
 .Slider {

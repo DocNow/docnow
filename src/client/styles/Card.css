@@ -132,13 +132,31 @@ select:disabled {
 }
 
 .SavedImageCard img {
-  opacity: .3;
+  opacity: .4;
+  max-height: 200px;
+  max-width: 300px;
+}
+
+.SavedImageCard video {
+  opacity: .4;
+  max-height: 200px;
+  max-width: 300px;
+}
+
+.SavedImageCard h1 {
+  position: absolute;
+  background-color: rgba(255,255,255,0.6);
+  width: 300px;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 }
 
 .SavedLongCard {
   display: flex;
-  flex-direction: column;
-  justify-content:  space-between;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
   padding: 0;
   box-sizing: border-box;
   border-radius: 2px;
@@ -146,6 +164,10 @@ select:disabled {
   height: 300px;
   width: 660px;
   margin-top: 20px;
+}
+
+.SavedLongCard img {
+  max-width: 48px;
 }
 
 @media screen and (max-width: 660px) {
