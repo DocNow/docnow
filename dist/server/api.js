@@ -226,6 +226,7 @@ app.get('/search/:searchId', function (req, res) {
 app.put('/search/:searchId', function (req, res) {
   if (req.user) {
     var newSearch = req.body;
+    console.log(req.body);
     db.getSearch(newSearch.id).then(function (search) {
       newSearch = (0, _extends3.default)({}, search, newSearch);
       db.updateSearch(newSearch);

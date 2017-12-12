@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.waybackKey = exports.deselectedUrlsKey = exports.selectedUrlsKey = exports.tweetsKey = exports.urlsCountKey = exports.queueCountKey = exports.urlsKey = exports.metadataKey = exports.urlKey = undefined;
+exports.videosCountKey = exports.imagesCountKey = exports.usersCountKey = exports.tweetsCountKey = exports.waybackKey = exports.deselectedUrlsKey = exports.selectedUrlsKey = exports.tweetsKey = exports.urlsCountKey = exports.queueCountKey = exports.urlsKey = exports.metadataKey = exports.urlKey = undefined;
 exports.getRedis = getRedis;
 
 var _redis = require('redis');
@@ -86,4 +86,24 @@ var deselectedUrlsKey = exports.deselectedUrlsKey = function deselectedUrlsKey(s
 // metadata for wayback information for a url
 var waybackKey = exports.waybackKey = function waybackKey(url) {
   return 'wayback:' + url;
+};
+
+// number of tweets in a search
+var tweetsCountKey = exports.tweetsCountKey = function tweetsCountKey(search) {
+  return 'tweetcount:' + search.id;
+};
+
+// user counts for a search
+var usersCountKey = exports.usersCountKey = function usersCountKey(search) {
+  return 'usercounts:' + search.id;
+};
+
+// image counts for a search
+var imagesCountKey = exports.imagesCountKey = function imagesCountKey(search) {
+  return 'imagecounts:' + search.id;
+};
+
+// video counts for a search
+var videosCountKey = exports.videosCountKey = function videosCountKey(search) {
+  return 'videocounts:' + search.id;
 };
