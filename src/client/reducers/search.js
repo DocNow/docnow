@@ -8,6 +8,8 @@ import {
 const initialState = {
   id: '',
   creator: '',
+  title: '',
+  description: '',
   query: [],
   created: '',
   minDate: '',
@@ -18,13 +20,23 @@ const initialState = {
   hashtags: [],
   images: [],
   videos: [],
-  urls: []
+  urls: [],
+  queryUpdated: false,
+  tweetCount: 0,
+  userCount: 0,
+  videoCount: 0,
+  imageCount: 0,
+  urlCount: 0
 }
 
 export default function user(state = initialState, action) {
   switch (action.type) {
 
     case SET_TWITTER_SEARCH: {
+      if (state.queryUpdated) {
+        action.search.queryUpdated = true
+        action.search.query = state.query
+      }
       return {
         ...state,
         ...action.search
@@ -98,6 +110,7 @@ export default function user(state = initialState, action) {
       })
       return {
         ...state,
+        queryUpdated: true,
         query: newQuery
       }
     }
@@ -115,6 +128,7 @@ export default function user(state = initialState, action) {
       })
       return {
         ...state,
+        queryUpdated: true,
         query: newQuery
       }
     }
@@ -122,6 +136,7 @@ export default function user(state = initialState, action) {
     case ADD_SEARCH_TERM: {
       return {
         ...state,
+        queryUpdated: true,
         query: [
           ...state.query,
           action.term

@@ -56,6 +56,7 @@ time, .Count  {
 }
 
 .SearchTerm {
+  min-width: 5px;
   padding: 3px;
   margin: 3px;
   border-radius: 4px;
@@ -85,5 +86,13 @@ time, .Count  {
 }
 
 .User {
-  background-color: lightpink;
+  background-color: lightyellow;
+}
+
+.Input {
+  background-color: white;
+  border: none;
+  border-radius: none;
+  margin: 0px;
+  padding: 0px;
 }

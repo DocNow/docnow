@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-require('babel-register')()
-
 import path from 'path'
 import morgan from 'morgan'
 import webpack from 'webpack'
@@ -51,15 +49,15 @@ if (isDevelopment) {
     res.write(compiler.outputFileSystem.readFileSync(htmlFile))
     res.end()
   })
+  
+  // log additional information about unhandled promises so they can be debugged
+  process.on('unhandledRejection', (reason, p) => {
+    log.warn('Unhandled Rejection at:', p, 'reason:', reason)
+  })
 } else {
   app.use(express.static(clientDir))
   app.get('*', (req, res) => res.sendFile(path.join(clientDir, 'index.html')))
 }
-
-// log additional information about unhandled promises so they can be debugged
-process.on('unhandledRejection', (reason, p) => {
-  log.warn('Unhandled Rejection at:', p, 'reason:', reason)
-})
 
 // maybe it's a bad idea to have the server fetching urls
 // by default, but it doesn't seem problematic to have one

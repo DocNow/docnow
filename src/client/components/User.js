@@ -17,7 +17,15 @@ export default class User extends Component {
     })
   }
 
+  viewTwitterUser(e) {
+    e.stopPropagation()
+    const url = 'https://twitter.com/' + this.props.data.screenName
+    const win = window.open(url, '_new')
+    win.focus()
+  }
+
   render() {
+    const countHelper = this.props.data.screenName + ' has tweeted ' + this.props.data.tweetsInSearch + ' times in this search'
     return (
       <div onClick={() => {this.addUser()}} className={style.User}>
         <div className={style.UserProfile}>
@@ -25,23 +33,26 @@ export default class User extends Component {
           <div className={style.UserName}>
             {this.props.data.name}
           </div>
-          <div className={style.UserHandle}>
-            <a href={'https://twitter.com/' + this.props.data.screenName}>
-              @{this.props.data.screenName}
-            </a>
+          &nbsp;
+          <div className={style.UserHandle} onClick={(e) => {this.viewTwitterUser(e)}}>
+            @{this.props.data.screenName}
           </div>
         </div>
-        <div className={style.Inline}>
-          <b>{this.props.data.followersCount}</b> <br /> followers
-        </div>
-        <div className={style.Inline}>
-          <b>{this.props.data.friendsCount}</b> <br /> following
-        </div>
-        <div className={style.Inline}>
-          <b>{this.props.data.tweetsCount}</b> <br /> tweets
-        </div>
-        <div className={style.UserCount}>
-          {this.props.data.tweetsInSearch}
+        <div className={style.UserStats}>
+          <div>
+            <b>{this.props.data.followersCount}</b> <br /> followers
+          </div>
+          <div>
+            <b>{this.props.data.friendsCount}</b> <br /> following
+          </div>
+          <div>
+            <b>{this.props.data.tweetsCount}</b> <br /> tweets
+          </div>
+          <div className={style.UserCount}>
+            <span alt={countHelper} title={countHelper}>
+              {this.props.data.tweetsInSearch}
+            </span>
+          </div>
         </div>
         <hr />
         <p>{this.props.data.description}</p>

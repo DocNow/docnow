@@ -13,9 +13,13 @@ export default class UrlList extends Component {
     return (
         <div className={styles.UrlsCard}>
           {loader}
+          <ul>
           {this.props.urls.map(u => (
-            <Url key={u.url} url={u.url} count={u.count} />
+            <li key={u.url}>
+              <Url url={u.url} count={u.count} />
+            </li>
           ))}
+          </ul>
         </div>
     )
   }
