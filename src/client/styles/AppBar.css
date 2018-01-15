@@ -1,7 +1,7 @@
 .AppBar {
   display: flex;
   justify-content: flex-end;
-  background-color: #000000;
+  background-color: #333333;
   color: #ffffff;
   font-size: 9pt;
 }

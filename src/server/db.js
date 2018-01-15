@@ -1,6 +1,7 @@
 import uuid from 'uuid/v4'
-import { getRedis } from './redis'
 import elasticsearch from 'elasticsearch'
+import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
+         tweetsCountKey, urlsKey } from './redis'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -335,6 +336,7 @@ export class Database {
         creator: user.id,
         query: query,
         created: new Date().toISOString(),
+        updated: new Date(),
         maxTweetId: null,
         active: true
       }
@@ -377,39 +379,44 @@ export class Database {
   }
 
   updateSearch(search) {
+    search.updated = new Date()
     return this.add(SEARCH, search.id, search)
   }
 
-  getSearchSummary(search) {
-    return new Promise((resolve, reject) => {
-      const body = {
-        query: {
-          match: {
-            search: search.id
-          }
-        },
-        aggregations: {
-          minDate: {min: {field: 'created'}},
-          maxDate: {max: {field: 'created'}}
+  async getSearchSummary(search) {
+    const body = {
+      query: {
+        match: {
+          search: search.id
         }
+      },
+      aggregations: {
+        minDate: {min: {field: 'created'}},
+        maxDate: {max: {field: 'created'}}
       }
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((resp) => {
-        resolve({
-          ...search,
-          minDate: new Date(resp.aggregations.minDate.value),
-          maxDate: new Date(resp.aggregations.maxDate.value),
-          count: resp.hits.total
-        })
-      })
-      .catch((err) => {
-        log.error(err)
-        reject(err)
-      })
+    }
+
+    const resp = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: body
     })
+
+    const userCount = await this.redis.zcardAsync(usersCountKey(search))
+    const videoCount = await this.redis.zcardAsync(videosCountKey(search))
+    const imageCount = await this.redis.zcardAsync(imagesCountKey(search))
+    const urlCount = await this.redis.zcardAsync(urlsKey(search))
+
+    return {
+      ...search,
+      minDate: new Date(resp.aggregations.minDate.value),
+      maxDate: new Date(resp.aggregations.maxDate.value),
+      tweetCount: resp.hits.total,
+      imageCount: imageCount,
+      videoCount: videoCount,
+      userCount: userCount,
+      urlCount: urlCount
+    }
   }
 
   importFromSearch(search, maxTweets = 1000) {
@@ -458,9 +465,13 @@ export class Database {
                     const bulk = []
                     const seenUsers = new Set()
                     for (const tweet of results) {
+
+                      this.tallyTweet(search, tweet)
+
                       for (const url of tweet.urls) {
                         urlFetcher.add(search, url.long, tweet.id)
                       }
+
                       tweet.search = search.id
                       const id = search.id + ':' + tweet.id
                       bulk.push(
@@ -507,6 +518,17 @@ export class Database {
           })
       })
     })
+  }
+
+  tallyTweet(search, tweet) {
+    this.redis.incr(tweetsCountKey(search))
+    this.redis.zincrby(usersCountKey(search), 1, tweet.user.screenName)
+    for (const video of tweet.videos) {
+      this.redis.zincrby(videosCountKey(search), 1, video)
+    }
+    for (const image of tweet.images) {
+      this.redis.zincrby(imagesCountKey(search), 1, image)
+    }
   }
 
   getTweets(search) {
@@ -565,7 +587,6 @@ export class Database {
       }).then((response1) => {
 
         // with the list of users get the user information for them
-
         const counts = new Map()
         const buckets = response1.aggregations.users.buckets
         buckets.map((c) => {counts.set(c.key, c.doc_count)})
@@ -810,6 +831,7 @@ export class Database {
           id: {type: 'keyword'},
           type: {type: 'keyword'},
           title: {type: 'text'},
+          description: {type: 'text'},
           created: {type: 'date', format: 'date_time'},
           creator: {type: 'keyword'},
           active: {type: 'boolean'},

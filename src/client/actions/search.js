@@ -97,10 +97,31 @@ export const addSearchTerm = (term) => {
 
 
 export const createSearch = (query) => {
+
+  // clean up any new input in the query
+  const newQuery = []
+  for (const term of query) {
+    const value = term.value.trim()
+    let type = null
+    if (value === '') {
+      continue
+    } else if (value[0] === '@') {
+      type = 'user'
+    } else if (value[0] === '#') {
+      type = 'hashtag'
+    } else if (value.match(/ /)) {
+      type = 'phrase'
+    } else {
+      type = 'keyword'
+    }
+    newQuery.push({value, type})
+  }
+
   return (dispatch, getState) => {
     dispatch(resetTwitterSearch())
+    dispatch(activateSearch())
     const { user } = getState()
-    const body = {user, query}
+    const body = {user, query: newQuery}
     const opts = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
@@ -112,7 +133,7 @@ export const createSearch = (query) => {
       .then((resp) => {
         resp.json().then((result) => {
           dispatch(setTwitterSearch(result))
-          dispatch(push('/search/'))
+          dispatch(push('/explore/'))
         })
       })
   }
@@ -121,6 +142,7 @@ export const createSearch = (query) => {
 export const updateSearch = (search) => {
   return (dispatch) => {
     dispatch(activateSearch())
+    dispatch(setTwitterSearch(search))
     const opts = {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
@@ -130,9 +152,16 @@ export const updateSearch = (search) => {
     const url = `/api/v1/search/${search.id}`
     return fetch(url, opts)
       .then((resp) => resp.json())
-      .then(() => {
-        dispatch(push('/search/' + search.id))
+      .then((result) => {
+        dispatch(setTwitterSearch(result))
       })
+  }
+}
+
+export const saveSearch = (search) => {
+  return (dispatch) => {
+    dispatch(updateSearch(search))
+    dispatch(push(`/search/${search.id}`))
   }
 }
 

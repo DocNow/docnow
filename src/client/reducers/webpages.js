@@ -1,5 +1,5 @@
 import { SET_WEBPAGES, RESET_WEBPAGES, SELECT_WEBPAGE,
-         DESELECT_WEBPAGE, SET_WEBPAGE_ARCHIVE } from '../actions/webpages'
+         DESELECT_WEBPAGE, SET_WEBPAGE_ARCHIVE, ARCHIVE_ERROR } from '../actions/webpages'
 
 const initialState = []
 
@@ -54,6 +54,25 @@ export default function savedSearch(state = initialState, action) {
             archive: {
               url: action.archiveUrl,
               time: action.archiveTime
+            }
+          },
+          ...state.slice(i + 1)
+        ]
+      } else {
+        return state
+      }
+    }
+
+    case ARCHIVE_ERROR: {
+      const i = state.findIndex((w) => {return w.url === action.url})
+      if (i >= 0) {
+        const w = state[i]
+        return [
+          ...state.slice(0, i),
+          {
+            ...w,
+            archive: {
+              error: true
             }
           },
           ...state.slice(i + 1)

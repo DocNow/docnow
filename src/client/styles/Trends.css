@@ -1,6 +1,5 @@
 .Trends {
-  position: relative;
-  height: 800px;
+  min-height: 80vh;
   margin: 20px 0px 20px 0px;
    /* Location of the image */
   background-image: url("../images/mapbg.png");
@@ -30,7 +29,7 @@
   padding: 10px;
 }
 
-input {
+.Trends input {
   border-style: none;
   padding: 2px 2px 2px 2px;
   font-size: 16pt;
@@ -38,11 +37,11 @@ input {
   text-align: center;
 }
 
-input option {
+.Trends input option {
   padding: 2px 2px 2px 2px;
   font-size: 14px;
 }
 
-input:disabled {
+.Trends input:disabled {
   color: #666666;
 }

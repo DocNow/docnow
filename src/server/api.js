@@ -175,6 +175,7 @@ app.get('/search/:searchId', (req, res) => {
 app.put('/search/:searchId', (req, res) => {
   if (req.user) {
     let newSearch = req.body
+    console.log(req.body)
     db.getSearch(newSearch.id).then((search) => {
       newSearch = {...search, ...newSearch}
       db.updateSearch(newSearch)
@@ -315,9 +316,16 @@ app.get('/search/:searchId/queue', async (req, res) => {
   }
 })
 
-app.get('/wayback/', async (req, res) => {
+app.get('/wayback/:url', async (req, res) => {
   if (req.user) {
-    const result = await wayback.closest(req.query.url)
+    const result = await wayback.closest(req.params.url)
+    res.json(result)
+  }
+})
+
+app.put('/wayback/:url', async (req, res) => {
+  if (req.user) {
+    const result = await wayback.saveArchive(req.params.url)
     res.json(result)
   }
 })

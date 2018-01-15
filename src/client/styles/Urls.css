@@ -1,22 +1,39 @@
 .UrlsCard {
   height: 274px;
-  background-color: #C8D2D3;
   overflow-y: scroll;
-  overflow-x: hidden;
+  background-color: #000000;
 }
 
-.URLsCard a {
-  color: #1E77B6;
+.UrlsCard::-webkit-scrollbar {
+  width: 15px;
+  border-bottom: 1px solid #ffffff;
 }
 
-.Urls {
+.UrlsCard::-webkit-scrollbar-thumb {
+  background-color: #0f1282;
+}
+
+.UrlsCard ul {
+  width: 310px;
   background-color: #ffffff;
   margin: 5px;
   padding: 5px;
-  font-size: 11pt;
-  border: 1px solid #CCCCCC;
+  height: 242px;
+}
+
+.UrlsCard li {
+  display: block;
+  border-bottom: solid 1px #CCCCCC;
   border-radius: 3px;
+  font-size: 10pt;
+  padding-top: 5px;
+  padding-bottom: 5px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+.UrlsCard a {
+  color: #1da1f2;
+}
+

@@ -10,16 +10,22 @@ export default class SearchTerm extends Component {
   }
 
   componentDidMount() {
-    this.span.focus()
+    this.refs.span.focus()
   }
 
   shouldComponentUpdate(nextProps) {
-    // prevent cursor jumping around when react updates component
-    // after it has already been edited
-    if (nextProps.value !== this.value) {
-      return true
-    } else {
+    // prevent cursor from jumping around when editing
+    if (nextProps.value === this.value) {
       return false
+    } else {
+      return true
+    }
+  }
+
+  keyDown(e) {
+    if (e.key === 'Enter') {
+      this.props.createSearch(this.props.query)
+      e.stopPropagation()
     }
   }
 
@@ -60,8 +66,10 @@ export default class SearchTerm extends Component {
         return style.Phrase
       case 'user':
         return style.User
+      case 'input':
+        return style.Input
       default:
-        return style.Keyword
+        return ''
     }
   }
 
@@ -71,15 +79,17 @@ export default class SearchTerm extends Component {
     const editable = this.props.onInput ? true : false
     return (
       <span
+        spellCheck={false}
         contentEditable={editable}
         suppressContentEditableWarning={editable}
+        onKeyDown={(e) => {this.keyDown(e)}}
         onClick={(e) => {this.click(e)}}
         onInput={(e) => {this.update(e)}}
         data-type={type}
         className={style.SearchTerm + ' ' + cssClass}
-        ref={(span) => {this.span = span}}
+        ref="span"
         title={`${type} ${this.props.value}`}>
-        { this.props.value + ' ' }
+        { this.props.value }
       </span>
     )
   }
@@ -90,5 +100,7 @@ SearchTerm.propTypes = {
   type: PropTypes.string,
   value: PropTypes.string,
   onInput: PropTypes.func,
-  onClick: PropTypes.func
+  onClick: PropTypes.func,
+  createSearch: PropTypes.func,
+  query: PropTypes.array,
 }

@@ -2,9 +2,9 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import LazyLoad from 'react-lazy-load'
 import Wayback from './Wayback'
-import style from '../styles/Webpage.css'
-import card from '../styles/Card.css'
-import doc from '../images/doc.png'
+import style from '../../styles/Webpage.css'
+import card from '../../styles/Card.css'
+import doc from '../../images/doc.png'
 
 export default class Webpage extends Component {
 
@@ -18,6 +18,10 @@ export default class Webpage extends Component {
 
   deselect() {
     this.props.deselectWebpage(this.props.searchId, this.props.url)
+  }
+
+  archive() {
+    this.props.archive(this.props.url)
   }
 
   render() {
@@ -42,7 +46,7 @@ export default class Webpage extends Component {
             <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-thumbs-down'}/>
           </div>
           <a href={this.props.url} target="_new">
-            <img src={img} />
+            <img rel="noreferrer" src={img} />
           </a>
         </div>
         <div className={style.Title}>
@@ -68,7 +72,8 @@ export default class Webpage extends Component {
             <Wayback
               url={this.props.url}
               archive={this.props.archive}
-              checkArchive={this.props.checkArchive}/>
+              checkArchive={this.props.checkArchive}
+              saveArchive={this.props.saveArchive}/>
           </LazyLoad>
         </div>
       </div>
@@ -91,4 +96,5 @@ Webpage.propTypes = {
   selectWebpage: PropTypes.func,
   deselectWebpage: PropTypes.func,
   checkArchive: PropTypes.func,
+  saveArchive: PropTypes.func,
 }

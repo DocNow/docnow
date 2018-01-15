@@ -1,7 +1,7 @@
 .Header {
   display: flex;
-  background-color: #4A4A4A;
-  height: 60px;
+  border-bottom: 3px solid #000000;
+  height: 65px;
   margin-bottom: 20px;
 }
 
@@ -15,16 +15,17 @@
   position: relative;
   margin: 0 auto;
   padding-top: 10px;
+  margin-bottom: 10px;
 }
 
-.HeaderUnder480px {
+.HeaderUnder480px header {
   height: 50px;
 }
 
-.HeaderUnder480px avatar img {
+.HeaderUnder480px .Avatar img {
   width: 90%
 }
 
-.HeaderUnder480px logo img {
+.HeaderUnder480px .Logo img {
   width: 80%;
 }

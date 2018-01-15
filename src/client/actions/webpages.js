@@ -3,6 +3,7 @@ export const RESET_WEBPAGES = 'RESET_WEBPAGES'
 export const SELECT_WEBPAGE = 'SELECT_WEBPAGE'
 export const DESELECT_WEBPAGE = 'DESELECT_WEBPAGE'
 export const SET_WEBPAGE_ARCHIVE = 'SET_WEBPAGE_ARCHIVE'
+export const ARCHIVE_ERROR = 'ARCHIVE_ERROR'
 
 export const setWebpages = (webpages) => {
   return {
@@ -63,7 +64,7 @@ export const deselectWebpage = (searchId, url) => {
 
 export const checkArchive = (url) => {
   return (dispatch) => {
-    const apiUrl = '/api/v1/wayback?url=' + encodeURIComponent(url)
+    const apiUrl = '/api/v1/wayback/' + encodeURIComponent(url)
     fetch(apiUrl, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
@@ -76,5 +77,26 @@ export const checkArchive = (url) => {
           })
         }
       })
+  }
+}
+
+export const saveArchive = (url) => {
+  return async (dispatch) => {
+    const apiUrl = '/api/v1/wayback/' + encodeURIComponent(url)
+    const resp = await fetch(apiUrl, {credentials: 'same-origin', method: 'PUT'})
+    const result = await resp.json()
+    if (result) {
+      dispatch({
+        type: SET_WEBPAGE_ARCHIVE,
+        url: url,
+        archiveUrl: result.url,
+        archiveTime: result.time
+      })
+    } else {
+      dispatch({
+        type: ARCHIVE_ERROR,
+        url: url
+      })
+    }
   }
 }

@@ -17,9 +17,7 @@ export default class Place extends Component {
     let trends = null
     let remove = null
     if (this.props.username) {
-      remove = (
-        <a href="#" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}}><i className="fa fa-minus" aria-hidden="true"/></a>
-      )
+      remove = <a href="#" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}}><i className="fa fa-minus" aria-hidden="true"/></a>
       trends = this.props.trends.map((trend, i) => {
         return (
           <li key={ trend.name + trend.text }>
@@ -33,7 +31,7 @@ export default class Place extends Component {
         )
       })
     } else {
-      trends = this.props.trends.slice(0, 8).map(trend => {
+      trends = this.props.trends.map(trend => {
         return (
           <li key={ trend.name + trend.text }>
             <span>{ trend.name }</span>
@@ -48,6 +46,7 @@ export default class Place extends Component {
       <div className={card.Card}>
         <div className={card.Data}>
           <FlipMove
+            typeName="ul"
             duration={2000}
             enterAnimation="elevator"
             leaveAnimation="fade">
@@ -55,8 +54,7 @@ export default class Place extends Component {
           </FlipMove>
         </div>
         <div className={card.CardTitle}>
-          <h2>{this.props.name}</h2>
-          {remove}
+          <h2>{this.props.name} {remove}</h2>
         </div>
       </div>
     )

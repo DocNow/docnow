@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import TweetEmbed from 'react-tweet-embed'
 import Modal from 'react-modal'
-import style from '../styles/TweetsModal.css'
+import style from '../../styles/TweetsModal.css'
 
 export default class TweetsModal extends Component {
 

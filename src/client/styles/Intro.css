@@ -8,10 +8,14 @@
 }
 
 .Intro p {
+  font-family: 'Roboto:400' serif;
   font-size: 20px;
   align-self: flex-start;
   font-weight: 200 !important;
-  color: #666666;
+  color: #000000;
+  background-color: #cdc9f1;
+  border-radius: 10px;
+  padding: 8px;
   margin-top: 10px;
   margin-left: 20px;
 }
