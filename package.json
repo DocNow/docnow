@@ -14,6 +14,7 @@
     "wtest": "better-npm-run wtest",
     "eslint:server": "eslint server.js src/server/*",
     "reset": "node dist/commands/reset",
+    "update-indexes": "node dist/commands/update-indexes",
     "load-places": "node dist/commands/load-places",
     "url-fetcher": "node dist/commands/url-fetcher"
   },

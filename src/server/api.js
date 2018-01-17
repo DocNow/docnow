@@ -197,7 +197,8 @@ app.get('/search/:searchId/tweets', (req, res) => {
               res.json(tweets)
             })
         } else {
-          db.getTweets(search)
+          const includeRetweets = req.query.includeRetweets ? true : false
+          db.getTweets(search, includeRetweets)
             .then((tweets) => {
               res.json(tweets)
             })

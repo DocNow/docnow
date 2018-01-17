@@ -868,11 +868,34 @@ var Database = exports.Database = function () {
     value: function getTweets(search) {
       var _this15 = this;
 
+      var includeRetweets = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+
       var body = {
         size: 100,
-        query: { match: { search: search.id } },
-        sort: [{ created: 'desc' }]
-      };
+        query: {
+          bool: {
+            must: {
+              term: {
+                search: search.id
+              }
+            },
+            must_not: {
+              exists: {
+                field: 'retweet'
+              }
+            }
+          }
+        },
+        sort: {
+          created: 'desc'
+        }
+
+        // adjust the query and sorting if they don't want retweets
+      };if (!includeRetweets) {
+        body.query.bool.must_not = { exists: { field: 'retweet' } };
+        body.sort = [{ retweetCount: 'desc' }, { created: 'desc' }];
+      }
+
       return new _promise2.default(function (resolve, reject) {
         _this15.es.search({
           index: _this15.getIndex(TWEET),
@@ -933,7 +956,7 @@ var Database = exports.Database = function () {
         }, _callee3, this);
       }));
 
-      function getTweetsForUrl(_x7, _x8) {
+      function getTweetsForUrl(_x8, _x9) {
         return _ref3.apply(this, arguments);
       }
 
@@ -1233,6 +1256,49 @@ var Database = exports.Database = function () {
       return this.es.indices.create({
         index: prefixedName,
         body: body
+      });
+    }
+  }, {
+    key: 'updateIndexes',
+    value: function updateIndexes() {
+      var indexMappings = this.getIndexMappings();
+      var promises = [];
+      var _iteratorNormalCompletion11 = true;
+      var _didIteratorError11 = false;
+      var _iteratorError11 = undefined;
+
+      try {
+        for (var _iterator11 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          var name = _step11.value;
+
+          promises.push(this.updateIndex(name, indexMappings[name]));
+        }
+      } catch (err) {
+        _didIteratorError11 = true;
+        _iteratorError11 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion11 && _iterator11.return) {
+            _iterator11.return();
+          }
+        } finally {
+          if (_didIteratorError11) {
+            throw _iteratorError11;
+          }
+        }
+      }
+
+      return _promise2.default.all(promises);
+    }
+  }, {
+    key: 'updateIndex',
+    value: function updateIndex(name, map) {
+      var prefixedName = this.getIndex(name);
+      _logger2.default.info('updating index: ' + prefixedName);
+      return this.es.indices.putMapping({
+        index: prefixedName,
+        type: name,
+        body: map
       });
     }
   }, {
