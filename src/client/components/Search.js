@@ -95,7 +95,7 @@ export default class Search extends Component {
           </button>
 
           <button title="Save Search" onClick={() => {this.save()}}>
-            <i className="fa fa-plus" aria-hidden="true" />
+            <i className="fa fa-archive" aria-hidden="true" />
           </button>
 
           </div>
