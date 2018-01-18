@@ -4,6 +4,15 @@
   overflow-x: hidden;
 }
 
+.HashtagsCard::-webkit-scrollbar {
+  width: 15px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.HashtagsCard::-webkit-scrollbar-thumb {
+  background-color: #0f1282;
+}
+
 rect {
   fill: lightblue;
   stroke: gray;
