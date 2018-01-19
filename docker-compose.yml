@@ -13,7 +13,6 @@ services:
       memlock:
         soft: -1
         hard: -1
-      mem_limit: 2g
 
   app:
     environment:
@@ -28,4 +27,4 @@ services:
     depends_on:
       - redis
       - elasticsearch
-    entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- npm run start
+    entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- npm run start:dev
