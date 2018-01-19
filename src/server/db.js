@@ -531,12 +531,34 @@ export class Database {
     }
   }
 
-  getTweets(search) {
+  getTweets(search, includeRetweets = true) {
     const body = {
       size: 100,
-      query: {match: {search: search.id}},
-      sort: [{created: 'desc'}]
+      query: {
+        bool: {
+          must: {
+            term: {
+              search: search.id
+            }
+          },
+          must_not: {
+            exists: {
+              field: 'retweet'
+            }
+          }
+        }
+      },
+      sort: {
+        created: 'desc'
+      }
     }
+
+    // adjust the query and sorting if they don't want retweets
+    if (! includeRetweets) {
+      body.query.bool.must_not = {exists: {field: 'retweet'}}
+      body.sort = [{retweetCount: 'desc'}, {created: 'desc'}]
+    }
+
     return new Promise((resolve, reject) => {
       this.es.search({
         index: this.getIndex(TWEET),
@@ -790,6 +812,25 @@ export class Database {
     return this.es.indices.create({
       index: prefixedName,
       body: body
+    })
+  }
+
+  updateIndexes() {
+    const indexMappings = this.getIndexMappings()
+    const promises = []
+    for (const name of Object.keys(indexMappings)) {
+      promises.push(this.updateIndex(name, indexMappings[name]))
+    }
+    return Promise.all(promises)
+  }
+
+  updateIndex(name, map) {
+    const prefixedName = this.getIndex(name)
+    log.info(`updating index: ${prefixedName}`)
+    return this.es.indices.putMapping({
+      index: prefixedName,
+      type: name,
+      body: map
     })
   }
 

@@ -40,6 +40,11 @@
   color: #cdc9f1;
 }
 
+.CardTitle i {
+  color: #cdc9f1;
+  cursor: pointer;
+}
+
 .NewLocation {
   background-color: #ffffff;
   padding-right:  10px;

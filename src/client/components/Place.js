@@ -17,7 +17,7 @@ export default class Place extends Component {
     let trends = null
     let remove = null
     if (this.props.username) {
-      remove = <a href="#" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}}><i className="fa fa-minus" aria-hidden="true"/></a>
+      remove = <i className="fa fa-minus" aria-hidden="true" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}} />
       trends = this.props.trends.map((trend, i) => {
         return (
           <li key={ trend.name + trend.text }>

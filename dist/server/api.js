@@ -246,7 +246,8 @@ app.get('/search/:searchId/tweets', function (req, res) {
           res.json(tweets);
         });
       } else {
-        db.getTweets(search).then(function (tweets) {
+        var includeRetweets = req.query.includeRetweets ? true : false;
+        db.getTweets(search, includeRetweets).then(function (tweets) {
           res.json(tweets);
         });
       }
