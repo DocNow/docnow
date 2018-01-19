@@ -1,11 +1,11 @@
 .TabBar {
   text-transform: uppercase;
-  padding-left: 40px;
   margin-left: 20px;
 }
 
 .TabBar a {
   color: #000000;
+  padding: 5px;
 }
 
 .TabBar a:hover {
@@ -28,7 +28,6 @@
   text-decoration: none;
   overflow: hidden;
   vertical-align: middle;
-  margin-right: 5px;
 }
 
 .TabActive {
