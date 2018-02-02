@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import SearchTerm from './SearchTerm'
-import styles from '../styles/Search.css'
+
+import style from './SearchTerm.css'
+import styleQuery from './SearchQuery.css'
 
 export default class SearchQuery extends Component {
 
@@ -14,15 +16,15 @@ export default class SearchQuery extends Component {
     if (this.props.query.length === 0 && ! this.props.active) {
       placeHolder = (
         <div>
-          enter a <span className={styles.SearchTerm + ' ' + styles.Keyword}>keyword</span>
-          <span className={styles.SearchTerm + ' ' + styles.Phrase}>a phrase</span>
-          <span className={styles.SearchTerm + ' ' + styles.Hashtag}>#hashtag</span>
-          <span className={styles.SearchTerm + ' ' + styles.User}>@user</span>
+          enter a <span className={style.SearchTerm + ' ' + style.Keyword}>keyword</span>
+          <span className={style.SearchTerm + ' ' + style.Phrase}>a phrase</span>
+          <span className={style.SearchTerm + ' ' + style.Hashtag}>#hashtag</span>
+          <span className={style.SearchTerm + ' ' + style.User}>@user</span>
         </div>
       )
     }
     return (
-      <div onClick={(e) => {this.onClick(e)}} className={styles.SearchQuery}>
+      <div onClick={(e) => {this.onClick(e)}} className={styleQuery.SearchQuery}>
         {placeHolder}
         {this.props.query.map((term, i) => (
           <SearchTerm

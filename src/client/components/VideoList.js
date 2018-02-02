@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from '../styles/Videos.css'
+import style from './VideoList.css'
 
 export default class VideoList extends Component {
 

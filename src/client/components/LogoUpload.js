@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import def from '../images/mith.png'
-import styles from '../styles/Profile.css'
+import styles from './LogoUpload.css'
 import PropTypes from 'prop-types'
 
 export default class LogoUpload extends Component {
@@ -13,7 +13,6 @@ export default class LogoUpload extends Component {
 
     const reader = new FileReader()
     const file = e.target.files[0]
-
 
     reader.onloadend = () => {
       this.setState({

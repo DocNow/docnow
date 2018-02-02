@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from '../styles/Search.css'
+import style from './SearchTerm.css'
 
 export default class SearchTerm extends Component {
 

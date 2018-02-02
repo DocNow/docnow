@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import FlipMove from 'react-flip-move'
-import card from '../styles/Card.css'
 import SearchTerm from './SearchTerm'
+
+import style from './Card.css'
 
 export default class Place extends Component {
 
@@ -36,15 +37,15 @@ export default class Place extends Component {
           <li key={ trend.name + trend.text }>
             <span>{ trend.name }</span>
             &nbsp;
-            <bdo title="foo">{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
+            <bdo>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
           </li>
         )
       })
     }
 
     return (
-      <div className={card.Card}>
-        <div className={card.Data}>
+      <div className={style.Card}>
+        <div className={style.Data}>
           <FlipMove
             typeName="ul"
             duration={2000}
@@ -53,7 +54,7 @@ export default class Place extends Component {
             { trends }
           </FlipMove>
         </div>
-        <div className={card.CardTitle}>
+        <div className={style.CardTitle}>
           <h2>{this.props.name} {remove}</h2>
         </div>
       </div>

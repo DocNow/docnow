@@ -6,7 +6,7 @@ import mith from '../images/mith.png'
 import AppBar from './AppBar'
 import TabBar from './TabBar'
 
-import styles from '../styles/Header.css'
+import styles from './Header.css'
 
 export default class Header extends MediaQueryComponent {
 
@@ -37,7 +37,7 @@ export default class Header extends MediaQueryComponent {
       <div>
         {appBar}
         <header className={this.state.mediaStyle}>
-          <div className={styles.Avatar}><a href="http://docnow.io"><img src={dn}/></a></div>
+          <div className={styles.AppIcon}><a href="http://docnow.io"><img src={dn}/></a></div>
           <div className={styles.Logo}><center>{logo}</center></div>
         </header>
         {tabBar}

@@ -2,7 +2,7 @@
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
+  justify-content: left;
 }
 
 .Card {
@@ -45,14 +45,6 @@
   cursor: pointer;
 }
 
-.NewLocation {
-  background-color: #ffffff;
-  padding-right:  10px;
-}
-
-.NewLocation i {
-  padding: 10px;
-}
 
 .CardTitle i {
   padding: 10px;

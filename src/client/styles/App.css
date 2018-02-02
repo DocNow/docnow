@@ -9,10 +9,6 @@
   margin-bottom: 5px;
 }
 
-.App div {
-  position: relative;
-}
-
 .App h2 {
   position: relative;
   text-transform: uppercase;
@@ -76,6 +72,10 @@
 
 .App h1 a:hover {
   color: #0f1282
+}
+
+.App main {
+  margin: 20px 60px 20px 60px;
 }
 
 .AppUnder780px li {

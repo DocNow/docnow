@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from '../styles/Images.css'
+import style from './ImageList.css'
 
 export default class ImageList extends Component {
 

@@ -4,9 +4,7 @@
 
 .SavedSearchText {
   flex: 3;
-  padding: 12px;
   border: none;
-  margin-left: 50px;
 }
 
 .SavedSearchText i {

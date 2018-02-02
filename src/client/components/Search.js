@@ -9,7 +9,7 @@ import VideoList from './VideoList'
 import SearchSummary from './SearchSummary'
 import SearchQuery from './SearchQuery'
 
-import styles from '../styles/Search.css'
+import styles from './Search.css'
 import card from '../styles/Card.css'
 
 export default class Search extends Component {

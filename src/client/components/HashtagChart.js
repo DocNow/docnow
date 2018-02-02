@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import styles from '../styles/Hashtags.css'
+import styles from './HashtagChart.css'
 
 import 'd3-transition'
 import { max } from 'd3-array'
