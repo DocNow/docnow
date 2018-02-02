@@ -1,0 +1,34 @@
+.HashtagsCard {
+  height: 274px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.HashtagsCard::-webkit-scrollbar {
+  width: 15px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.HashtagsCard::-webkit-scrollbar-thumb {
+  background-color: #0f1282;
+}
+
+rect {
+  fill: lightblue;
+  stroke: gray;
+  stroke-width: 1;
+}
+
+text {
+  font-size: 11pt;
+}
+
+.Active rect {
+  cursor: pointer;
+  fill: lightyellow;
+}
+
+.Active text {
+  cursor: pointer;
+  font-weight: bold;
+}

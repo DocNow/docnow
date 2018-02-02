@@ -1,0 +1,41 @@
+.SearchTerm {
+  min-width: 5px;
+  padding: 3px;
+  margin: 3px;
+  border-radius: 4px;
+  background-color: #C8D2D3;
+}
+
+.SearchTerm:hover {
+  margin-right: 2px;
+  border: 1px solid gray;
+  cursor: pointer;
+}
+
+.SearchTerm:focus {
+  outline: none;
+}
+
+.Hashtag {
+  background-color: lightblue;
+}
+
+.Phrase {
+  background-color: #cceecc;
+}
+
+.Keyword {
+  background-color: #ccccee;
+}
+
+.User {
+  background-color: lightyellow;
+}
+
+.Input {
+  background-color: white;
+  border: none;
+  border-radius: none;
+  margin: 0px;
+  padding: 0px;
+}

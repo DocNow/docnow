@@ -1,0 +1,39 @@
+.ImagesCard {
+  height: 274px;
+  background-color: #000000;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+
+.ImagesCard::-webkit-scrollbar {
+  width: 15px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.ImagesCard::-webkit-scrollbar-thumb {
+  background-color: #0f1282;
+}
+
+.Images {
+  padding: 3px;
+  margin: 5px 5px 5px 5px;
+}
+
+.Images img {
+  width: 300px;
+}
+
+.Image {
+  background-color: #ffffff;
+  margin: 5px;
+  padding: 5px;
+  font-size: 10px;
+  border: 1px solid #CCCCCC;
+  border-radius: 3px;
+  text-align: center;
+}
+
+.Image img {
+  width: 95%;
+  border: 2px solid gray;
+}

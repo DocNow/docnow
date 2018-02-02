@@ -1,0 +1,17 @@
+.SearchQuery {
+  align-self: flex-start;
+  overflow: hidden;
+  font-family: 'Roboto Medium', sans-serif;
+  line-height: 30px;
+  min-height: 30px;
+  width: 340px;
+  background: transparent;
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  user-select: none;
+  border: thin solid gray;
+  box-shadow: 1px 2px 3px 1px rgba(30, 119,182,0.2), 0px 2px 3px 0px rgba(0,0,0,0.1);
+  -webkit-appearance: none;
+}

@@ -1,0 +1,98 @@
+.SearchBar {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  margin-top: 20px;
+  padding-left: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.SearchQuery {
+  align-self: flex-start;
+  overflow: hidden;
+  font-family: 'Roboto Medium', sans-serif;
+  line-height: 30px;
+  min-height: 30px;
+  width: 340px;
+  background: transparent;
+  padding: 10px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  user-select: none;
+  border: thin solid gray;
+  box-shadow: 1px 2px 3px 1px rgba(30, 119,182,0.2), 0px 2px 3px 0px rgba(0,0,0,0.1);
+  -webkit-appearance: none;
+}
+
+.Controls {
+  margin-bottom: 10px;
+}
+
+.Controls button {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.Controls button i {
+  padding-left: 0px !important;
+  padding-right: 0px;
+}
+
+.Summary {
+  width: 340px;
+  min-height: 30px;
+  margin-left: 10px;
+  align-self: flex-start;
+  padding: 10px;
+  margin-right: 10px;
+  border: thin solid gray;
+  box-shadow: 1px 2px 3px 1px rgba(30, 119,182,0.2), 0px 2px 3px 0px rgba(0,0,0,0.1);
+}
+
+time, .Count  {
+  font-weight: bold;
+}
+
+.SearchTerm {
+  min-width: 5px;
+  padding: 3px;
+  margin: 3px;
+  border-radius: 4px;
+  background-color: #C8D2D3;
+}
+
+.SearchTerm:hover {
+  margin-right: 2px;
+  border: 1px solid gray;
+  cursor: pointer;
+}
+
+.SearchTerm:focus {
+  outline: none;
+}
+
+.Hashtag {
+  background-color: lightblue;
+}
+
+.Phrase {
+  background-color: #cceecc;
+}
+
+.Keyword {
+  background-color: #ccccee;
+}
+
+.User {
+  background-color: lightyellow;
+}
+
+.Input {
+  background-color: white;
+  border: none;
+  border-radius: none;
+  margin: 0px;
+  padding: 0px;
+}
