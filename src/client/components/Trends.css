@@ -1,3 +1,36 @@
+.Trends {
+  min-height: 80vh;
+  margin: 20px 0px 20px 0px;
+  background-image: url("../images/mapbg.png");
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.Trends a {
+    color: #1E77B6;
+}
+
+.Trends input {
+  border-style: none;
+  padding: 2px 2px 2px 2px;
+  font-size: 16pt;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.Trends input option {
+  padding: 2px 2px 2px 2px;
+  font-size: 14px;
+}
+
+.Trends input:disabled {
+  color: #666666;
+}
+
 .Intro {
   display: flex;
   flex-direction: column;

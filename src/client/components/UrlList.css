@@ -1,19 +1,19 @@
-.UrlsCard {
+.UrlList {
   height: 274px;
   overflow-y: scroll;
   background-color: #000000;
 }
 
-.UrlsCard::-webkit-scrollbar {
+.UrlList::-webkit-scrollbar {
   width: 15px;
   border-bottom: 1px solid #ffffff;
 }
 
-.UrlsCard::-webkit-scrollbar-thumb {
+.UrlList::-webkit-scrollbar-thumb {
   background-color: #0f1282;
 }
 
-.UrlsCard ul {
+.UrlList ul {
   width: 310px;
   background-color: #ffffff;
   margin: 5px;
@@ -21,7 +21,7 @@
   height: 242px;
 }
 
-.UrlsCard li {
+.UrlList li {
   display: block;
   border-bottom: solid 1px #CCCCCC;
   border-radius: 3px;
@@ -33,7 +33,6 @@
   white-space: nowrap;
 }
 
-.UrlsCard a {
+.UrlList a {
   color: #1da1f2;
 }
-

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Tweet from './Tweet'
 
-import style from '../styles/Tweets.css'
+import style from './TweetList.css'
 
 export default class TweetList extends Component {
 

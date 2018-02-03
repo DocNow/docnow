@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from '../styles/Urls.css'
+import style from './Url.css'
 
 export default class Url extends Component {
 
   render() {
     return (
-      <div className={style.Urls}>
+      <div className={style.Url}>
         <a target="_new" href={this.props.url}>
           {this.props.url}
         </a>

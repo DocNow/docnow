@@ -4,15 +4,14 @@ import PropTypes from 'prop-types'
 import Place from './Place'
 import AddPlace from './AddPlace'
 
-import intro from '../styles/Intro.css'
-import card from '../styles/Card.css'
-import trends from '../styles/Trends.css'
+import card from './Card.css'
+import style from './Trends.css'
 
 export default class Trends extends MediaQueryComponent {
 
   constructor(props) {
     super(props)
-    this.state = {introStyle: intro.Intro}
+    this.state = {introStyle: style.Intro}
   }
 
   componentDidMount() {
@@ -21,7 +20,7 @@ export default class Trends extends MediaQueryComponent {
     this.setState((prevState) => {
       return Object.assign(prevState, {intervalId: intervalId})
     })
-    this.setMediaQuery('(min-width: 1180px)', intro.Intro, intro.IntroOver1180px)
+    this.setMediaQuery('(min-width: 1180px)', style.Intro, style.IntroOver1180px)
   }
 
   componentWillUnmount() {
@@ -65,7 +64,7 @@ export default class Trends extends MediaQueryComponent {
     return (
       <div>
         {introElement}
-        <div className={trends.Trends}>
+        <div className={style.Trends}>
           <div className={card.CardHolder}>
             {this.props.trends.map(place => (
               <Place

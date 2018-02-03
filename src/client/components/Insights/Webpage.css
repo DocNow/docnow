@@ -119,12 +119,6 @@ i.Remove:hover {
   color: blue;
 }
 
-.Queue {
-  margin-top: 10px;
-  text-align: right;
-  margin-right: 70px;
-}
-
 .ArchiveError {
   animation: shake 0.82s cubic-bezier(.36,.07,.19,.97) both;
   transform: translate3d(0, 0, 0);

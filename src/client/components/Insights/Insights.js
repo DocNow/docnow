@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import SearchInfo from './SearchInfo'
 import TweetEmbed from 'react-tweet-embed'
-import card from '../../styles/Card.css'
-import download from '../../styles/DownloadOptions.css'
-import ttb from '../../styles/TweetTabBar.css'
+import TweetTabBar from './TweetTabBar'
+
+import card from '../Card.css'
+import download from './Insights.css'
 
 export default class Insights extends Component {
 
@@ -62,13 +63,7 @@ export default class Insights extends Component {
           search={this.props.search}
           updateSearch={this.props.updateSearch} />
 
-        <div className={ttb.TweetTabBar}>
-          <ul>
-            <li><a className={ttb.TweetTab + ' ' + ttb.TweetTabActive} href="/"><i className="fa fa-archive" aria-hidden="true" /> All</a></li>
-            <li><a className={ttb.TweetTab} href="exampleselected.html"><i className="fa fa-check-square-o" aria-hidden="true" /> Selected</a></li>
-            <li><a  className={ttb.TweetTab} href="exampleannotated.html"><i className="fa fa-comment" aria-hidden="true" /> Annotated</a></li>
-          </ul>
-        </div>
+        <TweetTabBar />
 
         <div className={card.CardHolder}>
           <div className={card.SavedShortCard}>

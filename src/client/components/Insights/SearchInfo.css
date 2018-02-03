@@ -35,9 +35,10 @@
   border: none;
 
 }
-  .SavedSearchButtons button {
-    width: 120px;
-    margin-right: 20px;
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
+
+.SavedSearchButtons button {
+  width: 120px;
+  margin-right: 20px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}

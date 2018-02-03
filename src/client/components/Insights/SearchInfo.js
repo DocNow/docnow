@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Editable from '../Editable'
 import moment from 'moment'
-import style from '../../styles/SavedSearchInfo.css'
-import sl from '../../styles/SearchList.css'
+import style from './SearchInfo.css'
+import sl from '../SearchList.css'
 
 export default class SearchInfo extends Component {
 

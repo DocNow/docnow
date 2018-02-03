@@ -1,16 +1,16 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import moment from 'moment'
-import style from '../styles/Tweets.css'
+import style from './Tweet.css'
 
 export default class Tweet extends Component {
   render() {
     const created = moment(this.props.data.created).fromNow()
     return (
-      <div className={style.Tweets}>
-        <div className={style.TweetsProfile}>
+      <div className={style.Tweet}>
+        <div className={style.TweetProfile}>
           <img src={this.props.data.user.avatarUrl} />
-          <div className={style.TweetsName}>{this.props.data.user.name}</div>
+          <div className={style.TweetName}>{this.props.data.user.name}</div>
           <div>
             <a href={'https://twitter.com/' + this.props.data.user.screenName }>
               @{ this.props.data.user.screenName}

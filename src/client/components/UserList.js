@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import User from './User'
 
-import style from '../styles/Users.css'
+import style from './UserList.css'
 
 export default class UserList extends Component {
 
@@ -12,7 +12,7 @@ export default class UserList extends Component {
       loader = 'Loading...'
     }
     return (
-      <div className={ style.UsersCard }>
+      <div className={ style.UserList }>
         {loader}
         {this.props.users.map(user => {
           return (

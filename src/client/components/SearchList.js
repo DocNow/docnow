@@ -1,7 +1,7 @@
 import moment from 'moment'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import style from '../styles/SearchList.css'
+import style from './SearchList.css'
 import { Link } from 'react-router-dom'
 
 

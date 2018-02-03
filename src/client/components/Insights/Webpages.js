@@ -3,8 +3,9 @@ import PropTypes from 'prop-types'
 import Webpage from './Webpage'
 import TweetsModal from './TweetsModal'
 import SearchInfo from './SearchInfo'
-import cardStyle from '../../styles/Card.css'
-import webpageStyle from '../../styles/Webpage.css'
+
+import cardStyle from '../Card.css'
+import style from './Webpages.css'
 
 export default class Webpages extends Component {
 
@@ -55,7 +56,7 @@ export default class Webpages extends Component {
           close={() => {this.closeModal()}}
           tweets={this.props.tweets} />
 
-        <div className={webpageStyle.Queue}>
+        <div className={style.Queue}>
           URLs Checked: {this.props.total - this.props.remaining}/{this.props.total}
         </div>
 

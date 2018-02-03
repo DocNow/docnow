@@ -16,7 +16,7 @@ import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
 
-import styles from '../styles/App.css'
+import styles from './App.css'
 
 class App extends MediaQueryComponent {
 

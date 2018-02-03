@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Url from './Url'
-import styles from '../styles/Urls.css'
+import styles from './UrlList.css'
 
 export default class UrlList extends Component {
 
@@ -11,7 +11,7 @@ export default class UrlList extends Component {
       loader = 'Loading...'
     }
     return (
-        <div className={styles.UrlsCard}>
+        <div className={styles.UrlList}>
           {loader}
           <ul>
           {this.props.urls.map(u => (
