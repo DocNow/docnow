@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import FlipMove from 'react-flip-move'
-import SearchTerm from './SearchTerm'
+import SearchTerm from '../Explore/SearchTerm'
 
-import style from './Card.css'
+import style from '../Card.css'
 
 export default class Place extends Component {
 

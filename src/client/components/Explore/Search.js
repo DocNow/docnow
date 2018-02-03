@@ -10,7 +10,7 @@ import SearchSummary from './SearchSummary'
 import SearchQuery from './SearchQuery'
 
 import styles from './Search.css'
-import card from './Card.css'
+import card from '../Card.css'
 
 export default class Search extends Component {
 

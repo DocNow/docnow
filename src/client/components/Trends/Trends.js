@@ -1,10 +1,10 @@
 import React from 'react'
-import MediaQueryComponent from './MediaQueryComponent'
+import MediaQueryComponent from '../MediaQueryComponent'
 import PropTypes from 'prop-types'
 import Place from './Place'
 import AddPlace from './AddPlace'
 
-import card from './Card.css'
+import card from '../Card.css'
 import style from './Trends.css'
 
 export default class Trends extends MediaQueryComponent {
