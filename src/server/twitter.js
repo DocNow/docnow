@@ -98,6 +98,23 @@ export class Twitter {
     recurse(opts.maxId, 0)
   }
 
+  filter(opts, cb) {
+    const params = {
+      track: opts.track,
+      tweet_mode: 'extended',
+      include_entities: true
+    }
+    log.info('starting stream for: ', {stream: params})
+    const stream = this.twit.stream('statuses/filter', params)
+    stream.on('tweet', (tweet) => {
+      const result = cb(this.extractTweet(tweet))
+      if (result === false) {
+        log.info('stopping stream for: ', {stream: params})
+        stream.stop()
+      }
+    })
+  }
+
   extractTweet(t) {
     const created = new Date(t.created_at)
     const userCreated = new Date(t.user.created_at)
@@ -151,7 +168,7 @@ export class Twitter {
     }
 
     let userUrl = null
-    if (t.user.entities.url) {
+    if (t.user.entities && t.user.entities.url) {
       userUrl = t.user.entities.url.urls[0].expanded_url
     }
 
@@ -180,9 +197,18 @@ export class Twitter {
       }
     }
 
+    let text = t.text
+    if (retweet) {
+      text = retweet.text
+    } else if (t.extended_tweet) {
+      text = t.extended_tweet.full_text
+    } else if (t.full_text) {
+      text = t.full_text
+    }
+
     return ({
       id: t.id_str,
-      text: t.full_text,
+      text: text,
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
