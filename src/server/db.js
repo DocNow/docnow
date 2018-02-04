@@ -462,53 +462,10 @@ export class Database {
                     if (maxTweetId === null) {
                       maxTweetId = results[0].id
                     }
-                    const bulk = []
-                    const seenUsers = new Set()
-                    for (const tweet of results) {
-
-                      this.tallyTweet(search, tweet)
-
-                      for (const url of tweet.urls) {
-                        urlFetcher.add(search, url.long, tweet.id)
-                      }
-
-                      tweet.search = search.id
-                      const id = search.id + ':' + tweet.id
-                      bulk.push(
-                        {
-                          index: {
-                            _index: this.getIndex(TWEET),
-                            _type: 'tweet',
-                            _id: id
-                          }
-                        },
-                        tweet
-                      )
-                      if (! seenUsers.has(tweet.user.id)) {
-                        bulk.push(
-                          {
-                            index: {
-                              _index: this.getIndex(TWUSER),
-                              _type: 'twuser',
-                              _id: tweet.user.id,
-                            }
-                          },
-                          tweet.user
-                        )
-                        seenUsers.add(tweet.user.id)
-                      }
-                    }
-                    this.es.bulk({
-                      body: bulk,
-                      refresh: 'wait_for'
-                    }).then((resp) => {
-                      if (resp.errors) {
-                        reject('indexing error check elasticsearch log')
-                      }
-                    }).catch((elasticErr) => {
-                      log.error(elasticErr.message)
-                      reject(elasticErr.message)
-                    })
+                    this.loadTweets(search, results)
+                      .then(() => {
+                        log.info('bulk loaded ' + results.items + ' objects')
+                      })
                   }
                 })
               })
@@ -516,6 +473,63 @@ export class Database {
           .catch((e) => {
             log.error('unable to update search: ', e)
           })
+      })
+    })
+  }
+
+  loadTweets(search, tweets) {
+    return new Promise((resolve, reject) => {
+      const bulk = []
+      const seenUsers = new Set()
+
+      for (const tweet of tweets) {
+
+        this.tallyTweet(search, tweet)
+
+        for (const url of tweet.urls) {
+          urlFetcher.add(search, url.long, tweet.id)
+        }
+
+        tweet.search = search.id
+        const id = search.id + ':' + tweet.id
+
+        bulk.push(
+          {
+            index: {
+              _index: this.getIndex(TWEET),
+              _type: 'tweet',
+              _id: id
+            }
+          },
+          tweet
+        )
+        if (! seenUsers.has(tweet.user.id)) {
+          bulk.push(
+            {
+              index: {
+                _index: this.getIndex(TWUSER),
+                _type: 'twuser',
+                _id: tweet.user.id,
+              }
+            },
+            tweet.user
+          )
+          seenUsers.add(tweet.user.id)
+        }
+      }
+
+      this.es.bulk({
+        body: bulk,
+        refresh: 'wait_for'
+      }).then((resp) => {
+        if (resp.errors) {
+          reject('indexing error check elasticsearch log')
+        } else {
+          resolve(resp)
+        }
+      }).catch((elasticErr) => {
+        log.error(elasticErr.message)
+        reject(elasticErr.message)
       })
     })
   }

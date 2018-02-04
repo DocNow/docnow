@@ -6,7 +6,7 @@ const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 let user = null
 let search = null
 
-describe('tweet-loader', () => {
+describe('stream-loader', () => {
 
   it('should setup', async () => {
 
@@ -31,6 +31,9 @@ describe('tweet-loader', () => {
       {type: 'keyword', value: 'obama'}
     ])
 
+    const tweets = await db.getTweets(search)
+    ok(tweets.length === 0, 'search has no tweets')
+
   })
 
   it('should load tweets', (done) => {
@@ -51,9 +54,15 @@ describe('tweet-loader', () => {
       controller.stop()
       loader.stop()
       db.close()
+
       done()
     }, 10000)
 
+  })
+
+  it('should have saved tweets', async () => {
+    const tweets = await db.getTweets(search)
+    ok(tweets.length > 0, 'streamed tweets were saved')
   })
 
 })

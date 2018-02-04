@@ -98,9 +98,17 @@ export class TweetLoader {
 
     const t = await this.db.getTwitterClientForUser(user)
     const track = search.query.map((term) => {return term.value}).join(',')
+    let tweets = []
 
     t.filter({track: track}, (tweet) => {
       log.info('got tweet', {text: tweet.text})
+      tweets.push(tweet)
+      if (this.active && tweets.length >= 10) {
+        this.db.loadTweets(search, tweets).then((resp) => {
+          log.info('bulk loaded ' + resp.items.length + ' items from the stream')
+        })
+        tweets = []
+      }
       return this.active
     })
 
