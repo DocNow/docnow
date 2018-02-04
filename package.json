@@ -16,7 +16,8 @@
     "reset": "node dist/commands/reset",
     "update-indexes": "node dist/commands/update-indexes",
     "load-places": "node dist/commands/load-places",
-    "url-fetcher": "node dist/commands/url-fetcher"
+    "url-fetcher": "node dist/commands/url-fetcher",
+    "tweet-loader": "node dist/commands/tweet-loader"
   },
   "betterScripts": {
     "build": {
