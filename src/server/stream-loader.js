@@ -7,18 +7,18 @@ const STOP_STREAM = 'stop-stream'
 
 
 /*
- * TweetLoaderController handles starting and stopping streaming
+ * StreamLoaderController handles starting and stopping streaming
  * jobs from Twitter.
  */
 
-export class TweetLoaderController {
+export class StreamLoaderController {
 
   constructor() {
     this.redis = getRedis()
   }
 
   stop() {
-    log.info('stopping TweetLoaderController')
+    log.info('stopping StreamLoaderController')
     this.redis.quit()
   }
 
@@ -34,14 +34,14 @@ export class TweetLoaderController {
 
 
 /*
- * TweetLoader will listen to a queue of commands to start streaming
+ * StreamLoader will listen to a queue of commands to start streaming
  * jobs and will subscribe for messages to stop those jobs. The queue is
  * used to make sure only one worker picks up the streaming job. the
  * pub/sub channel is used to notify all workers to stop the stream
  * since we don't really know which worker picked it up.
  */
 
-export class TweetLoader {
+export class StreamLoader {
 
   constructor(db = null, concurrency = 5) {
     this.concurrency = concurrency
@@ -75,7 +75,7 @@ export class TweetLoader {
 
   stop() {
     this.active = false
-    log.info('stopping TweetLoader')
+    log.info('stopping StreamLoader')
     this.redis.quit()
     this.redisBlocking.quit()
     this.db.close()

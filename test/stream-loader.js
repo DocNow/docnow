@@ -1,6 +1,6 @@
 import { Database } from '../src/server/db'
 import { ok, equal, deepEqual } from 'assert'
-import { TweetLoader, TweetLoaderController } from '../src/server/tweet-loader'
+import { StreamLoader, StreamLoaderController } from '../src/server/stream-loader'
 
 const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 let user = null
@@ -37,8 +37,8 @@ describe('stream-loader', () => {
   })
 
   it('should load tweets', (done) => {
-    const loader = new TweetLoader(db)
-    const controller = new TweetLoaderController()
+    const loader = new StreamLoader(db)
+    const controller = new StreamLoaderController()
 
     loader.start()
 
