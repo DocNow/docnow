@@ -8,7 +8,18 @@ import style from './SearchList.css'
 
 export default class SavedSearch extends Component {
 
-  componentDidMount() {
+  componentWillMount() {
+    this.tick()
+    this.timerId = setInterval(() => {
+      this.tick()
+    }, 3000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId)
+  }
+
+  tick() {
     this.props.getSearches()
   }
 
@@ -23,10 +34,11 @@ export default class SavedSearch extends Component {
           <div className={style.GridItem}><h2>Actions</h2></div>
         </div>
         {this.props.searches.map((search, i) => {
+          console.log(search)
           const rowClass = i % 2 === 0 ? style.GridRowGray : style.GridRow
           const created = moment(search.created).local().format('MMM D h:mm A')
           return (
-            <div key={search.id} className={rowClass}>
+            <div key={search.id + search.tweetCount} className={rowClass}>
               <div className={style.GridTitle}>
                 <Link to={`/search/${search.id}/`}>
                   {search.title}
@@ -35,7 +47,7 @@ export default class SavedSearch extends Component {
               <div className={style.GridCount}>
                 <i className="fa fa-twitter" />
                 &nbsp;
-                { parseInt(search.count, 10).toLocaleString() }
+                { search.tweetCount.toLocaleString() }
               </div>
               <div className={style.GridActivity}>
                 Created {created}

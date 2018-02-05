@@ -715,89 +715,8 @@ var Database = exports.Database = function () {
                   if (maxTweetId === null) {
                     maxTweetId = results[0].id;
                   }
-                  var bulk = [];
-                  var seenUsers = new _set2.default();
-                  var _iteratorNormalCompletion5 = true;
-                  var _didIteratorError5 = false;
-                  var _iteratorError5 = undefined;
-
-                  try {
-                    for (var _iterator5 = (0, _getIterator3.default)(results), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-                      var tweet = _step5.value;
-
-
-                      _this14.tallyTweet(search, tweet);
-
-                      var _iteratorNormalCompletion6 = true;
-                      var _didIteratorError6 = false;
-                      var _iteratorError6 = undefined;
-
-                      try {
-                        for (var _iterator6 = (0, _getIterator3.default)(tweet.urls), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                          var url = _step6.value;
-
-                          urlFetcher.add(search, url.long, tweet.id);
-                        }
-                      } catch (err) {
-                        _didIteratorError6 = true;
-                        _iteratorError6 = err;
-                      } finally {
-                        try {
-                          if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                            _iterator6.return();
-                          }
-                        } finally {
-                          if (_didIteratorError6) {
-                            throw _iteratorError6;
-                          }
-                        }
-                      }
-
-                      tweet.search = search.id;
-                      var id = search.id + ':' + tweet.id;
-                      bulk.push({
-                        index: {
-                          _index: _this14.getIndex(TWEET),
-                          _type: 'tweet',
-                          _id: id
-                        }
-                      }, tweet);
-                      if (!seenUsers.has(tweet.user.id)) {
-                        bulk.push({
-                          index: {
-                            _index: _this14.getIndex(TWUSER),
-                            _type: 'twuser',
-                            _id: tweet.user.id
-                          }
-                        }, tweet.user);
-                        seenUsers.add(tweet.user.id);
-                      }
-                    }
-                  } catch (err) {
-                    _didIteratorError5 = true;
-                    _iteratorError5 = err;
-                  } finally {
-                    try {
-                      if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                        _iterator5.return();
-                      }
-                    } finally {
-                      if (_didIteratorError5) {
-                        throw _iteratorError5;
-                      }
-                    }
-                  }
-
-                  _this14.es.bulk({
-                    body: bulk,
-                    refresh: 'wait_for'
-                  }).then(function (resp) {
-                    if (resp.errors) {
-                      reject('indexing error check elasticsearch log');
-                    }
-                  }).catch(function (elasticErr) {
-                    _logger2.default.error(elasticErr.message);
-                    reject(elasticErr.message);
+                  _this14.loadTweets(search, results).then(function () {
+                    _logger2.default.info('bulk loaded ' + results.items + ' objects');
                   });
                 }
               });
@@ -805,6 +724,102 @@ var Database = exports.Database = function () {
           }).catch(function (e) {
             _logger2.default.error('unable to update search: ', e);
           });
+        });
+      });
+    }
+  }, {
+    key: 'loadTweets',
+    value: function loadTweets(search, tweets) {
+      var _this15 = this;
+
+      return new _promise2.default(function (resolve, reject) {
+        var bulk = [];
+        var seenUsers = new _set2.default();
+
+        var _iteratorNormalCompletion5 = true;
+        var _didIteratorError5 = false;
+        var _iteratorError5 = undefined;
+
+        try {
+          for (var _iterator5 = (0, _getIterator3.default)(tweets), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+            var tweet = _step5.value;
+
+
+            _this15.tallyTweet(search, tweet);
+
+            var _iteratorNormalCompletion6 = true;
+            var _didIteratorError6 = false;
+            var _iteratorError6 = undefined;
+
+            try {
+              for (var _iterator6 = (0, _getIterator3.default)(tweet.urls), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+                var url = _step6.value;
+
+                urlFetcher.add(search, url.long, tweet.id);
+              }
+            } catch (err) {
+              _didIteratorError6 = true;
+              _iteratorError6 = err;
+            } finally {
+              try {
+                if (!_iteratorNormalCompletion6 && _iterator6.return) {
+                  _iterator6.return();
+                }
+              } finally {
+                if (_didIteratorError6) {
+                  throw _iteratorError6;
+                }
+              }
+            }
+
+            tweet.search = search.id;
+            var id = search.id + ':' + tweet.id;
+
+            bulk.push({
+              index: {
+                _index: _this15.getIndex(TWEET),
+                _type: 'tweet',
+                _id: id
+              }
+            }, tweet);
+            if (!seenUsers.has(tweet.user.id)) {
+              bulk.push({
+                index: {
+                  _index: _this15.getIndex(TWUSER),
+                  _type: 'twuser',
+                  _id: tweet.user.id
+                }
+              }, tweet.user);
+              seenUsers.add(tweet.user.id);
+            }
+          }
+        } catch (err) {
+          _didIteratorError5 = true;
+          _iteratorError5 = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion5 && _iterator5.return) {
+              _iterator5.return();
+            }
+          } finally {
+            if (_didIteratorError5) {
+              throw _iteratorError5;
+            }
+          }
+        }
+
+        _this15.es.bulk({
+          body: bulk,
+          refresh: 'wait_for'
+        }).then(function (resp) {
+          if (resp.errors) {
+            reject('indexing error check elasticsearch log');
+          } else {
+            resolve(resp);
+          }
+        }).catch(function (elasticErr) {
+          _logger2.default.error(elasticErr.message);
+          reject(elasticErr.message);
         });
       });
     }
@@ -866,7 +881,7 @@ var Database = exports.Database = function () {
   }, {
     key: 'getTweets',
     value: function getTweets(search) {
-      var _this15 = this;
+      var _this16 = this;
 
       var includeRetweets = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
 
@@ -897,8 +912,8 @@ var Database = exports.Database = function () {
       }
 
       return new _promise2.default(function (resolve, reject) {
-        _this15.es.search({
-          index: _this15.getIndex(TWEET),
+        _this16.es.search({
+          index: _this16.getIndex(TWEET),
           type: TWEET,
           body: body
         }).then(function (response) {
@@ -965,7 +980,7 @@ var Database = exports.Database = function () {
   }, {
     key: 'getTwitterUsers',
     value: function getTwitterUsers(search) {
-      var _this16 = this;
+      var _this17 = this;
 
       // first get the user counts for tweets
 
@@ -974,8 +989,8 @@ var Database = exports.Database = function () {
         aggregations: { users: { terms: { field: 'user.screenName', size: 100 } } }
       };
       return new _promise2.default(function (resolve, reject) {
-        _this16.es.search({
-          index: _this16.getIndex(TWEET),
+        _this17.es.search({
+          index: _this17.getIndex(TWEET),
           type: TWEET,
           body: body
         }).then(function (response1) {
@@ -1000,8 +1015,8 @@ var Database = exports.Database = function () {
               }
             }
           };
-          _this16.es.search({
-            index: _this16.getIndex(TWUSER),
+          _this17.es.search({
+            index: _this17.getIndex(TWUSER),
             type: TWUSER,
             body: body
           }).then(function (response2) {
@@ -1051,7 +1066,7 @@ var Database = exports.Database = function () {
   }, {
     key: 'getHashtags',
     value: function getHashtags(search) {
-      var _this17 = this;
+      var _this18 = this;
 
       var body = {
         size: 0,
@@ -1059,8 +1074,8 @@ var Database = exports.Database = function () {
         aggregations: { hashtags: { terms: { field: 'hashtags', size: 100 } } }
       };
       return new _promise2.default(function (resolve, reject) {
-        _this17.es.search({
-          index: _this17.getIndex(TWEET),
+        _this18.es.search({
+          index: _this18.getIndex(TWEET),
           type: TWEET,
           body: body
         }).then(function (response) {
@@ -1077,7 +1092,7 @@ var Database = exports.Database = function () {
   }, {
     key: 'getUrls',
     value: function getUrls(search) {
-      var _this18 = this;
+      var _this19 = this;
 
       var body = {
         size: 0,
@@ -1085,8 +1100,8 @@ var Database = exports.Database = function () {
         aggregations: { urls: { terms: { field: 'urls.long', size: 100 } } }
       };
       return new _promise2.default(function (resolve, reject) {
-        _this18.es.search({
-          index: _this18.getIndex(TWEET),
+        _this19.es.search({
+          index: _this19.getIndex(TWEET),
           type: TWEET,
           body: body
         }).then(function (response) {
@@ -1103,7 +1118,7 @@ var Database = exports.Database = function () {
   }, {
     key: 'getImages',
     value: function getImages(search) {
-      var _this19 = this;
+      var _this20 = this;
 
       var body = {
         size: 0,
@@ -1111,8 +1126,8 @@ var Database = exports.Database = function () {
         aggregations: { images: { terms: { field: 'images', size: 100 } } }
       };
       return new _promise2.default(function (resolve, reject) {
-        _this19.es.search({
-          index: _this19.getIndex(TWEET),
+        _this20.es.search({
+          index: _this20.getIndex(TWEET),
           type: TWEET,
           body: body
         }).then(function (response) {
@@ -1129,7 +1144,7 @@ var Database = exports.Database = function () {
   }, {
     key: 'getVideos',
     value: function getVideos(search) {
-      var _this20 = this;
+      var _this21 = this;
 
       var body = {
         size: 0,
@@ -1137,8 +1152,8 @@ var Database = exports.Database = function () {
         aggregations: { videos: { terms: { field: 'videos', size: 100 } } }
       };
       return new _promise2.default(function (resolve, reject) {
-        _this20.es.search({
-          index: _this20.getIndex(TWEET),
+        _this21.es.search({
+          index: _this21.getIndex(TWEET),
           type: TWEET,
           body: body
         }).then(function (response) {
@@ -1161,10 +1176,10 @@ var Database = exports.Database = function () {
   }, {
     key: 'processUrl',
     value: function processUrl() {
-      var _this21 = this;
+      var _this22 = this;
 
       return new _promise2.default(function (resolve, reject) {
-        _this21.redis.blpopAsync('urlqueue', 0).then(function (result) {
+        _this22.redis.blpopAsync('urlqueue', 0).then(function (result) {
           var job = JSON.parse(result[1]);
           resolve({
             url: job.url,
@@ -1201,12 +1216,12 @@ var Database = exports.Database = function () {
   }, {
     key: 'setupIndexes',
     value: function setupIndexes() {
-      var _this22 = this;
+      var _this23 = this;
 
       return this.es.indices.exists({ index: this.getIndex(TWEET) }).then(function (exists) {
         if (!exists) {
           _logger2.default.info('adding indexes');
-          _this22.addIndexes();
+          _this23.addIndexes();
         } else {
           _logger2.default.warn('indexes already present, not adding');
         }
@@ -1304,11 +1319,11 @@ var Database = exports.Database = function () {
   }, {
     key: 'deleteIndexes',
     value: function deleteIndexes() {
-      var _this23 = this;
+      var _this24 = this;
 
       _logger2.default.info('deleting all elasticsearch indexes');
       return new _promise2.default(function (resolve) {
-        _this23.es.indices.delete({ index: _this23.esPrefix + '*' }).then(function () {
+        _this24.es.indices.delete({ index: _this24.esPrefix + '*' }).then(function () {
           _logger2.default.info('deleted indexes');
           resolve();
         }).catch(function (err) {

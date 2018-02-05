@@ -95,7 +95,6 @@ export const addSearchTerm = (term) => {
   }
 }
 
-
 export const createSearch = (query) => {
 
   // clean up any new input in the query

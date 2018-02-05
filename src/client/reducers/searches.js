@@ -15,7 +15,6 @@ export default function settings(state = initialState, action) {
         return s.id === action.search.id
       })
       const search = {...state[pos], ...action.search}
-      console.log(search)
       return [
         ...state.slice(0, pos),
         search,

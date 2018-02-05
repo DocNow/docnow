@@ -40,6 +40,8 @@ var _db = require('./db');
 
 var _auth = require('./auth');
 
+var _streamLoader = require('./stream-loader');
+
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -47,6 +49,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var app = (0, _express2.default)();
 
 var db = new _db.Database();
+
+var streamLoader = new _streamLoader.StreamLoaderController();
 
 db.setupIndexes();
 db.startTrendsWatcher({ interval: 60 * 1000 });
@@ -225,14 +229,21 @@ app.get('/search/:searchId', function (req, res) {
 
 app.put('/search/:searchId', function (req, res) {
   if (req.user) {
-    var newSearch = req.body;
-    console.log(req.body);
-    db.getSearch(newSearch.id).then(function (search) {
-      newSearch = (0, _extends3.default)({}, search, newSearch);
-      db.updateSearch(newSearch);
-      if (req.query.refreshTweets) {
-        db.importFromSearch(search);
-      }
+    db.getSearch(req.body.id).then(function (search) {
+      var newSearch = (0, _extends3.default)({}, search, req.body);
+
+      db.updateSearch(newSearch).then(function () {
+        if (req.query.refreshTweets) {
+          db.importFromSearch(search);
+        } else if (search.active && !newSearch.active) {
+          console.log('turning off search');
+          streamLoader.stopStream(search.id);
+        } else if (!search.active && newSearch.active) {
+          console.log('turning on search');
+          streamLoader.startStream(search.id);
+        }
+      });
+
       res.json(newSearch);
     });
   }

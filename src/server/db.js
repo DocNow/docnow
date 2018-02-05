@@ -371,7 +371,19 @@ export class Database {
       type: SEARCH,
       body: body
     })
-    return resp.hits.hits.map((h) => {return h._source})
+
+    const searches = []
+
+    for (const hit of resp.hits.hits) {
+      const search = hit._source
+      const stats = await this.getSearchStats(search)
+      searches.push({
+        ...search,
+        ...stats
+      })
+    }
+
+    return searches
   }
 
   getSearch(searchId) {
@@ -402,16 +414,25 @@ export class Database {
       body: body
     })
 
+    const stats = await this.getSearchStats(search)
+
+    return {
+      ...search,
+      ...stats,
+      minDate: new Date(resp.aggregations.minDate.value),
+      maxDate: new Date(resp.aggregations.maxDate.value)
+    }
+  }
+
+  async getSearchStats(search) {
+    const tweetCount = await this.redis.getAsync(tweetsCountKey(search))
     const userCount = await this.redis.zcardAsync(usersCountKey(search))
     const videoCount = await this.redis.zcardAsync(videosCountKey(search))
     const imageCount = await this.redis.zcardAsync(imagesCountKey(search))
     const urlCount = await this.redis.zcardAsync(urlsKey(search))
 
     return {
-      ...search,
-      minDate: new Date(resp.aggregations.minDate.value),
-      maxDate: new Date(resp.aggregations.maxDate.value),
-      tweetCount: resp.hits.total,
+      tweetCount: parseInt(tweetCount || 0, 10),
       imageCount: imageCount,
       videoCount: videoCount,
       userCount: userCount,

@@ -6,10 +6,13 @@ import wayback from './wayback'
 
 import { Database } from './db'
 import { activateKeys } from './auth'
+import { StreamLoaderController } from './stream-loader'
 
 const app = express()
 
 const db = new Database()
+
+const streamLoader = new StreamLoaderController()
 
 db.setupIndexes()
 db.startTrendsWatcher({interval: 60 * 1000})
@@ -174,14 +177,21 @@ app.get('/search/:searchId', (req, res) => {
 
 app.put('/search/:searchId', (req, res) => {
   if (req.user) {
-    let newSearch = req.body
-    console.log(req.body)
-    db.getSearch(newSearch.id).then((search) => {
-      newSearch = {...search, ...newSearch}
-      db.updateSearch(newSearch)
-      if (req.query.refreshTweets) {
-        db.importFromSearch(search)
-      }
+    db.getSearch(req.body.id).then((search) => {
+      const newSearch = {...search, ...req.body}
+
+      db.updateSearch(newSearch).then(() => {
+        if (req.query.refreshTweets) {
+          db.importFromSearch(search)
+        } else if (search.active && ! newSearch.active) {
+          console.log('turning off search')
+          streamLoader.stopStream(search.id)
+        } else if (! search.active && newSearch.active) {
+          console.log('turning on search')
+          streamLoader.startStream(search.id)
+        }
+      })
+
       res.json(newSearch)
     })
   }
