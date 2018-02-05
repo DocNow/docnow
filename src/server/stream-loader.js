@@ -45,11 +45,11 @@ export class StreamLoader {
 
   constructor(db = null, concurrency = 5) {
     this.concurrency = concurrency
-    this.active = false
-    this.streams = {}
     this.db = db || new Database()
     this.redis = getRedis()
     this.redisBlocking = this.redis.duplicate()
+    this.active = false
+    this.activeStreams = new Set()
   }
 
   async start() {
@@ -100,22 +100,32 @@ export class StreamLoader {
     const track = search.query.map((term) => {return term.value}).join(',')
     let tweets = []
 
+    this.activeStreams.add(searchId)
+
     t.filter({track: track}, (tweet) => {
       log.info('got tweet', {text: tweet.text})
       tweets.push(tweet)
-      if (this.active && tweets.length >= 10) {
+
+      if (! (this.active === true && this.activeStreams.has(searchId))) {
+        log.info('stream for ' + searchId + ' has been closed')
+        return false
+      }
+
+      if (tweets.length >= 10) {
         this.db.loadTweets(search, tweets).then((resp) => {
           log.info('bulk loaded ' + resp.items.length + ' items from the stream')
         })
         tweets = []
       }
-      return this.active
+
+      return true
     })
 
   }
 
   stopStream(searchId) {
     log.info('stopping stream', {searchId})
+    this.activeStreams.delete(searchId)
   }
 
 }

@@ -10,7 +10,7 @@ import download from './Insights.css'
 
 export default class Insights extends Component {
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.resetTwitterSearch()
     this.tick()
     this.props.getUsers(this.props.searchId)
@@ -21,6 +21,10 @@ export default class Insights extends Component {
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
+  }
+
+  shouldComponentUpdate() {
+    return this.props.search.id ? true : false
   }
 
   componentWillUnmount() {

@@ -1,9 +1,10 @@
 import moment from 'moment'
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import style from './SearchList.css'
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
+import SearchToggle from './SearchToggle'
+import style from './SearchList.css'
 
 export default class SavedSearch extends Component {
 
@@ -43,10 +44,10 @@ export default class SavedSearch extends Component {
               <div className={style.GridActions}>
                 <div className={style.GridRowGrayInner}>
                   <div className={style.GridActionsInner}>
-                    <label className={style.Switch}>
-                      <input type="checkbox" />
-                      <span className={style.Slider + ' ' + style.Round} />
-                    </label>
+                    <SearchToggle
+                      id={search.id}
+                      active={search.active}
+                      updateSearch={this.props.updateSearch} />
                   </div>
                   <div className={style.GridActionsInner} title="delete">
                     <a href="">
@@ -66,5 +67,6 @@ export default class SavedSearch extends Component {
 
 SavedSearch.propTypes = {
   searches: PropTypes.array,
+  updateSearch: PropTypes.func,
   getSearches: PropTypes.func,
 }

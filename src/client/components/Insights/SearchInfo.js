@@ -1,7 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Editable from '../Editable'
+import SearchToggle from '../SearchToggle'
 import moment from 'moment'
+
 import style from './SearchInfo.css'
 import sl from '../SearchList.css'
 
@@ -44,10 +46,10 @@ export default class SearchInfo extends Component {
         </div>
         <div className={style.SavedSearchButtons}>
           <div className={sl.GridActionsInner}>
-            <label className={sl.Switch}>
-              <input type="checkbox" />
-              <span className={sl.Slider + ' ' + sl.Round} />
-            </label>
+            <SearchToggle
+              active={this.props.search.active}
+              id={this.props.search.id}
+              updateSearch={this.props.updateSearch} />
             <div className={sl.GridActionsInner} title="delete">
               <a href="">
                 <i className="fa fa-trash" className={sl.Trash + ' fa fa-trash'} aria-hidden="true" />
