@@ -16,13 +16,21 @@ export default class Tweet extends Component {
               @{ this.props.data.user.screenName}
             </a>
           </div>
-          <hr />
+        </div>
+        <div className={style.TweetTime}>
           <a href={this.props.data.twitterUrl}>{created}</a>
         </div>
         <p>{this.props.data.text}</p>
-        <div className={style.Inline}><i className="fa fa-comment-o" />{this.props.data.replyCount}</div>
-        <div className={style.Inline}><i className="fa fa-retweet" />{this.props.data.retweetCount}</div>
-        <div className={style.Inline}><i className="fa fa-heart-o" />{this.props.data.likeCount}</div>
+        <div className={style.TweetStats}>
+          <div className={style.Inline}>
+            <i className="fa fa-retweet" />
+            {this.props.data.retweetCount}
+          </div>
+          <div className={style.Inline}>
+            <i className="fa fa-heart-o" />
+            {this.props.data.likeCount}
+          </div>
+        </div>
       </div>
     )
   }

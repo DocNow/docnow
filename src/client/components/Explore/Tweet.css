@@ -6,6 +6,7 @@
   margin-bottom: 4px;
   padding: 2px;
   font-size: 10pt;
+  width: 96%;
 }
 
 .Tweet p {
@@ -34,6 +35,21 @@
 .TweetName {
   padding-left: 5px;
   padding-right: 10px;
+}
+
+.TweetTime {
+  display: flex;
+  justify-content: flex-end;
+  padding-right: 10px;
+}
+
+.TweetStats {
+  height: 25px;
+  border-top: 1px solid #CCCCCC;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 .Inline {

@@ -25,10 +25,12 @@ export default class User extends Component {
   }
 
   render() {
-    const countHelper = this.props.data.screenName + ' has tweeted ' + this.props.data.tweetsInSearch + ' times in this search'
+    const accountLife = (new Date() - new Date(this.props.data.created)) / 1000 / 60 / 60
+    const tweetsPerHour = (this.props.data.tweetsCount / accountLife).toFixed(2)
+
     return (
-      <div onClick={() => {this.addUser()}} className={style.User}>
-        <div className={style.UserProfile}>
+      <div className={style.User}>
+        <div onClick={() => {this.addUser()}} className={style.UserProfile}>
           <img src={this.props.data.avatarUrl} />
           <div className={style.UserName}>
             {this.props.data.name}
@@ -38,26 +40,36 @@ export default class User extends Component {
             @{this.props.data.screenName}
           </div>
         </div>
-        <div className={style.UserStats}>
-          <div>
+        <div className={style.TwitterUserStats}>
+          <div className={style.Inline}>
             <b>{this.props.data.followersCount}</b> <br /> followers
           </div>
-          <div>
+          <div className={style.Inline}>
             <b>{this.props.data.friendsCount}</b> <br /> following
           </div>
-          <div>
+          <div className={style.Inline}>
             <b>{this.props.data.tweetsCount}</b> <br /> tweets
           </div>
-          <div className={style.UserCount}>
-            <span alt={countHelper} title={countHelper}>
-              {this.props.data.tweetsInSearch}
-            </span>
-          </div>
         </div>
-        <hr />
         <p>{this.props.data.description}</p>
         <div className={style.Inline}>
-          {this.props.data.url}
+          <i className="fa fa-map-marker" aria-hidden="true" />
+          &nbsp;
+          {this.props.data.location}
+        </div>
+        <div className={style.Inline}>
+          <a href={this.props.data.url} target="_new">
+            {this.props.data.url}
+          </a>
+        </div>
+        <div className={style.UserStats}>
+          <div className={style.Inline}>
+            <i className="fa fa-twitter" aria-hidden="true" />
+            {this.props.data.tweetsInSearch}
+          </div>
+          <div className={style.Inline}>
+            {tweetsPerHour} tweets per hour
+          </div>
         </div>
       </div>
     )
