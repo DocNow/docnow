@@ -102,8 +102,9 @@ export class StreamLoader {
 
     this.activeStreams.add(searchId)
 
+    let lastUpdate = new Date()
+
     t.filter({track: track}, (tweet) => {
-      log.info('got tweet', {text: tweet.text})
       tweets.push(tweet)
 
       if (! (this.active === true && this.activeStreams.has(searchId))) {
@@ -111,11 +112,18 @@ export class StreamLoader {
         return false
       }
 
-      if (tweets.length >= 10) {
+      const elapsed = new Date() - lastUpdate
+
+      if (tweets.length >= 100 || (tweets.length > 0 && elapsed > 5000)) {
         this.db.loadTweets(search, tweets).then((resp) => {
-          log.info('bulk loaded ' + resp.items.length + ' items from the stream')
+          if (resp.error) {
+            log.info('errors during load!')
+          } else {
+            log.info('loaded ' + tweets.length + ' for ' + search.id)
+          }
         })
         tweets = []
+        lastUpdate = new Date()
       }
 
       return true

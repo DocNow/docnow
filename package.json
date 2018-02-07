@@ -89,7 +89,7 @@
     "twit": "^2.2.9",
     "update": "^0.7.4",
     "url-loader": "^0.6.2",
-    "uuid": "^3.1.0",
+    "uuid": "^3.2.1",
     "winston": "^2.3.1"
   },
   "devDependencies": {

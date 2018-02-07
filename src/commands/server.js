@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 import path from 'path'
+import uuid from 'uuid/v4'
 import morgan from 'morgan'
 import webpack from 'webpack'
 import express from 'express'
@@ -16,6 +17,7 @@ import auth from '../server/auth'
 import log from '../server/logger'
 import config from '../../webpack.dev.config.js'
 import { UrlFetcher } from '../server/url-fetcher'
+import { StreamLoader } from '../server/stream-loader'
 
 const projectDir = path.join(__dirname, '..', '..')
 const clientDir = path.join(projectDir, 'dist', 'client')
@@ -31,7 +33,11 @@ app.set('port', process.env.PORT || defaultPort)
 
 app.use(cookieParser())
 app.use(bodyParser.json())
-app.use(cookieSession({secret: 'ABCD', resave: true, saveUninitialized: true}))
+app.use(cookieSession({
+  secret: process.env.COOKIE_SECRET || 'F5478D6D-0896-4A00-92F4-C3E121DC4CC4', 
+  resave: true,
+  saveUninitialized: true
+}))
 app.use(passport.initialize())
 app.use(passport.session())
 app.use(morgan('combined'))
@@ -49,7 +55,7 @@ if (isDevelopment) {
     res.write(compiler.outputFileSystem.readFileSync(htmlFile))
     res.end()
   })
-  
+
   // log additional information about unhandled promises so they can be debugged
   process.on('unhandledRejection', (reason, p) => {
     log.warn('Unhandled Rejection at:', p, 'reason:', reason)
@@ -65,6 +71,9 @@ if (isDevelopment) {
 
 const urlFetcher = new UrlFetcher()
 urlFetcher.start()
+
+const streamLoader = new StreamLoader()
+streamLoader.start()
 
 log.info('starting app')
 app.listen(app.get('port'))
