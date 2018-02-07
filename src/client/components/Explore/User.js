@@ -30,14 +30,16 @@ export default class User extends Component {
 
     return (
       <div className={style.User}>
-        <div onClick={() => {this.addUser()}} className={style.UserProfile}>
-          <img src={this.props.data.avatarUrl} />
+        <div className={style.UserProfile}>
+          <img onClick={() => {this.addUser()}} src={this.props.data.avatarUrl} />
           <div className={style.UserName}>
             {this.props.data.name}
           </div>
           &nbsp;
           <div className={style.UserHandle} onClick={(e) => {this.viewTwitterUser(e)}}>
-            @{this.props.data.screenName}
+            <a href={'https://twitter.com/' + this.props.data.screenName} target="_new">
+              @{this.props.data.screenName}
+            </a>
           </div>
         </div>
         <div className={style.TwitterUserStats}>
@@ -68,7 +70,7 @@ export default class User extends Component {
             {this.props.data.tweetsInSearch}
           </div>
           <div className={style.Inline}>
-            {tweetsPerHour} tweets per hour
+            {tweetsPerHour} tw/hr
           </div>
         </div>
       </div>
