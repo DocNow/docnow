@@ -227,11 +227,12 @@ var StreamLoader = exports.StreamLoader = function () {
                   var elapsed = new Date() - lastUpdate;
 
                   if (tweets.length >= 100 || tweets.length > 0 && elapsed > 5000) {
+                    var numTweets = tweets.length;
                     _this2.db.loadTweets(search, tweets).then(function (resp) {
                       if (resp.error) {
                         _logger2.default.info('errors during load!');
                       } else {
-                        _logger2.default.info('loaded ' + tweets.length + ' for ' + search.id);
+                        _logger2.default.info('loaded ' + numTweets + ' tweets for ' + search.id);
                       }
                     });
                     tweets = [];

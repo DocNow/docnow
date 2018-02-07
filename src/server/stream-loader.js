@@ -115,11 +115,12 @@ export class StreamLoader {
       const elapsed = new Date() - lastUpdate
 
       if (tweets.length >= 100 || (tweets.length > 0 && elapsed > 5000)) {
+        const numTweets = tweets.length
         this.db.loadTweets(search, tweets).then((resp) => {
           if (resp.error) {
             log.info('errors during load!')
           } else {
-            log.info('loaded ' + tweets.length + ' for ' + search.id)
+            log.info('loaded ' + numTweets + ' tweets for ' + search.id)
           }
         })
         tweets = []
