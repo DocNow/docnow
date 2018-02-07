@@ -54,7 +54,7 @@ export default class SavedSearch extends Component {
               </div>
 
               <div className={style.GridActions}>
-                <div className={style.GridRowGrayInner}>
+                <div className={style.GridRowInner}>
                   <div className={style.GridActionsInner}>
                     <SearchToggle
                       id={search.id}

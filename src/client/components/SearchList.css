@@ -30,11 +30,6 @@
   display: flex;
 }
 
-.GridRowGrayInner {
-  display: flex;
-  background-color: #eeeeee;
-}
-
 .GridItem {
   flex: 1;
   padding: 12px;
