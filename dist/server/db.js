@@ -25,13 +25,13 @@ var _set = require('babel-runtime/core-js/set');
 
 var _set2 = _interopRequireDefault(_set);
 
-var _extends2 = require('babel-runtime/helpers/extends');
-
-var _extends3 = _interopRequireDefault(_extends2);
-
 var _regenerator = require('babel-runtime/regenerator');
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
+
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
 
 var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
 
@@ -520,7 +520,8 @@ var Database = exports.Database = function () {
     key: 'getUserSearches',
     value: function () {
       var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(user) {
-        var body, resp;
+        var body, resp, searches, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, hit, search, stats;
+
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
@@ -543,16 +544,77 @@ var Database = exports.Database = function () {
 
               case 3:
                 resp = _context.sent;
-                return _context.abrupt('return', resp.hits.hits.map(function (h) {
-                  return h._source;
-                }));
+                searches = [];
+                _iteratorNormalCompletion4 = true;
+                _didIteratorError4 = false;
+                _iteratorError4 = undefined;
+                _context.prev = 8;
+                _iterator4 = (0, _getIterator3.default)(resp.hits.hits);
 
-              case 5:
+              case 10:
+                if (_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done) {
+                  _context.next = 20;
+                  break;
+                }
+
+                hit = _step4.value;
+                search = hit._source;
+                _context.next = 15;
+                return this.getSearchStats(search);
+
+              case 15:
+                stats = _context.sent;
+
+                searches.push((0, _extends3.default)({}, search, stats));
+
+              case 17:
+                _iteratorNormalCompletion4 = true;
+                _context.next = 10;
+                break;
+
+              case 20:
+                _context.next = 26;
+                break;
+
+              case 22:
+                _context.prev = 22;
+                _context.t0 = _context['catch'](8);
+                _didIteratorError4 = true;
+                _iteratorError4 = _context.t0;
+
+              case 26:
+                _context.prev = 26;
+                _context.prev = 27;
+
+                if (!_iteratorNormalCompletion4 && _iterator4.return) {
+                  _iterator4.return();
+                }
+
+              case 29:
+                _context.prev = 29;
+
+                if (!_didIteratorError4) {
+                  _context.next = 32;
+                  break;
+                }
+
+                throw _iteratorError4;
+
+              case 32:
+                return _context.finish(29);
+
+              case 33:
+                return _context.finish(26);
+
+              case 34:
+                return _context.abrupt('return', searches);
+
+              case 35:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this);
+        }, _callee, this, [[8, 22, 26, 34], [27,, 29, 33]]);
       }));
 
       function getUserSearches(_x4) {
@@ -576,7 +638,7 @@ var Database = exports.Database = function () {
     key: 'getSearchSummary',
     value: function () {
       var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2(search) {
-        var body, resp, userCount, videoCount, imageCount, urlCount;
+        var body, resp, stats;
         return _regenerator2.default.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -602,36 +664,16 @@ var Database = exports.Database = function () {
               case 3:
                 resp = _context2.sent;
                 _context2.next = 6;
-                return this.redis.zcardAsync((0, _redis.usersCountKey)(search));
+                return this.getSearchStats(search);
 
               case 6:
-                userCount = _context2.sent;
-                _context2.next = 9;
-                return this.redis.zcardAsync((0, _redis.videosCountKey)(search));
-
-              case 9:
-                videoCount = _context2.sent;
-                _context2.next = 12;
-                return this.redis.zcardAsync((0, _redis.imagesCountKey)(search));
-
-              case 12:
-                imageCount = _context2.sent;
-                _context2.next = 15;
-                return this.redis.zcardAsync((0, _redis.urlsKey)(search));
-
-              case 15:
-                urlCount = _context2.sent;
-                return _context2.abrupt('return', (0, _extends3.default)({}, search, {
+                stats = _context2.sent;
+                return _context2.abrupt('return', (0, _extends3.default)({}, search, stats, {
                   minDate: new Date(resp.aggregations.minDate.value),
-                  maxDate: new Date(resp.aggregations.maxDate.value),
-                  tweetCount: resp.hits.total,
-                  imageCount: imageCount,
-                  videoCount: videoCount,
-                  userCount: userCount,
-                  urlCount: urlCount
+                  maxDate: new Date(resp.aggregations.maxDate.value)
                 }));
 
-              case 17:
+              case 8:
               case 'end':
                 return _context2.stop();
             }
@@ -646,6 +688,62 @@ var Database = exports.Database = function () {
       return getSearchSummary;
     }()
   }, {
+    key: 'getSearchStats',
+    value: function () {
+      var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(search) {
+        var tweetCount, userCount, videoCount, imageCount, urlCount;
+        return _regenerator2.default.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.redis.getAsync((0, _redis.tweetsCountKey)(search));
+
+              case 2:
+                tweetCount = _context3.sent;
+                _context3.next = 5;
+                return this.redis.zcardAsync((0, _redis.usersCountKey)(search));
+
+              case 5:
+                userCount = _context3.sent;
+                _context3.next = 8;
+                return this.redis.zcardAsync((0, _redis.videosCountKey)(search));
+
+              case 8:
+                videoCount = _context3.sent;
+                _context3.next = 11;
+                return this.redis.zcardAsync((0, _redis.imagesCountKey)(search));
+
+              case 11:
+                imageCount = _context3.sent;
+                _context3.next = 14;
+                return this.redis.zcardAsync((0, _redis.urlsKey)(search));
+
+              case 14:
+                urlCount = _context3.sent;
+                return _context3.abrupt('return', {
+                  tweetCount: parseInt(tweetCount || 0, 10),
+                  imageCount: imageCount,
+                  videoCount: videoCount,
+                  userCount: userCount,
+                  urlCount: urlCount
+                });
+
+              case 16:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function getSearchStats(_x6) {
+        return _ref3.apply(this, arguments);
+      }
+
+      return getSearchStats;
+    }()
+  }, {
     key: 'importFromSearch',
     value: function importFromSearch(search) {
       var _this14 = this;
@@ -657,13 +755,13 @@ var Database = exports.Database = function () {
       var maxTweetId = null;
 
       var queryParts = [];
-      var _iteratorNormalCompletion4 = true;
-      var _didIteratorError4 = false;
-      var _iteratorError4 = undefined;
+      var _iteratorNormalCompletion5 = true;
+      var _didIteratorError5 = false;
+      var _iteratorError5 = undefined;
 
       try {
-        for (var _iterator4 = (0, _getIterator3.default)(search.query), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
-          var term = _step4.value;
+        for (var _iterator5 = (0, _getIterator3.default)(search.query), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+          var term = _step5.value;
 
           if (term.type === 'keyword') {
             queryParts.push(term.value);
@@ -679,16 +777,16 @@ var Database = exports.Database = function () {
           }
         }
       } catch (err) {
-        _didIteratorError4 = true;
-        _iteratorError4 = err;
+        _didIteratorError5 = true;
+        _iteratorError5 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion4 && _iterator4.return) {
-            _iterator4.return();
+          if (!_iteratorNormalCompletion5 && _iterator5.return) {
+            _iterator5.return();
           }
         } finally {
-          if (_didIteratorError4) {
-            throw _iteratorError4;
+          if (_didIteratorError5) {
+            throw _iteratorError5;
           }
         }
       }
@@ -736,38 +834,38 @@ var Database = exports.Database = function () {
         var bulk = [];
         var seenUsers = new _set2.default();
 
-        var _iteratorNormalCompletion5 = true;
-        var _didIteratorError5 = false;
-        var _iteratorError5 = undefined;
+        var _iteratorNormalCompletion6 = true;
+        var _didIteratorError6 = false;
+        var _iteratorError6 = undefined;
 
         try {
-          for (var _iterator5 = (0, _getIterator3.default)(tweets), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-            var tweet = _step5.value;
+          for (var _iterator6 = (0, _getIterator3.default)(tweets), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+            var tweet = _step6.value;
 
 
             _this15.tallyTweet(search, tweet);
 
-            var _iteratorNormalCompletion6 = true;
-            var _didIteratorError6 = false;
-            var _iteratorError6 = undefined;
+            var _iteratorNormalCompletion7 = true;
+            var _didIteratorError7 = false;
+            var _iteratorError7 = undefined;
 
             try {
-              for (var _iterator6 = (0, _getIterator3.default)(tweet.urls), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                var url = _step6.value;
+              for (var _iterator7 = (0, _getIterator3.default)(tweet.urls), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+                var url = _step7.value;
 
                 urlFetcher.add(search, url.long, tweet.id);
               }
             } catch (err) {
-              _didIteratorError6 = true;
-              _iteratorError6 = err;
+              _didIteratorError7 = true;
+              _iteratorError7 = err;
             } finally {
               try {
-                if (!_iteratorNormalCompletion6 && _iterator6.return) {
-                  _iterator6.return();
+                if (!_iteratorNormalCompletion7 && _iterator7.return) {
+                  _iterator7.return();
                 }
               } finally {
-                if (_didIteratorError6) {
-                  throw _iteratorError6;
+                if (_didIteratorError7) {
+                  throw _iteratorError7;
                 }
               }
             }
@@ -794,16 +892,16 @@ var Database = exports.Database = function () {
             }
           }
         } catch (err) {
-          _didIteratorError5 = true;
-          _iteratorError5 = err;
+          _didIteratorError6 = true;
+          _iteratorError6 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion5 && _iterator5.return) {
-              _iterator5.return();
+            if (!_iteratorNormalCompletion6 && _iterator6.return) {
+              _iterator6.return();
             }
           } finally {
-            if (_didIteratorError5) {
-              throw _iteratorError5;
+            if (_didIteratorError6) {
+              throw _iteratorError6;
             }
           }
         }
@@ -828,40 +926,15 @@ var Database = exports.Database = function () {
     value: function tallyTweet(search, tweet) {
       this.redis.incr((0, _redis.tweetsCountKey)(search));
       this.redis.zincrby((0, _redis.usersCountKey)(search), 1, tweet.user.screenName);
-      var _iteratorNormalCompletion7 = true;
-      var _didIteratorError7 = false;
-      var _iteratorError7 = undefined;
-
-      try {
-        for (var _iterator7 = (0, _getIterator3.default)(tweet.videos), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-          var video = _step7.value;
-
-          this.redis.zincrby((0, _redis.videosCountKey)(search), 1, video);
-        }
-      } catch (err) {
-        _didIteratorError7 = true;
-        _iteratorError7 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion7 && _iterator7.return) {
-            _iterator7.return();
-          }
-        } finally {
-          if (_didIteratorError7) {
-            throw _iteratorError7;
-          }
-        }
-      }
-
       var _iteratorNormalCompletion8 = true;
       var _didIteratorError8 = false;
       var _iteratorError8 = undefined;
 
       try {
-        for (var _iterator8 = (0, _getIterator3.default)(tweet.images), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var image = _step8.value;
+        for (var _iterator8 = (0, _getIterator3.default)(tweet.videos), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+          var video = _step8.value;
 
-          this.redis.zincrby((0, _redis.imagesCountKey)(search), 1, image);
+          this.redis.zincrby((0, _redis.videosCountKey)(search), 1, video);
         }
       } catch (err) {
         _didIteratorError8 = true;
@@ -874,6 +947,31 @@ var Database = exports.Database = function () {
         } finally {
           if (_didIteratorError8) {
             throw _iteratorError8;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion9 = true;
+      var _didIteratorError9 = false;
+      var _iteratorError9 = undefined;
+
+      try {
+        for (var _iterator9 = (0, _getIterator3.default)(tweet.images), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+          var image = _step9.value;
+
+          this.redis.zincrby((0, _redis.imagesCountKey)(search), 1, image);
+        }
+      } catch (err) {
+        _didIteratorError9 = true;
+        _iteratorError9 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion9 && _iterator9.return) {
+            _iterator9.return();
+          }
+        } finally {
+          if (_didIteratorError9) {
+            throw _iteratorError9;
           }
         }
       }
@@ -929,17 +1027,17 @@ var Database = exports.Database = function () {
   }, {
     key: 'getTweetsForUrl',
     value: function () {
-      var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(search, url) {
+      var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(search, url) {
         var ids, body, resp;
-        return _regenerator2.default.wrap(function _callee3$(_context3) {
+        return _regenerator2.default.wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                _context3.next = 2;
+                _context4.next = 2;
                 return urlFetcher.getTweetIdentifiers(search, url);
 
               case 2:
-                ids = _context3.sent;
+                ids = _context4.sent;
                 body = {
                   size: 100,
                   query: {
@@ -950,7 +1048,7 @@ var Database = exports.Database = function () {
                   },
                   sort: [{ id: 'desc' }]
                 };
-                _context3.next = 6;
+                _context4.next = 6;
                 return this.es.search({
                   index: this.getIndex(TWEET),
                   type: TWEET,
@@ -958,21 +1056,21 @@ var Database = exports.Database = function () {
                 });
 
               case 6:
-                resp = _context3.sent;
-                return _context3.abrupt('return', resp.hits.hits.map(function (h) {
+                resp = _context4.sent;
+                return _context4.abrupt('return', resp.hits.hits.map(function (h) {
                   return h._source;
                 }));
 
               case 8:
               case 'end':
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
-      function getTweetsForUrl(_x8, _x9) {
-        return _ref3.apply(this, arguments);
+      function getTweetsForUrl(_x9, _x10) {
+        return _ref4.apply(this, arguments);
       }
 
       return getTweetsForUrl;
@@ -1025,29 +1123,29 @@ var Database = exports.Database = function () {
             });
 
             // add the tweet counts per user that we got previously
-            var _iteratorNormalCompletion9 = true;
-            var _didIteratorError9 = false;
-            var _iteratorError9 = undefined;
+            var _iteratorNormalCompletion10 = true;
+            var _didIteratorError10 = false;
+            var _iteratorError10 = undefined;
 
             try {
-              for (var _iterator9 = (0, _getIterator3.default)(users), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-                var user = _step9.value;
+              for (var _iterator10 = (0, _getIterator3.default)(users), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+                var user = _step10.value;
 
                 user.tweetsInSearch = counts.get(user.screenName);
               }
 
               // sort them by their counts
             } catch (err) {
-              _didIteratorError9 = true;
-              _iteratorError9 = err;
+              _didIteratorError10 = true;
+              _iteratorError10 = err;
             } finally {
               try {
-                if (!_iteratorNormalCompletion9 && _iterator9.return) {
-                  _iterator9.return();
+                if (!_iteratorNormalCompletion10 && _iterator10.return) {
+                  _iterator10.return();
                 }
               } finally {
-                if (_didIteratorError9) {
-                  throw _iteratorError9;
+                if (_didIteratorError10) {
+                  throw _iteratorError10;
                 }
               }
             }
@@ -1234,27 +1332,27 @@ var Database = exports.Database = function () {
     value: function addIndexes() {
       var indexMappings = this.getIndexMappings();
       var promises = [];
-      var _iteratorNormalCompletion10 = true;
-      var _didIteratorError10 = false;
-      var _iteratorError10 = undefined;
+      var _iteratorNormalCompletion11 = true;
+      var _didIteratorError11 = false;
+      var _iteratorError11 = undefined;
 
       try {
-        for (var _iterator10 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-          var name = _step10.value;
+        for (var _iterator11 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          var name = _step11.value;
 
           promises.push(this.addIndex(name, indexMappings[name]));
         }
       } catch (err) {
-        _didIteratorError10 = true;
-        _iteratorError10 = err;
+        _didIteratorError11 = true;
+        _iteratorError11 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion10 && _iterator10.return) {
-            _iterator10.return();
+          if (!_iteratorNormalCompletion11 && _iterator11.return) {
+            _iterator11.return();
           }
         } finally {
-          if (_didIteratorError10) {
-            throw _iteratorError10;
+          if (_didIteratorError11) {
+            throw _iteratorError11;
           }
         }
       }
@@ -1278,27 +1376,27 @@ var Database = exports.Database = function () {
     value: function updateIndexes() {
       var indexMappings = this.getIndexMappings();
       var promises = [];
-      var _iteratorNormalCompletion11 = true;
-      var _didIteratorError11 = false;
-      var _iteratorError11 = undefined;
+      var _iteratorNormalCompletion12 = true;
+      var _didIteratorError12 = false;
+      var _iteratorError12 = undefined;
 
       try {
-        for (var _iterator11 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-          var name = _step11.value;
+        for (var _iterator12 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+          var name = _step12.value;
 
           promises.push(this.updateIndex(name, indexMappings[name]));
         }
       } catch (err) {
-        _didIteratorError11 = true;
-        _iteratorError11 = err;
+        _didIteratorError12 = true;
+        _iteratorError12 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion11 && _iterator11.return) {
-            _iterator11.return();
+          if (!_iteratorNormalCompletion12 && _iterator12.return) {
+            _iterator12.return();
           }
         } finally {
-          if (_didIteratorError11) {
-            throw _iteratorError11;
+          if (_didIteratorError12) {
+            throw _iteratorError12;
           }
         }
       }

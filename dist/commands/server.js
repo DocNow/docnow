@@ -5,6 +5,10 @@ var _path = require('path');
 
 var _path2 = _interopRequireDefault(_path);
 
+var _v = require('uuid/v4');
+
+var _v2 = _interopRequireDefault(_v);
+
 var _morgan = require('morgan');
 
 var _morgan2 = _interopRequireDefault(_morgan);
@@ -59,6 +63,8 @@ var _webpackDevConfig2 = _interopRequireDefault(_webpackDevConfig);
 
 var _urlFetcher = require('../server/url-fetcher');
 
+var _streamLoader = require('../server/stream-loader');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var projectDir = _path2.default.join(__dirname, '..', '..');
@@ -75,7 +81,11 @@ app.set('port', process.env.PORT || defaultPort);
 
 app.use((0, _cookieParser2.default)());
 app.use(_bodyParser2.default.json());
-app.use((0, _cookieSession2.default)({ secret: 'ABCD', resave: true, saveUninitialized: true }));
+app.use((0, _cookieSession2.default)({
+  secret: process.env.COOKIE_SECRET || 'F5478D6D-0896-4A00-92F4-C3E121DC4CC4',
+  resave: true,
+  saveUninitialized: true
+}));
 app.use(_passport2.default.initialize());
 app.use(_passport2.default.session());
 app.use((0, _morgan2.default)('combined'));
@@ -111,6 +121,9 @@ if (isDevelopment) {
 
 var urlFetcher = new _urlFetcher.UrlFetcher();
 urlFetcher.start();
+
+var streamLoader = new _streamLoader.StreamLoader();
+streamLoader.start();
 
 _logger2.default.info('starting app');
 app.listen(app.get('port'));

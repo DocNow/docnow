@@ -163,7 +163,7 @@ var StreamLoader = exports.StreamLoader = function () {
       var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2(searchId) {
         var _this2 = this;
 
-        var search, user, t, track, tweets;
+        var search, user, t, track, tweets, lastUpdate;
         return _regenerator2.default.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -213,8 +213,10 @@ var StreamLoader = exports.StreamLoader = function () {
 
                 this.activeStreams.add(searchId);
 
+                lastUpdate = new Date();
+
+
                 t.filter({ track: track }, function (tweet) {
-                  _logger2.default.info('got tweet', { text: tweet.text });
                   tweets.push(tweet);
 
                   if (!(_this2.active === true && _this2.activeStreams.has(searchId))) {
@@ -222,17 +224,24 @@ var StreamLoader = exports.StreamLoader = function () {
                     return false;
                   }
 
-                  if (tweets.length >= 10) {
+                  var elapsed = new Date() - lastUpdate;
+
+                  if (tweets.length >= 100 || tweets.length > 0 && elapsed > 5000) {
                     _this2.db.loadTweets(search, tweets).then(function (resp) {
-                      _logger2.default.info('bulk loaded ' + resp.items.length + ' items from the stream');
+                      if (resp.error) {
+                        _logger2.default.info('errors during load!');
+                      } else {
+                        _logger2.default.info('loaded ' + tweets.length + ' for ' + search.id);
+                      }
                     });
                     tweets = [];
+                    lastUpdate = new Date();
                   }
 
                   return true;
                 });
 
-              case 20:
+              case 21:
               case 'end':
                 return _context2.stop();
             }
