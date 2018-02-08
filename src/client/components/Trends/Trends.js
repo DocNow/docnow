@@ -77,8 +77,8 @@ export default class Trends extends MediaQueryComponent {
                 username={this.props.username}
                 createSearch={this.props.createSearch}/>
             ))}
-            {newLocation}
           </div>
+          {newLocation}
         </div>
       </div>
     )
