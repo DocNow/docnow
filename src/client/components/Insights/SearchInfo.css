@@ -7,10 +7,6 @@
   border: none;
 }
 
-.SavedSearchText i {
-  color: #999999;
-}
-
 .SavedSearchInsightText {
   flex: 3;
   padding: 12px;
@@ -30,10 +26,8 @@
 }
 
 .SavedSearchButtons {
-  flex: .5;
-  flex-direction: column;
-  border: none;
-
+  display: flex;
+  align-items: center;
 }
 
 .SavedSearchButtons button {

@@ -1,5 +1,7 @@
 .TweetTabBar {
   text-transform: uppercase;
+  padding-top: 15px;
+  text-align: center;
 }
 
 .TweetTabBar ul {

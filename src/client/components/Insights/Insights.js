@@ -6,7 +6,7 @@ import TweetEmbed from 'react-tweet-embed'
 import TweetTabBar from './TweetTabBar'
 
 import card from '../Card.css'
-import download from './Insights.css'
+import style from './Insights.css'
 
 export default class Insights extends Component {
 
@@ -59,13 +59,14 @@ export default class Insights extends Component {
     }
 
     return (
-      <div>
+      <div className={style.Insights}>
 
         <SearchInfo
           title={this.props.search.title}
           description={this.props.search.description}
           search={this.props.search}
           updateSearch={this.props.updateSearch} />
+
 
         <TweetTabBar />
 
@@ -116,10 +117,6 @@ export default class Insights extends Component {
           </div>
         </div>
 
-        <div className={download.DownloadOptions}>
-          <button type="button">Download Full Data</button>
-          <button type="button">Download Selected</button>
-        </div>
 
       </div>
     )

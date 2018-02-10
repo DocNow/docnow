@@ -15,13 +15,15 @@ export default class SearchToggle extends Component {
 
   render() {
     return (
-      <label className={style.Switch}>
-        <input
-          type="checkbox"
-          checked={this.props.active}
-          onChange={(e) => {this.toggle(e)}} />
-        <span className={style.Slider + ' ' + style.Round} />
-      </label>
+      <div className={style.SearchToggle}>
+        <label className={style.Switch}>
+          <input
+            type="checkbox"
+            checked={this.props.active}
+            onChange={(e) => {this.toggle(e)}} />
+          <span className={style.Slider + ' ' + style.Round} />
+        </label>
+      </div>
     )
   }
 

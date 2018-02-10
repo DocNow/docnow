@@ -3,6 +3,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
+import Trash from './Trash'
 import SearchToggle from './SearchToggle'
 import style from './SearchList.css'
 
@@ -61,10 +62,8 @@ export default class SavedSearch extends Component {
                       active={search.active}
                       updateSearch={this.props.updateSearch} />
                   </div>
-                  <div className={style.GridActionsInner} title="delete">
-                    <a href="">
-                      <i className={style.Trash + ' fa fa-trash'} aria-hidden="true" />
-                    </a>
+                  <div className={style.GridActionsInner}>
+                    <Trash />
                   </div>
                 </div>
               </div>
