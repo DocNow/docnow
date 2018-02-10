@@ -70,8 +70,10 @@ app.get('/settings', async (req, res) => {
 })
 
 app.put('/settings', async (req, res) => {
+  // only allow super user to update the settings
+  // or when there is no super user yet during initial setup
   const superUser = await db.getSuperUser()
-  if (! superUser || req.user.isSuperUser) {
+  if (! superUser || (req.user && req.user.isSuperUser)) {
     const settings = {
       logoUrl: req.body.logoUrl,
       reinstanceTitle: req.body.instanceTitle,
