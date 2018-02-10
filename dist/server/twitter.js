@@ -45,9 +45,16 @@ var _emojiRegex = require('emoji-regex');
 
 var _emojiRegex2 = _interopRequireDefault(_emojiRegex);
 
+var _htmlEntities = require('html-entities');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var emojiMatch = (0, _emojiRegex2.default)();
+var entities = new _htmlEntities.AllHtmlEntities();
+
+function decode(s) {
+  return entities.decode(s);
+}
 
 var Twitter = exports.Twitter = function () {
   function Twitter() {
@@ -376,7 +383,7 @@ var Twitter = exports.Twitter = function () {
 
       return {
         id: t.id_str,
-        text: text,
+        text: decode(text),
         twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
         likeCount: t.favorite_count,
         retweetCount: t.retweet_count,
@@ -384,9 +391,9 @@ var Twitter = exports.Twitter = function () {
         user: {
           id: t.user.id_str,
           screenName: t.user.screen_name,
-          name: t.user.name,
-          description: t.user.description,
-          location: t.user.location,
+          name: decode(t.user.name),
+          description: decode(t.user.description),
+          location: decode(t.user.location),
           created: userCreated,
           avatarUrl: t.user.profile_image_url_https,
           url: userUrl,
