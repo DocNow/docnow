@@ -274,4 +274,19 @@ describe('database', function() {
     })
   })
 
+  it('should delete', async () => {
+    const result = await db.deleteSearch(testSearch)
+    ok(result, 'delete return value')
+  })
+
+  it('should be deleted', (done) => {
+    // fetching the search should throw an exception
+    db.getSearch(testSearch.id)
+      .then(() => {})
+      .catch((e) => {
+        ok(e.message === 'Not Found', 'search not found')
+        done()
+      })
+  })
+  
 })

@@ -353,6 +353,16 @@ export class Database {
     })
   }
 
+  async deleteSearch(search) {
+    log.info('deleting search', {id: search.id})
+    const resp = await this.es.delete({
+      index: this.getIndex(SEARCH),
+      type: SEARCH,
+      id: search.id
+    })
+    return resp && resp.result === 'deleted'
+  }
+
   async getUserSearches(user) {
     // const body = {query: {match: {creator: user.id, saved: true}}}
     const body = {

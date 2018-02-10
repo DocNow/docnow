@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import Webpage from './Webpage'
 import TweetsModal from './TweetsModal'
 import SearchInfo from './SearchInfo'
+import TweetTabBar from './TweetTabBar'
 
 import cardStyle from '../Card.css'
 import style from './Webpages.css'
@@ -56,15 +57,17 @@ export default class Webpages extends Component {
           close={() => {this.closeModal()}}
           tweets={this.props.tweets} />
 
-        <div className={style.Queue}>
-          URLs Checked: {this.props.total - this.props.remaining}/{this.props.total}
-        </div>
-
         <SearchInfo
           title={this.props.search.title}
           description={this.props.search.description}
           search={this.props.search}
           updateSearch={this.props.updateSearch} />
+
+        <TweetTabBar />
+
+        <div className={style.Queue}>
+          URLs Checked: {this.props.total - this.props.remaining}/{this.props.total}
+        </div>
 
         <div className={cardStyle.CardHolder}>
           {this.props.webpages.map((w) => (

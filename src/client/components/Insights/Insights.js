@@ -67,7 +67,6 @@ export default class Insights extends Component {
           search={this.props.search}
           updateSearch={this.props.updateSearch} />
 
-
         <TweetTabBar />
 
         <div className={card.CardHolder}>

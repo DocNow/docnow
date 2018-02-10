@@ -48,7 +48,7 @@ describe('stream-loader', () => {
 
     setTimeout(() => {
       controller.stopStream(search.id)
-    }, 5000)
+    }, 10000)
 
     setTimeout(() => {
       controller.stop()
@@ -56,13 +56,15 @@ describe('stream-loader', () => {
       db.close()
 
       done()
-    }, 10000)
-
+    }, 15000)
   })
 
-  it('should have saved tweets', async () => {
-    const tweets = await db.getTweets(search)
-    ok(tweets.length > 0, 'streamed tweets were saved')
+  it('should have saved tweets', (done) => {
+    setTimeout(async () => {
+      const tweets = await db.getTweets(search)
+      ok(tweets.length > 0, 'streamed tweets were saved')
+      done()
+    }, 5000)
   })
 
 })
