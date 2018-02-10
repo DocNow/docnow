@@ -34,7 +34,11 @@ app.get('/setup', (req, res) => {
 app.get('/user', (req, res) => {
   if (req.user) {
     db.getUser(req.user.id)
-      .then((user) => {res.json(user)})
+      .then((user) => {
+        delete user.twitterAccessToken
+        delete user.twitterAccessTokenSecret
+        res.json(user)
+      })
       .catch(() => {
         res.status(401)
         res.json({message: 'no such user'})
@@ -52,28 +56,31 @@ app.put('/user', (req, res) => {
     })
 })
 
-app.get('/settings', (req, res) => {
-  db.getSettings()
-    .then((result) => {
-      if (! result) {
-        res.json({})
-      } else {
-        res.json(result)
-      }
-    })
+app.get('/settings', async (req, res) => {
+  const settings = await db.getSettings()
+  if (! settings) {
+    res.json({})
+  } else {
+    if (! req.user.isSuperUser) {
+      delete settings.appKey
+      delete settings.appSecret
+    }
+    res.json(settings)
+  }
 })
 
-app.put('/settings', (req, res) => {
-  const settings = {
-    logoUrl: req.body.logoUrl,
-    reinstanceTitle: req.body.instanceTitle,
-    appKey: req.body.appKey,
-    appSecret: req.body.appSecret}
-  db.addSettings(settings)
-    .then(() => {
-      activateKeys()
-      res.json({status: 'updated'})
-    })
+app.put('/settings', async (req, res) => {
+  const superUser = await db.getSuperUser()
+  if (! superUser || req.user.isSuperUser) {
+    const settings = {
+      logoUrl: req.body.logoUrl,
+      reinstanceTitle: req.body.instanceTitle,
+      appKey: req.body.appKey,
+      appSecret: req.body.appSecret}
+    await db.addSettings(settings)
+    activateKeys()
+    res.json({status: 'updated'})
+  }
 })
 
 app.get('/world', (req, res) => {
