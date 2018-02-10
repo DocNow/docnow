@@ -3,8 +3,14 @@ import Twit from 'twit'
 import log from './logger'
 import bigInt from 'big-integer'
 import emojiRegex from 'emoji-regex'
+import { AllHtmlEntities } from 'html-entities'
 
 const emojiMatch = emojiRegex()
+const entities = new AllHtmlEntities()
+
+function decode(s) {
+  return entities.decode(s)
+}
 
 export class Twitter {
 
@@ -208,7 +214,7 @@ export class Twitter {
 
     return ({
       id: t.id_str,
-      text: text,
+      text: decode(text),
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
@@ -216,9 +222,9 @@ export class Twitter {
       user: {
         id: t.user.id_str,
         screenName: t.user.screen_name,
-        name: t.user.name,
-        description: t.user.description,
-        location: t.user.location,
+        name: decode(t.user.name),
+        description: decode(t.user.description),
+        location: decode(t.user.location),
         created: userCreated,
         avatarUrl: t.user.profile_image_url_https,
         url: userUrl,
