@@ -206,6 +206,14 @@ app.put('/search/:searchId', (req, res) => {
   }
 })
 
+app.delete('/search/:searchId', async (req, res) => {
+  if (req.user) {
+    const search = await db.getSearch(req.body.id)
+    const result = await db.deleteSearch(search)
+    res.json(result)
+  }
+})
+
 app.get('/search/:searchId/tweets', (req, res) => {
   if (req.user) {
     db.getSearch(req.params.searchId)

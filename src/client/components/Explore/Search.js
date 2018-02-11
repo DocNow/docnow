@@ -104,7 +104,7 @@ export default class Search extends Component {
             id={this.props.searchId}
             maxDate={this.props.maxDate}
             minDate={this.props.minDate}
-            count={this.props.count}
+            tweetCount={this.props.tweetCount}
             hashtagCount={this.props.hashtags.length}
             active={this.props.active} />
 
@@ -173,7 +173,7 @@ Search.propTypes = {
   query: PropTypes.array,
   maxDate: PropTypes.string,
   minDate: PropTypes.string,
-  count: PropTypes.number,
+  tweetCount: PropTypes.number,
   tweets: PropTypes.array,
   users: PropTypes.array,
   hashtags: PropTypes.array,

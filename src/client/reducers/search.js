@@ -14,7 +14,7 @@ const initialState = {
   created: '',
   minDate: '',
   maxDate: '',
-  action: false,
+  active: false,
   tweets: [],
   users: [],
   hashtags: [],

@@ -1,5 +1,5 @@
 import { SET_SEARCHES } from '../actions/searches'
-import { SET_TWITTER_SEARCH } from '../actions/search'
+import { SET_TWITTER_SEARCH, DELETE_SEARCH } from '../actions/search'
 
 const initialState = []
 
@@ -18,6 +18,16 @@ export default function settings(state = initialState, action) {
       return [
         ...state.slice(0, pos),
         search,
+        ...state.slice(pos + 1)
+      ]
+    }
+
+    case DELETE_SEARCH: {
+      const pos = state.findIndex((s) => {
+        return s.id === action.search.id
+      })
+      return [
+        ...state.slice(0, pos),
         ...state.slice(pos + 1)
       ]
     }

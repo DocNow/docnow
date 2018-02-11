@@ -44,13 +44,13 @@ export default class User extends Component {
         </div>
         <div className={style.TwitterUserStats}>
           <div className={style.Inline}>
-            <b>{this.props.data.followersCount}</b> <br /> followers
+            <b>{this.props.data.followersCount.toLocaleString()}</b> <br /> followers
           </div>
           <div className={style.Inline}>
-            <b>{this.props.data.friendsCount}</b> <br /> following
+            <b>{this.props.data.friendsCount.toLocaleString()}</b> <br /> following
           </div>
           <div className={style.Inline}>
-            <b>{this.props.data.tweetsCount}</b> <br /> tweets
+            <b>{this.props.data.tweetsCount.toLocaleString()}</b> <br /> tweets
           </div>
         </div>
         <p>{this.props.data.description}</p>

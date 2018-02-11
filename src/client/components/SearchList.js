@@ -31,13 +31,14 @@ export default class SavedSearch extends Component {
         <div className={style.GridRow}>
           <div className={style.GridItem}><h2>Title</h2></div>
           <div className={style.GridItem}><h2>Tweet Count</h2></div>
-          <div className={style.GridItem}><h2>Activity</h2></div>
+          <div className={style.GridItem}><h2>Created</h2></div>
+          <div className={style.GridItem}><h2>Last Update</h2></div>
           <div className={style.GridItem}><h2>Actions</h2></div>
         </div>
         {this.props.searches.map((search, i) => {
-          console.log(search)
           const rowClass = i % 2 === 0 ? style.GridRowGray : style.GridRow
           const created = moment(search.created).local().format('MMM D h:mm A')
+          const updated = moment(search.updated).local().format('MMM D h:mm A')
           return (
             <div key={search.id + search.tweetCount} className={rowClass}>
               <div className={style.GridTitle}>
@@ -51,9 +52,11 @@ export default class SavedSearch extends Component {
                 { search.tweetCount.toLocaleString() }
               </div>
               <div className={style.GridActivity}>
-                Created {created}
+                {created}
               </div>
-
+              <div className={style.GridActivity}>
+                {updated}
+              </div>
               <div className={style.GridActions}>
                 <div className={style.GridRowInner}>
                   <div className={style.GridActionsInner}>
@@ -63,7 +66,9 @@ export default class SavedSearch extends Component {
                       updateSearch={this.props.updateSearch} />
                   </div>
                   <div className={style.GridActionsInner}>
-                    <Trash />
+                    <Trash
+                      id={search.id}
+                      deleteSearch={this.props.deleteSearch} />
                   </div>
                 </div>
               </div>
@@ -79,5 +84,6 @@ export default class SavedSearch extends Component {
 SavedSearch.propTypes = {
   searches: PropTypes.array,
   updateSearch: PropTypes.func,
+  deleteSearch: PropTypes.func,
   getSearches: PropTypes.func,
 }
