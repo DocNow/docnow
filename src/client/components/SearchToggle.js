@@ -6,7 +6,6 @@ import style from './SearchToggle.css'
 export default class SearchToggle extends Component {
 
   toggle(e) {
-    console.log('toggle', e.target.checked)
     this.props.updateSearch({
       id: this.props.id,
       active: e.target.checked
