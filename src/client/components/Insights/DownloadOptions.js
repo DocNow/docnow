@@ -10,12 +10,7 @@ export default class DownloadOptions extends Component {
         <button type="button">
           <i className="fa fa-download" aria-hidden="true" />
           &nbsp;
-          Full Data
-        </button>
-        <button type="button">
-          <i className="fa fa-download" aria-hidden="true" />
-          &nbsp;
-          Selected
+          Download Data
         </button>
       </div>
     )

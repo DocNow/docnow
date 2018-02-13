@@ -1,4 +1,9 @@
+import fs from 'fs'
+import path from 'path'
 import uuid from 'uuid/v4'
+import csv from 'csv-stringify/lib/sync'
+import rimraf from 'rimraf'
+import archiver from 'archiver'
 import elasticsearch from 'elasticsearch'
 import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
          tweetsCountKey, urlsKey } from './redis'
@@ -576,19 +581,15 @@ export class Database {
     }
   }
 
-  getTweets(search, includeRetweets = true) {
+  getTweets(search, includeRetweets = true, offset = 0) {
     const body = {
+      from: offset,
       size: 100,
       query: {
         bool: {
           must: {
             term: {
               search: search.id
-            }
-          },
-          must_not: {
-            exists: {
-              field: 'retweet'
             }
           }
         }
@@ -807,8 +808,8 @@ export class Database {
     })
   }
 
-  getWebpages(search) {
-    return urlFetcher.getWebpages(search)
+  getWebpages(search, start = 0, limit =  100) {
+    return urlFetcher.getWebpages(search, start, limit)
   }
 
   queueStats(search) {
@@ -821,6 +822,72 @@ export class Database {
 
   deselectWebpage(search, url) {
     return urlFetcher.deselectWebpage(search, url)
+  }
+
+  async createArchive(search) {
+    const projectDir = path.dirname(path.dirname(__dirname))
+    const userDataDir = path.join(projectDir, 'userData')
+    const archivesDir = path.join(userDataDir, 'archives')
+    const searchDir = path.join(archivesDir, search.id)
+
+    if (! fs.existsSync(searchDir)) {
+      fs.mkdirSync(searchDir)
+    }
+
+    await this.saveTweetIds(search, searchDir)
+    await this.saveUrls(search, searchDir)
+
+    return new Promise((resolve) => {
+      const zipPath = path.join(archivesDir, `${search.id}.zip`)
+      const zipOut = fs.createWriteStream(zipPath)
+      const archive = archiver('zip')
+      archive.pipe(zipOut)
+      archive.directory(searchDir, search.id)
+      archive.finalize()
+
+      rimraf(searchDir, {}, () => {resolve(zipPath)})
+    })
+  }
+
+  async saveTweetIds(search, searchDir) {
+    return new Promise(async (resolve) => {
+      const idsPath = path.join(searchDir, 'ids.csv')
+      const fh = fs.createWriteStream(idsPath)
+      let offset = 0
+      while (true) {
+        const tweets = await this.getTweets(search, true, offset)
+        if (tweets.length === 0) {
+          break
+        }
+        for (const tweet of tweets) {
+          fh.write(tweet.id + '\r\n')
+        }
+        offset += 100
+      }
+      fh.end('')
+      fh.on('close', () => {resolve(idsPath)})
+    })
+  }
+
+  async saveUrls(search, searchDir) {
+    return new Promise(async (resolve) => {
+      const urlsPath = path.join(searchDir, 'urls.csv')
+      const fh = fs.createWriteStream(urlsPath)
+      let offset = 0
+      fh.write('url,title,count\r\n')
+
+      while (true) {
+        const webpages = await this.getWebpages(search, offset)
+        if (webpages.length === 0) {
+          break
+        }
+        const s = csv(webpages, {columns: ['url', 'title', 'count']})
+        fh.write(s + '\r\n')
+        offset += 100
+      }
+      fh.end('')
+      fh.on('close', () =>{resolve(urlsPath)})
+    })
   }
 
   /* elastic search index management */

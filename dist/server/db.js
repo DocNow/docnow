@@ -53,9 +53,29 @@ var _createClass2 = require('babel-runtime/helpers/createClass');
 
 var _createClass3 = _interopRequireDefault(_createClass2);
 
+var _fs = require('fs');
+
+var _fs2 = _interopRequireDefault(_fs);
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
+
 var _v = require('uuid/v4');
 
 var _v2 = _interopRequireDefault(_v);
+
+var _sync = require('csv-stringify/lib/sync');
+
+var _sync2 = _interopRequireDefault(_sync);
+
+var _rimraf = require('rimraf');
+
+var _rimraf2 = _interopRequireDefault(_rimraf);
+
+var _archiver = require('archiver');
+
+var _archiver2 = _interopRequireDefault(_archiver);
 
 var _elasticsearch = require('elasticsearch');
 
@@ -1017,19 +1037,16 @@ var Database = exports.Database = function () {
       var _this16 = this;
 
       var includeRetweets = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+      var offset = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
       var body = {
+        from: offset,
         size: 100,
         query: {
           bool: {
             must: {
               term: {
                 search: search.id
-              }
-            },
-            must_not: {
-              exists: {
-                field: 'retweet'
               }
             }
           }
@@ -1104,7 +1121,7 @@ var Database = exports.Database = function () {
         }, _callee5, this);
       }));
 
-      function getTweetsForUrl(_x10, _x11) {
+      function getTweetsForUrl(_x11, _x12) {
         return _ref5.apply(this, arguments);
       }
 
@@ -1326,7 +1343,10 @@ var Database = exports.Database = function () {
   }, {
     key: 'getWebpages',
     value: function getWebpages(search) {
-      return urlFetcher.getWebpages(search);
+      var start = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
+      var limit = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 100;
+
+      return urlFetcher.getWebpages(search, start, limit);
     }
   }, {
     key: 'queueStats',
@@ -1343,18 +1363,278 @@ var Database = exports.Database = function () {
     value: function deselectWebpage(search, url) {
       return urlFetcher.deselectWebpage(search, url);
     }
+  }, {
+    key: 'createArchive',
+    value: function () {
+      var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6(search) {
+        var projectDir, userDataDir, archivesDir, searchDir;
+        return _regenerator2.default.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                projectDir = _path2.default.dirname(_path2.default.dirname(__dirname));
+                userDataDir = _path2.default.join(projectDir, 'userData');
+                archivesDir = _path2.default.join(userDataDir, 'archives');
+                searchDir = _path2.default.join(archivesDir, search.id);
+
+
+                if (!_fs2.default.existsSync(searchDir)) {
+                  _fs2.default.mkdirSync(searchDir);
+                }
+
+                _context6.next = 7;
+                return this.saveTweetIds(search, searchDir);
+
+              case 7:
+                _context6.next = 9;
+                return this.saveUrls(search, searchDir);
+
+              case 9:
+                return _context6.abrupt('return', new _promise2.default(function (resolve) {
+                  var zipPath = _path2.default.join(archivesDir, search.id + '.zip');
+                  var zipOut = _fs2.default.createWriteStream(zipPath);
+                  var archive = (0, _archiver2.default)('zip');
+                  archive.pipe(zipOut);
+                  archive.directory(searchDir, search.id);
+                  archive.finalize();
+
+                  (0, _rimraf2.default)(searchDir, {}, function () {
+                    resolve(zipPath);
+                  });
+                }));
+
+              case 10:
+              case 'end':
+                return _context6.stop();
+            }
+          }
+        }, _callee6, this);
+      }));
+
+      function createArchive(_x15) {
+        return _ref6.apply(this, arguments);
+      }
+
+      return createArchive;
+    }()
+  }, {
+    key: 'saveTweetIds',
+    value: function () {
+      var _ref7 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee8(search, searchDir) {
+        var _this23 = this;
+
+        return _regenerator2.default.wrap(function _callee8$(_context8) {
+          while (1) {
+            switch (_context8.prev = _context8.next) {
+              case 0:
+                return _context8.abrupt('return', new _promise2.default(function () {
+                  var _ref8 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7(resolve) {
+                    var idsPath, fh, offset, tweets, _iteratorNormalCompletion11, _didIteratorError11, _iteratorError11, _iterator11, _step11, tweet;
+
+                    return _regenerator2.default.wrap(function _callee7$(_context7) {
+                      while (1) {
+                        switch (_context7.prev = _context7.next) {
+                          case 0:
+                            idsPath = _path2.default.join(searchDir, 'ids.csv');
+                            fh = _fs2.default.createWriteStream(idsPath);
+                            offset = 0;
+
+                          case 3:
+                            if (!true) {
+                              _context7.next = 31;
+                              break;
+                            }
+
+                            _context7.next = 6;
+                            return _this23.getTweets(search, true, offset);
+
+                          case 6:
+                            tweets = _context7.sent;
+
+                            if (!(tweets.length === 0)) {
+                              _context7.next = 9;
+                              break;
+                            }
+
+                            return _context7.abrupt('break', 31);
+
+                          case 9:
+                            _iteratorNormalCompletion11 = true;
+                            _didIteratorError11 = false;
+                            _iteratorError11 = undefined;
+                            _context7.prev = 12;
+
+                            for (_iterator11 = (0, _getIterator3.default)(tweets); !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                              tweet = _step11.value;
+
+                              fh.write(tweet.id + '\r\n');
+                            }
+                            _context7.next = 20;
+                            break;
+
+                          case 16:
+                            _context7.prev = 16;
+                            _context7.t0 = _context7['catch'](12);
+                            _didIteratorError11 = true;
+                            _iteratorError11 = _context7.t0;
+
+                          case 20:
+                            _context7.prev = 20;
+                            _context7.prev = 21;
+
+                            if (!_iteratorNormalCompletion11 && _iterator11.return) {
+                              _iterator11.return();
+                            }
+
+                          case 23:
+                            _context7.prev = 23;
+
+                            if (!_didIteratorError11) {
+                              _context7.next = 26;
+                              break;
+                            }
+
+                            throw _iteratorError11;
+
+                          case 26:
+                            return _context7.finish(23);
+
+                          case 27:
+                            return _context7.finish(20);
+
+                          case 28:
+                            offset += 100;
+                            _context7.next = 3;
+                            break;
+
+                          case 31:
+                            fh.end('');
+                            fh.on('close', function () {
+                              resolve(idsPath);
+                            });
+
+                          case 33:
+                          case 'end':
+                            return _context7.stop();
+                        }
+                      }
+                    }, _callee7, _this23, [[12, 16, 20, 28], [21,, 23, 27]]);
+                  }));
+
+                  return function (_x18) {
+                    return _ref8.apply(this, arguments);
+                  };
+                }()));
+
+              case 1:
+              case 'end':
+                return _context8.stop();
+            }
+          }
+        }, _callee8, this);
+      }));
+
+      function saveTweetIds(_x16, _x17) {
+        return _ref7.apply(this, arguments);
+      }
+
+      return saveTweetIds;
+    }()
+  }, {
+    key: 'saveUrls',
+    value: function () {
+      var _ref9 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10(search, searchDir) {
+        var _this24 = this;
+
+        return _regenerator2.default.wrap(function _callee10$(_context10) {
+          while (1) {
+            switch (_context10.prev = _context10.next) {
+              case 0:
+                return _context10.abrupt('return', new _promise2.default(function () {
+                  var _ref10 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee9(resolve) {
+                    var urlsPath, fh, offset, webpages, s;
+                    return _regenerator2.default.wrap(function _callee9$(_context9) {
+                      while (1) {
+                        switch (_context9.prev = _context9.next) {
+                          case 0:
+                            urlsPath = _path2.default.join(searchDir, 'urls.csv');
+                            fh = _fs2.default.createWriteStream(urlsPath);
+                            offset = 0;
+
+                            fh.write('url,title,count\r\n');
+
+                          case 4:
+                            if (!true) {
+                              _context9.next = 15;
+                              break;
+                            }
+
+                            _context9.next = 7;
+                            return _this24.getWebpages(search, offset);
+
+                          case 7:
+                            webpages = _context9.sent;
+
+                            if (!(webpages.length === 0)) {
+                              _context9.next = 10;
+                              break;
+                            }
+
+                            return _context9.abrupt('break', 15);
+
+                          case 10:
+                            s = (0, _sync2.default)(webpages, { columns: ['url', 'title', 'count'] });
+
+                            fh.write(s + '\r\n');
+                            offset += 100;
+                            _context9.next = 4;
+                            break;
+
+                          case 15:
+                            fh.end('');
+                            fh.on('close', function () {
+                              resolve(urlsPath);
+                            });
+
+                          case 17:
+                          case 'end':
+                            return _context9.stop();
+                        }
+                      }
+                    }, _callee9, _this24);
+                  }));
+
+                  return function (_x21) {
+                    return _ref10.apply(this, arguments);
+                  };
+                }()));
+
+              case 1:
+              case 'end':
+                return _context10.stop();
+            }
+          }
+        }, _callee10, this);
+      }));
+
+      function saveUrls(_x19, _x20) {
+        return _ref9.apply(this, arguments);
+      }
+
+      return saveUrls;
+    }()
 
     /* elastic search index management */
 
   }, {
     key: 'setupIndexes',
     value: function setupIndexes() {
-      var _this23 = this;
+      var _this25 = this;
 
       return this.es.indices.exists({ index: this.getIndex(TWEET) }).then(function (exists) {
         if (!exists) {
           _logger2.default.info('adding indexes');
-          _this23.addIndexes();
+          _this25.addIndexes();
         } else {
           _logger2.default.warn('indexes already present, not adding');
         }
@@ -1367,27 +1647,27 @@ var Database = exports.Database = function () {
     value: function addIndexes() {
       var indexMappings = this.getIndexMappings();
       var promises = [];
-      var _iteratorNormalCompletion11 = true;
-      var _didIteratorError11 = false;
-      var _iteratorError11 = undefined;
+      var _iteratorNormalCompletion12 = true;
+      var _didIteratorError12 = false;
+      var _iteratorError12 = undefined;
 
       try {
-        for (var _iterator11 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-          var name = _step11.value;
+        for (var _iterator12 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+          var name = _step12.value;
 
           promises.push(this.addIndex(name, indexMappings[name]));
         }
       } catch (err) {
-        _didIteratorError11 = true;
-        _iteratorError11 = err;
+        _didIteratorError12 = true;
+        _iteratorError12 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion11 && _iterator11.return) {
-            _iterator11.return();
+          if (!_iteratorNormalCompletion12 && _iterator12.return) {
+            _iterator12.return();
           }
         } finally {
-          if (_didIteratorError11) {
-            throw _iteratorError11;
+          if (_didIteratorError12) {
+            throw _iteratorError12;
           }
         }
       }
@@ -1411,27 +1691,27 @@ var Database = exports.Database = function () {
     value: function updateIndexes() {
       var indexMappings = this.getIndexMappings();
       var promises = [];
-      var _iteratorNormalCompletion12 = true;
-      var _didIteratorError12 = false;
-      var _iteratorError12 = undefined;
+      var _iteratorNormalCompletion13 = true;
+      var _didIteratorError13 = false;
+      var _iteratorError13 = undefined;
 
       try {
-        for (var _iterator12 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-          var name = _step12.value;
+        for (var _iterator13 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
+          var name = _step13.value;
 
           promises.push(this.updateIndex(name, indexMappings[name]));
         }
       } catch (err) {
-        _didIteratorError12 = true;
-        _iteratorError12 = err;
+        _didIteratorError13 = true;
+        _iteratorError13 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion12 && _iterator12.return) {
-            _iterator12.return();
+          if (!_iteratorNormalCompletion13 && _iterator13.return) {
+            _iterator13.return();
           }
         } finally {
-          if (_didIteratorError12) {
-            throw _iteratorError12;
+          if (_didIteratorError13) {
+            throw _iteratorError13;
           }
         }
       }
@@ -1452,11 +1732,11 @@ var Database = exports.Database = function () {
   }, {
     key: 'deleteIndexes',
     value: function deleteIndexes() {
-      var _this24 = this;
+      var _this26 = this;
 
       _logger2.default.info('deleting all elasticsearch indexes');
       return new _promise2.default(function (resolve) {
-        _this24.es.indices.delete({ index: _this24.esPrefix + '*' }).then(function () {
+        _this26.es.indices.delete({ index: _this26.esPrefix + '*' }).then(function () {
           _logger2.default.info('deleted indexes');
           resolve();
         }).catch(function (err) {
