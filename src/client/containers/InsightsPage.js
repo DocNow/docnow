@@ -11,6 +11,7 @@ const mapStateToProps = (state, ownProps) => {
     searchId: ownProps.match.params.searchId,
     search: state.search,
     webpages: state.webpages,
+    archived: state.search.archived
   }
 }
 

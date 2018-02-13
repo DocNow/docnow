@@ -5,24 +5,22 @@ import style from './DownloadOptions.css'
 export default class DownloadOptions extends Component {
 
   createArchive() {
-    this.props.createArchive(this.props.search)
+    this.props.createArchive({id: this.props.searchId})
   }
 
   render() {
-    const s = this.props.search
-
     let text = 'Create Archive'
     let onClick = () => {this.createArchive()}
 
-    if (s.active) {
+    if (this.props.active) {
       return (<div />)
-    } else if (s.archiveStarted) {
+    } else if (this.props.archiveStarted) {
       text = 'Creating Archive'
       onClick = null
-    } else if (s.archived) {
+    } else if (this.props.archived) {
       text = 'Download Archive'
       onClick = () => {
-        const url = `/userData/archives/${s.id}.zip`
+        const url = `/userData/archives/${this.props.searchId}.zip`
         window.location = url
       }
     }
@@ -41,6 +39,9 @@ export default class DownloadOptions extends Component {
 }
 
 DownloadOptions.propTypes = {
-  search: PropTypes.object,
+  searchId: PropTypes.string,
+  active: PropTypes.bool,
+  archived: PropTypes.bool,
+  archiveStarted: PropTypes.bool,
   createArchive: PropTypes.func
 }

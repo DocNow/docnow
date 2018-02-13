@@ -846,7 +846,11 @@ export class Database {
 
       archive.on('finish', () => {
         rimraf(searchDir, {}, async () => {
-          await this.updateSearch({...search, archived: true, startArchve: false})
+          await this.updateSearch({
+            ...search,
+            archived: true,
+            archiveStarted: false
+          })
           resolve(zipPath)
         })
       })

@@ -132,8 +132,10 @@ export class StreamLoader {
 
   }
 
-  stopStream(searchId) {
+  async stopStream(searchId) {
     log.info('stopping stream', {searchId})
+    const search = await this.db.getSearch(searchId)
+    this.db.updateSearch({...search, active: false, archived: false})
     this.activeStreams.delete(searchId)
   }
 

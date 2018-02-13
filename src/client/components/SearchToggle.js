@@ -8,7 +8,8 @@ export default class SearchToggle extends Component {
   toggle(e) {
     this.props.updateSearch({
       id: this.props.id,
-      active: e.target.checked
+      active: e.target.checked,
+      archived: false
     })
   }
 

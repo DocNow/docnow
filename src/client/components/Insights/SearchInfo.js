@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import DownloadOptions from './DownloadOptions'
+import DownloadOptions from '../../containers/DownloadOptions'
 import Editable from '../Editable'
 import SearchToggle from '../SearchToggle'
 import Trash from '../Trash'
@@ -51,12 +51,12 @@ export default class SearchInfo extends Component {
               updateSearch={this.props.updateSearch} />
             &nbsp;
             &nbsp;
+            &nbsp;
+            &nbsp;
             <Trash />
           </div>
         </div>
-        <DownloadOptions
-          createArchive={this.props.createArchive}
-          search={this.props.search} />
+        <DownloadOptions />
       </div>
     )
   }
