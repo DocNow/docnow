@@ -193,11 +193,11 @@ app.put('/search/:searchId', (req, res) => {
         if (req.query.refreshTweets) {
           db.importFromSearch(search)
         } else if (search.active && ! newSearch.active) {
-          console.log('turning off search')
           streamLoader.stopStream(search.id)
         } else if (! search.active && newSearch.active) {
-          console.log('turning on search')
           streamLoader.startStream(search.id)
+        } else if (! search.archiveStarted && newSearch.archiveStarted) {
+          db.createArchive(search)
         }
       })
 

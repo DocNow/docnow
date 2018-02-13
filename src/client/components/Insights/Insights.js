@@ -65,7 +65,8 @@ export default class Insights extends Component {
           title={this.props.search.title}
           description={this.props.search.description}
           search={this.props.search}
-          updateSearch={this.props.updateSearch} />
+          updateSearch={this.props.updateSearch}
+          createArchive={this.props.createArchive} />
 
         <TweetTabBar />
 
@@ -134,4 +135,5 @@ Insights.propTypes = {
   getWebpages: PropTypes.func,
   resetTwitterSearch: PropTypes.func,
   updateSearch: PropTypes.func,
+  createArchive: PropTypes.func
 }

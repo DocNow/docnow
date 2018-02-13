@@ -843,9 +843,15 @@ export class Database {
       const archive = archiver('zip')
       archive.pipe(zipOut)
       archive.directory(searchDir, search.id)
-      archive.finalize()
 
-      rimraf(searchDir, {}, () => {resolve(zipPath)})
+      archive.on('finish', () => {
+        rimraf(searchDir, {}, async () => {
+          await this.updateSearch({...search, archived: true, startArchve: false})
+          resolve(zipPath)
+        })
+      })
+
+      archive.finalize()
     })
   }
 
@@ -886,7 +892,7 @@ export class Database {
         offset += 100
       }
       fh.end('')
-      fh.on('close', () =>{resolve(urlsPath)})
+      fh.on('close', () => {resolve(urlsPath)})
     })
   }
 

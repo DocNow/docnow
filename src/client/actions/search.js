@@ -270,3 +270,10 @@ export const getSearch = (searchId) => {
       })
   }
 }
+
+export const createArchive = (search) => {
+  return (dispatch) => {
+    const newSearch = {id: search.id, archiveStarted: true}
+    dispatch(updateSearch(newSearch))
+  }
+}

@@ -54,7 +54,9 @@ export default class SearchInfo extends Component {
             <Trash />
           </div>
         </div>
-        <DownloadOptions />
+        <DownloadOptions
+          createArchive={this.props.createArchive}
+          search={this.props.search} />
       </div>
     )
   }
@@ -65,5 +67,6 @@ SearchInfo.propTypes = {
   search: PropTypes.object,
   title: PropTypes.string,
   description: PropTypes.string,
-  updateSearch: PropTypes.func
+  updateSearch: PropTypes.func,
+  createArchive: PropTypes.func
 }

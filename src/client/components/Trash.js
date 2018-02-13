@@ -11,6 +11,7 @@ export default class Trash extends Component {
   render() {
     return (
       <i
+        title="Delete Search!"
         className={style.Trash + ' fa fa-trash'}
         aria-hidden="true"
         onClick={() => {this.confirmDelete()}} />

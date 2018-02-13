@@ -13,9 +13,10 @@ export default class SearchToggle extends Component {
   }
 
   render() {
+    const title = this.props.active ? 'Stop Data Collection' : 'Start Data Collection'
     return (
       <div className={style.SearchToggle}>
-        <label className={style.Switch}>
+        <label title={title} className={style.Switch}>
           <input
             type="checkbox"
             checked={this.props.active}
