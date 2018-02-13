@@ -5,6 +5,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.StreamLoader = exports.StreamLoaderController = undefined;
 
+var _extends2 = require('babel-runtime/helpers/extends');
+
+var _extends3 = _interopRequireDefault(_extends2);
+
 var _regenerator = require('babel-runtime/regenerator');
 
 var _regenerator2 = _interopRequireDefault(_regenerator);
@@ -258,10 +262,37 @@ var StreamLoader = exports.StreamLoader = function () {
     }()
   }, {
     key: 'stopStream',
-    value: function stopStream(searchId) {
-      _logger2.default.info('stopping stream', { searchId: searchId });
-      this.activeStreams.delete(searchId);
-    }
+    value: function () {
+      var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(searchId) {
+        var search;
+        return _regenerator2.default.wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _logger2.default.info('stopping stream', { searchId: searchId });
+                _context3.next = 3;
+                return this.db.getSearch(searchId);
+
+              case 3:
+                search = _context3.sent;
+
+                this.db.updateSearch((0, _extends3.default)({}, search, { active: false, archived: false }));
+                this.activeStreams.delete(searchId);
+
+              case 6:
+              case 'end':
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function stopStream(_x4) {
+        return _ref3.apply(this, arguments);
+      }
+
+      return stopStream;
+    }()
   }]);
   return StreamLoader;
 }();
