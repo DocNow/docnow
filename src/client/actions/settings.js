@@ -15,7 +15,7 @@ export const setSettings = (logoUrl, instanceTitle, appKey, appSecret) => {
 
 export const getSettings = () => {
   return (dispatch) => {
-    fetch('/api/v1/settings')
+    fetch('/api/v1/settings', {credentials: 'same-origin'})
       .then(resp => resp.json())
       .then(result => {
         dispatch(setSettings(

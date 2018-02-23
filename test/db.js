@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
 import log from '../src/server/logger'
@@ -188,6 +190,20 @@ describe('database', function() {
       })
   })
 
+  it('should get tweets', (done) => {
+    // wait for indices to sync before querying
+    setTimeout(() => {
+      db.es.indices.refresh({index: '_all'})
+        .then(() => {
+          db.getTweets(testSearch).then((tweets) => {
+            ok(tweets.length >= 100, 'tweets.length')
+            ok(tweets[0].id, 'tweets[0].id')
+            done()
+          })
+        })
+      }, 200)
+  })
+
   it('should import more from search', function(done) {
     // test assumes someone will tweet about obama aggregations
     // 5 seconds from now...
@@ -198,20 +214,6 @@ describe('database', function() {
           done()
         })
       })
-  })
-
-  it('should get tweets', (done) => {
-    // wait for indices to sync before querying
-    setTimeout(() => {
-      db.es.indices.refresh({index: '_all'})
-        .then(() => {
-          db.getTweets(testSearch).then((tweets) => {
-            ok(tweets.length > 0, 'tweets.length')
-            ok(tweets[0].id, 'tweets[0].id')
-            done()
-          })
-        })
-      }, 200)
   })
 
   it('should get summary', (done) => {
@@ -273,5 +275,35 @@ describe('database', function() {
       done()
     })
   })
+
+  it('should create archive', async () => {
+    const zipFile = await db.createArchive(testSearch)
+    ok(fs.existsSync(zipFile), 'zip file exists')
+  })
+
+  it('should be flagged as archived', async () => {
+    const search = await db.getSearch(testSearch.id)
+    ok(search.archived, 'archived')
+    ok(! search.archiveStarted, 'archive started not set')
+  })
+
+  /*
+
+  it('should delete', async () => {
+    const result = await db.deleteSearch(testSearch)
+    ok(result, 'delete return value')
+  })
+
+  it('should be deleted', (done) => {
+    // fetching the search should throw an exception
+    db.getSearch(testSearch.id)
+      .then(() => {})
+      .catch((e) => {
+        ok(e.message === 'Not Found', 'search not found')
+        done()
+      })
+  })
+
+  */
 
 })

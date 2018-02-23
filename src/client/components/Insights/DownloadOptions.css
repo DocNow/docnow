@@ -1,0 +1,10 @@
+.DownloadOptions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-around;
+  margin-right: 55px !important;
+}
+
+.DownloadOptions button {
+}

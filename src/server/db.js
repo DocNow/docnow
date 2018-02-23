@@ -1,4 +1,9 @@
+import fs from 'fs'
+import path from 'path'
 import uuid from 'uuid/v4'
+import csv from 'csv-stringify/lib/sync'
+import rimraf from 'rimraf'
+import archiver from 'archiver'
 import elasticsearch from 'elasticsearch'
 import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
          tweetsCountKey, urlsKey } from './redis'
@@ -353,6 +358,16 @@ export class Database {
     })
   }
 
+  async deleteSearch(search) {
+    log.info('deleting search', {id: search.id})
+    const resp = await this.es.delete({
+      index: this.getIndex(SEARCH),
+      type: SEARCH,
+      id: search.id
+    })
+    return resp && resp.result === 'deleted'
+  }
+
   async getUserSearches(user) {
     // const body = {query: {match: {creator: user.id, saved: true}}}
     const body = {
@@ -371,7 +386,19 @@ export class Database {
       type: SEARCH,
       body: body
     })
-    return resp.hits.hits.map((h) => {return h._source})
+
+    const searches = []
+
+    for (const hit of resp.hits.hits) {
+      const search = hit._source
+      const stats = await this.getSearchStats(search)
+      searches.push({
+        ...search,
+        ...stats
+      })
+    }
+
+    return searches
   }
 
   getSearch(searchId) {
@@ -402,16 +429,25 @@ export class Database {
       body: body
     })
 
+    const stats = await this.getSearchStats(search)
+
+    return {
+      ...search,
+      ...stats,
+      minDate: new Date(resp.aggregations.minDate.value),
+      maxDate: new Date(resp.aggregations.maxDate.value)
+    }
+  }
+
+  async getSearchStats(search) {
+    const tweetCount = await this.redis.getAsync(tweetsCountKey(search))
     const userCount = await this.redis.zcardAsync(usersCountKey(search))
     const videoCount = await this.redis.zcardAsync(videosCountKey(search))
     const imageCount = await this.redis.zcardAsync(imagesCountKey(search))
     const urlCount = await this.redis.zcardAsync(urlsKey(search))
 
     return {
-      ...search,
-      minDate: new Date(resp.aggregations.minDate.value),
-      maxDate: new Date(resp.aggregations.maxDate.value),
-      tweetCount: resp.hits.total,
+      tweetCount: parseInt(tweetCount || 0, 10),
       imageCount: imageCount,
       videoCount: videoCount,
       userCount: userCount,
@@ -462,53 +498,10 @@ export class Database {
                     if (maxTweetId === null) {
                       maxTweetId = results[0].id
                     }
-                    const bulk = []
-                    const seenUsers = new Set()
-                    for (const tweet of results) {
-
-                      this.tallyTweet(search, tweet)
-
-                      for (const url of tweet.urls) {
-                        urlFetcher.add(search, url.long, tweet.id)
-                      }
-
-                      tweet.search = search.id
-                      const id = search.id + ':' + tweet.id
-                      bulk.push(
-                        {
-                          index: {
-                            _index: this.getIndex(TWEET),
-                            _type: 'tweet',
-                            _id: id
-                          }
-                        },
-                        tweet
-                      )
-                      if (! seenUsers.has(tweet.user.id)) {
-                        bulk.push(
-                          {
-                            index: {
-                              _index: this.getIndex(TWUSER),
-                              _type: 'twuser',
-                              _id: tweet.user.id,
-                            }
-                          },
-                          tweet.user
-                        )
-                        seenUsers.add(tweet.user.id)
-                      }
-                    }
-                    this.es.bulk({
-                      body: bulk,
-                      refresh: 'wait_for'
-                    }).then((resp) => {
-                      if (resp.errors) {
-                        reject('indexing error check elasticsearch log')
-                      }
-                    }).catch((elasticErr) => {
-                      log.error(elasticErr.message)
-                      reject(elasticErr.message)
-                    })
+                    this.loadTweets(search, results)
+                      .then(() => {
+                        log.info('bulk loaded ' + results.items + ' objects')
+                      })
                   }
                 })
               })
@@ -516,6 +509,63 @@ export class Database {
           .catch((e) => {
             log.error('unable to update search: ', e)
           })
+      })
+    })
+  }
+
+  loadTweets(search, tweets) {
+    return new Promise((resolve, reject) => {
+      const bulk = []
+      const seenUsers = new Set()
+
+      for (const tweet of tweets) {
+
+        this.tallyTweet(search, tweet)
+
+        for (const url of tweet.urls) {
+          urlFetcher.add(search, url.long, tweet.id)
+        }
+
+        tweet.search = search.id
+        const id = search.id + ':' + tweet.id
+
+        bulk.push(
+          {
+            index: {
+              _index: this.getIndex(TWEET),
+              _type: 'tweet',
+              _id: id
+            }
+          },
+          tweet
+        )
+        if (! seenUsers.has(tweet.user.id)) {
+          bulk.push(
+            {
+              index: {
+                _index: this.getIndex(TWUSER),
+                _type: 'twuser',
+                _id: tweet.user.id,
+              }
+            },
+            tweet.user
+          )
+          seenUsers.add(tweet.user.id)
+        }
+      }
+
+      this.es.bulk({
+        body: bulk,
+        refresh: 'wait_for'
+      }).then((resp) => {
+        if (resp.errors) {
+          reject('indexing error check elasticsearch log')
+        } else {
+          resolve(resp)
+        }
+      }).catch((elasticErr) => {
+        log.error(elasticErr.message)
+        reject(elasticErr.message)
       })
     })
   }
@@ -531,19 +581,15 @@ export class Database {
     }
   }
 
-  getTweets(search, includeRetweets = true) {
+  getTweets(search, includeRetweets = true, offset = 0) {
     const body = {
+      from: offset,
       size: 100,
       query: {
         bool: {
           must: {
             term: {
               search: search.id
-            }
-          },
-          must_not: {
-            exists: {
-              field: 'retweet'
             }
           }
         }
@@ -762,8 +808,8 @@ export class Database {
     })
   }
 
-  getWebpages(search) {
-    return urlFetcher.getWebpages(search)
+  getWebpages(search, start = 0, limit =  100) {
+    return urlFetcher.getWebpages(search, start, limit)
   }
 
   queueStats(search) {
@@ -776,6 +822,82 @@ export class Database {
 
   deselectWebpage(search, url) {
     return urlFetcher.deselectWebpage(search, url)
+  }
+
+  async createArchive(search) {
+    const projectDir = path.dirname(path.dirname(__dirname))
+    const userDataDir = path.join(projectDir, 'userData')
+    const archivesDir = path.join(userDataDir, 'archives')
+    const searchDir = path.join(archivesDir, search.id)
+
+    if (! fs.existsSync(searchDir)) {
+      fs.mkdirSync(searchDir)
+    }
+
+    await this.saveTweetIds(search, searchDir)
+    await this.saveUrls(search, searchDir)
+
+    return new Promise((resolve) => {
+      const zipPath = path.join(archivesDir, `${search.id}.zip`)
+      const zipOut = fs.createWriteStream(zipPath)
+      const archive = archiver('zip')
+      archive.pipe(zipOut)
+      archive.directory(searchDir, search.id)
+
+      archive.on('finish', () => {
+        rimraf(searchDir, {}, async () => {
+          await this.updateSearch({
+            ...search,
+            archived: true,
+            archiveStarted: false
+          })
+          resolve(zipPath)
+        })
+      })
+
+      archive.finalize()
+    })
+  }
+
+  async saveTweetIds(search, searchDir) {
+    return new Promise(async (resolve) => {
+      const idsPath = path.join(searchDir, 'ids.csv')
+      const fh = fs.createWriteStream(idsPath)
+      let offset = 0
+      while (true) {
+        const tweets = await this.getTweets(search, true, offset)
+        if (tweets.length === 0) {
+          break
+        }
+        for (const tweet of tweets) {
+          fh.write(tweet.id + '\r\n')
+        }
+        offset += 100
+      }
+      fh.end('')
+      fh.on('close', () => {resolve(idsPath)})
+    })
+  }
+
+  async saveUrls(search, searchDir) {
+    return new Promise(async (resolve) => {
+      const urlsPath = path.join(searchDir, 'urls.csv')
+      const fh = fs.createWriteStream(urlsPath)
+      let offset = 0
+      fh.write('url,title,count\r\n')
+
+      while (true) {
+        const webpages = await this.getWebpages(search, offset)
+        if (webpages.length === 0) {
+          break
+        }
+        const s = csv(webpages, {columns: ['url', 'title', 'count']})
+        fh.write(s + '\r\n')
+        offset += 100
+      }
+      fh.end('')
+      fh.on('close', () => {resolve(urlsPath)})
+    })
   }
 
   /* elastic search index management */

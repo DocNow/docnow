@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import SearchInfo from './SearchInfo'
 import TweetEmbed from 'react-tweet-embed'
-import card from '../../styles/Card.css'
-import download from '../../styles/DownloadOptions.css'
-import ttb from '../../styles/TweetTabBar.css'
+import TweetTabBar from './TweetTabBar'
+
+import card from '../Card.css'
+import style from './Insights.css'
 
 export default class Insights extends Component {
 
-  componentDidMount() {
+  componentWillMount() {
     this.props.resetTwitterSearch()
     this.tick()
     this.props.getUsers(this.props.searchId)
@@ -20,6 +21,10 @@ export default class Insights extends Component {
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
+  }
+
+  shouldComponentUpdate() {
+    return this.props.search.id ? true : false
   }
 
   componentWillUnmount() {
@@ -54,21 +59,16 @@ export default class Insights extends Component {
     }
 
     return (
-      <div>
+      <div className={style.Insights}>
 
         <SearchInfo
           title={this.props.search.title}
           description={this.props.search.description}
           search={this.props.search}
-          updateSearch={this.props.updateSearch} />
+          updateSearch={this.props.updateSearch}
+          createArchive={this.props.createArchive} />
 
-        <div className={ttb.TweetTabBar}>
-          <ul>
-            <li><a className={ttb.TweetTab + ' ' + ttb.TweetTabActive} href="/"><i className="fa fa-archive" aria-hidden="true" /> All</a></li>
-            <li><a className={ttb.TweetTab} href="exampleselected.html"><i className="fa fa-check-square-o" aria-hidden="true" /> Selected</a></li>
-            <li><a  className={ttb.TweetTab} href="exampleannotated.html"><i className="fa fa-comment" aria-hidden="true" /> Annotated</a></li>
-          </ul>
-        </div>
+        <TweetTabBar />
 
         <div className={card.CardHolder}>
           <div className={card.SavedShortCard}>
@@ -117,10 +117,6 @@ export default class Insights extends Component {
           </div>
         </div>
 
-        <div className={download.DownloadOptions}>
-          <button type="button">Download Full Data</button>
-          <button type="button">Download Selected</button>
-        </div>
 
       </div>
     )
@@ -139,4 +135,5 @@ Insights.propTypes = {
   getWebpages: PropTypes.func,
   resetTwitterSearch: PropTypes.func,
   updateSearch: PropTypes.func,
+  createArchive: PropTypes.func
 }

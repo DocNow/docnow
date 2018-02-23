@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Trends from '../components/Trends'
+import Trends from '../components/Trends/Trends'
 import { createSearch } from '../actions/search'
 import { getTrends, updateNewTrend, saveTrends, deleteTrend } from '../actions/trends'
 

@@ -10,6 +10,7 @@ export const ACTIVATE_SEARCH = 'ACTIVATE_SEARCH'
 export const UPDATE_SEARCH_TERM = 'UPDATE_SEARCH_TERM'
 export const REMOVE_SEARCH_TERM = 'REMOVE_SEARCH_TERM'
 export const ADD_SEARCH_TERM = 'ADD_SEARCH_TERM'
+export const DELETE_SEARCH = 'DELETE_SEARCH'
 
 import { push } from 'react-router-redux'
 
@@ -94,7 +95,6 @@ export const addSearchTerm = (term) => {
     term
   }
 }
-
 
 export const createSearch = (query) => {
 
@@ -183,6 +183,23 @@ export const refreshSearch = (search) => {
   }
 }
 
+export const deleteSearch = (search) => {
+  return (dispatch) => {
+    dispatch({
+      type: DELETE_SEARCH,
+      search
+    })
+    const opts = {
+      method: 'DELETE',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(search),
+      credentials: 'same-origin'
+    }
+    const url = `/api/v1/search/${search.id}`
+    fetch(url, opts)
+  }
+}
+
 export const getTweets = (id) => {
   return (dispatch) => {
     fetch('/api/v1/search/' + id + '/tweets', {credentials: 'same-origin'})
@@ -251,5 +268,12 @@ export const getSearch = (searchId) => {
       .then((result) => {
         dispatch(setTwitterSearch(result))
       })
+  }
+}
+
+export const createArchive = (search) => {
+  return (dispatch) => {
+    const newSearch = {id: search.id, archiveStarted: true}
+    dispatch(updateSearch(newSearch))
   }
 }

@@ -80,9 +80,26 @@ describe('twitter', () => {
       callbackCount += 1
       if (callbackCount === 3) {
         done()
+        return
       } else if (tweets.length > 0) {
-        ok(tweets[0].id, 'check id')
+        ok(tweets[0].id, 'check id in searched tweet')
+        ok(tweets[0].text, 'check text in searched tweet')
       }
     })
   })
+
+  it('should filter', (done) => {
+    let count = 0
+    t.filter({track: 'putin,trump'}, (tweet) => {
+      count += 1
+      ok(tweet.id, 'check id in streamed tweet')
+      ok(tweet.text, 'check text in streamed tweet')
+      if (count > 50) {
+        done()
+        return false
+      }
+      return true
+    })
+  })
+
 })

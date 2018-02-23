@@ -1,0 +1,95 @@
+.Grid {
+  border: none;
+  color: #000000;
+}
+
+.Grid a {
+  color: #1da1f2;
+  text-decoration: none;
+}
+
+.Grid a:hover {
+  cursor: pointer;
+  color: #0f1282;
+}
+
+.Grid a::after {
+  color:#0f1282;
+}
+
+.GridRow {
+  display: flex;
+}
+
+.GridRowGray {
+  display: flex;
+  background-color: #eeeeee;
+}
+
+.GridRowInner {
+  display: flex;
+}
+
+.GridItem {
+  flex: 1;
+  padding: 12px;
+  border: none;
+}
+
+.GridTitle {
+  flex: 1;
+  padding: 12px;
+  border: none;
+}
+
+.GridCount {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  font-weight: 500;
+  animation: fadein 2s;
+}
+
+@keyframes fadein {
+  from {opacity: 0.5;}
+  to   {opacity: 1.0;}
+}
+
+
+.GridActivity {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  color: #000000;
+}
+
+
+.GridActions {
+  flex: 1;
+  padding: 12px;
+  border: none;
+}
+
+.GridActionsInner {
+  padding-right: 25px;
+  border: none;
+}
+
+.GridActionsInner i {
+  font-size: 20px;
+}
+
+.InnerGrid {
+  border: solid .5px #eeeeee;
+}
+
+@media all and ( max-width: 480px ) {
+
+  .GridRow, .GridRowGray {
+     flex-direction: column;
+  }
+
+  .GridItem {
+    display:none;
+  }
+}

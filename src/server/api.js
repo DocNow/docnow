@@ -6,10 +6,13 @@ import wayback from './wayback'
 
 import { Database } from './db'
 import { activateKeys } from './auth'
+import { StreamLoaderController } from './stream-loader'
 
 const app = express()
 
 const db = new Database()
+
+const streamLoader = new StreamLoaderController()
 
 db.setupIndexes()
 db.startTrendsWatcher({interval: 60 * 1000})
@@ -31,7 +34,11 @@ app.get('/setup', (req, res) => {
 app.get('/user', (req, res) => {
   if (req.user) {
     db.getUser(req.user.id)
-      .then((user) => {res.json(user)})
+      .then((user) => {
+        delete user.twitterAccessToken
+        delete user.twitterAccessTokenSecret
+        res.json(user)
+      })
       .catch(() => {
         res.status(401)
         res.json({message: 'no such user'})
@@ -49,28 +56,33 @@ app.put('/user', (req, res) => {
     })
 })
 
-app.get('/settings', (req, res) => {
-  db.getSettings()
-    .then((result) => {
-      if (! result) {
-        res.json({})
-      } else {
-        res.json(result)
-      }
-    })
+app.get('/settings', async (req, res) => {
+  const settings = await db.getSettings()
+  if (! settings) {
+    res.json({})
+  } else {
+    if (! req.user.isSuperUser) {
+      delete settings.appKey
+      delete settings.appSecret
+    }
+    res.json(settings)
+  }
 })
 
-app.put('/settings', (req, res) => {
-  const settings = {
-    logoUrl: req.body.logoUrl,
-    reinstanceTitle: req.body.instanceTitle,
-    appKey: req.body.appKey,
-    appSecret: req.body.appSecret}
-  db.addSettings(settings)
-    .then(() => {
-      activateKeys()
-      res.json({status: 'updated'})
-    })
+app.put('/settings', async (req, res) => {
+  // only allow super user to update the settings
+  // or when there is no super user yet during initial setup
+  const superUser = await db.getSuperUser()
+  if (! superUser || (req.user && req.user.isSuperUser)) {
+    const settings = {
+      logoUrl: req.body.logoUrl,
+      reinstanceTitle: req.body.instanceTitle,
+      appKey: req.body.appKey,
+      appSecret: req.body.appSecret}
+    await db.addSettings(settings)
+    activateKeys()
+    res.json({status: 'updated'})
+  }
 })
 
 app.get('/world', (req, res) => {
@@ -174,16 +186,31 @@ app.get('/search/:searchId', (req, res) => {
 
 app.put('/search/:searchId', (req, res) => {
   if (req.user) {
-    let newSearch = req.body
-    console.log(req.body)
-    db.getSearch(newSearch.id).then((search) => {
-      newSearch = {...search, ...newSearch}
-      db.updateSearch(newSearch)
-      if (req.query.refreshTweets) {
-        db.importFromSearch(search)
-      }
+    db.getSearch(req.body.id).then((search) => {
+      const newSearch = {...search, ...req.body}
+
+      db.updateSearch(newSearch).then(() => {
+        if (req.query.refreshTweets) {
+          db.importFromSearch(search)
+        } else if (search.active && ! newSearch.active) {
+          streamLoader.stopStream(search.id)
+        } else if (! search.active && newSearch.active) {
+          streamLoader.startStream(search.id)
+        } else if (! search.archiveStarted && newSearch.archiveStarted) {
+          db.createArchive(search)
+        }
+      })
+
       res.json(newSearch)
     })
+  }
+})
+
+app.delete('/search/:searchId', async (req, res) => {
+  if (req.user) {
+    const search = await db.getSearch(req.body.id)
+    const result = await db.deleteSearch(search)
+    res.json(result)
   }
 })
 

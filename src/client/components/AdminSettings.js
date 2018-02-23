@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import LogoUpload from './LogoUpload'
 import Keys from './Keys'
-// import style from '../styles/Settings.css'
 
 export default class AdminSettings extends Component {
   render() {

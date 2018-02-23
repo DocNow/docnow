@@ -16,7 +16,7 @@ import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
 
-import styles from '../styles/App.css'
+import styles from './App.css'
 
 class App extends MediaQueryComponent {
 
@@ -47,7 +47,7 @@ class App extends MediaQueryComponent {
         <main>
           <Route exact name="trends" path="/" component={TrendsPage} />
           <Route exact name="settings" path="/settings/" component={SettingsPage} />
-          <Route exact name="profile" path="/profile/$" component={ProfilePage} />
+          <Route exact name="profile" path="/profile/" component={ProfilePage} />
           <Route exact name="explore" path="/explore/" component={SearchPage} />
           <Route exact name="searches" path="/searches/" component={SearchListPage} />
           <Route exact name="insights" path="/search/:searchId/" component={InsightsPage} />

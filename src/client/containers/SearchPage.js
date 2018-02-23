@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import Search from '../components/Search'
+import Search from '../components/Explore/Search'
 import { createSearch, getSearch, getTweets, getUsers, getHashtags,
   getUrls, getImages, getVideos, refreshSearch, updateSearch, activateSearch,
   updateSearchTerm, addSearchTerm, resetTwitterSearch, saveSearch } from '../actions/search'
@@ -17,8 +17,8 @@ const mapStateToProps = (state) => {
     videos: state.search.videos,
     maxDate: state.search.maxDate,
     minDate: state.search.minDate,
-    count: state.search.count,
-    active: state.search.active
+    active: state.search.active,
+    tweetCount: state.search.tweetCount
   }
 }
 

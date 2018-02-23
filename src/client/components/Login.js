@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Link } from 'react-router-dom'
-import style from '../styles/Header.css'
+import style from './Header.css'
 
 export default class Login extends Component {
 

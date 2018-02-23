@@ -1,0 +1,30 @@
+.AddPlace {
+  background-color: #ffffff;
+  padding-right:  10px;
+  opacity: 0.8;
+  width: 350px;
+  padding: 5px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 25px;
+}
+
+.AddPlace button {
+  margin-left: 5px;
+}
+
+.AddPlace input {
+  padding: 2px 2px 2px 2px;
+  font-size: 16pt;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.AddPlace input option {
+  padding: 2px 2px 2px 2px;
+  font-size: 14px;
+}
+
+.AddPlace input:disabled {
+  color: #666666;
+}

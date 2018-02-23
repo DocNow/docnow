@@ -45,9 +45,16 @@ var _emojiRegex = require('emoji-regex');
 
 var _emojiRegex2 = _interopRequireDefault(_emojiRegex);
 
+var _htmlEntities = require('html-entities');
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var emojiMatch = (0, _emojiRegex2.default)();
+var entities = new _htmlEntities.AllHtmlEntities();
+
+function decode(s) {
+  return entities.decode(s);
+}
 
 var Twitter = exports.Twitter = function () {
   function Twitter() {
@@ -194,6 +201,26 @@ var Twitter = exports.Twitter = function () {
       recurse(opts.maxId, 0);
     }
   }, {
+    key: 'filter',
+    value: function filter(opts, cb) {
+      var _this4 = this;
+
+      var params = {
+        track: opts.track,
+        tweet_mode: 'extended',
+        include_entities: true
+      };
+      _logger2.default.info('starting stream for: ', { stream: params });
+      var stream = this.twit.stream('statuses/filter', params);
+      stream.on('tweet', function (tweet) {
+        var result = cb(_this4.extractTweet(tweet));
+        if (result === false) {
+          _logger2.default.info('stopping stream for: ', { stream: params });
+          stream.stop();
+        }
+      });
+    }
+  }, {
     key: 'extractTweet',
     value: function extractTweet(t) {
       var created = new Date(t.created_at);
@@ -273,7 +300,7 @@ var Twitter = exports.Twitter = function () {
       }
 
       var userUrl = null;
-      if (t.user.entities.url) {
+      if (t.user.entities && t.user.entities.url) {
         userUrl = t.user.entities.url.urls[0].expanded_url;
       }
 
@@ -345,9 +372,18 @@ var Twitter = exports.Twitter = function () {
         }
       }
 
+      var text = t.text;
+      if (retweet) {
+        text = retweet.text;
+      } else if (t.extended_tweet) {
+        text = t.extended_tweet.full_text;
+      } else if (t.full_text) {
+        text = t.full_text;
+      }
+
       return {
         id: t.id_str,
-        text: t.full_text,
+        text: decode(text),
         twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
         likeCount: t.favorite_count,
         retweetCount: t.retweet_count,
@@ -355,9 +391,10 @@ var Twitter = exports.Twitter = function () {
         user: {
           id: t.user.id_str,
           screenName: t.user.screen_name,
-          name: t.user.name,
-          description: t.user.description,
-          created: created, userCreated: userCreated,
+          name: decode(t.user.name),
+          description: decode(t.user.description),
+          location: decode(t.user.location),
+          created: userCreated,
           avatarUrl: t.user.profile_image_url_https,
           url: userUrl,
           followersCount: t.user.followers_count,

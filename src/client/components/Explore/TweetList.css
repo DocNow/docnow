@@ -1,0 +1,15 @@
+.TweetsCard {
+  height: 290px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  background-color: #000000;
+}
+
+.TweetsCard::-webkit-scrollbar {
+  width: 15px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.TweetsCard::-webkit-scrollbar-thumb {
+  background-color: #0f1282;
+}

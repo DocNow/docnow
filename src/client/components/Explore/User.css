@@ -1,0 +1,71 @@
+.User {
+  background-color: #ffffff;
+  margin-top: 4px;
+  margin-left: 4px;
+  margin-bottom: 4px;
+  padding: 2px;
+  font-size: 10pt;
+  width: 96%;
+}
+
+.User img {
+  display: inline-block;
+  width: 30px;
+  height: 30px;
+  margin: 3px;
+}
+
+.User img:hover {
+  border: 1px solid black;
+  cursor: pointer;
+  margin: 2px;
+}
+
+.User a {
+  color: #1da1f2;
+}
+
+.UserProfile {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  margin-bottom: 5px;
+}
+
+.UserName {
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.UserHandle {
+  padding-right: 10px;
+}
+
+.UserStats {
+  height: 25px;
+  border-top: 1px solid #CCCCCC;
+  display: flex;
+  justify-content: space-between;
+  padding-right: 10px;
+  align-items: center;
+}
+
+.TwitterUserStats {
+  height: 25px;
+  display: flex;
+  justify-content: space-around;
+  padding-right: 10px;
+  align-items: center;
+  padding-bottom: 5px;
+}
+
+.Inline {
+  display: inline-block;
+  text-align: center;
+  padding-left: 5px;
+}
+
+.User p {
+  margin: 5px;
+  font-size: 10pt;
+}
