@@ -429,7 +429,7 @@ var UrlFetcher = exports.UrlFetcher = function () {
               case 0:
                 key = (0, _redis.urlsKey)(search);
                 _context8.next = 3;
-                return this.redis.zrevrangeAsync(key, start, limit, 'withscores');
+                return this.redis.zrevrangeAsync(key, start, start + limit, 'withscores');
 
               case 3:
                 urlCounts = _context8.sent;
