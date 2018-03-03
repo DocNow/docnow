@@ -1077,19 +1077,86 @@ var Database = exports.Database = function () {
       });
     }
   }, {
-    key: 'getTweetsForUrl',
+    key: 'getAllTweets',
     value: function () {
-      var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(search, url) {
-        var ids, body, resp;
+      var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(search, cb) {
+        var response, scrollId;
         return _regenerator2.default.wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
                 _context5.next = 2;
+                return this.es.search({
+                  index: this.getIndex(TWEET),
+                  type: TWEET,
+                  q: 'search:' + search.id,
+                  scroll: '1m',
+                  size: 100
+                });
+
+              case 2:
+                response = _context5.sent;
+
+
+                response.hits.hits.map(function (hit) {
+                  cb(hit._source);
+                });
+                scrollId = response._scroll_id;
+
+              case 5:
+                if (!true) {
+                  _context5.next = 14;
+                  break;
+                }
+
+                _context5.next = 8;
+                return this.es.scroll({ scrollId: scrollId, scroll: '1m' });
+
+              case 8:
+                response = _context5.sent;
+
+                if (!(response.hits.hits.length === 0)) {
+                  _context5.next = 11;
+                  break;
+                }
+
+                return _context5.abrupt('break', 14);
+
+              case 11:
+                response.hits.hits.map(function (hit) {
+                  cb(hit._source);
+                });
+                _context5.next = 5;
+                break;
+
+              case 14:
+              case 'end':
+                return _context5.stop();
+            }
+          }
+        }, _callee5, this);
+      }));
+
+      function getAllTweets(_x11, _x12) {
+        return _ref5.apply(this, arguments);
+      }
+
+      return getAllTweets;
+    }()
+  }, {
+    key: 'getTweetsForUrl',
+    value: function () {
+      var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6(search, url) {
+        var ids, body, resp;
+        return _regenerator2.default.wrap(function _callee6$(_context6) {
+          while (1) {
+            switch (_context6.prev = _context6.next) {
+              case 0:
+                _context6.next = 2;
                 return urlFetcher.getTweetIdentifiers(search, url);
 
               case 2:
-                ids = _context5.sent;
+                ids = _context6.sent;
                 body = {
                   size: 100,
                   query: {
@@ -1100,7 +1167,7 @@ var Database = exports.Database = function () {
                   },
                   sort: [{ id: 'desc' }]
                 };
-                _context5.next = 6;
+                _context6.next = 6;
                 return this.es.search({
                   index: this.getIndex(TWEET),
                   type: TWEET,
@@ -1108,21 +1175,21 @@ var Database = exports.Database = function () {
                 });
 
               case 6:
-                resp = _context5.sent;
-                return _context5.abrupt('return', resp.hits.hits.map(function (h) {
+                resp = _context6.sent;
+                return _context6.abrupt('return', resp.hits.hits.map(function (h) {
                   return h._source;
                 }));
 
               case 8:
               case 'end':
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee5, this);
+        }, _callee6, this);
       }));
 
-      function getTweetsForUrl(_x11, _x12) {
-        return _ref5.apply(this, arguments);
+      function getTweetsForUrl(_x13, _x14) {
+        return _ref6.apply(this, arguments);
       }
 
       return getTweetsForUrl;
@@ -1366,13 +1433,13 @@ var Database = exports.Database = function () {
   }, {
     key: 'createArchive',
     value: function () {
-      var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7(search) {
+      var _ref7 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee8(search) {
         var _this23 = this;
 
         var projectDir, userDataDir, archivesDir, searchDir;
-        return _regenerator2.default.wrap(function _callee7$(_context7) {
+        return _regenerator2.default.wrap(function _callee8$(_context8) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
                 projectDir = _path2.default.dirname(_path2.default.dirname(__dirname));
                 userDataDir = _path2.default.join(projectDir, 'userData');
@@ -1384,15 +1451,15 @@ var Database = exports.Database = function () {
                   _fs2.default.mkdirSync(searchDir);
                 }
 
-                _context7.next = 7;
+                _context8.next = 7;
                 return this.saveTweetIds(search, searchDir);
 
               case 7:
-                _context7.next = 9;
+                _context8.next = 9;
                 return this.saveUrls(search, searchDir);
 
               case 9:
-                return _context7.abrupt('return', new _promise2.default(function (resolve) {
+                return _context8.abrupt('return', new _promise2.default(function (resolve) {
                   var zipPath = _path2.default.join(archivesDir, search.id + '.zip');
                   var zipOut = _fs2.default.createWriteStream(zipPath);
                   var archive = (0, _archiver2.default)('zip');
@@ -1400,12 +1467,12 @@ var Database = exports.Database = function () {
                   archive.directory(searchDir, search.id);
 
                   archive.on('finish', function () {
-                    (0, _rimraf2.default)(searchDir, {}, (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6() {
-                      return _regenerator2.default.wrap(function _callee6$(_context6) {
+                    (0, _rimraf2.default)(searchDir, {}, (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7() {
+                      return _regenerator2.default.wrap(function _callee7$(_context7) {
                         while (1) {
-                          switch (_context6.prev = _context6.next) {
+                          switch (_context7.prev = _context7.next) {
                             case 0:
-                              _context6.next = 2;
+                              _context7.next = 2;
                               return _this23.updateSearch((0, _extends3.default)({}, search, {
                                 archived: true,
                                 archiveStarted: false
@@ -1416,10 +1483,10 @@ var Database = exports.Database = function () {
 
                             case 3:
                             case 'end':
-                              return _context6.stop();
+                              return _context7.stop();
                           }
                         }
-                      }, _callee6, _this23);
+                      }, _callee7, _this23);
                     })));
                   });
 
@@ -1428,14 +1495,14 @@ var Database = exports.Database = function () {
 
               case 10:
               case 'end':
-                return _context7.stop();
+                return _context8.stop();
             }
           }
-        }, _callee7, this);
+        }, _callee8, this);
       }));
 
-      function createArchive(_x15) {
-        return _ref6.apply(this, arguments);
+      function createArchive(_x17) {
+        return _ref7.apply(this, arguments);
       }
 
       return createArchive;
@@ -1443,122 +1510,57 @@ var Database = exports.Database = function () {
   }, {
     key: 'saveTweetIds',
     value: function () {
-      var _ref8 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee9(search, searchDir) {
+      var _ref9 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10(search, searchDir) {
         var _this24 = this;
 
-        return _regenerator2.default.wrap(function _callee9$(_context9) {
+        return _regenerator2.default.wrap(function _callee10$(_context10) {
           while (1) {
-            switch (_context9.prev = _context9.next) {
+            switch (_context10.prev = _context10.next) {
               case 0:
-                return _context9.abrupt('return', new _promise2.default(function () {
-                  var _ref9 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee8(resolve) {
-                    var idsPath, fh, offset, tweets, _iteratorNormalCompletion11, _didIteratorError11, _iteratorError11, _iterator11, _step11, tweet;
-
-                    return _regenerator2.default.wrap(function _callee8$(_context8) {
+                return _context10.abrupt('return', new _promise2.default(function () {
+                  var _ref10 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee9(resolve) {
+                    var idsPath, fh;
+                    return _regenerator2.default.wrap(function _callee9$(_context9) {
                       while (1) {
-                        switch (_context8.prev = _context8.next) {
+                        switch (_context9.prev = _context9.next) {
                           case 0:
                             idsPath = _path2.default.join(searchDir, 'ids.csv');
                             fh = _fs2.default.createWriteStream(idsPath);
-                            offset = 0;
-
-                          case 3:
-                            if (!true) {
-                              _context8.next = 31;
-                              break;
-                            }
-
-                            _context8.next = 6;
-                            return _this24.getTweets(search, true, offset);
-
-                          case 6:
-                            tweets = _context8.sent;
-
-                            if (!(tweets.length === 0)) {
-                              _context8.next = 9;
-                              break;
-                            }
-
-                            return _context8.abrupt('break', 31);
-
-                          case 9:
-                            _iteratorNormalCompletion11 = true;
-                            _didIteratorError11 = false;
-                            _iteratorError11 = undefined;
-                            _context8.prev = 12;
-
-                            for (_iterator11 = (0, _getIterator3.default)(tweets); !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
-                              tweet = _step11.value;
-
+                            _context9.next = 4;
+                            return _this24.getAllTweets(search, function (tweet) {
                               fh.write(tweet.id + '\r\n');
-                            }
-                            _context8.next = 20;
-                            break;
+                            });
 
-                          case 16:
-                            _context8.prev = 16;
-                            _context8.t0 = _context8['catch'](12);
-                            _didIteratorError11 = true;
-                            _iteratorError11 = _context8.t0;
+                          case 4:
 
-                          case 20:
-                            _context8.prev = 20;
-                            _context8.prev = 21;
-
-                            if (!_iteratorNormalCompletion11 && _iterator11.return) {
-                              _iterator11.return();
-                            }
-
-                          case 23:
-                            _context8.prev = 23;
-
-                            if (!_didIteratorError11) {
-                              _context8.next = 26;
-                              break;
-                            }
-
-                            throw _iteratorError11;
-
-                          case 26:
-                            return _context8.finish(23);
-
-                          case 27:
-                            return _context8.finish(20);
-
-                          case 28:
-                            offset += 100;
-                            _context8.next = 3;
-                            break;
-
-                          case 31:
                             fh.end('');
                             fh.on('close', function () {
                               resolve(idsPath);
                             });
 
-                          case 33:
+                          case 6:
                           case 'end':
-                            return _context8.stop();
+                            return _context9.stop();
                         }
                       }
-                    }, _callee8, _this24, [[12, 16, 20, 28], [21,, 23, 27]]);
+                    }, _callee9, _this24);
                   }));
 
-                  return function (_x18) {
-                    return _ref9.apply(this, arguments);
+                  return function (_x20) {
+                    return _ref10.apply(this, arguments);
                   };
                 }()));
 
               case 1:
               case 'end':
-                return _context9.stop();
+                return _context10.stop();
             }
           }
-        }, _callee9, this);
+        }, _callee10, this);
       }));
 
-      function saveTweetIds(_x16, _x17) {
-        return _ref8.apply(this, arguments);
+      function saveTweetIds(_x18, _x19) {
+        return _ref9.apply(this, arguments);
       }
 
       return saveTweetIds;
@@ -1566,19 +1568,19 @@ var Database = exports.Database = function () {
   }, {
     key: 'saveUrls',
     value: function () {
-      var _ref10 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee11(search, searchDir) {
+      var _ref11 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee12(search, searchDir) {
         var _this25 = this;
 
-        return _regenerator2.default.wrap(function _callee11$(_context11) {
+        return _regenerator2.default.wrap(function _callee12$(_context12) {
           while (1) {
-            switch (_context11.prev = _context11.next) {
+            switch (_context12.prev = _context12.next) {
               case 0:
-                return _context11.abrupt('return', new _promise2.default(function () {
-                  var _ref11 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10(resolve) {
+                return _context12.abrupt('return', new _promise2.default(function () {
+                  var _ref12 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee11(resolve) {
                     var urlsPath, fh, offset, webpages, s;
-                    return _regenerator2.default.wrap(function _callee10$(_context10) {
+                    return _regenerator2.default.wrap(function _callee11$(_context11) {
                       while (1) {
-                        switch (_context10.prev = _context10.next) {
+                        switch (_context11.prev = _context11.next) {
                           case 0:
                             urlsPath = _path2.default.join(searchDir, 'urls.csv');
                             fh = _fs2.default.createWriteStream(urlsPath);
@@ -1588,29 +1590,29 @@ var Database = exports.Database = function () {
 
                           case 4:
                             if (!true) {
-                              _context10.next = 15;
+                              _context11.next = 15;
                               break;
                             }
 
-                            _context10.next = 7;
+                            _context11.next = 7;
                             return _this25.getWebpages(search, offset);
 
                           case 7:
-                            webpages = _context10.sent;
+                            webpages = _context11.sent;
 
                             if (!(webpages.length === 0)) {
-                              _context10.next = 10;
+                              _context11.next = 10;
                               break;
                             }
 
-                            return _context10.abrupt('break', 15);
+                            return _context11.abrupt('break', 15);
 
                           case 10:
                             s = (0, _sync2.default)(webpages, { columns: ['url', 'title', 'count'] });
 
                             fh.write(s + '\r\n');
                             offset += 100;
-                            _context10.next = 4;
+                            _context11.next = 4;
                             break;
 
                           case 15:
@@ -1621,27 +1623,27 @@ var Database = exports.Database = function () {
 
                           case 17:
                           case 'end':
-                            return _context10.stop();
+                            return _context11.stop();
                         }
                       }
-                    }, _callee10, _this25);
+                    }, _callee11, _this25);
                   }));
 
-                  return function (_x21) {
-                    return _ref11.apply(this, arguments);
+                  return function (_x23) {
+                    return _ref12.apply(this, arguments);
                   };
                 }()));
 
               case 1:
               case 'end':
-                return _context11.stop();
+                return _context12.stop();
             }
           }
-        }, _callee11, this);
+        }, _callee12, this);
       }));
 
-      function saveUrls(_x19, _x20) {
-        return _ref10.apply(this, arguments);
+      function saveUrls(_x21, _x22) {
+        return _ref11.apply(this, arguments);
       }
 
       return saveUrls;
@@ -1670,27 +1672,27 @@ var Database = exports.Database = function () {
     value: function addIndexes() {
       var indexMappings = this.getIndexMappings();
       var promises = [];
-      var _iteratorNormalCompletion12 = true;
-      var _didIteratorError12 = false;
-      var _iteratorError12 = undefined;
+      var _iteratorNormalCompletion11 = true;
+      var _didIteratorError11 = false;
+      var _iteratorError11 = undefined;
 
       try {
-        for (var _iterator12 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
-          var name = _step12.value;
+        for (var _iterator11 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+          var name = _step11.value;
 
           promises.push(this.addIndex(name, indexMappings[name]));
         }
       } catch (err) {
-        _didIteratorError12 = true;
-        _iteratorError12 = err;
+        _didIteratorError11 = true;
+        _iteratorError11 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion12 && _iterator12.return) {
-            _iterator12.return();
+          if (!_iteratorNormalCompletion11 && _iterator11.return) {
+            _iterator11.return();
           }
         } finally {
-          if (_didIteratorError12) {
-            throw _iteratorError12;
+          if (_didIteratorError11) {
+            throw _iteratorError11;
           }
         }
       }
@@ -1714,27 +1716,27 @@ var Database = exports.Database = function () {
     value: function updateIndexes() {
       var indexMappings = this.getIndexMappings();
       var promises = [];
-      var _iteratorNormalCompletion13 = true;
-      var _didIteratorError13 = false;
-      var _iteratorError13 = undefined;
+      var _iteratorNormalCompletion12 = true;
+      var _didIteratorError12 = false;
+      var _iteratorError12 = undefined;
 
       try {
-        for (var _iterator13 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step13; !(_iteratorNormalCompletion13 = (_step13 = _iterator13.next()).done); _iteratorNormalCompletion13 = true) {
-          var name = _step13.value;
+        for (var _iterator12 = (0, _getIterator3.default)((0, _keys2.default)(indexMappings)), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+          var name = _step12.value;
 
           promises.push(this.updateIndex(name, indexMappings[name]));
         }
       } catch (err) {
-        _didIteratorError13 = true;
-        _iteratorError13 = err;
+        _didIteratorError12 = true;
+        _iteratorError12 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion13 && _iterator13.return) {
-            _iterator13.return();
+          if (!_iteratorNormalCompletion12 && _iterator12.return) {
+            _iterator12.return();
           }
         } finally {
-          if (_didIteratorError13) {
-            throw _iteratorError13;
+          if (_didIteratorError12) {
+            throw _iteratorError12;
           }
         }
       }
