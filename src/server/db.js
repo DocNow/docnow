@@ -1084,7 +1084,8 @@ export class Database {
   }
 
   async mergeIndexes() {
-    await this.es.indices.forcemerge({index: '_all'})
+    const results = await this.es.indices.forcemerge({index: '_all'})
+    return results
   }
 
 }
