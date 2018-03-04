@@ -82,3 +82,7 @@
   display: block;
   margin: 10;
 }
+
+.App p {
+  margin-top: 10px;
+}

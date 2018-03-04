@@ -1866,6 +1866,31 @@ var Database = exports.Database = function () {
         }
       };
     }
+  }, {
+    key: 'mergeIndexes',
+    value: function () {
+      var _ref13 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee13() {
+        return _regenerator2.default.wrap(function _callee13$(_context13) {
+          while (1) {
+            switch (_context13.prev = _context13.next) {
+              case 0:
+                _context13.next = 2;
+                return this.es.indices.forcemerge({ index: '_all' });
+
+              case 2:
+              case 'end':
+                return _context13.stop();
+            }
+          }
+        }, _callee13, this);
+      }));
+
+      function mergeIndexes() {
+        return _ref13.apply(this, arguments);
+      }
+
+      return mergeIndexes;
+    }()
   }]);
   return Database;
 }();

@@ -1083,4 +1083,8 @@ export class Database {
     }
   }
 
+  async mergeIndexes() {
+    await this.es.indices.forcemerge({index: '_all'})
+  }
+
 }

@@ -15,9 +15,11 @@
     "eslint:server": "eslint server.js src/server/*",
     "reset": "node dist/commands/reset",
     "update-indexes": "node dist/commands/update-indexes",
+    "merge-indexes": "node dist/commands/merge-indexes",
     "load-places": "node dist/commands/load-places",
     "url-fetcher": "node dist/commands/url-fetcher",
     "stream-loader": "node dist/commands/stream-loader"
+
   },
   "betterScripts": {
     "build": {

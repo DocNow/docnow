@@ -39,12 +39,10 @@ export default class Trends extends MediaQueryComponent {
         <div className={this.state.mediaStyle}>
           <p>
             Welcome to DocNow, an app built to appraise social media content for potential collection.
-            <a href="http://docnow.io">Learn more.</a>
           </p>
           <button onClick={() => {window.location = '/auth/twitter'; return false}}>
             <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
           </button>
-          <a href="/">Request an Account</a>
         </div>
       )
     } else {
