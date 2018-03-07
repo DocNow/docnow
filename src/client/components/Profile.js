@@ -23,17 +23,18 @@ export default class Profile extends Component {
 
         <p>
           You are logged in with Twitter as @{this.props.user.twitterScreenName}.
-          <a href="/auth/logout">Disconnect.</a>
+          <br />
+          <button href="/auth/logout">Disconnect.</button>
         </p>
 
         <p>
-          <label htmlFor="userName">Your Name:</label>
+          <label htmlFor="userName">Your Name:</label>&nbsp;
           <input type="text" id="userName" name="name" placeholder=""
             onChange={this.props.updateUserSettings} value={this.props.user.name}/>
         </p>
 
         <p>
-          <label htmlFor="email">Email:</label>
+          <label htmlFor="email">Email:</label>&nbsp;
           <input placeholder="" id="email" name="email" type="email"
             onChange={this.props.updateUserSettings} value={this.props.user.email}/>
         </p>

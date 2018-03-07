@@ -78,7 +78,7 @@ export default class Insights extends Component {
            {this.props.search.users.slice(0, 78).map((u) => {
              return (
                <a key={u.screenName} href={`https://twitter.com/${u.screenName}`} target="_new">
-                 <img src={u.avatarUrl} />
+                 <img title={`${u.screenName} sent ${u.tweetsInSearch} tweets`} src={u.avatarUrl} />
                </a>
              )
            })}

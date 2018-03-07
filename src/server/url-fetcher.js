@@ -154,7 +154,7 @@ export class UrlFetcher {
   async getWebpages(search, start = 0, limit = 100) {
     const key = urlsKey(search)
 
-    const urlCounts = await this.redis.zrevrangeAsync(key, start, limit, 'withscores')
+    const urlCounts = await this.redis.zrevrangeAsync(key, start, start + limit, 'withscores')
     const selected = await this.redis.smembersAsync(selectedUrlsKey(search))
     const deselected = await this.redis.smembersAsync(deselectedUrlsKey(search))
 

@@ -619,6 +619,29 @@ export class Database {
     })
   }
 
+  async getAllTweets(search, cb) {
+
+    let response = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      q: 'search:' + search.id,
+      scroll: '1m',
+      size: 100
+    })
+
+    response.hits.hits.map((hit) => {cb(hit._source)})
+    const scrollId = response._scroll_id
+
+    while (true) {
+      response = await this.es.scroll({scrollId: scrollId, scroll: '1m'})
+      if (response.hits.hits.length === 0) {
+        break
+      }
+      response.hits.hits.map((hit) => {cb(hit._source)})
+    }
+
+  }
+
   async getTweetsForUrl(search, url) {
     const ids = await urlFetcher.getTweetIdentifiers(search, url)
     const body = {
@@ -863,17 +886,11 @@ export class Database {
     return new Promise(async (resolve) => {
       const idsPath = path.join(searchDir, 'ids.csv')
       const fh = fs.createWriteStream(idsPath)
-      let offset = 0
-      while (true) {
-        const tweets = await this.getTweets(search, true, offset)
-        if (tweets.length === 0) {
-          break
-        }
-        for (const tweet of tweets) {
-          fh.write(tweet.id + '\r\n')
-        }
-        offset += 100
-      }
+
+      await this.getAllTweets(search, (tweet) => {
+        fh.write(tweet.id + '\r\n')
+      })
+
       fh.end('')
       fh.on('close', () => {resolve(idsPath)})
     })
@@ -1064,6 +1081,11 @@ export class Database {
         }
       }
     }
+  }
+
+  async mergeIndexes() {
+    const results = await this.es.indices.forcemerge({index: '_all'})
+    return results
   }
 
 }
