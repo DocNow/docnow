@@ -401,8 +401,13 @@ export class Database {
     return searches
   }
 
-  getSearch(searchId) {
-    return this.get(SEARCH, searchId)
+  async getSearch(searchId) {
+    const search = await this.get(SEARCH, searchId)
+    const stats = await this.getSearchStats(search)
+    return {
+      ...search,
+      ...stats
+    }
   }
 
   updateSearch(search) {

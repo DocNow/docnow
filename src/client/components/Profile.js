@@ -15,16 +15,14 @@ export default class Profile extends Component {
     if (this.props.updatedSettings || this.props.updatedUserSettings) {
       disableSave = false
     }
-    adminSettings
-    disableSave
 
     return (
-      <div className={style.Profile}>
+      <form className={style.Profile}>
+
+        <img src={this.props.user.twitterAvatarUrl} />
 
         <p>
           You are logged in with Twitter as @{this.props.user.twitterScreenName}.
-          <br />
-          <button href="/auth/logout">Disconnect.</button>
         </p>
 
         <p>
@@ -50,7 +48,7 @@ export default class Profile extends Component {
           </button>
         </div>
 
-      </div >
+      </form>
     )
   }
 }

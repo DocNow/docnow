@@ -26,3 +26,12 @@
 .AppBar i {
   padding-right: 2px;
 }
+
+.Notifications {
+  color: white;
+  background-color: red;
+  font-size: 7pt;
+  padding-left: 2px;
+  padding-right: 2px;
+  border-radius: 50%;
+}

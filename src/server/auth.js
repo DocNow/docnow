@@ -20,9 +20,11 @@ const activateKeys = () => {
         },
         (token, tokenSecret, profile, cb) => {
           db.getUserByTwitterUserId(profile.id).then((user) => {
+            console.log(JSON.stringify(profile, null, 2))
             if (! user) {
               const newUser = {
                 name: profile.displayName,
+                description: profile._json.description,
                 twitterUserId: profile.id,
                 twitterScreenName: profile.username,
                 twitterLocation: profile._json.location,

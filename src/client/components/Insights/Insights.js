@@ -92,7 +92,7 @@ export default class Insights extends Component {
           <div className={card.SavedLongCard}>
             <TweetEmbed
               id={tweetIds[0]}
-              joptions={{cards: 'hidden'}} />
+              options={{cards: 'hidden'}} />
           </div>
         </div>
 

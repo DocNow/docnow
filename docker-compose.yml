@@ -28,4 +28,4 @@ services:
     depends_on:
       - redis
       - elasticsearch
-    entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- npm run start
+    entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- npm run start:dev

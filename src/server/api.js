@@ -234,26 +234,6 @@ app.get('/search/:searchId/tweets', (req, res) => {
   }
 })
 
-app.put('/search/:searchId', (req, res) => {
-  if (req.user) {
-    db.getSearch(req.body.id).then( async (search) => {
-      await db.updateSearch(search)
-      if (req.query.refreshTweets) {
-        db.importFromSearch(search)
-          .then(() => {
-            res.json(search)
-          })
-          .catch((e) => {
-            log.error('search failed', e)
-            res.json(search)
-          })
-      } else {
-        res.json(search)
-      }
-    })
-  }
-})
-
 app.get('/search/:searchId/users', (req, res) => {
   if (req.user) {
     db.getSearch(req.params.searchId)

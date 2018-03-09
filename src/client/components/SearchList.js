@@ -7,10 +7,12 @@ import Trash from './Trash'
 import SearchToggle from './SearchToggle'
 import style from './SearchList.css'
 
-export default class SavedSearch extends Component {
+export default class SearchList extends Component {
 
   componentWillMount() {
-    this.tick()
+    if (this.props.searches.length === 0) {
+      this.tick()
+    }
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
@@ -40,7 +42,7 @@ export default class SavedSearch extends Component {
           const created = moment(search.created).local().format('MMM D h:mm A')
           const updated = moment(search.updated).local().format('MMM D h:mm A')
           return (
-            <div key={search.id + search.tweetCount} className={rowClass}>
+            <div key={search.id} className={rowClass}>
               <div className={style.GridTitle}>
                 <Link to={`/search/${search.id}/`}>
                   {search.title}
@@ -81,7 +83,7 @@ export default class SavedSearch extends Component {
   }
 }
 
-SavedSearch.propTypes = {
+SearchList.propTypes = {
   searches: PropTypes.array,
   updateSearch: PropTypes.func,
   deleteSearch: PropTypes.func,

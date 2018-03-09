@@ -30,9 +30,15 @@ export default class Header extends MediaQueryComponent {
     } else {
       logo = <img src={mith}/>
     }
+
+    // if logged in give them the app and tab bar
     if (this.props.twitterScreenName && this.props.twitterAvatarUrl) {
-      appBar = <AppBar />
-      tabBar = <TabBar location={this.props.location}/>
+      appBar = (
+        <AppBar
+          notifications={this.props.notifications}
+          isSuperUser={this.props.isSuperUser} />
+      )
+      tabBar = <TabBar location={this.props.location} />
     }
 
     return (
@@ -57,5 +63,7 @@ Header.propTypes = {
   twitterAvatarUrl: PropTypes.string,
   getUser: PropTypes.func,
   location: PropTypes.string,
-  logoUrl: PropTypes.string
+  logoUrl: PropTypes.string,
+  isSuperUser: PropTypes.bool,
+  notifications: PropTypes.number
 }

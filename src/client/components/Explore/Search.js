@@ -51,8 +51,7 @@ export default class Search extends Component {
     this.props.activateSearch()
     this.props.saveSearch({
       id: this.props.searchId,
-      title: title,
-      saved: true
+      title: title
     })
   }
 
@@ -181,6 +180,7 @@ Search.propTypes = {
   images: PropTypes.array,
   videos: PropTypes.array,
   active: PropTypes.bool,
+
   getSearch: PropTypes.func,
   resetTwitterSearch: PropTypes.func,
   getTweets: PropTypes.func,

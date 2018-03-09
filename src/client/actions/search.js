@@ -11,9 +11,9 @@ export const UPDATE_SEARCH_TERM = 'UPDATE_SEARCH_TERM'
 export const REMOVE_SEARCH_TERM = 'REMOVE_SEARCH_TERM'
 export const ADD_SEARCH_TERM = 'ADD_SEARCH_TERM'
 export const DELETE_SEARCH = 'DELETE_SEARCH'
+export const ADD_SEARCH = 'ADD_SEARCH'
 
 import { push } from 'react-router-redux'
-import { getSearches } from './searches'
 
 const setTwitterSearch = (search) => {
   return {
@@ -159,10 +159,19 @@ export const updateSearch = (search) => {
   }
 }
 
+export const addSearch = (search) => {
+  return {
+    type: ADD_SEARCH,
+    search
+  }
+}
+
 export const saveSearch = (search) => {
   return (dispatch) => {
-    dispatch(updateSearch(search))
-    dispatch(getSearches())
+    dispatch(updateSearch({
+      ...search,
+      saved: true
+    }))
     dispatch(push('/searches/'))
   }
 }
