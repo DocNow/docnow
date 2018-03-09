@@ -45,7 +45,7 @@ export default function settings(state = initialState, action) {
       const pos = state.findIndex((s) => {
         return s.id === action.search.id
       })
-      if (pos === null) {
+      if (pos === -1) {
         return state
       }
 

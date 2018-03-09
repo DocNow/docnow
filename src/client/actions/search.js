@@ -142,7 +142,6 @@ export const createSearch = (query) => {
 
 export const updateSearch = (search) => {
   return (dispatch) => {
-    dispatch(activateSearch())
     dispatch(setTwitterSearch(search))
     const opts = {
       method: 'PUT',
@@ -168,12 +167,33 @@ export const addSearch = (search) => {
 
 export const saveSearch = (search) => {
   return (dispatch) => {
+    const opts = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        ...search,
+        saved: true
+      })
+    }
+    const url = `/api/v1/search/${search.id}`
+    return fetch(url, opts)
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(addSearch(result))
+        dispatch(push('/searches/'))
+      })
+  }
+
+  /*
+  return (dispatch) => {
     dispatch(updateSearch({
       ...search,
       saved: true
     }))
     dispatch(push('/searches/'))
   }
+  */
 }
 
 export const refreshSearch = (search) => {
