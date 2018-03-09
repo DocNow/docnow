@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
     isSuperUser: state.user.isSuperUser,
     location: state.router.location.pathname,
     logoUrl: state.settings.logoUrl,
-    notifications: 2
+    notifications: 0 // todo: map to state
   }
 }
 
