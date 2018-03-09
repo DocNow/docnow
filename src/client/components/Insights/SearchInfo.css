@@ -1,5 +1,9 @@
 .SavedSearchInfo {
   display: flex;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 20px;
 }
 
 .SavedSearchText {
