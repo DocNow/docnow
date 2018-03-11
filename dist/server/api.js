@@ -102,7 +102,7 @@ app.get('/settings', function () {
           case 2:
             settings = _context.sent;
 
-            if (!settings) {
+            if (!settings || !req.user) {
               res.json({});
             } else {
               if (!req.user.isSuperUser) {
@@ -145,7 +145,7 @@ app.put('/settings', function () {
 
             settings = {
               logoUrl: req.body.logoUrl,
-              reinstanceTitle: req.body.instanceTitle,
+              instanceTitle: req.body.instanceTitle,
               appKey: req.body.appKey,
               appSecret: req.body.appSecret };
             _context2.next = 7;
@@ -608,6 +608,39 @@ app.put('/wayback/:url', function () {
 
   return function (_x15, _x16) {
     return _ref8.apply(this, arguments);
+  };
+}());
+
+app.get('/stats', function () {
+  var _ref9 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee9(req, res) {
+    return _regenerator2.default.wrap(function _callee9$(_context9) {
+      while (1) {
+        switch (_context9.prev = _context9.next) {
+          case 0:
+            if (!req.user) {
+              _context9.next = 6;
+              break;
+            }
+
+            _context9.t0 = res;
+            _context9.next = 4;
+            return db.getSystemStats();
+
+          case 4:
+            _context9.t1 = _context9.sent;
+
+            _context9.t0.json.call(_context9.t0, _context9.t1);
+
+          case 6:
+          case 'end':
+            return _context9.stop();
+        }
+      }
+    }, _callee9, undefined);
+  }));
+
+  return function (_x17, _x18) {
+    return _ref9.apply(this, arguments);
   };
 }());
 

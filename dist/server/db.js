@@ -1926,6 +1926,71 @@ var Database = exports.Database = function () {
 
       return mergeIndexes;
     }()
+  }, {
+    key: 'getSystemStats',
+    value: function () {
+      var _ref15 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee15() {
+        var result, tweetCount, twitterUserCount, userCount;
+        return _regenerator2.default.wrap(function _callee15$(_context15) {
+          while (1) {
+            switch (_context15.prev = _context15.next) {
+              case 0:
+                _context15.next = 2;
+                return this.es.search({
+                  index: this.getIndex(TWEET),
+                  type: TWEET,
+                  body: {
+                    query: { match_all: {} }
+                  }
+                });
+
+              case 2:
+                result = _context15.sent;
+                tweetCount = result.hits.total;
+                _context15.next = 6;
+                return this.es.search({
+                  index: this.getIndex(TWUSER),
+                  type: TWUSER,
+                  body: {
+                    query: { match_all: {} }
+                  }
+                });
+
+              case 6:
+                result = _context15.sent;
+                twitterUserCount = result.hits.total;
+                _context15.next = 10;
+                return this.es.search({
+                  index: this.getIndex(USER),
+                  type: USER,
+                  body: {
+                    query: { match_all: {} }
+                  }
+                });
+
+              case 10:
+                result = _context15.sent;
+                userCount = result.hits.total;
+                return _context15.abrupt('return', {
+                  tweetCount: tweetCount,
+                  twitterUserCount: twitterUserCount,
+                  userCount: userCount
+                });
+
+              case 13:
+              case 'end':
+                return _context15.stop();
+            }
+          }
+        }, _callee15, this);
+      }));
+
+      function getSystemStats() {
+        return _ref15.apply(this, arguments);
+      }
+
+      return getSystemStats;
+    }()
   }]);
   return Database;
 }();
