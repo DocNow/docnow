@@ -89,7 +89,8 @@
 @media all and ( max-width: 480px ) {
 
   .GridRow, .GridRowGray {
-     flex-direction: row;
+     flex-direction: column;
+     border-bottom: thin solid gray;
   }
 
   .GridItem {
@@ -97,10 +98,13 @@
   }
 
   .GridTitle {
+    flex: 1;
+    overflow-wrap: break-word;
     padding: 3px;
   }
 
   .GridCount {
+    flex: 1;
     padding: 3px;
   }
 
