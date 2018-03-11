@@ -1,6 +1,7 @@
 .Grid {
   border: none;
   color: #000000;
+  margin-top: 20px;
 }
 
 .Grid a {
@@ -18,10 +19,13 @@
 }
 
 .GridRow {
+  padding: 5px;
   display: flex;
+  align-content: center;
 }
 
 .GridRowGray {
+  padding: 5px;
   display: flex;
   background-color: #eeeeee;
 }
@@ -63,7 +67,6 @@
   color: #000000;
 }
 
-
 .GridActions {
   flex: 1;
   padding: 12px;
@@ -86,10 +89,28 @@
 @media all and ( max-width: 480px ) {
 
   .GridRow, .GridRowGray {
-     flex-direction: column;
+     flex-direction: row;
   }
 
   .GridItem {
-    display:none;
+    display:  none;
   }
+
+  .GridTitle {
+    padding: 3px;
+  }
+
+  .GridCount {
+    padding: 3px;
+  }
+
+  .GridActivity {
+    padding: 3px;
+    display: none;
+  }
+
+  .GridActions {
+    padding: 3px;
+  }
+
 }

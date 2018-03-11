@@ -49,11 +49,16 @@ app.get('/user', (req, res) => {
   }
 })
 
-app.put('/user', (req, res) => {
-  db.updateUser(req.body)
-    .then(() => {
-      res.json({status: 'updated'})
-    })
+app.put('/user', async (req, res) => {
+  if (req.user) {
+    const user = await db.getUser(req.user.id)
+    const newUser = {
+      ...user,
+      ...req.body
+    }
+    await db.updateUser(newUser)
+    res.json(newUser)
+  }
 })
 
 app.get('/settings', async (req, res) => {

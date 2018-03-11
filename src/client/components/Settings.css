@@ -57,7 +57,8 @@
 
 .SettingsUnder780px dl {
   text-align: left;
-  margin-left: 0px;
+  margin: 5px;
   padding: 0px;
   border: none;
+  background-color: white;
 }
