@@ -58,7 +58,7 @@ app.put('/user', (req, res) => {
 
 app.get('/settings', async (req, res) => {
   const settings = await db.getSettings()
-  if (! settings) {
+  if (! settings || ! req.user) {
     res.json({})
   } else {
     if (! req.user.isSuperUser) {
@@ -76,7 +76,7 @@ app.put('/settings', async (req, res) => {
   if (! superUser || (req.user && req.user.isSuperUser)) {
     const settings = {
       logoUrl: req.body.logoUrl,
-      reinstanceTitle: req.body.instanceTitle,
+      instanceTitle: req.body.instanceTitle,
       appKey: req.body.appKey,
       appSecret: req.body.appSecret}
     await db.addSettings(settings)
@@ -335,6 +335,12 @@ app.put('/wayback/:url', async (req, res) => {
   if (req.user) {
     const result = await wayback.saveArchive(req.params.url)
     res.json(result)
+  }
+})
+
+app.get('/stats', async (req, res) => {
+  if (req.user) {
+    res.json(await db.getSystemStats())
   }
 })
 

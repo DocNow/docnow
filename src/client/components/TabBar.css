@@ -3,6 +3,7 @@
   padding-left: 40px;
   margin-left: 20px;
   text-align: center;
+  line-height: 40px;
 }
 
 .TabBar a {
@@ -23,7 +24,6 @@
   font-size: 16pt;
   font-weight: 500;
   min-width: 120px;
-  height: 40px;
   padding: 6px 24px 6px 6px;
   text-align: center;
   text-decoration: none;

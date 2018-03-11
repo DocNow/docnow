@@ -1,18 +1,25 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
-import Keys from './Keys'
 import style from './Settings.css'
 
-export default class Settings extends Component {
+import LogoUpload from './LogoUpload'
+import MediaQueryComponent from '../components/MediaQueryComponent'
+
+export default class Settings extends MediaQueryComponent {
 
   componentWillMount() {
     this.props.getSettings()
+    this.props.getSystemStats()
+  }
+
+  componentDidMount() {
+    this.setMediaQuery('(max-width: 780px)', style.Settings, style.SettingsUnder780px)
   }
 
   render() {
 
     let welcome = ''
-    if (! this.props.appKey) {
+    if (! this.props.appKey && ! this.props.appSecret) {
       welcome = (
         <div>
           <h1>Welcome!</h1>
@@ -32,35 +39,94 @@ export default class Settings extends Component {
     }
 
     return (
-      <div className={style.Settings}>
+      <div className={this.state.mediaStyle}>
+
         {welcome}
-        <Keys
-          appKey={this.props.appKey}
-          appSecret={this.props.appSecret}
-          updateSettings={this.props.updateSettings} />
-        <p>
-          <button onClick={()=>{
-            this.props.saveSettings().then(() => {
-              if (this.props.userLoggedIn) {
-                this.props.returnHome()
-              } else {
-                window.location = '/auth/twitter/'
-              }
-            })
-          }}>Save</button>
-        </p>
+
+        <div className={style.SystemSettings}>
+
+          <p>
+            <input onChange={this.props.updateSettings}
+               id="instanceTitle"
+               name="instanceTitle"
+               type="text"
+               placeholder="My Community Group"
+               value={this.props.instanceTitle} />
+            <br />
+            <label htmlFor="instanceTitle">Instance Name</label>
+          </p>
+
+          <LogoUpload
+            logoUrl={this.props.logoUrl}
+            updateSettings={this.props.updateSettings} />
+
+          <p>
+            <input onChange={this.props.updateSettings}
+              id="appKey"
+              name="appKey"
+              type="text"
+              value={this.props.appKey} />
+            <br />
+            <label htmlFor="appKey">Consumer Key</label>
+          </p>
+
+          <p>
+            <input
+              onChange={this.props.updateSettings}
+              id="appSecret"
+              name="appSecret"
+              type="text"
+              value={this.props.appSecret} />
+            <br />
+            <label htmlFor="appSecret">Consumer Secret</label>
+          </p>
+
+          <p>
+            <button onClick={()=>{
+              this.props.saveSettings().then(() => {
+                if (this.props.userLoggedIn) {
+                  this.props.returnHome()
+                } else {
+                  window.location = '/auth/twitter/'
+                }
+              })
+            }}>Save</button>
+          </p>
+
+        </div>
+
+        <div className={style.SystemStats}>
+          <dl>
+            <dd>{this.props.tweetCount.toLocaleString()}</dd>
+            <dt>Tweets</dt>
+
+            <dd>{this.props.twitterUserCount.toLocaleString()}</dd>
+            <dt>Twitter Users</dt>
+
+            <dd>{this.props.userCount.toLocaleString()}</dd>
+            <dt>Instance Users</dt>
+          </dl>
+        </div>
+
       </div>
     )
   }
 }
 
 Settings.propTypes = {
+  instanceTitle: PropTypes.string,
+  logoUrl: PropTypes.string,
   appKey: PropTypes.string,
   appSecret: PropTypes.string,
   userLoggedIn: PropTypes.bool,
+  isSuperUser: PropTypes.bool,
+  tweetCount: PropTypes.number,
+  twitterUserCount: PropTypes.number,
+  userCount: PropTypes.number,
+
   getSettings: PropTypes.func,
   updateSettings: PropTypes.func,
   saveSettings: PropTypes.func,
   returnHome: PropTypes.func,
-  isSuperUser: PropTypes.bool,
+  getSystemStats: PropTypes.func
 }

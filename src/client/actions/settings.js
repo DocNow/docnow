@@ -60,9 +60,10 @@ export const saveSettings = () => {
     const opts = {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
+      credentials: 'same-origin',
       body: JSON.stringify(settings)
     }
-    return fetch('/api/v1/settings', opts)
+    return fetch('/api/v1/settings', opts, )
       .then((resp) => {
         if (settings.logoFile) {
           dispatch(postLogo())

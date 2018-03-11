@@ -1093,4 +1093,39 @@ export class Database {
     return results
   }
 
+  async getSystemStats() {
+    let result = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: {
+        query: {match_all: {}}
+      }
+    })
+    const tweetCount = result.hits.total
+
+    result = await this.es.search({
+      index: this.getIndex(TWUSER),
+      type: TWUSER,
+      body: {
+        query: {match_all: {}}
+      }
+    })
+    const twitterUserCount = result.hits.total
+
+    result = await this.es.search({
+      index: this.getIndex(USER),
+      type: USER,
+      body: {
+        query: {match_all: {}}
+      }
+    })
+    const userCount = result.hits.total
+
+    return {
+      tweetCount: tweetCount,
+      twitterUserCount: twitterUserCount,
+      userCount: userCount
+    }
+  }
+
 }

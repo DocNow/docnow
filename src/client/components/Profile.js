@@ -1,17 +1,13 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import AdminSettingsForm from '../containers/AdminSettingsForm'
 
 import style from './Profile.css'
 
 export default class Profile extends Component {
 
   render() {
-    let adminSettings = null
     let disableSave = true
-    if (this.props.user.isSuperUser === 'true') {
-      adminSettings = <AdminSettingsForm />
-    }
+
     if (this.props.updatedSettings || this.props.updatedUserSettings) {
       disableSave = false
     }
@@ -37,14 +33,12 @@ export default class Profile extends Component {
             onChange={this.props.updateUserSettings} value={this.props.user.email}/>
         </p>
 
-        { adminSettings }
-
         <div>
           <button
             type="button"
             onClick={this.props.saveAllSettings}
             disabled={disableSave}>
-            Save Settings
+            Save
           </button>
         </div>
 

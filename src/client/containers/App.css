@@ -4,11 +4,6 @@
   padding: 0;
 }
 
-.App p {
-  margin-top: 5px;
-  margin-bottom: 5px;
-}
-
 .App h2 {
   position: relative;
   text-transform: uppercase;
@@ -83,6 +78,6 @@
   margin: 10;
 }
 
-.App p {
-  margin-top: 10px;
+.AppUnder780px main {
+  margin: 0px;
 }

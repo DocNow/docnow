@@ -36,7 +36,7 @@ export default class AddPlace extends Component {
   render() {
 
     const inputProps = {
-      placeholder: 'CLICK TO ADD A PLACE'
+      placeholder: 'ENTER A PLACE NAME'
     }
     let placeDisabled = false
 

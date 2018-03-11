@@ -287,8 +287,6 @@ describe('database', function() {
     ok(! search.archiveStarted, 'archive started not set')
   })
 
-  /*
-
   it('should delete', async () => {
     const result = await db.deleteSearch(testSearch)
     ok(result, 'delete return value')
@@ -304,6 +302,11 @@ describe('database', function() {
       })
   })
 
-  */
+  it('should get stats', async() => {
+    const stats = await db.getSystemStats()
+    ok(stats.tweetCount > 0, 'stats.tweetCount')
+    ok(stats.twitterUserCount > 0, 'stats.twitterUserCount')
+    ok(stats.userCount > 0, 'stats.userCount')
+  })
 
 })
