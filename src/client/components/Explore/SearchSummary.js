@@ -12,9 +12,7 @@ export default class SearchSummary extends Component {
       const maxDate = moment(this.props.maxDate).local().format('MMM D h:mm A')
       return (
         <div className={style.Summary}>
-          <span className={style.Count}>{this.props.tweetCount}</span> tweets
-          from <time>{minDate}</time> to <time>{maxDate}</time>&nbsp;
-          from the Twitter Search API.
+          Loaded <span className={style.Count}>{this.props.tweetCount}</span> tweets from <time>{minDate}</time> to <time>{maxDate}</time> from the Twitter Search API.
         </div>
       )
     } else if (this.props.id) {
