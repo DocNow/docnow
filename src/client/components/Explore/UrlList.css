@@ -1,6 +1,7 @@
 .UrlList {
   height: 274px;
   overflow-y: scroll;
+  overflow-x: hidden;
   background-color: #000000;
 }
 

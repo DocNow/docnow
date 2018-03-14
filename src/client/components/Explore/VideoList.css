@@ -5,6 +5,15 @@
   overflow-x: hidden;
 }
 
+.VideosCard::-webkit-scrollbar {
+  width: 15px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.VideosCard::-webkit-scrollbar-thumb {
+  background-color: #0f1282;
+}
+
 .Video {
   background-color: #ffffff;
   margin: 5px;
