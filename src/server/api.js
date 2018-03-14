@@ -49,16 +49,21 @@ app.get('/user', (req, res) => {
   }
 })
 
-app.put('/user', (req, res) => {
-  db.updateUser(req.body)
-    .then(() => {
-      res.json({status: 'updated'})
-    })
+app.put('/user', async (req, res) => {
+  if (req.user) {
+    const user = await db.getUser(req.user.id)
+    const newUser = {
+      ...user,
+      ...req.body
+    }
+    await db.updateUser(newUser)
+    res.json(newUser)
+  }
 })
 
 app.get('/settings', async (req, res) => {
   const settings = await db.getSettings()
-  if (! settings) {
+  if (! settings || ! req.user) {
     res.json({})
   } else {
     if (! req.user.isSuperUser) {
@@ -76,7 +81,7 @@ app.put('/settings', async (req, res) => {
   if (! superUser || (req.user && req.user.isSuperUser)) {
     const settings = {
       logoUrl: req.body.logoUrl,
-      reinstanceTitle: req.body.instanceTitle,
+      instanceTitle: req.body.instanceTitle,
       appKey: req.body.appKey,
       appSecret: req.body.appSecret}
     await db.addSettings(settings)
@@ -234,26 +239,6 @@ app.get('/search/:searchId/tweets', (req, res) => {
   }
 })
 
-app.put('/search/:searchId', (req, res) => {
-  if (req.user) {
-    db.getSearch(req.body.id).then( async (search) => {
-      await db.updateSearch(search)
-      if (req.query.refreshTweets) {
-        db.importFromSearch(search)
-          .then(() => {
-            res.json(search)
-          })
-          .catch((e) => {
-            log.error('search failed', e)
-            res.json(search)
-          })
-      } else {
-        res.json(search)
-      }
-    })
-  }
-})
-
 app.get('/search/:searchId/users', (req, res) => {
   if (req.user) {
     db.getSearch(req.params.searchId)
@@ -355,6 +340,12 @@ app.put('/wayback/:url', async (req, res) => {
   if (req.user) {
     const result = await wayback.saveArchive(req.params.url)
     res.json(result)
+  }
+})
+
+app.get('/stats', async (req, res) => {
+  if (req.user) {
+    res.json(await db.getSystemStats())
   }
 })
 

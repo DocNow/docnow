@@ -8,7 +8,7 @@ import styleQuery from './SearchQuery.css'
 export default class SearchQuery extends Component {
 
   onClick() {
-    this.props.addSearchTerm({value: '', type: 'input'})
+    this.props.addSearchTerm({value: ' ', type: 'input'})
   }
 
   render() {

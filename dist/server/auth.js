@@ -1,5 +1,9 @@
 'use strict';
 
+var _stringify = require('babel-runtime/core-js/json/stringify');
+
+var _stringify2 = _interopRequireDefault(_stringify);
+
 var _express = require('express');
 
 var _express2 = _interopRequireDefault(_express);
@@ -31,9 +35,11 @@ var activateKeys = function activateKeys() {
         includeEmail: true
       }, function (token, tokenSecret, profile, cb) {
         db.getUserByTwitterUserId(profile.id).then(function (user) {
+          console.log((0, _stringify2.default)(profile, null, 2));
           if (!user) {
             var newUser = {
               name: profile.displayName,
+              description: profile._json.description,
               twitterUserId: profile.id,
               twitterScreenName: profile.username,
               twitterLocation: profile._json.location,

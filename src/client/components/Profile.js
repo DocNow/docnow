@@ -1,30 +1,24 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import AdminSettingsForm from '../containers/AdminSettingsForm'
 
 import style from './Profile.css'
 
 export default class Profile extends Component {
 
   render() {
-    let adminSettings = null
     let disableSave = true
-    if (this.props.user.isSuperUser === 'true') {
-      adminSettings = <AdminSettingsForm />
-    }
+
     if (this.props.updatedSettings || this.props.updatedUserSettings) {
       disableSave = false
     }
-    adminSettings
-    disableSave
 
     return (
-      <div className={style.Profile}>
+      <form className={style.Profile}>
+
+        <img src={this.props.user.twitterAvatarUrl} />
 
         <p>
           You are logged in with Twitter as @{this.props.user.twitterScreenName}.
-          <br />
-          <button href="/auth/logout">Disconnect.</button>
         </p>
 
         <p>
@@ -39,18 +33,16 @@ export default class Profile extends Component {
             onChange={this.props.updateUserSettings} value={this.props.user.email}/>
         </p>
 
-        { adminSettings }
-
         <div>
           <button
             type="button"
             onClick={this.props.saveAllSettings}
             disabled={disableSave}>
-            Save Settings
+            Save
           </button>
         </div>
 
-      </div >
+      </form>
     )
   }
 }

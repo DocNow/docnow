@@ -51,8 +51,7 @@ export default class Search extends Component {
     this.props.activateSearch()
     this.props.saveSearch({
       id: this.props.searchId,
-      title: title,
-      saved: true
+      title: title
     })
   }
 
@@ -73,6 +72,30 @@ export default class Search extends Component {
     const style = this.props.tweets.length === 0 ? {display: 'none'} : {}
     const disabled = this.props.query.length === 0
 
+    let controls = (
+      <div className={styles.Controls}>
+        <button title="Search" disabled={disabled} onClick={() => {this.search()}}>
+          <i className="fa fa-search" aria-hidden="true" />
+        </button>
+        <button title="Update Search" disabled={disabled} onClick={() => {this.update()}}>
+          <i className={'fa fa-refresh' + spin} aria-hidden="true" />
+        </button>
+        <button title="Save Search" onClick={() => {this.save()}}>
+          <i className="fa fa-archive" aria-hidden="true" />
+        </button>
+      </div>
+    )
+
+    if (! this.props.searchId) {
+      controls = (
+        <div className={styles.Controls}>
+          <button title="Search" disabled={disabled} onClick={() => {this.search()}}>
+            <i className="fa fa-search" aria-hidden="true" />
+          </button>
+        </div>
+      )
+    }
+
     return (
       <div>
         <div className={styles.SearchBar}>
@@ -84,21 +107,7 @@ export default class Search extends Component {
             active={this.props.active}
             createSearch={this.props.createSearch} />
 
-          <div className={styles.Controls}>
-
-          <button title="Search" disabled={disabled} onClick={() => {this.search()}}>
-            <i className="fa fa-search" aria-hidden="true" />
-          </button>
-
-          <button title="Update Search" disabled={disabled} onClick={() => {this.update()}}>
-            <i className={'fa fa-refresh' + spin} aria-hidden="true" />
-          </button>
-
-          <button title="Save Search" onClick={() => {this.save()}}>
-            <i className="fa fa-archive" aria-hidden="true" />
-          </button>
-
-          </div>
+          {controls}
 
           <SearchSummary
             id={this.props.searchId}
@@ -181,6 +190,7 @@ Search.propTypes = {
   images: PropTypes.array,
   videos: PropTypes.array,
   active: PropTypes.bool,
+
   getSearch: PropTypes.func,
   resetTwitterSearch: PropTypes.func,
   getTweets: PropTypes.func,

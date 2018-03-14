@@ -23,10 +23,6 @@ export default class Insights extends Component {
     }, 3000)
   }
 
-  shouldComponentUpdate() {
-    return this.props.search.id ? true : false
-  }
-
   componentWillUnmount() {
     clearInterval(this.timerId)
     this.props.resetTwitterSearch()
@@ -37,6 +33,11 @@ export default class Insights extends Component {
   }
 
   render() {
+
+    // don't render until we at least know the title of the search
+    if (! this.props.search.title) {
+      return <div />
+    }
 
     let webpageImageUrl = ''
     if (this.props.webpages.length > 0) {
@@ -92,7 +93,7 @@ export default class Insights extends Component {
           <div className={card.SavedLongCard}>
             <TweetEmbed
               id={tweetIds[0]}
-              joptions={{cards: 'hidden'}} />
+              options={{cards: 'hidden'}} />
           </div>
         </div>
 

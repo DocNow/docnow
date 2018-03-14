@@ -1,5 +1,5 @@
 import { SET_SEARCHES } from '../actions/searches'
-import { SET_TWITTER_SEARCH, DELETE_SEARCH } from '../actions/search'
+import { SET_TWITTER_SEARCH, DELETE_SEARCH, ADD_SEARCH } from '../actions/search'
 
 const initialState = []
 
@@ -38,9 +38,17 @@ export default function settings(state = initialState, action) {
     }
 
     case SET_TWITTER_SEARCH: {
+      if (action.search.active === false) {
+        return state
+      }
+
       const pos = state.findIndex((s) => {
         return s.id === action.search.id
       })
+      if (pos === -1) {
+        return state
+      }
+
       const search = {...state[pos], ...action.search}
       return [
         ...state.slice(0, pos),
@@ -56,6 +64,13 @@ export default function settings(state = initialState, action) {
       return [
         ...state.slice(0, pos),
         ...state.slice(pos + 1)
+      ]
+    }
+
+    case ADD_SEARCH: {
+      return [
+        action.search,
+        ...state
       ]
     }
 

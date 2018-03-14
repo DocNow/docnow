@@ -1,5 +1,11 @@
-.Preview img {
-  background-color: #4A4A4A;
+.LogoUpload img {
   max-height: 100px;
   padding: 10px;
+  border: thin solid gray;
+}
+
+.LogoUpload input {
+  font-size: 12pt;
+  border: none;
+  font-weight: normal;
 }

@@ -2,11 +2,14 @@
   background-color: #ffffff;
   padding-right:  10px;
   opacity: 0.8;
-  width: 350px;
+  width: 300px;
   padding: 5px;
   margin-left: auto;
   margin-right: auto;
   margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  align-content: center;
 }
 
 .AddPlace button {
@@ -15,9 +18,9 @@
 
 .AddPlace input {
   padding: 2px 2px 2px 2px;
-  font-size: 16pt;
   text-transform: uppercase;
   text-align: center;
+  font-size: 12pt;
 }
 
 .AddPlace input option {

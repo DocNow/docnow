@@ -401,8 +401,13 @@ export class Database {
     return searches
   }
 
-  getSearch(searchId) {
-    return this.get(SEARCH, searchId)
+  async getSearch(searchId) {
+    const search = await this.get(SEARCH, searchId)
+    const stats = await this.getSearchStats(search)
+    return {
+      ...search,
+      ...stats
+    }
   }
 
   updateSearch(search) {
@@ -1086,6 +1091,41 @@ export class Database {
   async mergeIndexes() {
     const results = await this.es.indices.forcemerge({index: '_all'})
     return results
+  }
+
+  async getSystemStats() {
+    let result = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: {
+        query: {match_all: {}}
+      }
+    })
+    const tweetCount = result.hits.total
+
+    result = await this.es.search({
+      index: this.getIndex(TWUSER),
+      type: TWUSER,
+      body: {
+        query: {match_all: {}}
+      }
+    })
+    const twitterUserCount = result.hits.total
+
+    result = await this.es.search({
+      index: this.getIndex(USER),
+      type: USER,
+      body: {
+        query: {match_all: {}}
+      }
+    })
+    const userCount = result.hits.total
+
+    return {
+      tweetCount: tweetCount,
+      twitterUserCount: twitterUserCount,
+      userCount: userCount
+    }
   }
 
 }

@@ -36,7 +36,7 @@ export default class AddPlace extends Component {
   render() {
 
     const inputProps = {
-      placeholder: 'CLICK TO ADD A PLACE'
+      placeholder: 'ENTER A PLACE NAME'
     }
     let placeDisabled = false
 
@@ -46,24 +46,21 @@ export default class AddPlace extends Component {
     }
     return (
       <div className={style.AddPlace}>
-        <h2>
         <Autocomplete
-           getItemValue={(item) => item}
-           sortItems={this.sortPlaces}
-           items={Object.keys(this.props.world)}
-           shouldItemRender={this.matchInputToTerm}
-           renderItem={(item, isHighlighted) =>
-             (<div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-               {item}
-             </div>)
-           }
+          getItemValue={(item) => item}
+          sortItems={this.sortPlaces}
+          items={Object.keys(this.props.world)}
+          shouldItemRender={this.matchInputToTerm}
+          renderItem={(item, isHighlighted) => (
+            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+              {item}
+            </div>
+           )}
            value={this.props.newPlace}
            onChange={(event, value) => this.props.updateNewTrend(value)}
            onSelect={value => this.props.updateNewTrend(value)}
-           inputProps={inputProps}
-         />
-         <button href="#" onClick={ this.checkPlace } className="Save" disabled={placeDisabled}><i className="fa fa-plus" aria-hidden="true"/></button>
-        </h2>
+           inputProps={inputProps} />
+        <button href="#" onClick={ this.checkPlace } className="Save" disabled={placeDisabled}><i className="fa fa-plus" aria-hidden="true"/></button>
       </div>
     )
   }

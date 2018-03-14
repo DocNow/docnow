@@ -3,6 +3,7 @@ import { Component } from 'react'
 export default class MediaQueryComponent extends Component {
   constructor(props) {
     super(props)
+    this.state = {mediaClass: null}
   }
 
   setMediaQuery(q, baseClass, mediaClass) {

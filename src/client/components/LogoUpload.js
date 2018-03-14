@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
-import def from '../images/mith.png'
+import defaultLogo from '../images/mith.png'
 import styles from './LogoUpload.css'
 import PropTypes from 'prop-types'
 
 export default class LogoUpload extends Component {
   state = {
-    imagePreviewUrl: this.props.logoUrl ? this.props.logoUrl : def
+    imagePreviewUrl: this.props.logoUrl ? this.props.logoUrl : defaultLogo
   }
 
   handleImageChange(e) {
@@ -36,24 +36,14 @@ export default class LogoUpload extends Component {
   }
 
   render() {
-    const {imagePreviewUrl} = this.state
-    let imagePreview = null
-    if (imagePreviewUrl) {
-      imagePreview = (<img src={imagePreviewUrl} />)
-    } else {
-      imagePreview = (<span>Please select an Image for Preview</span>)
-    }
-
     return (
-      <div>
-        <label>Your Logo:</label>
-          <input
-            type="file"
-            onChange={(e)=>this.handleImageChange(e)} />
-        <div className={styles.Preview}>
-          {imagePreview}
-        </div>
-      </div>
+      <p className={styles.LogoUpload}>
+        <img src={this.state.imagePreviewUrl} />
+        <br />
+        <input
+          type="file"
+          onChange={(e)=>this.handleImageChange(e)} />
+      </p>
     )
   }
 }

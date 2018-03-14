@@ -8,6 +8,7 @@ import searches from './searches'
 import webpages from './webpages'
 import queue from './queue'
 import tweets from './tweets'
+import stats from './stats'
 
 const rootReducer = combineReducers({
   settings,
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   webpages,
   queue,
   tweets,
+  stats,
   router: routerReducer
 })
 

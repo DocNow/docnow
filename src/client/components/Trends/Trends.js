@@ -11,7 +11,6 @@ export default class Trends extends MediaQueryComponent {
 
   constructor(props) {
     super(props)
-    this.state = {introStyle: style.Intro}
   }
 
   componentDidMount() {
@@ -20,7 +19,7 @@ export default class Trends extends MediaQueryComponent {
     this.setState((prevState) => {
       return Object.assign(prevState, {intervalId: intervalId})
     })
-    this.setMediaQuery('(min-width: 1180px)', style.Intro, style.IntroOver1180px)
+    this.setMediaQuery('(max-width: 780px)', style.Trends, style.Mobile)
   }
 
   componentWillUnmount() {
@@ -36,9 +35,9 @@ export default class Trends extends MediaQueryComponent {
     let newLocation = null
     if (!loggedIn) {
       introElement = (
-        <div className={this.state.mediaStyle}>
+        <div className={style.Intro}>
           <p>
-            Welcome to DocNow, an app built to appraise social media content for potential collection.
+          Welcome to DocNow, an social media appraisal tool.
           </p>
           <button onClick={() => {window.location = '/auth/twitter'; return false}}>
             <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
@@ -61,8 +60,8 @@ export default class Trends extends MediaQueryComponent {
 
     return (
       <div>
-        {introElement}
-        <div className={style.Trends}>
+        <div className={this.state.mediaStyle}>
+          {introElement}
           <div className={card.CardHolder}>
             {this.props.trends.map(place => (
               <Place

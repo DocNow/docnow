@@ -1,23 +1,64 @@
 .Settings {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
   justify-content: center;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-  font-size: 16pt;
 }
 
 .Settings p {
-  text-align: left;
-}
-
-.Settings label {
-  font-weight: bold;
+  margin-bottom: 25px;
 }
 
 .Settings input {
-  margin-left: 10px;
-  border-bottom: thin solid gray;
+  border: none;
+  font-size: 18pt;
+  border-bottom: thin solid grey;
+  width: 500px;
+  font-weight: bold;
+}
+
+.Settings label {
+  font-size: 12pt;
+  margin-bottom: 20px;
+}
+
+.SystemStats {
+  justify-content: right;
+}
+
+.SystemStats dl {
+  margin-left: 50px;
+  text-align: right;
+  padding: 10px;
+  border: thin solid gray;
+  background-color: lightgreen;
+  border-radius: 5px;
+}
+
+.SystemStats dd {
+  font-size: 18pt;
+  margin-left: 0px;
+  font-weight: bold;
+}
+
+.SystemStats dt {
+  margin-bottom: 20px;
+}
+
+.SettingsUnder780px {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  margin: 5px;
+}
+
+.SettingsUnder780px input {
+  width: 90%;
+}
+
+.SettingsUnder780px dl {
+  text-align: left;
+  margin: 5px;
+  padding: 0px;
+  border: none;
+  background-color: white;
 }

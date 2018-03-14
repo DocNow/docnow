@@ -4,6 +4,7 @@
   margin: 3px;
   border-radius: 4px;
   background-color: #C8D2D3;
+  line-height: 14px;
 }
 
 .SearchTerm:hover {
@@ -29,7 +30,7 @@
 }
 
 .User {
-  background-color: lightyellow;
+  background-color: yellow;
 }
 
 .Input {

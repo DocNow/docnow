@@ -23,6 +23,7 @@ export default class TabBar extends Component {
       default:
         break
     }
+
     return (
       <div className={styles.TabBar}>
         <ul>
@@ -55,5 +56,6 @@ export default class TabBar extends Component {
 }
 
 TabBar.propTypes = {
-  location: PropTypes.string
+  location: PropTypes.string,
+  isSuperUser: PropTypes.bool
 }

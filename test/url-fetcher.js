@@ -38,8 +38,9 @@ describe('url-fetcher', () => {
       equal(w.count, 3, 'tally works')
 
       w = webpages[1]
-      equal(w.url, 'http://www.nytimes.com/1994/05/07/business/new-venture-in-cyberspace-by-silicon-graphics-founder.html', 'tally should use canonical url')
-      equal(w.title, 'New Venture in Cyberspace By Silicon Graphics Founder - NYTimes.com')
+      equal(w.url, 'https://www.nytimes.com/1994/05/07/business/new-venture-in-cyberspace-by-silicon-graphics-founder.html', 'tally should use canonical url')
+
+      equal(w.title, 'New Venture in Cyberspace By Silicon Graphics Founder - The New York Times')
       equal(w.count, 2, 'tally uses canoanical url')
 
       equal(w.archive, null)
