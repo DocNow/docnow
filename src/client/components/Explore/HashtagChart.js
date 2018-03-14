@@ -43,7 +43,7 @@ export default class Hashtags extends Component {
     g.select('text')
       .transition()
       .duration(2000)
-      .text((d) => {return '#' + d.hashtag + ' (' + d.count + ')'})
+      .text((d) => {return d.count + ' ' + '#' + d.hashtag})
 
     g.exit()
       .remove()

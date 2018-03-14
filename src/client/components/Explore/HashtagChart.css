@@ -7,6 +7,7 @@
 .HashtagsCard::-webkit-scrollbar {
   width: 15px;
   border-bottom: 1px solid #ffffff;
+  background-color: #000000;
 }
 
 .HashtagsCard::-webkit-scrollbar-thumb {
@@ -20,12 +21,13 @@ rect {
 }
 
 text {
-  font-size: 11pt;
+  font-size: 10pt;
 }
+
 
 .Active rect {
   cursor: pointer;
-  fill: lightyellow;
+  fill: #1da1f2;
 }
 
 .Active text {
