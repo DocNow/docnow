@@ -30,6 +30,7 @@
   text-decoration: none;
   overflow: hidden;
   vertical-align: middle;
+  margin-left: 10px;
 }
 
 .TabActive {
