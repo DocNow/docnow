@@ -171,6 +171,10 @@ export class Database {
     return this.search(USER, `twitterUserId:${twitterUserId}`, true)
   }
 
+  getUserByTwitterScreenName(twitterScreenName) {
+    return this.search(USER, `twitterScreenName:${twitterScreenName}`, true)
+  }
+
   importLatestTrends() {
     log.debug('importing trends')
     return new Promise((resolve) => {
