@@ -279,6 +279,11 @@ var Database = exports.Database = function () {
       return this.search(USER, 'twitterUserId:' + twitterUserId, true);
     }
   }, {
+    key: 'getUserByTwitterScreenName',
+    value: function getUserByTwitterScreenName(twitterScreenName) {
+      return this.search(USER, 'twitterScreenName:' + twitterScreenName, true);
+    }
+  }, {
     key: 'importLatestTrends',
     value: function importLatestTrends() {
       var _this7 = this;

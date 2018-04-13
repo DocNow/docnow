@@ -17,6 +17,7 @@
     "update-indexes": "node dist/commands/update-indexes",
     "merge-indexes": "node dist/commands/merge-indexes",
     "load-places": "node dist/commands/load-places",
+    "sudo": "node dist/commands/sudo",
     "url-fetcher": "node dist/commands/url-fetcher",
     "stream-loader": "node dist/commands/stream-loader"
 
