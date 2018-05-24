@@ -3,6 +3,7 @@
   background-color: #000000;
   overflow-y: scroll;
   overflow-x: hidden;
+  border-top: solid 2px #000000;
 }
 
 .ImagesCard::-webkit-scrollbar {
@@ -13,7 +14,6 @@
 .ImagesCard::-webkit-scrollbar-thumb {
   background-color: #000000;
 }
-
 
 .Image {
   background-color: #ffffff;
