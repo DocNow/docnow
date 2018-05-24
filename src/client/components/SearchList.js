@@ -35,8 +35,7 @@ export default class SearchList extends Component {
           <div className={style.GridItem}><h2>Tweet Count</h2></div>
           <div className={style.GridItem}><h2>Created</h2></div>
           <div className={style.GridItem}><h2>Last Update</h2></div>
-          <div className={style.GridItem}><h2>Stream</h2></div>
-          <div className={style.GridItem}><h2>Search</h2></div>
+          <div className={style.GridItem}><h2>Actions</h2></div>
           <div className={style.GridItem}><h2>Delete</h2></div>
         </div>
         {this.props.searches.map((search, i) => {
@@ -62,21 +61,19 @@ export default class SearchList extends Component {
                 {updated}
               </div>
               <div className={style.GridActions}>
+              <div className={style.GridRowInner}>
+                  <div className={style.GridActionsInner}>
                     <SearchToggle
                       id={search.id}
                       active={search.active}
                       updateSearch={this.props.updateSearch} />
-              </div>
-              <div className={style.GridActions}>
-                    <SearchToggle
-                      id={search.id}
-                      active={search.active}
-                      updateSearch={this.props.updateSearch} />
-              </div>
-              <div className={style.GridActions}>
+                  </div>
+              <div className={style.GridActionsInner}>
                     <Trash
                       id={search.id}
                       deleteSearch={this.props.deleteSearch} />
+              </div>
+             </div>
               </div>
             </div>
           )
