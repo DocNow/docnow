@@ -7,9 +7,9 @@
 
 .TweetsCard::-webkit-scrollbar {
   width: 15px;
-  border-bottom: 1px solid #ffffff;
+  background-color: #eeeeee;
 }
 
 .TweetsCard::-webkit-scrollbar-thumb {
-  background-color: #0f1282;
+  background-color: #000000;
 }

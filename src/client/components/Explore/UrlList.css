@@ -7,17 +7,17 @@
 
 .UrlList::-webkit-scrollbar {
   width: 15px;
-  border-bottom: 1px solid #ffffff;
+  background-color: #eeeeee;
 }
 
 .UrlList::-webkit-scrollbar-thumb {
-  background-color: #0f1282;
+  background-color: #000000;
 }
 
 .UrlList ul {
-  width: 310px;
+  width: 97%;
   background-color: #ffffff;
-  margin: 5px;
+  margin: 2px;
   padding: 5px;
 }
 
@@ -28,7 +28,7 @@
   font-size: 10pt;
   padding-top: 5px;
   padding-bottom: 5px;
-  overflow: hidden;
+
   text-overflow: ellipsis;
   white-space: nowrap;
 }

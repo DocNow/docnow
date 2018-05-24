@@ -15,9 +15,9 @@ export default class VideoList extends Component {
         {this.props.videos.map((video) => (
           <div key={video.url} className={style.Video}>
             <video controls src={video.url} />
-            <div>
-              {video.count} shares
-            </div>
+            <figcaption>
+              <i className="fa fa-retweet" aria-hidden="true" /> {video.count}
+            </figcaption>
           </div>
         ))}
       </div>
