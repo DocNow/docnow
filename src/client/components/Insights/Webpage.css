@@ -12,20 +12,20 @@
 }
 
 .Selected {
-  box-shadow: 1px 4px 8px 1px #1da1f2;
+  box-shadow: 1px 4px 8px 1px lightgreen;
 }
 
 .Selected:hover {
-  box-shadow: 0 8px 16px 0 #ffff00;
+  box-shadow: 0 8px 16px 0 lightgreen;
 }
 
-/*.Deselected {
+.Deselected {
   box-shadow: 1px 4px 8px 1px pink;
 }
 
 .Deselected:hover {
   box-shadow: 0 8px 16px 0 pink;
-} */
+}
 
 div.Controls {
   left: 180px;
@@ -45,19 +45,19 @@ div.Controls i {
 }
 
 .Selected i.Add {
-  color: #1da1f2;
+  background-color: lightgreen;
 }
 
 i.Add:hover {
-  background-color: #ff0000;
+  background-color: lightgreen;
 }
 
 .Deselected i.Remove {
-  color: pink;
+  background-color: pink;
 }
 
 i.Remove:hover {
-  color: #cdc9f1;
+  background-color: pink;
 }
 
 .Image {

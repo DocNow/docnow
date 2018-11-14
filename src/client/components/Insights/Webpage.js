@@ -42,9 +42,9 @@ export default class Webpage extends Component {
       <div className={card.Card + ' ' +  selectedStyle}>
         <div className={style.Image}>
           <div className={style.Controls}>
-            <i onClick={() => {this.select()}} className={style.Add + ' fa fa-check-circle"'} />
+            <i onClick={() => {this.select()}} className={style.Add + ' fa fa-thumbs-up'} />
             &nbsp;
-            <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-eye-slash'}/>
+            <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-thumbs-down'}/>
           </div>
           <a href={this.props.url} target="_new">
             <img rel="noreferrer" src={img} />
