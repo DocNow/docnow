@@ -61,11 +61,10 @@ var _webpackDevConfig = require('../../webpack.dev.config.js');
 
 var _webpackDevConfig2 = _interopRequireDefault(_webpackDevConfig);
 
-var _urlFetcher = require('../server/url-fetcher');
-
-var _streamLoader = require('../server/stream-loader');
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+//import { UrlFetcher } from '../server/url-fetcher'
+//import { StreamLoader } from '../server/stream-loader'
 
 var projectDir = _path2.default.join(__dirname, '..', '..');
 var clientDir = _path2.default.join(projectDir, 'dist', 'client');
@@ -115,15 +114,18 @@ if (isDevelopment) {
   });
 }
 
-// maybe it's a bad idea to have the server fetching urls
-// by default, but it doesn't seem problematic to have one
-// worker running by default, more can be started up if needed
+// As a convenience embed a UrlFetcher and StreamLoader in development mode.
+// This would not be a good idea to do in production as a it could
+// really bog down the web server process if lots of data collection is
+// going on.
 
-var urlFetcher = new _urlFetcher.UrlFetcher();
-urlFetcher.start();
+if (isDevelopment) {
+  var urlFetcher = new UrlFetcher();
+  urlFetcher.start();
 
-var streamLoader = new _streamLoader.StreamLoader();
-streamLoader.start();
+  var streamLoader = new StreamLoader();
+  streamLoader.start();
+}
 
 _logger2.default.info('starting app');
 app.listen(app.get('port'));
