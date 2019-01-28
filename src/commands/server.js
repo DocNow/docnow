@@ -16,8 +16,8 @@ import api from '../server/api'
 import auth from '../server/auth'
 import log from '../server/logger'
 import config from '../../webpack.dev.config.js'
-//import { UrlFetcher } from '../server/url-fetcher'
-//import { StreamLoader } from '../server/stream-loader'
+import { UrlFetcher } from '../server/url-fetcher'
+import { StreamLoader } from '../server/stream-loader'
 
 const projectDir = path.join(__dirname, '..', '..')
 const clientDir = path.join(projectDir, 'dist', 'client')
