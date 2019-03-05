@@ -19,7 +19,8 @@
     "load-places": "node dist/commands/load-places",
     "sudo": "node dist/commands/sudo",
     "url-fetcher": "node dist/commands/url-fetcher",
-    "stream-loader": "node dist/commands/stream-loader"
+    "stream-loader": "node dist/commands/stream-loader",
+    "users": "node dist/commands/users"
   },
   "betterScripts": {
     "build": {
