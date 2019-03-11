@@ -12,6 +12,7 @@ services:
     environment:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - xpack.security.enabled=false
     ulimits:
       memlock:
         soft: -1
@@ -30,4 +31,4 @@ services:
     links:
       - redis
       - elasticsearch
-    entrypoint: src/commands/wait-for-it.sh -t 120 127.0.0.1:9200 -- npm run start:dev
+    entrypoint: src/commands/wait-for-it.sh -t 120 0.0.0.0:9200 -- npm run start:dev
