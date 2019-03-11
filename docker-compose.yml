@@ -1,31 +1,33 @@
-version: '2'
+version: '3'
 services:
 
   redis:
     image: redis
+    ports:
+      - 6379:6379
+    pid: host
 
   elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:5.5.2
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
     environment:
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ulimits:
       memlock:
         soft: -1
         hard: -1
-    mem_limit: 2g
+    ports:
+      - 9200:9200
+    pid: host
 
   app:
-    environment:
-      - REDIS_HOST=redis
-      - ES_HOST=http://elastic:changeme@elasticsearch:9200
+    ports:
+      - 3000:3000
     build:
       context: .
     volumes:
       - ./src:/code/src
-    ports:
-      - 3000:3000
-    depends_on:
+    links:
       - redis
       - elasticsearch
-    entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- npm run start:dev
+    entrypoint: src/commands/wait-for-it.sh -t 120 127.0.0.1:9200 -- npm run start:dev

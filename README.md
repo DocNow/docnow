@@ -43,6 +43,25 @@ If you run into an error above
 
 1. sh clean-up.sh
 
+### Other known issues
+
+The `redis` container will occasionally error out and can be resolved with:
+
+```bash
+sysctl vm.overcommit_memory=1
+```
+
+as `root` on the host machine
+
+The `elasticsearch` container will occasionally error out and can be resolved with:
+
+```bash
+sysctl -w vm.max_map_count=262144
+```
+
+as `root` on the host machine
+
+
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/
 [Appraisal]: https://www2.archivists.org/glossary/terms/a/appraisal
