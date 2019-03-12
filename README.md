@@ -53,7 +53,8 @@ sysctl vm.overcommit_memory=1
 
 as `root` on the host machine
 
-The `elasticsearch` container will occasionally error out and can be resolved with:
+The `elasticsearch` container will occasionally error out and can be
+[resolved](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html) with:
 
 ```bash
 sysctl -w vm.max_map_count=262144
