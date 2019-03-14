@@ -5,8 +5,6 @@ services:
     image: redis
     ports:
       - 6379:6379
-    networks:
-      - app
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
@@ -20,8 +18,6 @@ services:
         hard: -1
     ports:
       - 9200:9200
-    networks:
-      - app
 
   app:
     environment:
@@ -29,8 +25,6 @@ services:
       - ES_HOST=elasticsearch:9200
     ports:
       - 3000:3000
-    networks:
-      - app
     build:
       context: .
     volumes:
@@ -39,6 +33,3 @@ services:
       - redis
       - elasticsearch
     entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- npm run start:dev
-
-networks:
-  app:
