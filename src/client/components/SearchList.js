@@ -9,7 +9,7 @@ import style from './SearchList.css'
 
 export default class SearchList extends Component {
 
-  componentWillMount() {
+  componentDidMount() {
     if (this.props.searches.length === 0) {
       this.tick()
     }

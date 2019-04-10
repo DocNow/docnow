@@ -1,31 +1,59 @@
-'use strict';
+"use strict";
 
-var _getIterator2 = require('babel-runtime/core-js/get-iterator');
+var _http = _interopRequireDefault(require("http"));
 
-var _getIterator3 = _interopRequireDefault(_getIterator2);
+var _moment = _interopRequireDefault(require("moment"));
 
-var _regenerator = require('babel-runtime/regenerator');
+var _requestPromise = _interopRequireDefault(require("request-promise"));
 
-var _regenerator2 = _interopRequireDefault(_regenerator);
+var _logger = _interopRequireDefault(require("./logger"));
 
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+var _redis = require("./redis");
 
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _stringify = require('babel-runtime/core-js/json/stringify');
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
-var _stringify2 = _interopRequireDefault(_stringify);
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
+var pool = new _http["default"].Agent({
+  keepAlive: true,
+  maxSockets: 1
+});
+var redis = (0, _redis.getRedis)();
+/**
+ * Save Wayback metadata by URL in Redis.
+ * @param {string} The URL that was archived.
+ * @param {object} Metadata (url, time) about the Wayback snapshot.
+ * @returns {promise}
+ */
+
+function save(url, metadata) {
+  return redis.setAsync((0, _redis.waybackKey)(url), JSON.stringify(metadata));
+}
 /**
  * Get saved Wayback metadata by URL from Redis.
  * @param {string}
  * @param {promise} The Wayback snapshot metadata.
  */
 
-var get = function () {
-  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(url) {
+
+function get(_x) {
+  return _get.apply(this, arguments);
+}
+/**
+ * Tells Wayback Machine to archive a URL.
+ * @param {string} a URL string
+ * @returns {object} an object
+ */
+
+
+function _get() {
+  _get = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee(url) {
     var json;
-    return _regenerator2.default.wrap(function _callee$(_context) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -40,89 +68,104 @@ var get = function () {
               break;
             }
 
-            return _context.abrupt('return', JSON.parse(json));
+            return _context.abrupt("return", JSON.parse(json));
 
           case 7:
-            return _context.abrupt('return', null);
+            return _context.abrupt("return", null);
 
           case 8:
-          case 'end':
+          case "end":
             return _context.stop();
         }
       }
-    }, _callee, this);
+    }, _callee);
   }));
+  return _get.apply(this, arguments);
+}
 
-  return function get(_x) {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-/**
- * Tells Wayback Machine to archive a URL.
- * @param {string} a URL string
- * @returns {object} an object
- */
-
-var saveArchive = function () {
-  var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2(url) {
-    var saveUrl, resp, location, iaUrl, time, metadata;
-    return _regenerator2.default.wrap(function _callee2$(_context2) {
-      while (1) {
-        switch (_context2.prev = _context2.next) {
-          case 0:
-            saveUrl = 'https://web.archive.org/save/' + url;
-            _context2.prev = 1;
-            _context2.next = 4;
-            return _requestPromise2.default.get({ url: saveUrl, resolveWithFullResponse: true });
-
-          case 4:
-            resp = _context2.sent;
-            location = resp.headers['content-location'];
-            iaUrl = 'https://wayback.archive.org/' + location;
-            time = (0, _moment2.default)(location.split('/')[2] + 'Z', 'YYYYMMDDhhmmssZ').toDate();
-            metadata = { url: iaUrl, time: time };
-
-            save(url, metadata);
-            return _context2.abrupt('return', metadata);
-
-          case 13:
-            _context2.prev = 13;
-            _context2.t0 = _context2['catch'](1);
-
-            _logger2.default.warn('got error when fetching ' + saveUrl, _context2.t0.response.statusCode);
-            return _context2.abrupt('return', null);
-
-          case 17:
-          case 'end':
-            return _context2.stop();
-        }
-      }
-    }, _callee2, this, [[1, 13]]);
-  }));
-
-  return function saveArchive(_x2) {
-    return _ref2.apply(this, arguments);
-  };
-}();
-
+function saveArchive(_x2) {
+  return _saveArchive.apply(this, arguments);
+}
 /**
  * Fetch metadata for archival snapshots at the Internet Archive.
  * @param {string} the URL you want to search for.
  * @returns {array} a list of link objects
  */
 
-var memento = function () {
-  var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(url) {
+
+function _saveArchive() {
+  _saveArchive = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee2(url) {
+    var saveUrl, resp, location, iaUrl, time, metadata;
+    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+      while (1) {
+        switch (_context2.prev = _context2.next) {
+          case 0:
+            saveUrl = "https://web.archive.org/save/" + url;
+            _context2.prev = 1;
+            _context2.next = 4;
+            return _requestPromise["default"].get({
+              url: saveUrl,
+              resolveWithFullResponse: true
+            });
+
+          case 4:
+            resp = _context2.sent;
+            location = resp.headers['content-location'];
+            iaUrl = 'https://wayback.archive.org/' + location;
+            time = (0, _moment["default"])(location.split('/')[2] + 'Z', 'YYYYMMDDhhmmssZ').toDate();
+            metadata = {
+              url: iaUrl,
+              time: time
+            };
+            save(url, metadata);
+            return _context2.abrupt("return", metadata);
+
+          case 13:
+            _context2.prev = 13;
+            _context2.t0 = _context2["catch"](1);
+
+            _logger["default"].warn("got error when fetching ".concat(saveUrl), _context2.t0.response.statusCode);
+
+            return _context2.abrupt("return", null);
+
+          case 17:
+          case "end":
+            return _context2.stop();
+        }
+      }
+    }, _callee2, null, [[1, 13]]);
+  }));
+  return _saveArchive.apply(this, arguments);
+}
+
+function memento(_x3) {
+  return _memento.apply(this, arguments);
+}
+/**
+ * Fetch the closest Wayback snapshot by URL.
+ * @param {string} A URL
+ * @param {boolean} Set to true to ignore cache and go back to the web.
+ * @returns {object} Metadata about the Wayback snapshot.
+ */
+
+
+function _memento() {
+  _memento = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee3(url) {
     var iaUrl, text, lines, links, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, line, match;
 
-    return _regenerator2.default.wrap(function _callee3$(_context3) {
+    return regeneratorRuntime.wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
-            iaUrl = 'http://web.archive.org/web/timemap/link/' + url;
+            iaUrl = "http://web.archive.org/web/timemap/link/".concat(url);
             _context3.next = 3;
-            return _requestPromise2.default.get(iaUrl, { pool: pool });
+            return _requestPromise["default"].get(iaUrl, {
+              pool: pool
+            });
 
           case 3:
             text = _context3.sent;
@@ -133,7 +176,7 @@ var memento = function () {
             _iteratorError = undefined;
             _context3.prev = 9;
 
-            for (_iterator = (0, _getIterator3.default)(lines); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            for (_iterator = lines[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               line = _step.value;
               match = line.match(/<(.+)>; rel="(.+)"; datetime="(.+)",/);
 
@@ -145,12 +188,13 @@ var memento = function () {
                 });
               }
             }
+
             _context3.next = 17;
             break;
 
           case 13:
             _context3.prev = 13;
-            _context3.t0 = _context3['catch'](9);
+            _context3.t0 = _context3["catch"](9);
             _didIteratorError = true;
             _iteratorError = _context3.t0;
 
@@ -158,8 +202,8 @@ var memento = function () {
             _context3.prev = 17;
             _context3.prev = 18;
 
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
             }
 
           case 20:
@@ -179,146 +223,125 @@ var memento = function () {
             return _context3.finish(17);
 
           case 25:
-            return _context3.abrupt('return', links);
+            return _context3.abrupt("return", links);
 
           case 26:
-          case 'end':
+          case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, this, [[9, 13, 17, 25], [18,, 20, 24]]);
+    }, _callee3, null, [[9, 13, 17, 25], [18,, 20, 24]]);
   }));
+  return _memento.apply(this, arguments);
+}
 
-  return function memento(_x3) {
-    return _ref3.apply(this, arguments);
-  };
-}();
+function closest(_x4) {
+  return _closest.apply(this, arguments);
+}
 
-/**
- * Fetch the closest Wayback snapshot by URL.
- * @param {string} A URL
- * @param {boolean} Set to true to ignore cache and go back to the web.
- * @returns {object} Metadata about the Wayback snapshot.
- */
+function _closest() {
+  _closest = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee4(url) {
+    var refresh,
+        result,
+        today,
+        q,
+        iaUrl,
+        _result,
+        snap,
+        metadata,
+        _args4 = arguments;
 
-var closest = function () {
-  var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(url) {
-    var refresh = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
-    var result, today, q, iaUrl, _result, snap, metadata;
-
-    return _regenerator2.default.wrap(function _callee4$(_context4) {
+    return regeneratorRuntime.wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
+            refresh = _args4.length > 1 && _args4[1] !== undefined ? _args4[1] : false;
+
             if (refresh) {
-              _context4.next = 6;
+              _context4.next = 7;
               break;
             }
 
-            _context4.next = 3;
+            _context4.next = 4;
             return get(url);
 
-          case 3:
+          case 4:
             result = _context4.sent;
 
             if (!result) {
-              _context4.next = 6;
+              _context4.next = 7;
               break;
             }
 
-            return _context4.abrupt('return', result);
+            return _context4.abrupt("return", result);
 
-          case 6:
-            today = (0, _moment2.default)().format('YYYYMMDD');
-            q = { url: url, timestamp: today };
+          case 7:
+            today = (0, _moment["default"])().format('YYYYMMDD');
+            q = {
+              url: url,
+              timestamp: today
+            };
             iaUrl = 'https://archive.org/wayback/available';
-            _context4.prev = 9;
-            _context4.next = 12;
-            return _requestPromise2.default.get({ url: iaUrl, qs: q, pool: pool, json: true });
+            _context4.prev = 10;
+            _context4.next = 13;
+            return _requestPromise["default"].get({
+              url: iaUrl,
+              qs: q,
+              pool: pool,
+              json: true
+            });
 
-          case 12:
+          case 13:
             _result = _context4.sent;
 
             if (_result) {
-              _context4.next = 15;
+              _context4.next = 16;
               break;
             }
 
-            return _context4.abrupt('return', null);
+            return _context4.abrupt("return", null);
 
-          case 15:
+          case 16:
             snap = _result.archived_snapshots.closest;
 
             if (snap) {
-              _context4.next = 18;
+              _context4.next = 19;
               break;
             }
 
-            return _context4.abrupt('return', null);
+            return _context4.abrupt("return", null);
 
-          case 18:
+          case 19:
             metadata = {
               url: snap.url,
-              time: (0, _moment2.default)(snap.timestamp, 'YYYYMMDDHHmmss').toDate()
+              time: (0, _moment["default"])(snap.timestamp, 'YYYYMMDDHHmmss').toDate()
             };
-
-
             save(url, metadata);
-            return _context4.abrupt('return', metadata);
+            return _context4.abrupt("return", metadata);
 
-          case 23:
-            _context4.prev = 23;
-            _context4.t0 = _context4['catch'](9);
+          case 24:
+            _context4.prev = 24;
+            _context4.t0 = _context4["catch"](10);
 
-            _logger2.default.error('wayback error for: ' + url);
-            return _context4.abrupt('return', null);
+            _logger["default"].error("wayback error for: ".concat(url));
 
-          case 27:
-          case 'end':
+            return _context4.abrupt("return", null);
+
+          case 28:
+          case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, this, [[9, 23]]);
+    }, _callee4, null, [[10, 24]]);
   }));
-
-  return function closest(_x4) {
-    return _ref4.apply(this, arguments);
-  };
-}();
-
-var _http = require('http');
-
-var _http2 = _interopRequireDefault(_http);
-
-var _moment = require('moment');
-
-var _moment2 = _interopRequireDefault(_moment);
-
-var _requestPromise = require('request-promise');
-
-var _requestPromise2 = _interopRequireDefault(_requestPromise);
-
-var _logger = require('./logger');
-
-var _logger2 = _interopRequireDefault(_logger);
-
-var _redis = require('./redis');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var pool = new _http2.default.Agent({ keepAlive: true, maxSockets: 1 });
-var redis = (0, _redis.getRedis)();
-
-/**
- * Save Wayback metadata by URL in Redis.
- * @param {string} The URL that was archived.
- * @param {object} Metadata (url, time) about the Wayback snapshot.
- * @returns {promise}
- */
-
-function save(url, metadata) {
-  return redis.setAsync((0, _redis.waybackKey)(url), (0, _stringify2.default)(metadata));
+  return _closest.apply(this, arguments);
 }
 
-module.exports = { memento: memento, closest: closest, saveArchive: saveArchive, get: get };
+module.exports = {
+  memento: memento,
+  closest: closest,
+  saveArchive: saveArchive,
+  get: get
+};

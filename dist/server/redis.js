@@ -1,26 +1,20 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.videosCountKey = exports.imagesCountKey = exports.usersCountKey = exports.tweetsCountKey = exports.waybackKey = exports.deselectedUrlsKey = exports.selectedUrlsKey = exports.tweetsKey = exports.urlsCountKey = exports.queueCountKey = exports.urlsKey = exports.metadataKey = exports.urlKey = undefined;
 exports.getRedis = getRedis;
+exports.videosCountKey = exports.imagesCountKey = exports.usersCountKey = exports.tweetsCountKey = exports.waybackKey = exports.deselectedUrlsKey = exports.selectedUrlsKey = exports.tweetsKey = exports.urlsCountKey = exports.queueCountKey = exports.urlsKey = exports.metadataKey = exports.urlKey = void 0;
 
-var _redis = require('redis');
+var _redis = _interopRequireDefault(require("redis"));
 
-var _redis2 = _interopRequireDefault(_redis);
+var _bluebird = _interopRequireDefault(require("bluebird"));
 
-var _bluebird = require('bluebird');
+var _logger = _interopRequireDefault(require("./logger"));
 
-var _bluebird2 = _interopRequireDefault(_bluebird);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _logger = require('./logger');
-
-var _logger2 = _interopRequireDefault(_logger);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-_bluebird2.default.promisifyAll(_redis2.default.RedisClient.prototype);
+_bluebird["default"].promisifyAll(_redis["default"].RedisClient.prototype);
 
 var env = process.env.NODE_ENV;
 
@@ -37,73 +31,100 @@ function getRedis() {
     opts.host = opts.host || process.env.REDIS_HOST || '127.0.0.1';
     opts.db = 0;
   }
-  _logger2.default.info('connecting to redis: ', opts);
-  return _redis2.default.createClient(opts);
-}
 
-// Functions to help construct redis keys consistently.
+  _logger["default"].info('connecting to redis: ', opts);
 
+  return _redis["default"].createClient(opts);
+} // Functions to help construct redis keys consistently.
 // url to url mappings
-var urlKey = exports.urlKey = function urlKey(url) {
-  return 'url:' + url;
+
+
+var urlKey = function urlKey(url) {
+  return "url:".concat(url);
+}; // url metadata
+
+
+exports.urlKey = urlKey;
+
+var metadataKey = function metadataKey(url) {
+  return "metadata:".concat(url);
+}; // a search's sorted set of url counts
+
+
+exports.metadataKey = metadataKey;
+
+var urlsKey = function urlsKey(search) {
+  return "urls:".concat(search.id);
+}; // the number of urls yet to be fetched for a search
+
+
+exports.urlsKey = urlsKey;
+
+var queueCountKey = function queueCountKey(search) {
+  return "queue:".concat(search.id);
+}; // the total number of urls to be checked in a search
+
+
+exports.queueCountKey = queueCountKey;
+
+var urlsCountKey = function urlsCountKey(search) {
+  return "urlscount:".concat(search.id);
+}; // the set of tweet ids that mention a url in a search
+
+
+exports.urlsCountKey = urlsCountKey;
+
+var tweetsKey = function tweetsKey(search, url) {
+  return "tweets:".concat(url, ":").concat(search.id);
+}; // the selected urls in a search
+
+
+exports.tweetsKey = tweetsKey;
+
+var selectedUrlsKey = function selectedUrlsKey(search) {
+  return "urlsselected:".concat(search.id);
+}; // the deselected urls in a search
+
+
+exports.selectedUrlsKey = selectedUrlsKey;
+
+var deselectedUrlsKey = function deselectedUrlsKey(search) {
+  return "urlsdeselected:".concat(search.id);
+}; // metadata for wayback information for a url
+
+
+exports.deselectedUrlsKey = deselectedUrlsKey;
+
+var waybackKey = function waybackKey(url) {
+  return "wayback:".concat(url);
+}; // number of tweets in a search
+
+
+exports.waybackKey = waybackKey;
+
+var tweetsCountKey = function tweetsCountKey(search) {
+  return "tweetcount:".concat(search.id);
+}; // user counts for a search
+
+
+exports.tweetsCountKey = tweetsCountKey;
+
+var usersCountKey = function usersCountKey(search) {
+  return "usercounts:".concat(search.id);
+}; // image counts for a search
+
+
+exports.usersCountKey = usersCountKey;
+
+var imagesCountKey = function imagesCountKey(search) {
+  return "imagecounts:".concat(search.id);
+}; // video counts for a search
+
+
+exports.imagesCountKey = imagesCountKey;
+
+var videosCountKey = function videosCountKey(search) {
+  return "videocounts:".concat(search.id);
 };
 
-// url metadata
-var metadataKey = exports.metadataKey = function metadataKey(url) {
-  return 'metadata:' + url;
-};
-
-// a search's sorted set of url counts
-var urlsKey = exports.urlsKey = function urlsKey(search) {
-  return 'urls:' + search.id;
-};
-
-// the number of urls yet to be fetched for a search
-var queueCountKey = exports.queueCountKey = function queueCountKey(search) {
-  return 'queue:' + search.id;
-};
-
-// the total number of urls to be checked in a search
-var urlsCountKey = exports.urlsCountKey = function urlsCountKey(search) {
-  return 'urlscount:' + search.id;
-};
-
-// the set of tweet ids that mention a url in a search
-var tweetsKey = exports.tweetsKey = function tweetsKey(search, url) {
-  return 'tweets:' + url + ':' + search.id;
-};
-
-// the selected urls in a search
-var selectedUrlsKey = exports.selectedUrlsKey = function selectedUrlsKey(search) {
-  return 'urlsselected:' + search.id;
-};
-
-// the deselected urls in a search
-var deselectedUrlsKey = exports.deselectedUrlsKey = function deselectedUrlsKey(search) {
-  return 'urlsdeselected:' + search.id;
-};
-
-// metadata for wayback information for a url
-var waybackKey = exports.waybackKey = function waybackKey(url) {
-  return 'wayback:' + url;
-};
-
-// number of tweets in a search
-var tweetsCountKey = exports.tweetsCountKey = function tweetsCountKey(search) {
-  return 'tweetcount:' + search.id;
-};
-
-// user counts for a search
-var usersCountKey = exports.usersCountKey = function usersCountKey(search) {
-  return 'usercounts:' + search.id;
-};
-
-// image counts for a search
-var imagesCountKey = exports.imagesCountKey = function imagesCountKey(search) {
-  return 'imagecounts:' + search.id;
-};
-
-// video counts for a search
-var videosCountKey = exports.videosCountKey = function videosCountKey(search) {
-  return 'videocounts:' + search.id;
-};
+exports.videosCountKey = videosCountKey;

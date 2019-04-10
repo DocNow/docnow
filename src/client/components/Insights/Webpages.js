@@ -16,7 +16,7 @@ export default class Webpages extends Component {
     this.modalOpen = true
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.tick()
     this.props.resetWebpages()
     this.props.resetTweets()

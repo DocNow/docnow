@@ -23,7 +23,7 @@ export default function trends(state = initialState, action) {
     }
 
     case REMOVE_TREND: {
-      const places = state.places.filter((place)=>{
+      const places = state.places.filter((place) => {
         return place.placeId !== action.id
       })
       return {

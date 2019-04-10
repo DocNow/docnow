@@ -1,71 +1,50 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Twitter = undefined;
+exports.Twitter = void 0;
 
-var _assign = require('babel-runtime/core-js/object/assign');
+var _url = _interopRequireDefault(require("url"));
 
-var _assign2 = _interopRequireDefault(_assign);
+var _twit = _interopRequireDefault(require("twit"));
 
-var _getIterator2 = require('babel-runtime/core-js/get-iterator');
+var _logger = _interopRequireDefault(require("./logger"));
 
-var _getIterator3 = _interopRequireDefault(_getIterator2);
+var _bigInteger = _interopRequireDefault(require("big-integer"));
 
-var _promise = require('babel-runtime/core-js/promise');
+var _emojiRegex = _interopRequireDefault(require("emoji-regex"));
 
-var _promise2 = _interopRequireDefault(_promise);
+var _htmlEntities = require("html-entities");
 
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _createClass2 = require('babel-runtime/helpers/createClass');
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-var _createClass3 = _interopRequireDefault(_createClass2);
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var _url = require('url');
-
-var _url2 = _interopRequireDefault(_url);
-
-var _twit = require('twit');
-
-var _twit2 = _interopRequireDefault(_twit);
-
-var _logger = require('./logger');
-
-var _logger2 = _interopRequireDefault(_logger);
-
-var _bigInteger = require('big-integer');
-
-var _bigInteger2 = _interopRequireDefault(_bigInteger);
-
-var _emojiRegex = require('emoji-regex');
-
-var _emojiRegex2 = _interopRequireDefault(_emojiRegex);
-
-var _htmlEntities = require('html-entities');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var emojiMatch = (0, _emojiRegex2.default)();
+var emojiMatch = (0, _emojiRegex["default"])();
 var entities = new _htmlEntities.AllHtmlEntities();
 
 function decode(s) {
   return entities.decode(s);
 }
 
-var Twitter = exports.Twitter = function () {
+var Twitter =
+/*#__PURE__*/
+function () {
   function Twitter() {
     var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    (0, _classCallCheck3.default)(this, Twitter);
+
+    _classCallCheck(this, Twitter);
 
     this.consumerKey = keys.consumerKey || process.env.CONSUMER_KEY;
     this.consumerSecret = keys.consumerSecret || process.env.CONSUMER_SECRET;
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN;
     this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET;
-    this.twit = new _twit2.default({
+    this.twit = new _twit["default"]({
       consumer_key: this.consumerKey,
       consumer_secret: this.consumerSecret,
       access_token: this.accessToken,
@@ -73,12 +52,12 @@ var Twitter = exports.Twitter = function () {
     });
   }
 
-  (0, _createClass3.default)(Twitter, [{
-    key: 'getPlaces',
+  _createClass(Twitter, [{
+    key: "getPlaces",
     value: function getPlaces() {
       var _this = this;
 
-      return new _promise2.default(function (resolve) {
+      return new Promise(function (resolve) {
         _this.twit.get('trends/available').then(function (resp) {
           var places = [];
           var _iteratorNormalCompletion = true;
@@ -86,9 +65,8 @@ var Twitter = exports.Twitter = function () {
           var _iteratorError = undefined;
 
           try {
-            for (var _iterator = (0, _getIterator3.default)(resp.data), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            for (var _iterator = resp.data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               var place = _step.value;
-
               places.push({
                 id: place.woeid,
                 name: place.name,
@@ -103,8 +81,8 @@ var Twitter = exports.Twitter = function () {
             _iteratorError = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion && _iterator.return) {
-                _iterator.return();
+              if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+                _iterator["return"]();
               }
             } finally {
               if (_didIteratorError) {
@@ -118,13 +96,16 @@ var Twitter = exports.Twitter = function () {
       });
     }
   }, {
-    key: 'getTrendsAtPlace',
+    key: "getTrendsAtPlace",
     value: function getTrendsAtPlace(woeId) {
       var _this2 = this;
 
-      _logger2.default.info('fetching trends for ' + woeId);
-      return new _promise2.default(function (resolve, reject) {
-        _this2.twit.get('trends/place', { id: woeId }).then(function (resp) {
+      _logger["default"].info('fetching trends for ' + woeId);
+
+      return new Promise(function (resolve, reject) {
+        _this2.twit.get('trends/place', {
+          id: woeId
+        }).then(function (resp) {
           var place = {
             id: resp.data[0].locations[0].woeid,
             name: resp.data[0].locations[0].name,
@@ -135,18 +116,20 @@ var Twitter = exports.Twitter = function () {
           var _iteratorError2 = undefined;
 
           try {
-            for (var _iterator2 = (0, _getIterator3.default)(resp.data[0].trends), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            for (var _iterator2 = resp.data[0].trends[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
               var trend = _step2.value;
-
-              place.trends.push({ name: trend.name, tweets: trend.tweet_volume });
+              place.trends.push({
+                name: trend.name,
+                tweets: trend.tweet_volume
+              });
             }
           } catch (err) {
             _didIteratorError2 = true;
             _iteratorError2 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion2 && _iterator2.return) {
-                _iterator2.return();
+              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                _iterator2["return"]();
               }
             } finally {
               if (_didIteratorError2) {
@@ -162,7 +145,7 @@ var Twitter = exports.Twitter = function () {
       });
     }
   }, {
-    key: 'search',
+    key: "search",
     value: function search(opts, cb) {
       var _this3 = this;
 
@@ -177,8 +160,14 @@ var Twitter = exports.Twitter = function () {
       };
 
       var recurse = function recurse(maxId, total) {
-        var newParams = (0, _assign2.default)({ max_id: maxId }, params);
-        _logger2.default.info('searching twitter', { params: newParams });
+        var newParams = Object.assign({
+          max_id: maxId
+        }, params);
+
+        _logger["default"].info('searching twitter', {
+          params: newParams
+        });
+
         _this3.twit.get('search/tweets', newParams).then(function (resp) {
           if (resp.data.errors) {
             cb(resp.data.errors[0], null);
@@ -188,8 +177,9 @@ var Twitter = exports.Twitter = function () {
             cb(null, tweets.map(function (s) {
               return _this3.extractTweet(s);
             }));
+
             if (tweets.length > 0 && newTotal < count) {
-              var newMaxId = String((0, _bigInteger2.default)(tweets[tweets.length - 1].id_str).minus(1));
+              var newMaxId = String((0, _bigInteger["default"])(tweets[tweets.length - 1].id_str).minus(1));
               recurse(newMaxId, newTotal);
             } else {
               cb(null, []);
@@ -201,7 +191,7 @@ var Twitter = exports.Twitter = function () {
       recurse(opts.maxId, 0);
     }
   }, {
-    key: 'filter',
+    key: "filter",
     value: function filter(opts, cb) {
       var _this4 = this;
 
@@ -210,18 +200,26 @@ var Twitter = exports.Twitter = function () {
         tweet_mode: 'extended',
         include_entities: true
       };
-      _logger2.default.info('starting stream for: ', { stream: params });
+
+      _logger["default"].info('starting stream for: ', {
+        stream: params
+      });
+
       var stream = this.twit.stream('statuses/filter', params);
       stream.on('tweet', function (tweet) {
         var result = cb(_this4.extractTweet(tweet));
+
         if (result === false) {
-          _logger2.default.info('stopping stream for: ', { stream: params });
+          _logger["default"].info('stopping stream for: ', {
+            stream: params
+          });
+
           stream.stop();
         }
       });
     }
   }, {
-    key: 'extractTweet',
+    key: "extractTweet",
     value: function extractTweet(t) {
       var created = new Date(t.created_at);
       var userCreated = new Date(t.user.created_at);
@@ -231,25 +229,27 @@ var Twitter = exports.Twitter = function () {
       var mentions = t.entities.user_mentions.map(function (m) {
         return m.screen_name;
       });
-
       var geo = null;
+
       if (t.coordinates) {
         geo = t.coordinates;
       }
 
       var emojis = emojiMatch.exec(t.full_text);
-
       var retweet = null;
+
       if (t.retweeted_status) {
         retweet = this.extractTweet(t.retweeted_status);
       }
 
       var quote = null;
+
       if (t.quoted_status) {
         quote = this.extractTweet(t.quoted_status);
       }
 
       var place = null;
+
       if (t.place) {
         place = {
           name: t.place.full_name,
@@ -262,24 +262,27 @@ var Twitter = exports.Twitter = function () {
       }
 
       var urls = [];
+
       if (t.entities.urls) {
         var _iteratorNormalCompletion3 = true;
         var _didIteratorError3 = false;
         var _iteratorError3 = undefined;
 
         try {
-          for (var _iterator3 = (0, _getIterator3.default)(t.entities.urls), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          for (var _iterator3 = t.entities.urls[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
             var e = _step3.value;
 
-            var u = _url2.default.parse(e.expanded_url);
-            // not interested in pointers back to Twitter which
+            var u = _url["default"].parse(e.expanded_url); // not interested in pointers back to Twitter which
             // happens during quoting
+
+
             if (u.hostname === 'twitter.com') {
               continue;
             }
+
             urls.push({
-              short: e.url,
-              long: e.expanded_url,
+              "short": e.url,
+              "long": e.expanded_url,
               hostname: u.hostname
             });
           }
@@ -288,8 +291,8 @@ var Twitter = exports.Twitter = function () {
           _iteratorError3 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion3 && _iterator3.return) {
-              _iterator3.return();
+            if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+              _iterator3["return"]();
             }
           } finally {
             if (_didIteratorError3) {
@@ -300,6 +303,7 @@ var Twitter = exports.Twitter = function () {
       }
 
       var userUrl = null;
+
       if (t.user.entities && t.user.entities.url) {
         userUrl = t.user.entities.url.urls[0].expanded_url;
       }
@@ -307,13 +311,14 @@ var Twitter = exports.Twitter = function () {
       var images = [];
       var videos = [];
       var animatedGifs = [];
+
       if (t.extended_entities && t.extended_entities.media) {
         var _iteratorNormalCompletion4 = true;
         var _didIteratorError4 = false;
         var _iteratorError4 = undefined;
 
         try {
-          for (var _iterator4 = (0, _getIterator3.default)(t.extended_entities.media), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+          for (var _iterator4 = t.extended_entities.media[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
             var _e = _step4.value;
 
             if (_e.type === 'photo') {
@@ -326,7 +331,7 @@ var Twitter = exports.Twitter = function () {
               var _iteratorError5 = undefined;
 
               try {
-                for (var _iterator5 = (0, _getIterator3.default)(_e.video_info.variants), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
+                for (var _iterator5 = _e.video_info.variants[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
                   var v = _step5.value;
 
                   if (v.content_type === 'video/mp4' && v.bitrate > maxBitRate) {
@@ -339,8 +344,8 @@ var Twitter = exports.Twitter = function () {
                 _iteratorError5 = err;
               } finally {
                 try {
-                  if (!_iteratorNormalCompletion5 && _iterator5.return) {
-                    _iterator5.return();
+                  if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
+                    _iterator5["return"]();
                   }
                 } finally {
                   if (_didIteratorError5) {
@@ -361,8 +366,8 @@ var Twitter = exports.Twitter = function () {
           _iteratorError4 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion4 && _iterator4.return) {
-              _iterator4.return();
+            if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+              _iterator4["return"]();
             }
           } finally {
             if (_didIteratorError4) {
@@ -373,6 +378,7 @@ var Twitter = exports.Twitter = function () {
       }
 
       var text = t.text;
+
       if (retweet) {
         text = retweet.text;
       } else if (t.extended_tweet) {
@@ -417,5 +423,8 @@ var Twitter = exports.Twitter = function () {
       };
     }
   }]);
+
   return Twitter;
 }();
+
+exports.Twitter = Twitter;

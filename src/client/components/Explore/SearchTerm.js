@@ -10,7 +10,7 @@ export default class SearchTerm extends Component {
   }
 
   componentDidMount() {
-    this.refs.span.focus()
+    this.span.focus()
   }
 
   shouldComponentUpdate(nextProps) {
@@ -87,7 +87,7 @@ export default class SearchTerm extends Component {
         onInput={(e) => {this.update(e)}}
         data-type={type}
         className={style.SearchTerm + ' ' + cssClass}
-        ref="span"
+        ref={(c) => { this.span = c }}
         title={`${type} ${this.props.value}`}>
         { this.props.value }
       </span>

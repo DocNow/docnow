@@ -9,10 +9,6 @@ import style from './Trends.css'
 
 export default class Trends extends MediaQueryComponent {
 
-  constructor(props) {
-    super(props)
-  }
-
   componentDidMount() {
     this.props.getTrends()
     const intervalId = setInterval(this.props.getTrends, 3000)

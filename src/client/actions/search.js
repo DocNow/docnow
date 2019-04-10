@@ -205,7 +205,7 @@ export const refreshSearch = (search) => {
       body: JSON.stringify(search),
       credentials: 'same-origin'
     }
-    const url = `/api/v1/search/${search.id}` + '?refreshTweets=true'
+    const url = `/api/v1/search/${search.id}?refreshTweets=true`
     return fetch(url, opts)
       .then((resp) => resp.json())
       .then((result) => {
