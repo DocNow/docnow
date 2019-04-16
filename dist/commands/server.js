@@ -61,10 +61,11 @@ var _webpackDevConfig = require('../../webpack.dev.config.js');
 
 var _webpackDevConfig2 = _interopRequireDefault(_webpackDevConfig);
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _urlFetcher = require('../server/url-fetcher');
 
-//import { UrlFetcher } from '../server/url-fetcher'
-//import { StreamLoader } from '../server/stream-loader'
+var _streamLoader = require('../server/stream-loader');
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var projectDir = _path2.default.join(__dirname, '..', '..');
 var clientDir = _path2.default.join(projectDir, 'dist', 'client');
@@ -120,10 +121,10 @@ if (isDevelopment) {
 // going on.
 
 if (isDevelopment) {
-  var urlFetcher = new UrlFetcher();
+  var urlFetcher = new _urlFetcher.UrlFetcher();
   urlFetcher.start();
 
-  var streamLoader = new StreamLoader();
+  var streamLoader = new _streamLoader.StreamLoader();
   streamLoader.start();
 }
 

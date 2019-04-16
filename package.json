@@ -12,7 +12,7 @@
     "clean": "rimraf dist/*",
     "test": "better-npm-run test",
     "wtest": "better-npm-run wtest",
-    "eslint:server": "eslint server.js src/server/*",
+    "eslint:server": "eslint src/server/*",
     "reset": "node dist/commands/reset",
     "update-indexes": "node dist/commands/update-indexes",
     "merge-indexes": "node dist/commands/merge-indexes",
