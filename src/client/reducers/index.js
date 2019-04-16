@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
-import { routerReducer } from 'react-router-redux'
+import { connectRouter } from 'connected-react-router'
+
 import settings from './settings'
 import user from './user'
 import trends from './trends'
@@ -10,7 +11,7 @@ import queue from './queue'
 import tweets from './tweets'
 import stats from './stats'
 
-const rootReducer = combineReducers({
+export default (history) => combineReducers({
   settings,
   user,
   trends,
@@ -20,7 +21,5 @@ const rootReducer = combineReducers({
   queue,
   tweets,
   stats,
-  router: routerReducer
+  router: connectRouter(history)
 })
-
-export default rootReducer

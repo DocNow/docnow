@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 var _path = _interopRequireDefault(require("path"));
 
 var _v = _interopRequireDefault(require("uuid/v4"));
@@ -34,8 +36,6 @@ var _webpackDevConfig = _interopRequireDefault(require("../../webpack.dev.config
 var _urlFetcher = require("../server/url-fetcher");
 
 var _streamLoader = require("../server/stream-loader");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var projectDir = _path["default"].join(__dirname, '..', '..');
 

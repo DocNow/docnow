@@ -1,5 +1,15 @@
 "use strict";
 
+var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
+
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/objectSpread"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _express = _interopRequireDefault(require("express"));
 
 var _multiparty = _interopRequireDefault(require("multiparty"));
@@ -12,21 +22,11 @@ var _wayback = _interopRequireDefault(require("./wayback"));
 
 var _db = require("./db");
 
+var _archive = require("./archive");
+
 var _auth = require("./auth");
 
 var _streamLoader = require("./stream-loader");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj["default"] = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 var app = (0, _express["default"])();
 var db = new _db.Database();
@@ -68,11 +68,11 @@ app.get('/user', function (req, res) {
 app.put('/user',
 /*#__PURE__*/
 function () {
-  var _ref = _asyncToGenerator(
+  var _ref = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee(req, res) {
+  _regenerator["default"].mark(function _callee(req, res) {
     var user, newUser;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
+    return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -86,7 +86,7 @@ function () {
 
           case 3:
             user = _context.sent;
-            newUser = _objectSpread({}, user, req.body);
+            newUser = (0, _objectSpread2["default"])({}, user, req.body);
             _context.next = 7;
             return db.updateUser(newUser);
 
@@ -108,11 +108,11 @@ function () {
 app.get('/settings',
 /*#__PURE__*/
 function () {
-  var _ref2 = _asyncToGenerator(
+  var _ref2 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee2(req, res) {
+  _regenerator["default"].mark(function _callee2(req, res) {
     var settings;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
@@ -148,11 +148,11 @@ function () {
 app.put('/settings',
 /*#__PURE__*/
 function () {
-  var _ref3 = _asyncToGenerator(
+  var _ref3 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee3(req, res) {
+  _regenerator["default"].mark(function _callee3(req, res) {
     var superUser, settings;
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+    return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
@@ -310,8 +310,7 @@ app.get('/search/:searchId', function (req, res) {
 app.put('/search/:searchId', function (req, res) {
   if (req.user) {
     db.getSearch(req.body.id).then(function (search) {
-      var newSearch = _objectSpread({}, search, req.body);
-
+      var newSearch = (0, _objectSpread2["default"])({}, search, req.body);
       db.updateSearch(newSearch).then(function () {
         if (req.query.refreshTweets) {
           db.importFromSearch(search);
@@ -320,7 +319,8 @@ app.put('/search/:searchId', function (req, res) {
         } else if (!search.active && newSearch.active) {
           streamLoader.startStream(search.id);
         } else if (!search.archiveStarted && newSearch.archiveStarted) {
-          db.createArchive(search);
+          var archive = new _archive.Archive();
+          archive.createArchive(search);
         }
       });
       res.json(newSearch);
@@ -330,11 +330,11 @@ app.put('/search/:searchId', function (req, res) {
 app["delete"]('/search/:searchId',
 /*#__PURE__*/
 function () {
-  var _ref4 = _asyncToGenerator(
+  var _ref4 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee4(req, res) {
+  _regenerator["default"].mark(function _callee4(req, res) {
     var search, result;
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+    return _regenerator["default"].wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:
@@ -431,11 +431,11 @@ app.get('/search/:searchId/videos', function (req, res) {
 app.get('/search/:searchId/webpages',
 /*#__PURE__*/
 function () {
-  var _ref5 = _asyncToGenerator(
+  var _ref5 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee5(req, res) {
+  _regenerator["default"].mark(function _callee5(req, res) {
     var search, webpages;
-    return regeneratorRuntime.wrap(function _callee5$(_context5) {
+    return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
           case 0:
@@ -471,11 +471,11 @@ function () {
 app.put('/search/:searchId/webpages',
 /*#__PURE__*/
 function () {
-  var _ref6 = _asyncToGenerator(
+  var _ref6 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee6(req, res) {
+  _regenerator["default"].mark(function _callee6(req, res) {
     var search, url;
-    return regeneratorRuntime.wrap(function _callee6$(_context6) {
+    return _regenerator["default"].wrap(function _callee6$(_context6) {
       while (1) {
         switch (_context6.prev = _context6.next) {
           case 0:
@@ -532,11 +532,11 @@ function () {
 app.get('/search/:searchId/queue',
 /*#__PURE__*/
 function () {
-  var _ref7 = _asyncToGenerator(
+  var _ref7 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee7(req, res) {
+  _regenerator["default"].mark(function _callee7(req, res) {
     var search, result;
-    return regeneratorRuntime.wrap(function _callee7$(_context7) {
+    return _regenerator["default"].wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
@@ -572,11 +572,11 @@ function () {
 app.get('/wayback/:url',
 /*#__PURE__*/
 function () {
-  var _ref8 = _asyncToGenerator(
+  var _ref8 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee8(req, res) {
+  _regenerator["default"].mark(function _callee8(req, res) {
     var result;
-    return regeneratorRuntime.wrap(function _callee8$(_context8) {
+    return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
@@ -607,11 +607,11 @@ function () {
 app.put('/wayback/:url',
 /*#__PURE__*/
 function () {
-  var _ref9 = _asyncToGenerator(
+  var _ref9 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee9(req, res) {
+  _regenerator["default"].mark(function _callee9(req, res) {
     var result;
-    return regeneratorRuntime.wrap(function _callee9$(_context9) {
+    return _regenerator["default"].wrap(function _callee9$(_context9) {
       while (1) {
         switch (_context9.prev = _context9.next) {
           case 0:
@@ -642,10 +642,10 @@ function () {
 app.get('/stats',
 /*#__PURE__*/
 function () {
-  var _ref10 = _asyncToGenerator(
+  var _ref10 = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee10(req, res) {
-    return regeneratorRuntime.wrap(function _callee10$(_context10) {
+  _regenerator["default"].mark(function _callee10(req, res) {
+    return _regenerator["default"].wrap(function _callee10$(_context10) {
       while (1) {
         switch (_context10.prev = _context10.next) {
           case 0:

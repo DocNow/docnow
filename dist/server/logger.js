@@ -1,10 +1,10 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 var _path = _interopRequireDefault(require("path"));
 
 var _winston = _interopRequireDefault(require("winston"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var logger = _winston["default"].createLogger();
 

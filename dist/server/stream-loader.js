@@ -1,31 +1,27 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.StreamLoader = exports.StreamLoaderController = void 0;
+
+var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/objectSpread"));
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
 var _logger = _interopRequireDefault(require("./logger"));
 
 var _db = require("./db");
 
 var _redis = require("./redis");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var START_STREAM = 'start-stream';
 var STOP_STREAM = 'stop-stream';
@@ -38,12 +34,11 @@ var StreamLoaderController =
 /*#__PURE__*/
 function () {
   function StreamLoaderController() {
-    _classCallCheck(this, StreamLoaderController);
-
+    (0, _classCallCheck2["default"])(this, StreamLoaderController);
     this.redis = (0, _redis.getRedis)();
   }
 
-  _createClass(StreamLoaderController, [{
+  (0, _createClass2["default"])(StreamLoaderController, [{
     key: "stop",
     value: function stop() {
       _logger["default"].info('stopping StreamLoaderController');
@@ -61,7 +56,6 @@ function () {
       this.redis.publish(STOP_STREAM, searchId);
     }
   }]);
-
   return StreamLoaderController;
 }();
 /*
@@ -81,9 +75,7 @@ function () {
   function StreamLoader() {
     var db = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     var concurrency = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
-
-    _classCallCheck(this, StreamLoader);
-
+    (0, _classCallCheck2["default"])(this, StreamLoader);
     this.concurrency = concurrency;
     this.db = db || new _db.Database();
     this.redis = (0, _redis.getRedis)();
@@ -92,16 +84,16 @@ function () {
     this.activeStreams = new Set();
   }
 
-  _createClass(StreamLoader, [{
+  (0, _createClass2["default"])(StreamLoader, [{
     key: "start",
     value: function () {
-      var _start = _asyncToGenerator(
+      var _start = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
+      _regenerator["default"].mark(function _callee() {
         var _this = this;
 
         var item;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
+        return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
@@ -161,13 +153,13 @@ function () {
   }, {
     key: "startStream",
     value: function () {
-      var _startStream = _asyncToGenerator(
+      var _startStream = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee2(searchId) {
+      _regenerator["default"].mark(function _callee2(searchId) {
         var _this2 = this;
 
         var search, user, t, track, tweets, lastUpdate;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
@@ -266,11 +258,11 @@ function () {
   }, {
     key: "stopStream",
     value: function () {
-      var _stopStream = _asyncToGenerator(
+      var _stopStream = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee3(searchId) {
+      _regenerator["default"].mark(function _callee3(searchId) {
         var search;
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
@@ -283,7 +275,7 @@ function () {
 
               case 3:
                 search = _context3.sent;
-                this.db.updateSearch(_objectSpread({}, search, {
+                this.db.updateSearch((0, _objectSpread2["default"])({}, search, {
                   active: false,
                   archived: false
                 }));
@@ -304,7 +296,6 @@ function () {
       return stopStream;
     }()
   }]);
-
   return StreamLoader;
 }();
 

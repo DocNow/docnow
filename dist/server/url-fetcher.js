@@ -1,9 +1,19 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.UrlFetcher = void 0;
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
 var _metaweb = _interopRequireDefault(require("metaweb"));
 
@@ -11,40 +21,26 @@ var _logger = _interopRequireDefault(require("./logger"));
 
 var _redis = require("./redis");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 var UrlFetcher =
 /*#__PURE__*/
 function () {
   function UrlFetcher() {
     var concurrency = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5;
-
-    _classCallCheck(this, UrlFetcher);
-
+    (0, _classCallCheck2["default"])(this, UrlFetcher);
     this.concurrency = concurrency;
     this.redis = (0, _redis.getRedis)();
     this.redisBlocking = this.redis.duplicate();
     this.active = false;
   }
 
-  _createClass(UrlFetcher, [{
+  (0, _createClass2["default"])(UrlFetcher, [{
     key: "start",
     value: function () {
-      var _start = _asyncToGenerator(
+      var _start = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee() {
+      _regenerator["default"].mark(function _callee() {
         var promises, i;
-        return regeneratorRuntime.wrap(function _callee$(_context) {
+        return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
@@ -110,11 +106,11 @@ function () {
   }, {
     key: "fetchJob",
     value: function () {
-      var _fetchJob = _asyncToGenerator(
+      var _fetchJob = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee2() {
+      _regenerator["default"].mark(function _callee2() {
         var result, item, job;
-        return regeneratorRuntime.wrap(function _callee2$(_context2) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
@@ -161,11 +157,11 @@ function () {
   }, {
     key: "processJob",
     value: function () {
-      var _processJob = _asyncToGenerator(
+      var _processJob = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee3(job) {
+      _regenerator["default"].mark(function _callee3(job) {
         var metadata;
-        return regeneratorRuntime.wrap(function _callee3$(_context3) {
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
@@ -246,11 +242,11 @@ function () {
   }, {
     key: "getMetadata",
     value: function () {
-      var _getMetadata = _asyncToGenerator(
+      var _getMetadata = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee4(url) {
+      _regenerator["default"].mark(function _callee4(url) {
         var metadata, val, json;
-        return regeneratorRuntime.wrap(function _callee4$(_context4) {
+        return _regenerator["default"].wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
@@ -296,11 +292,11 @@ function () {
   }, {
     key: "saveMetadata",
     value: function () {
-      var _saveMetadata = _asyncToGenerator(
+      var _saveMetadata = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee5(job, metadata) {
+      _regenerator["default"].mark(function _callee5(job, metadata) {
         var url;
-        return regeneratorRuntime.wrap(function _callee5$(_context5) {
+        return _regenerator["default"].wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
@@ -335,10 +331,10 @@ function () {
   }, {
     key: "tally",
     value: function () {
-      var _tally = _asyncToGenerator(
+      var _tally = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee6(job, metadata) {
-        return regeneratorRuntime.wrap(function _callee6$(_context6) {
+      _regenerator["default"].mark(function _callee6(job, metadata) {
+        return _regenerator["default"].wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
@@ -366,11 +362,11 @@ function () {
   }, {
     key: "queueStats",
     value: function () {
-      var _queueStats = _asyncToGenerator(
+      var _queueStats = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee7(search) {
+      _regenerator["default"].mark(function _callee7(search) {
         var total, remaining;
-        return regeneratorRuntime.wrap(function _callee7$(_context7) {
+        return _regenerator["default"].wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
@@ -421,9 +417,9 @@ function () {
   }, {
     key: "getWebpages",
     value: function () {
-      var _getWebpages = _asyncToGenerator(
+      var _getWebpages = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee8(search) {
+      _regenerator["default"].mark(function _callee8(search) {
         var _this = this;
 
         var start,
@@ -438,7 +434,7 @@ function () {
             url,
             count,
             _args8 = arguments;
-        return regeneratorRuntime.wrap(function _callee8$(_context8) {
+        return _regenerator["default"].wrap(function _callee8$(_context8) {
           while (1) {
             switch (_context8.prev = _context8.next) {
               case 0:
@@ -508,11 +504,11 @@ function () {
   }, {
     key: "getWebpage",
     value: function () {
-      var _getWebpage = _asyncToGenerator(
+      var _getWebpage = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee9(search, url) {
+      _regenerator["default"].mark(function _callee9(search, url) {
         var json, metadata, selected, deselected;
-        return regeneratorRuntime.wrap(function _callee9$(_context9) {
+        return _regenerator["default"].wrap(function _callee9$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
@@ -565,10 +561,10 @@ function () {
   }, {
     key: "selectWebpage",
     value: function () {
-      var _selectWebpage = _asyncToGenerator(
+      var _selectWebpage = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee10(search, url) {
-        return regeneratorRuntime.wrap(function _callee10$(_context10) {
+      _regenerator["default"].mark(function _callee10(search, url) {
+        return _regenerator["default"].wrap(function _callee10$(_context10) {
           while (1) {
             switch (_context10.prev = _context10.next) {
               case 0:
@@ -595,10 +591,10 @@ function () {
   }, {
     key: "deselectWebpage",
     value: function () {
-      var _deselectWebpage = _asyncToGenerator(
+      var _deselectWebpage = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      regeneratorRuntime.mark(function _callee11(search, url) {
-        return regeneratorRuntime.wrap(function _callee11$(_context11) {
+      _regenerator["default"].mark(function _callee11(search, url) {
+        return _regenerator["default"].wrap(function _callee11$(_context11) {
           while (1) {
             switch (_context11.prev = _context11.next) {
               case 0:
@@ -628,7 +624,6 @@ function () {
       return this.redis.smembersAsync((0, _redis.tweetsKey)(search, url));
     }
   }]);
-
   return UrlFetcher;
 }();
 

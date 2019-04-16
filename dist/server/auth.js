@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 var _express = _interopRequireDefault(require("express"));
 
 var _passport = _interopRequireDefault(require("passport"));
@@ -7,8 +9,6 @@ var _passport = _interopRequireDefault(require("passport"));
 var _passportTwitter = _interopRequireDefault(require("passport-twitter"));
 
 var _db = require("./db");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 var db = new _db.Database();
 var app = (0, _express["default"])();

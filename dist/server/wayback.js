@@ -1,5 +1,11 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _http = _interopRequireDefault(require("http"));
 
 var _moment = _interopRequireDefault(require("moment"));
@@ -9,12 +15,6 @@ var _requestPromise = _interopRequireDefault(require("request-promise"));
 var _logger = _interopRequireDefault(require("./logger"));
 
 var _redis = require("./redis");
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
-
-function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
 var pool = new _http["default"].Agent({
   keepAlive: true,
@@ -49,11 +49,11 @@ function get(_x) {
 
 
 function _get() {
-  _get = _asyncToGenerator(
+  _get = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee(url) {
+  _regenerator["default"].mark(function _callee(url) {
     var json;
-    return regeneratorRuntime.wrap(function _callee$(_context) {
+    return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -94,11 +94,11 @@ function saveArchive(_x2) {
 
 
 function _saveArchive() {
-  _saveArchive = _asyncToGenerator(
+  _saveArchive = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee2(url) {
+  _regenerator["default"].mark(function _callee2(url) {
     var saveUrl, resp, location, iaUrl, time, metadata;
-    return regeneratorRuntime.wrap(function _callee2$(_context2) {
+    return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
@@ -152,12 +152,12 @@ function memento(_x3) {
 
 
 function _memento() {
-  _memento = _asyncToGenerator(
+  _memento = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee3(url) {
+  _regenerator["default"].mark(function _callee3(url) {
     var iaUrl, text, lines, links, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, line, match;
 
-    return regeneratorRuntime.wrap(function _callee3$(_context3) {
+    return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) {
         switch (_context3.prev = _context3.next) {
           case 0:
@@ -240,9 +240,9 @@ function closest(_x4) {
 }
 
 function _closest() {
-  _closest = _asyncToGenerator(
+  _closest = (0, _asyncToGenerator2["default"])(
   /*#__PURE__*/
-  regeneratorRuntime.mark(function _callee4(url) {
+  _regenerator["default"].mark(function _callee4(url) {
     var refresh,
         result,
         today,
@@ -253,7 +253,7 @@ function _closest() {
         metadata,
         _args4 = arguments;
 
-    return regeneratorRuntime.wrap(function _callee4$(_context4) {
+    return _regenerator["default"].wrap(function _callee4$(_context4) {
       while (1) {
         switch (_context4.prev = _context4.next) {
           case 0:

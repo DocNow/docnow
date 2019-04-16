@@ -274,20 +274,6 @@ describe('database', function() {
     })
   })
 
-  /*
-
-  it('should create archive', async () => {
-    const zipFile = await db.createArchive(testSearch)
-    ok(fs.existsSync(zipFile), 'zip file exists')
-  })
-
-  it('should be flagged as archived', async () => {
-    const search = await db.getSearch(testSearch.id)
-    ok(search.archived, 'archived')
-    ok(! search.archiveStarted, 'archive started not set')
-  })
-  */
-
   it('should delete', async () => {
     const result = await db.deleteSearch(testSearch)
     ok(result, 'delete return value')

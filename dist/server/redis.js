@@ -1,5 +1,7 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -11,8 +13,6 @@ var _redis = _interopRequireDefault(require("redis"));
 var _bluebird = _interopRequireDefault(require("bluebird"));
 
 var _logger = _interopRequireDefault(require("./logger"));
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
 _bluebird["default"].promisifyAll(_redis["default"].RedisClient.prototype);
 

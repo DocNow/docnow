@@ -1,7 +1,8 @@
 import React from 'react'
 import MediaQueryComponent from '../components/MediaQueryComponent'
-import { Route } from 'react-router-dom'
-import { push } from 'react-router-redux'
+// import { Route } from 'react-router-dom'
+import { Route, Switch } from 'react-router'
+import { push } from 'connected-react-router'
 import store from '../store'
 
 import Header from './Header'
@@ -47,13 +48,15 @@ class App extends MediaQueryComponent {
       <div id="App" className={this.state.mediaStyle}>
         <Header />
         <main>
-          <Route exact name="trends" path="/" component={TrendsPage} />
-          <Route exact name="settings" path="/settings/" component={SettingsPage} />
-          <Route exact name="profile" path="/profile/" component={ProfilePage} />
-          <Route exact name="explore" path="/explore/" component={SearchPage} />
-          <Route exact name="searches" path="/searches/" component={SearchListPage} />
-          <Route exact name="insights" path="/search/:searchId/" component={InsightsPage} />
-          <Route exact name="webpages" path="/search/:searchId/webpages/" component={WebpagesPage} />
+          <Switch>
+            <Route exact name="trends" path="/" component={TrendsPage} />
+            <Route exact name="settings" path="/settings/" component={SettingsPage} />
+            <Route exact name="profile" path="/profile/" component={ProfilePage} />
+            <Route exact name="explore" path="/explore/" component={SearchPage} />
+            <Route exact name="searches" path="/searches/" component={SearchListPage} />
+            <Route exact name="insights" path="/search/:searchId/" component={InsightsPage} />
+            <Route exact name="webpages" path="/search/:searchId/webpages/" component={WebpagesPage} />
+          </Switch>
         </main>
       </div>
     )

@@ -1,9 +1,15 @@
 "use strict";
 
+var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Twitter = void 0;
+
+var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
+
+var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
 var _url = _interopRequireDefault(require("url"));
 
@@ -17,14 +23,6 @@ var _emojiRegex = _interopRequireDefault(require("emoji-regex"));
 
 var _htmlEntities = require("html-entities");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
 var emojiMatch = (0, _emojiRegex["default"])();
 var entities = new _htmlEntities.AllHtmlEntities();
 
@@ -37,9 +35,7 @@ var Twitter =
 function () {
   function Twitter() {
     var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
-    _classCallCheck(this, Twitter);
-
+    (0, _classCallCheck2["default"])(this, Twitter);
     this.consumerKey = keys.consumerKey || process.env.CONSUMER_KEY;
     this.consumerSecret = keys.consumerSecret || process.env.CONSUMER_SECRET;
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN;
@@ -52,7 +48,7 @@ function () {
     });
   }
 
-  _createClass(Twitter, [{
+  (0, _createClass2["default"])(Twitter, [{
     key: "getPlaces",
     value: function getPlaces() {
       var _this = this;
@@ -423,7 +419,6 @@ function () {
       };
     }
   }]);
-
   return Twitter;
 }();
 

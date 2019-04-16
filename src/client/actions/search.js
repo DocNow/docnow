@@ -13,7 +13,7 @@ export const ADD_SEARCH_TERM = 'ADD_SEARCH_TERM'
 export const DELETE_SEARCH = 'DELETE_SEARCH'
 export const ADD_SEARCH = 'ADD_SEARCH'
 
-import { push } from 'react-router-redux'
+import { push } from 'connected-react-router'
 
 const setTwitterSearch = (search) => {
   return {
