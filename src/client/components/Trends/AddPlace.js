@@ -23,13 +23,10 @@ export default class AddPlace extends Component {
     return aLower < bLower ? -1 : 1
   }
 
-  checkPlace = () => {
+  checkPlace() {
     const placeId = this.props.placeLabelToId(this.props.newPlace)
     if (placeId) {
       this.props.saveTrends(placeId)
-    } else {
-      // TODO: Replace with an alert component
-      alert('place not found')
     }
   }
 

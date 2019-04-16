@@ -10,7 +10,7 @@ const mapStateToProps = (state) => {
     if (state.trends.world[label]) {
       return state.trends.world[label][0].id
     }
-    return undefined
+    return null
   }
 
   const placeIdToLabel = id => {

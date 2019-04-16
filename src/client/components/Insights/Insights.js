@@ -10,7 +10,7 @@ import style from './Insights.css'
 
 export default class Insights extends Component {
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.resetTwitterSearch()
     this.tick()
     this.props.getUsers(this.props.searchId)

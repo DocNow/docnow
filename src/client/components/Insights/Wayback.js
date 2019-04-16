@@ -7,7 +7,7 @@ import style from './Wayback.css'
 
 export default class Wayback extends Component {
 
-  componentWillMount() {
+  componentDidMount() {
     this.props.checkArchive(this.props.url)
   }
 

@@ -1,22 +1,22 @@
-'use strict';
+"use strict";
 
-var _regenerator = require('babel-runtime/regenerator');
+var _db = require("../server/db");
 
-var _regenerator2 = _interopRequireDefault(_regenerator);
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
-var _getIterator2 = require('babel-runtime/core-js/get-iterator');
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var _getIterator3 = _interopRequireDefault(_getIterator2);
+function main() {
+  return _main.apply(this, arguments);
+}
 
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
-
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
-
-var main = function () {
-  var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
+function _main() {
+  _main = _asyncToGenerator(
+  /*#__PURE__*/
+  regeneratorRuntime.mark(function _callee() {
     var db, places, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, place;
 
-    return _regenerator2.default.wrap(function _callee$(_context) {
+    return regeneratorRuntime.wrap(function _callee$(_context) {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
@@ -31,14 +31,13 @@ var main = function () {
             _iteratorError = undefined;
             _context.prev = 7;
 
-
-            for (_iterator = (0, _getIterator3.default)(places); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            for (_iterator = places[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
               place = _step.value;
 
               if (place.type == 'Town') {
-                console.log('added ' + place.name + ', ' + place.country);
+                console.log("added ".concat(place.name, ", ").concat(place.country));
               } else {
-                console.log('added ' + place.name);
+                console.log("added ".concat(place.name));
               }
             }
 
@@ -47,7 +46,7 @@ var main = function () {
 
           case 11:
             _context.prev = 11;
-            _context.t0 = _context['catch'](7);
+            _context.t0 = _context["catch"](7);
             _didIteratorError = true;
             _iteratorError = _context.t0;
 
@@ -55,8 +54,8 @@ var main = function () {
             _context.prev = 15;
             _context.prev = 16;
 
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
+            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+              _iterator["return"]();
             }
 
           case 18:
@@ -81,20 +80,13 @@ var main = function () {
             return db.close();
 
           case 26:
-          case 'end':
+          case "end":
             return _context.stop();
         }
       }
-    }, _callee, this, [[7, 11, 15, 23], [16,, 18, 22]]);
+    }, _callee, null, [[7, 11, 15, 23], [16,, 18, 22]]);
   }));
-
-  return function main() {
-    return _ref.apply(this, arguments);
-  };
-}();
-
-var _db = require('../server/db');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+  return _main.apply(this, arguments);
+}
 
 main();

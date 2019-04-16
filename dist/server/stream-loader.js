@@ -1,79 +1,69 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.StreamLoader = exports.StreamLoaderController = undefined;
+exports.StreamLoader = exports.StreamLoaderController = void 0;
 
-var _extends2 = require('babel-runtime/helpers/extends');
+var _logger = _interopRequireDefault(require("./logger"));
 
-var _extends3 = _interopRequireDefault(_extends2);
+var _db = require("./db");
 
-var _regenerator = require('babel-runtime/regenerator');
+var _redis = require("./redis");
 
-var _regenerator2 = _interopRequireDefault(_regenerator);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _asyncToGenerator2 = require('babel-runtime/helpers/asyncToGenerator');
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }
 
-var _asyncToGenerator3 = _interopRequireDefault(_asyncToGenerator2);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-var _set = require('babel-runtime/core-js/set');
+function asyncGeneratorStep(gen, resolve, reject, _next, _throw, key, arg) { try { var info = gen[key](arg); var value = info.value; } catch (error) { reject(error); return; } if (info.done) { resolve(value); } else { Promise.resolve(value).then(_next, _throw); } }
 
-var _set2 = _interopRequireDefault(_set);
+function _asyncToGenerator(fn) { return function () { var self = this, args = arguments; return new Promise(function (resolve, reject) { var gen = fn.apply(self, args); function _next(value) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "next", value); } function _throw(err) { asyncGeneratorStep(gen, resolve, reject, _next, _throw, "throw", err); } _next(undefined); }); }; }
 
-var _classCallCheck2 = require('babel-runtime/helpers/classCallCheck');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _classCallCheck3 = _interopRequireDefault(_classCallCheck2);
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-var _createClass2 = require('babel-runtime/helpers/createClass');
-
-var _createClass3 = _interopRequireDefault(_createClass2);
-
-var _logger = require('./logger');
-
-var _logger2 = _interopRequireDefault(_logger);
-
-var _db = require('./db');
-
-var _redis = require('./redis');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
 var START_STREAM = 'start-stream';
 var STOP_STREAM = 'stop-stream';
-
 /*
  * StreamLoaderController handles starting and stopping streaming
  * jobs from Twitter.
  */
 
-var StreamLoaderController = exports.StreamLoaderController = function () {
+var StreamLoaderController =
+/*#__PURE__*/
+function () {
   function StreamLoaderController() {
-    (0, _classCallCheck3.default)(this, StreamLoaderController);
+    _classCallCheck(this, StreamLoaderController);
 
     this.redis = (0, _redis.getRedis)();
   }
 
-  (0, _createClass3.default)(StreamLoaderController, [{
-    key: 'stop',
+  _createClass(StreamLoaderController, [{
+    key: "stop",
     value: function stop() {
-      _logger2.default.info('stopping StreamLoaderController');
+      _logger["default"].info('stopping StreamLoaderController');
+
       this.redis.quit();
     }
   }, {
-    key: 'startStream',
+    key: "startStream",
     value: function startStream(searchId) {
       this.redis.rpush(START_STREAM, searchId);
     }
   }, {
-    key: 'stopStream',
+    key: "stopStream",
     value: function stopStream(searchId) {
       this.redis.publish(STOP_STREAM, searchId);
     }
   }]);
+
   return StreamLoaderController;
 }();
-
 /*
  * StreamLoader will listen to a queue of commands to start streaming
  * jobs and will subscribe for messages to stop those jobs. The queue is
@@ -82,42 +72,46 @@ var StreamLoaderController = exports.StreamLoaderController = function () {
  * since we don't really know which worker picked it up.
  */
 
-var StreamLoader = exports.StreamLoader = function () {
+
+exports.StreamLoaderController = StreamLoaderController;
+
+var StreamLoader =
+/*#__PURE__*/
+function () {
   function StreamLoader() {
     var db = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
     var concurrency = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
-    (0, _classCallCheck3.default)(this, StreamLoader);
+
+    _classCallCheck(this, StreamLoader);
 
     this.concurrency = concurrency;
     this.db = db || new _db.Database();
     this.redis = (0, _redis.getRedis)();
     this.redisBlocking = this.redis.duplicate();
     this.active = false;
-    this.activeStreams = new _set2.default();
+    this.activeStreams = new Set();
   }
 
-  (0, _createClass3.default)(StreamLoader, [{
-    key: 'start',
+  _createClass(StreamLoader, [{
+    key: "start",
     value: function () {
-      var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee() {
+      var _start = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee() {
         var _this = this;
 
         var item;
-        return _regenerator2.default.wrap(function _callee$(_context) {
+        return regeneratorRuntime.wrap(function _callee$(_context) {
           while (1) {
             switch (_context.prev = _context.next) {
               case 0:
-
                 this.redis.subscribe(STOP_STREAM);
-
                 this.redis.on('message', function (channel, searchId) {
                   _this.stopStream(searchId);
                 });
-
                 this.redis.on('disconnect', function () {
                   _this.stop();
                 });
-
                 this.active = true;
 
               case 4:
@@ -135,11 +129,12 @@ var StreamLoader = exports.StreamLoader = function () {
                 if (item) {
                   this.startStream(item[1]);
                 }
+
                 _context.next = 4;
                 break;
 
               case 11:
-              case 'end':
+              case "end":
                 return _context.stop();
             }
           }
@@ -147,32 +142,38 @@ var StreamLoader = exports.StreamLoader = function () {
       }));
 
       function start() {
-        return _ref.apply(this, arguments);
+        return _start.apply(this, arguments);
       }
 
       return start;
     }()
   }, {
-    key: 'stop',
+    key: "stop",
     value: function stop() {
       this.active = false;
-      _logger2.default.info('stopping StreamLoader');
+
+      _logger["default"].info('stopping StreamLoader');
+
       this.redis.quit();
       this.redisBlocking.quit();
       this.db.close();
     }
   }, {
-    key: 'startStream',
+    key: "startStream",
     value: function () {
-      var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2(searchId) {
+      var _startStream = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee2(searchId) {
         var _this2 = this;
 
         var search, user, t, track, tweets, lastUpdate;
-        return _regenerator2.default.wrap(function _callee2$(_context2) {
+        return regeneratorRuntime.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                _logger2.default.info('starting stream', { searchId: searchId });
+                _logger["default"].info('starting stream', {
+                  searchId: searchId
+                });
 
                 _context2.next = 3;
                 return this.db.getSearch(searchId);
@@ -185,8 +186,9 @@ var StreamLoader = exports.StreamLoader = function () {
                   break;
                 }
 
-                _logger2.default.error('unable to find search for ' + searchId);
-                return _context2.abrupt('return');
+                _logger["default"].error('unable to find search for ' + searchId);
+
+                return _context2.abrupt("return");
 
               case 7:
                 _context2.next = 9;
@@ -200,8 +202,9 @@ var StreamLoader = exports.StreamLoader = function () {
                   break;
                 }
 
-                _logger2.default.error('unable to find user for ' + search.creator);
-                return _context2.abrupt('return');
+                _logger["default"].error('unable to find user for ' + search.creator);
+
+                return _context2.abrupt("return");
 
               case 13:
                 _context2.next = 15;
@@ -213,18 +216,16 @@ var StreamLoader = exports.StreamLoader = function () {
                   return term.value;
                 }).join(',');
                 tweets = [];
-
-
                 this.activeStreams.add(searchId);
-
                 lastUpdate = new Date();
-
-
-                t.filter({ track: track }, function (tweet) {
+                t.filter({
+                  track: track
+                }, function (tweet) {
                   tweets.push(tweet);
 
                   if (!(_this2.active === true && _this2.activeStreams.has(searchId))) {
-                    _logger2.default.info('stream for ' + searchId + ' has been closed');
+                    _logger["default"].info('stream for ' + searchId + ' has been closed');
+
                     return false;
                   }
 
@@ -232,13 +233,15 @@ var StreamLoader = exports.StreamLoader = function () {
 
                   if (tweets.length >= 100 || tweets.length > 0 && elapsed > 5000) {
                     var numTweets = tweets.length;
+
                     _this2.db.loadTweets(search, tweets).then(function (resp) {
                       if (resp.error) {
-                        _logger2.default.info('errors during load!');
+                        _logger["default"].info('errors during load!');
                       } else {
-                        _logger2.default.info('loaded ' + numTweets + ' tweets for ' + search.id);
+                        _logger["default"].info('loaded ' + numTweets + ' tweets for ' + search.id);
                       }
                     });
+
                     tweets = [];
                     lastUpdate = new Date();
                   }
@@ -247,52 +250,62 @@ var StreamLoader = exports.StreamLoader = function () {
                 });
 
               case 21:
-              case 'end':
+              case "end":
                 return _context2.stop();
             }
           }
         }, _callee2, this);
       }));
 
-      function startStream(_x3) {
-        return _ref2.apply(this, arguments);
+      function startStream(_x) {
+        return _startStream.apply(this, arguments);
       }
 
       return startStream;
     }()
   }, {
-    key: 'stopStream',
+    key: "stopStream",
     value: function () {
-      var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(searchId) {
+      var _stopStream = _asyncToGenerator(
+      /*#__PURE__*/
+      regeneratorRuntime.mark(function _callee3(searchId) {
         var search;
-        return _regenerator2.default.wrap(function _callee3$(_context3) {
+        return regeneratorRuntime.wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _logger2.default.info('stopping stream', { searchId: searchId });
+                _logger["default"].info('stopping stream', {
+                  searchId: searchId
+                });
+
                 _context3.next = 3;
                 return this.db.getSearch(searchId);
 
               case 3:
                 search = _context3.sent;
-
-                this.db.updateSearch((0, _extends3.default)({}, search, { active: false, archived: false }));
-                this.activeStreams.delete(searchId);
+                this.db.updateSearch(_objectSpread({}, search, {
+                  active: false,
+                  archived: false
+                }));
+                this.activeStreams["delete"](searchId);
 
               case 6:
-              case 'end':
+              case "end":
                 return _context3.stop();
             }
           }
         }, _callee3, this);
       }));
 
-      function stopStream(_x4) {
-        return _ref3.apply(this, arguments);
+      function stopStream(_x2) {
+        return _stopStream.apply(this, arguments);
       }
 
       return stopStream;
     }()
   }]);
+
   return StreamLoader;
 }();
+
+exports.StreamLoader = StreamLoader;

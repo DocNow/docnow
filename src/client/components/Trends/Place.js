@@ -8,17 +8,19 @@ import style from '../Card.css'
 export default class Place extends Component {
 
   createSearch(e) {
-    this.props.createSearch([{
-      type: e.target.getAttribute('data-type'),
-      value: e.target.innerText
-    }])
+    this.props.createSearch([
+      {
+        type: e.target.getAttribute('data-type'),
+        value: e.target.innerText
+      }
+    ])
   }
 
   render() {
     let trends = null
     let remove = null
     if (this.props.username) {
-      remove = <i className="fa fa-minus" aria-hidden="true" onClick={(e)=>{e.preventDefault(); this.props.deleteTrend(this.props.placeId)}} />
+      remove = <i className="fa fa-minus" aria-hidden="true" onClick={(e) => {e.preventDefault(); this.props.deleteTrend(this.props.placeId)}} />
       trends = this.props.trends.map((trend, i) => {
         return (
           <li key={ trend.name + trend.text }>

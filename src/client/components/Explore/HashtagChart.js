@@ -19,7 +19,7 @@ export default class Hashtags extends Component {
 
   createBarChart() {
     const node = this.node
-    const component = this
+    const that = this
 
     const maxX = max(this.props.hashtags.map((ht) => {return ht.count}))
     const xScale = scalePow()
@@ -38,12 +38,12 @@ export default class Hashtags extends Component {
     g.select('rect')
       .transition()
       .duration(2000)
-      .attr('width', function(d) {return xScale(d.count)})
+      .attr('width', (d) => xScale(d.count))
 
     g.select('text')
       .transition()
       .duration(2000)
-      .text((d) => {return d.count + ' ' + '#' + d.hashtag})
+      .text((d) => {return d.count + ' #' + d.hashtag})
 
     g.exit()
       .remove()
@@ -51,17 +51,17 @@ export default class Hashtags extends Component {
     const gEnter = g.enter()
       .append('g')
       .attr('class', 'bar')
-      .attr('transform', function(d, i) {
-        return 'translate(0,' + i * 25 + ')'
+      .attr('transform', (d, i) => {
+        return 'translate(0,' + (i * 25) + ')'
       })
-      .on('mouseover', function() {
+      .on('mouseover', () => {
         select(this).classed(styles.Active, true)
       })
-      .on('mouseout', function() {
+      .on('mouseout', () => {
         select(this).classed(styles.Active, false)
       })
-      .on('click', function(d) {
-        component.props.addSearchTerm({
+      .on('click', (d) => {
+        that.props.addSearchTerm({
           type: 'hashtag',
           value: '#' + d.hashtag
         })
@@ -81,8 +81,8 @@ export default class Hashtags extends Component {
     gEnter.merge(g)
       .transition()
       .duration(2000)
-      .attr('transform', function(d, i) {
-        return 'translate(0,' + i * 25 + ')'
+      .attr('transform', (d, i) => {
+        return 'translate(0,' + (i * 25) + ')'
       })
 
   }
@@ -96,7 +96,7 @@ export default class Hashtags extends Component {
     return (
       <div className={styles.HashtagsCard}>
         {loader}
-        <svg ref={node => this.node = node} height={800} />
+        <svg ref={node => {this.node = node}} height={800} />
       </div>
     )
   }

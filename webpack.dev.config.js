@@ -1,7 +1,8 @@
 var webpack    = require("webpack"),
     baseConfig = require("./webpack.base.config.js")
 
-baseConfig.devtool = 'inline-source-map'
+baseConfig.devtool = "inline-source-map"
+baseConfig.mode = "development"
 
 baseConfig.entry.push("webpack-hot-middleware/client")
 

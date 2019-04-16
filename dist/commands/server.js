@@ -1,132 +1,100 @@
 #!/usr/bin/env node
-'use strict';
+"use strict";
 
-var _path = require('path');
+var _path = _interopRequireDefault(require("path"));
 
-var _path2 = _interopRequireDefault(_path);
+var _v = _interopRequireDefault(require("uuid/v4"));
 
-var _v = require('uuid/v4');
+var _morgan = _interopRequireDefault(require("morgan"));
 
-var _v2 = _interopRequireDefault(_v);
+var _webpack = _interopRequireDefault(require("webpack"));
 
-var _morgan = require('morgan');
+var _express = _interopRequireDefault(require("express"));
 
-var _morgan2 = _interopRequireDefault(_morgan);
+var _bodyParser = _interopRequireDefault(require("body-parser"));
 
-var _webpack = require('webpack');
+var _cookieParser = _interopRequireDefault(require("cookie-parser"));
 
-var _webpack2 = _interopRequireDefault(_webpack);
+var _cookieSession = _interopRequireDefault(require("cookie-session"));
 
-var _express = require('express');
+var _passport = _interopRequireDefault(require("passport"));
 
-var _express2 = _interopRequireDefault(_express);
+var _webpackDevMiddleware = _interopRequireDefault(require("webpack-dev-middleware"));
 
-var _bodyParser = require('body-parser');
+var _webpackHotMiddleware = _interopRequireDefault(require("webpack-hot-middleware"));
 
-var _bodyParser2 = _interopRequireDefault(_bodyParser);
+var _api = _interopRequireDefault(require("../server/api"));
 
-var _cookieParser = require('cookie-parser');
+var _auth = _interopRequireDefault(require("../server/auth"));
 
-var _cookieParser2 = _interopRequireDefault(_cookieParser);
+var _logger = _interopRequireDefault(require("../server/logger"));
 
-var _cookieSession = require('cookie-session');
+var _webpackDevConfig = _interopRequireDefault(require("../../webpack.dev.config.js"));
 
-var _cookieSession2 = _interopRequireDefault(_cookieSession);
+var _urlFetcher = require("../server/url-fetcher");
 
-var _passport = require('passport');
+var _streamLoader = require("../server/stream-loader");
 
-var _passport2 = _interopRequireDefault(_passport);
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
-var _webpackDevMiddleware = require('webpack-dev-middleware');
+var projectDir = _path["default"].join(__dirname, '..', '..');
 
-var _webpackDevMiddleware2 = _interopRequireDefault(_webpackDevMiddleware);
+var clientDir = _path["default"].join(projectDir, 'dist', 'client');
 
-var _webpackHotMiddleware = require('webpack-hot-middleware');
+var staticAssets = _path["default"].join(projectDir, 'userData');
 
-var _webpackHotMiddleware2 = _interopRequireDefault(_webpackHotMiddleware);
+var htmlFile = _path["default"].join(clientDir, 'index.html');
 
-var _api = require('../server/api');
-
-var _api2 = _interopRequireDefault(_api);
-
-var _auth = require('../server/auth');
-
-var _auth2 = _interopRequireDefault(_auth);
-
-var _logger = require('../server/logger');
-
-var _logger2 = _interopRequireDefault(_logger);
-
-var _webpackDevConfig = require('../../webpack.dev.config.js');
-
-var _webpackDevConfig2 = _interopRequireDefault(_webpackDevConfig);
-
-var _urlFetcher = require('../server/url-fetcher');
-
-var _streamLoader = require('../server/stream-loader');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-var projectDir = _path2.default.join(__dirname, '..', '..');
-var clientDir = _path2.default.join(projectDir, 'dist', 'client');
-var staticAssets = _path2.default.join(projectDir, 'userData');
-var htmlFile = _path2.default.join(clientDir, 'index.html');
 var isDevelopment = process.env.NODE_ENV !== 'production';
 var defaultPort = 3000;
-var compiler = (0, _webpack2.default)(_webpackDevConfig2.default);
-
-var app = (0, _express2.default)();
-
+var compiler = (0, _webpack["default"])(_webpackDevConfig["default"]);
+var app = (0, _express["default"])();
 app.set('port', process.env.PORT || defaultPort);
-
-app.use((0, _cookieParser2.default)());
-app.use(_bodyParser2.default.json());
-app.use((0, _cookieSession2.default)({
+app.use((0, _cookieParser["default"])());
+app.use(_bodyParser["default"].json());
+app.use((0, _cookieSession["default"])({
   secret: process.env.COOKIE_SECRET || 'F5478D6D-0896-4A00-92F4-C3E121DC4CC4',
   resave: true,
   saveUninitialized: true
 }));
-app.use(_passport2.default.initialize());
-app.use(_passport2.default.session());
-app.use((0, _morgan2.default)('combined'));
-
-app.use('/api/v1', _api2.default);
-app.use('/auth', _auth2.default.app);
-app.use('/userData', _express2.default.static(staticAssets));
+app.use(_passport["default"].initialize());
+app.use(_passport["default"].session());
+app.use((0, _morgan["default"])('combined'));
+app.use('/api/v1', _api["default"]);
+app.use('/auth', _auth["default"].app);
+app.use('/userData', _express["default"]["static"](staticAssets));
 
 if (isDevelopment) {
-  app.use((0, _webpackDevMiddleware2.default)(compiler, {
-    publicPath: _webpackDevConfig2.default.output.publicPath
+  app.use((0, _webpackDevMiddleware["default"])(compiler, {
+    publicPath: _webpackDevConfig["default"].output.publicPath
   }));
-  app.use((0, _webpackHotMiddleware2.default)(compiler));
+  app.use((0, _webpackHotMiddleware["default"])(compiler));
   app.get('*', function (req, res) {
     res.write(compiler.outputFileSystem.readFileSync(htmlFile));
     res.end();
-  });
+  }); // log additional information about unhandled promises so they can be debugged
 
-  // log additional information about unhandled promises so they can be debugged
   process.on('unhandledRejection', function (reason, p) {
-    _logger2.default.warn('Unhandled Rejection at:', p, 'reason:', reason);
+    _logger["default"].warn('Unhandled Rejection at:', p, 'reason:', reason);
   });
 } else {
-  app.use(_express2.default.static(clientDir));
+  app.use(_express["default"]["static"](clientDir));
   app.get('*', function (req, res) {
-    return res.sendFile(_path2.default.join(clientDir, 'index.html'));
+    return res.sendFile(_path["default"].join(clientDir, 'index.html'));
   });
-}
-
-// As a convenience embed a UrlFetcher and StreamLoader in development mode.
+} // As a convenience embed a UrlFetcher and StreamLoader in development mode.
 // This would not be a good idea to do in production as a it could
 // really bog down the web server process if lots of data collection is
 // going on.
 
+
 if (isDevelopment) {
   var urlFetcher = new _urlFetcher.UrlFetcher();
   urlFetcher.start();
-
   var streamLoader = new _streamLoader.StreamLoader();
   streamLoader.start();
 }
 
-_logger2.default.info('starting app');
+_logger["default"].info('starting app');
+
 app.listen(app.get('port'));

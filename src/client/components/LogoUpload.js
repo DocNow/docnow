@@ -4,8 +4,12 @@ import styles from './LogoUpload.css'
 import PropTypes from 'prop-types'
 
 export default class LogoUpload extends Component {
-  state = {
-    imagePreviewUrl: this.props.logoUrl ? this.props.logoUrl : defaultLogo
+
+  constructor() {
+    super()
+    this.state = {
+      imagePreviewUrl: this.props.logoUrl ? this.props.logoUrl : defaultLogo
+    }
   }
 
   handleImageChange(e) {
@@ -42,7 +46,7 @@ export default class LogoUpload extends Component {
         <br />
         <input
           type="file"
-          onChange={(e)=>this.handleImageChange(e)} />
+          onChange={(e) => this.handleImageChange(e)} />
       </p>
     )
   }

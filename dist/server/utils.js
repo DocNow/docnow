@@ -1,25 +1,34 @@
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.addPrefixes = exports.stripPrefix = exports.addPrefix = void 0;
 var sep = '-';
 
-var addPrefix = exports.addPrefix = function addPrefix(prefix, id) {
+var addPrefix = function addPrefix(prefix, id) {
   var idString = String(id);
+
   if (!idString.match('^' + prefix + sep)) {
     idString = prefix + sep + idString;
   }
+
   return idString;
 };
 
-var stripPrefix = exports.stripPrefix = function stripPrefix(s) {
-  var pattern = new RegExp('^.+?' + sep);
+exports.addPrefix = addPrefix;
+
+var stripPrefix = function stripPrefix(s) {
+  var pattern = new RegExp("^.+?".concat(sep));
   return String(s).replace(pattern, '');
 };
 
-var addPrefixes = exports.addPrefixes = function addPrefixes(ids, prefix) {
+exports.stripPrefix = stripPrefix;
+
+var addPrefixes = function addPrefixes(ids, prefix) {
   return ids.map(function (id) {
     return addPrefix(prefix, id);
   });
 };
+
+exports.addPrefixes = addPrefixes;

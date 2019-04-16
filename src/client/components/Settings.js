@@ -82,7 +82,7 @@ export default class Settings extends MediaQueryComponent {
           </p>
 
           <p>
-            <button onClick={()=>{
+            <button onClick={() => {
               this.props.saveSettings().then(() => {
                 if (this.props.userLoggedIn) {
                   this.props.returnHome()
