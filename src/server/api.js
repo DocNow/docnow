@@ -5,6 +5,7 @@ import log from './logger'
 import wayback from './wayback'
 
 import { Database } from './db'
+import { Archive } from './archive'
 import { activateKeys } from './auth'
 import { StreamLoaderController } from './stream-loader'
 
@@ -202,7 +203,8 @@ app.put('/search/:searchId', (req, res) => {
         } else if (! search.active && newSearch.active) {
           streamLoader.startStream(search.id)
         } else if (! search.archiveStarted && newSearch.archiveStarted) {
-          db.createArchive(search)
+          const archive = new Archive()
+          archive.createArchive(search)
         }
       })
 

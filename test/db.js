@@ -1,8 +1,6 @@
 import fs from 'fs'
-import path from 'path'
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
-import log from '../src/server/logger'
 
 const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 
@@ -276,6 +274,8 @@ describe('database', function() {
     })
   })
 
+  /*
+
   it('should create archive', async () => {
     const zipFile = await db.createArchive(testSearch)
     ok(fs.existsSync(zipFile), 'zip file exists')
@@ -286,6 +286,7 @@ describe('database', function() {
     ok(search.archived, 'archived')
     ok(! search.archiveStarted, 'archive started not set')
   })
+  */
 
   it('should delete', async () => {
     const result = await db.deleteSearch(testSearch)
