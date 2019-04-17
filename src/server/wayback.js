@@ -123,4 +123,8 @@ async function closest(url, refresh = false) {
   }
 }
 
-module.exports = { memento, closest, saveArchive, get }
+async function close() {
+  await redis.quit()
+}
+
+module.exports = { memento, closest, saveArchive, get, close }

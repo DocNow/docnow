@@ -1,5 +1,5 @@
 import { ok, equal } from 'assert'
-import { memento, closest, saveArchive, get } from '../src/server/wayback'
+import { memento, closest, saveArchive, get, close } from '../src/server/wayback'
 
 describe('internet-archive', function() {
 
@@ -38,6 +38,10 @@ describe('internet-archive', function() {
       equal(result2.url, result1.url)
       equal(result2.time, result2.time)
     }
+  })
+
+  it('should close', async () => {
+    close()
   })
 
 })

@@ -36,10 +36,10 @@ export class UrlFetcher {
     return true
   }
 
-  stop() {
+  async stop() {
     this.active = false
-    this.redis.quit()
-    this.redisBlocking.quit()
+    await this.redis.quit()
+    await this.redisBlocking.quit()
   }
 
   add(search, url, tweetId) {

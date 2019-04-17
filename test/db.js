@@ -296,4 +296,8 @@ describe('database', function() {
     ok(stats.userCount > 0, 'stats.userCount')
   })
 
+  it('should close', async() => {
+    await db.close()
+  })
+
 })
