@@ -1,12 +1,13 @@
-//import Archive from '../src/server/archive'
 import fs from 'fs'
 import { Database } from '../src/server/db'
 import { ok } from 'assert'
-import { Archive } from '../src/server/archive';
+import { Archive } from '../src/server/archive'
 
 describe('archive', function() {
 
   const db = new Database()
+  const archive = new Archive()
+
   let testSearch = null
   let testUser = null
 
@@ -28,15 +29,15 @@ describe('archive', function() {
       twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET
     })
 
+
     testSearch = await db.createSearch(testUser, [
       {type: 'keyword', value: 'obama'}
     ])
 
-    db.importFromSearch(testSearch, 200)
+    await db.importFromSearch(testSearch, 200)
   })
 
   it('should create archive', async () => {
-    const archive = new Archive()
     const zipFile = await archive.createArchive(testSearch)
     ok(fs.existsSync(zipFile), 'zip file exists')
   })
@@ -45,6 +46,12 @@ describe('archive', function() {
     const search = await db.getSearch(testSearch.id)
     ok(search.archived, 'archived')
     ok(! search.archiveStarted, 'archive started not set')
+  })
+
+  it('should close things', async () => {
+    // or else this test will never finish
+    await db.close()
+    await archive.close()
   })
 
 })

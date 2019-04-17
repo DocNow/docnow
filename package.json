@@ -42,13 +42,13 @@
       }
     },
     "wtest": {
-      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 20000 --require babel-polyfill --require babel-register test/*'",
+      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 20000 --require @babel/polyfill --require @babel/register test/*'",
       "env": {
         "NODE_ENV": "test"
       }
     },
     "test": {
-      "command": "npm run eslint:server && mocha --timeout 20000 --require babel-register --require babel-polyfill test/*",
+      "command": "npm run eslint:server && mocha --timeout 20000 --require @babel/register --require @babel/polyfill test/*",
       "env": {
         "NODE_ENV": "test"
       }
@@ -120,8 +120,10 @@
     "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-syntax-import-meta": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/polyfill": "^7.4.3",
     "@babel/preset-env": "^7.4.3",
     "@babel/preset-react": "^7.0.0",
+    "@babel/register": "^7.4.0",
     "@babel/runtime": "^7.4.3",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",

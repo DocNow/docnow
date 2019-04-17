@@ -57,6 +57,10 @@ export class Archive {
     })
   }
 
+  async close() {
+    this.db.close()
+  }
+
   async saveTweetIds(search, searchDir) {
     return new Promise(async (resolve) => {
       const idsPath = path.join(searchDir, 'ids.csv')
