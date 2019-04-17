@@ -27,6 +27,8 @@ var _rimraf = _interopRequireDefault(require("rimraf"));
 
 var _archiver = _interopRequireDefault(require("archiver"));
 
+var _tweetArchive = _interopRequireDefault(require("tweet-archive"));
+
 var _db = require("./db");
 
 var Archive =
@@ -45,7 +47,7 @@ function () {
       _regenerator["default"].mark(function _callee2(search) {
         var _this = this;
 
-        var projectDir, userDataDir, archivesDir, searchDir;
+        var projectDir, userDataDir, archivesDir, searchDir, tweetIdsPath, builder, metadata;
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -63,10 +65,25 @@ function () {
                 return this.saveTweetIds(search, searchDir);
 
               case 7:
-                _context2.next = 9;
+                tweetIdsPath = _context2.sent;
+                _context2.next = 10;
                 return this.saveUrls(search, searchDir);
 
-              case 9:
+              case 10:
+                builder = new _tweetArchive["default"]();
+                metadata = {
+                  title: search.title,
+                  creator: search.creator,
+                  startDate: search.created,
+                  endDate: search.updated,
+                  searchQuery: search.query.map(function (q) {
+                    return q.value;
+                  }).join(' ')
+                };
+                _context2.next = 14;
+                return builder.build(tweetIdsPath, metadata, searchDir);
+
+              case 14:
                 return _context2.abrupt("return", new Promise(function (resolve) {
                   var zipPath = _path["default"].join(archivesDir, "".concat(search.id, ".zip"));
 
@@ -105,7 +122,7 @@ function () {
                   archive.finalize();
                 }));
 
-              case 10:
+              case 15:
               case "end":
                 return _context2.stop();
             }
