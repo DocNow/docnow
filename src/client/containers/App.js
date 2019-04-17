@@ -1,6 +1,5 @@
 import React from 'react'
 import MediaQueryComponent from '../components/MediaQueryComponent'
-// import { Route } from 'react-router-dom'
 import { Route, Switch } from 'react-router'
 import { push } from 'connected-react-router'
 import store from '../store'
