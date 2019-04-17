@@ -3,6 +3,7 @@ import path from 'path'
 import csv from 'csv-stringify/lib/sync'
 import rimraf from 'rimraf'
 import archiver from 'archiver'
+import Builder from 'tweet-archive'
 
 import { Database } from './db'
 
@@ -22,8 +23,17 @@ export class Archive {
       fs.mkdirSync(searchDir)
     }
 
-    await this.saveTweetIds(search, searchDir)
+    const tweetIdsPath = await this.saveTweetIds(search, searchDir)
     await this.saveUrls(search, searchDir)
+    const builder = new Builder()
+    const metadata = {
+      title: search.title,
+      creator: search.creator,
+      startDate: search.created,
+      endDate: search.updated,
+      searchQuery: search.query.map(q => q.value).join(' ')
+    }
+    await builder.build(tweetIdsPath, metadata, searchDir)
 
     return new Promise((resolve) => {
       const zipPath = path.join(archivesDir, `${search.id}.zip`)
