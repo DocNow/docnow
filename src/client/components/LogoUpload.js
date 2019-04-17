@@ -5,10 +5,10 @@ import PropTypes from 'prop-types'
 
 export default class LogoUpload extends Component {
 
-  constructor() {
-    super()
+  constructor(props) {
+    super(props)
     this.state = {
-      imagePreviewUrl: this.props.logoUrl ? this.props.logoUrl : defaultLogo
+      imagePreviewUrl: props.logoUrl ? props.logoUrl : defaultLogo
     }
   }
 
