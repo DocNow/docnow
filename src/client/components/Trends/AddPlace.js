@@ -6,6 +6,11 @@ import style from './AddPlace.css'
 
 export default class AddPlace extends Component {
 
+  constructor(props) {
+    super(props)
+    this.checkPlace = this.checkPlace.bind(this)
+  }
+
   matchInputToTerm(input, value) {
     return (input.toLowerCase().indexOf(value.toLowerCase()) !== -1 ||
             input.toLowerCase().indexOf(value.toLowerCase()) !== -1)
