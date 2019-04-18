@@ -339,9 +339,35 @@ function _closest() {
   return _closest.apply(this, arguments);
 }
 
+function close() {
+  return _close.apply(this, arguments);
+}
+
+function _close() {
+  _close = (0, _asyncToGenerator2["default"])(
+  /*#__PURE__*/
+  _regenerator["default"].mark(function _callee5() {
+    return _regenerator["default"].wrap(function _callee5$(_context5) {
+      while (1) {
+        switch (_context5.prev = _context5.next) {
+          case 0:
+            _context5.next = 2;
+            return redis.quit();
+
+          case 2:
+          case "end":
+            return _context5.stop();
+        }
+      }
+    }, _callee5);
+  }));
+  return _close.apply(this, arguments);
+}
+
 module.exports = {
   memento: memento,
   closest: closest,
   saveArchive: saveArchive,
-  get: get
+  get: get,
+  close: close
 };

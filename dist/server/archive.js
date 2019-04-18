@@ -137,31 +137,57 @@ function () {
       return createArchive;
     }()
   }, {
+    key: "close",
+    value: function () {
+      var _close = (0, _asyncToGenerator2["default"])(
+      /*#__PURE__*/
+      _regenerator["default"].mark(function _callee3() {
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                this.db.close();
+
+              case 1:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function close() {
+        return _close.apply(this, arguments);
+      }
+
+      return close;
+    }()
+  }, {
     key: "saveTweetIds",
     value: function () {
       var _saveTweetIds = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee4(search, searchDir) {
+      _regenerator["default"].mark(function _callee5(search, searchDir) {
         var _this2 = this;
 
-        return _regenerator["default"].wrap(function _callee4$(_context4) {
+        return _regenerator["default"].wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
-                return _context4.abrupt("return", new Promise(
+                return _context5.abrupt("return", new Promise(
                 /*#__PURE__*/
                 function () {
                   var _ref2 = (0, _asyncToGenerator2["default"])(
                   /*#__PURE__*/
-                  _regenerator["default"].mark(function _callee3(resolve) {
+                  _regenerator["default"].mark(function _callee4(resolve) {
                     var idsPath, fh;
-                    return _regenerator["default"].wrap(function _callee3$(_context3) {
+                    return _regenerator["default"].wrap(function _callee4$(_context4) {
                       while (1) {
-                        switch (_context3.prev = _context3.next) {
+                        switch (_context4.prev = _context4.next) {
                           case 0:
                             idsPath = _path["default"].join(searchDir, 'ids.csv');
                             fh = _fs["default"].createWriteStream(idsPath);
-                            _context3.next = 4;
+                            _context4.next = 4;
                             return _this2.db.getAllTweets(search, function (tweet) {
                               fh.write(tweet.id + '\r\n');
                             });
@@ -174,10 +200,10 @@ function () {
 
                           case 6:
                           case "end":
-                            return _context3.stop();
+                            return _context4.stop();
                         }
                       }
-                    }, _callee3);
+                    }, _callee4);
                   }));
 
                   return function (_x4) {
@@ -187,10 +213,10 @@ function () {
 
               case 1:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4);
+        }, _callee5);
       }));
 
       function saveTweetIds(_x2, _x3) {
@@ -204,23 +230,23 @@ function () {
     value: function () {
       var _saveUrls = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee6(search, searchDir) {
+      _regenerator["default"].mark(function _callee7(search, searchDir) {
         var _this3 = this;
 
-        return _regenerator["default"].wrap(function _callee6$(_context6) {
+        return _regenerator["default"].wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                return _context6.abrupt("return", new Promise(
+                return _context7.abrupt("return", new Promise(
                 /*#__PURE__*/
                 function () {
                   var _ref3 = (0, _asyncToGenerator2["default"])(
                   /*#__PURE__*/
-                  _regenerator["default"].mark(function _callee5(resolve) {
+                  _regenerator["default"].mark(function _callee6(resolve) {
                     var urlsPath, fh, offset, webpages, s;
-                    return _regenerator["default"].wrap(function _callee5$(_context5) {
+                    return _regenerator["default"].wrap(function _callee6$(_context6) {
                       while (1) {
-                        switch (_context5.prev = _context5.next) {
+                        switch (_context6.prev = _context6.next) {
                           case 0:
                             urlsPath = _path["default"].join(searchDir, 'urls.csv');
                             fh = _fs["default"].createWriteStream(urlsPath);
@@ -229,22 +255,22 @@ function () {
 
                           case 4:
                             if (!true) {
-                              _context5.next = 15;
+                              _context6.next = 15;
                               break;
                             }
 
-                            _context5.next = 7;
+                            _context6.next = 7;
                             return _this3.db.getWebpages(search, offset);
 
                           case 7:
-                            webpages = _context5.sent;
+                            webpages = _context6.sent;
 
                             if (!(webpages.length === 0)) {
-                              _context5.next = 10;
+                              _context6.next = 10;
                               break;
                             }
 
-                            return _context5.abrupt("break", 15);
+                            return _context6.abrupt("break", 15);
 
                           case 10:
                             s = (0, _sync["default"])(webpages, {
@@ -252,7 +278,7 @@ function () {
                             });
                             fh.write(s + '\r\n');
                             offset += 100;
-                            _context5.next = 4;
+                            _context6.next = 4;
                             break;
 
                           case 15:
@@ -263,10 +289,10 @@ function () {
 
                           case 17:
                           case "end":
-                            return _context5.stop();
+                            return _context6.stop();
                         }
                       }
-                    }, _callee5);
+                    }, _callee6);
                   }));
 
                   return function (_x7) {
@@ -276,10 +302,10 @@ function () {
 
               case 1:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6);
+        }, _callee7);
       }));
 
       function saveUrls(_x5, _x6) {
