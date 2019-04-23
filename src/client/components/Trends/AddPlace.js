@@ -1,6 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
+import '@material/react-text-field/dist/text-field.css'
+import TextField, {HelperText, Input} from '@material/react-text-field';
+import MaterialIcon from '@material/react-material-icon';
 
 import style from './AddPlace.css'
 
@@ -47,22 +50,28 @@ export default class AddPlace extends Component {
       placeDisabled = true
     }
     return (
-      <div className={style.AddPlace}>
-        <Autocomplete
-          getItemValue={(item) => item}
-          sortItems={this.sortPlaces}
-          items={Object.keys(this.props.world)}
-          shouldItemRender={this.matchInputToTerm}
-          renderItem={(item, isHighlighted) => (
-            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-              {item}
-            </div>
-           )}
-           value={this.props.newPlace}
-           onChange={(event, value) => this.props.updateNewTrend(value)}
-           onSelect={value => this.props.updateNewTrend(value)}
-           inputProps={inputProps} />
-        <button href="#" onClick={ this.checkPlace } className="Save" disabled={placeDisabled}><i className="fa fa-plus" aria-hidden="true"/></button>
+      <div>
+        <TextField
+          label='Dog'
+          helperText={<HelperText>Help Me!</HelperText>}
+          onTrailingIconSelect={ this.checkPlace }
+          trailingIcon={<MaterialIcon role="button" icon="add"/>}
+        >
+          <Autocomplete
+            getItemValue={(item) => item}
+            sortItems={this.sortPlaces}
+            items={Object.keys(this.props.world)}
+            shouldItemRender={this.matchInputToTerm}
+            renderItem={(item, isHighlighted) => (
+              <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+                {item}
+              </div>
+            )}
+            value={this.props.newPlace}
+            onChange={(event, value) => this.props.updateNewTrend(value)}
+            onSelect={value => this.props.updateNewTrend(value)}
+            inputProps={inputProps} />
+        </TextField>
       </div>
     )
   }
