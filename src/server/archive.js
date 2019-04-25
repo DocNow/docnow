@@ -14,6 +14,7 @@ export class Archive {
   }
 
   async createArchive(search) {
+    const user = await this.db.getUser(search.creator)
     const projectDir = path.dirname(path.dirname(__dirname))
     const userDataDir = path.join(projectDir, 'userData')
     const archivesDir = path.join(userDataDir, 'archives')
@@ -28,7 +29,7 @@ export class Archive {
     const builder = new Builder()
     const metadata = {
       title: search.title,
-      creator: search.creator,
+      creator: user.name,
       startDate: search.created,
       endDate: search.updated,
       searchQuery: search.query.map(q => q.value).join(' ')
