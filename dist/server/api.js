@@ -320,7 +320,6 @@ app.put('/search/:searchId', function (req, res) {
           streamLoader.startStream(search.id);
         } else if (!search.archiveStarted && newSearch.archiveStarted) {
           var archive = new _archive.Archive();
-          search.creator = req.user.name;
           archive.createArchive(search);
         }
       });

@@ -204,7 +204,6 @@ app.put('/search/:searchId', (req, res) => {
           streamLoader.startStream(search.id)
         } else if (! search.archiveStarted && newSearch.archiveStarted) {
           const archive = new Archive()
-          search.creator = req.user.name
           archive.createArchive(search)
         }
       })

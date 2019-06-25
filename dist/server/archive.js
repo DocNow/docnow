@@ -47,11 +47,16 @@ function () {
       _regenerator["default"].mark(function _callee2(search) {
         var _this = this;
 
-        var projectDir, userDataDir, archivesDir, searchDir, tweetIdsPath, builder, metadata;
+        var user, projectDir, userDataDir, archivesDir, searchDir, tweetIdsPath, builder, metadata;
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
+                _context2.next = 2;
+                return this.db.getUser(search.creator);
+
+              case 2:
+                user = _context2.sent;
                 projectDir = _path["default"].dirname(_path["default"].dirname(__dirname));
                 userDataDir = _path["default"].join(projectDir, 'userData');
                 archivesDir = _path["default"].join(userDataDir, 'archives');
@@ -61,29 +66,29 @@ function () {
                   _fs["default"].mkdirSync(searchDir);
                 }
 
-                _context2.next = 7;
+                _context2.next = 10;
                 return this.saveTweetIds(search, searchDir);
 
-              case 7:
+              case 10:
                 tweetIdsPath = _context2.sent;
-                _context2.next = 10;
+                _context2.next = 13;
                 return this.saveUrls(search, searchDir);
 
-              case 10:
+              case 13:
                 builder = new _tweetArchive["default"]();
                 metadata = {
                   title: search.title,
-                  creator: search.creator,
+                  creator: user.name,
                   startDate: search.created,
                   endDate: search.updated,
                   searchQuery: search.query.map(function (q) {
                     return q.value;
                   }).join(' ')
                 };
-                _context2.next = 14;
+                _context2.next = 17;
                 return builder.build(tweetIdsPath, metadata, searchDir);
 
-              case 14:
+              case 17:
                 return _context2.abrupt("return", new Promise(function (resolve) {
                   var zipPath = _path["default"].join(archivesDir, "".concat(search.id, ".zip"));
 
@@ -122,7 +127,7 @@ function () {
                   archive.finalize();
                 }));
 
-              case 15:
+              case 18:
               case "end":
                 return _context2.stop();
             }
