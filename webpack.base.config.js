@@ -50,6 +50,18 @@ module.exports = {
         ]
       },
       {
+        test:  /\.css$/,
+        include: /node_modules\/@material/, // bypass for material components web CSS
+        use: [
+          {
+            loader: 'style-loader',
+          },
+          {
+            loader: 'css-loader'
+          }
+        ]
+      },
+      {
         test:  /\.(png|jpg|ttf|eot)$/,
         exclude: /node_modules/,
         use: [
