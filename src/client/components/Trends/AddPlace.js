@@ -2,8 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
 import '@material/react-text-field/dist/text-field.css'
-import TextField from '@material/react-text-field'
-import MaterialIcon from '@material/react-material-icon'
+import TextField, {Input} from '@material/react-text-field'
+// import MaterialIcon from '@material/react-material-icon'
 
 export default class AddPlace extends Component {
 
@@ -48,47 +48,33 @@ export default class AddPlace extends Component {
       // placeDisabled = true
     }
     return (
-      <div>
-        <TextField
-          label="Add Place"
-          onTrailingIconSelect={() => console.log('clear')}
-          trailingIcon={<MaterialIcon role="button" icon="delete"/>}
-        >
-          <Autocomplete
-            getItemValue={(item) => item}
-            sortItems={this.sortPlaces}
-            items={Object.keys(this.props.world)}
-            shouldItemRender={this.matchInputToTerm}
-            renderItem={(item, isHighlighted) => (
-              <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-                {item}
-              </div>
-            )}
-            value={this.props.newPlace}
-            onChange={(event, value) => this.props.updateNewTrend(value)}
-            onSelect={value => this.props.updateNewTrend(value)}
-            inputProps={inputProps} >
-          </Autocomplete>
-        </TextField>
-      </div>
+      <Autocomplete
+        getItemValue={(item) => item}
+        sortItems={this.sortPlaces}
+        items={Object.keys(this.props.world)}
+        shouldItemRender={this.matchInputToTerm}
+        renderItem={(item, isHighlighted) => (
+          <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+            {item}
+          </div>
+        )}
+        value={this.props.newPlace}
+        onChange={(event, value) => this.props.updateNewTrend(value)}
+        onSelect={value => this.props.updateNewTrend(value)}
+        renderInput={(props) => {
+          return (
+            <div>
+              <TextField label="ADD PLACE">
+                <Input {...props} />
+              </TextField>
+            </div>
+          )
+        }}
+        inputProps={inputProps} >
+      </Autocomplete>
     )
   }
 }
-
-/* <Autocomplete
-          getItemValue={(item) => item}
-          sortItems={this.sortPlaces}
-          items={Object.keys(this.props.world)}
-          shouldItemRender={this.matchInputToTerm}
-          renderItem={(item, isHighlighted) => (
-            <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-              {item}
-            </div>
-           )}
-           value={this.props.newPlace}
-           onChange={(event, value) => this.props.updateNewTrend(value)}
-           onSelect={value => this.props.updateNewTrend(value)}
-inputProps={inputProps} /> */
 
 AddPlace.propTypes = {
   limit: PropTypes.number,
