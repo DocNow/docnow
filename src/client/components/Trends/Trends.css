@@ -1,8 +1,8 @@
 .Trends {
   min-height: 80vh;
   margin: 20px 0px 20px 0px;
-  background-image: url("../../images/mapbg.png");
-  background-position: center center;
+  background-image: url("../../images/mapbg.svg");
+  background-position: center 50px;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: 100%;
@@ -35,7 +35,7 @@
 }
 
 .Mobile {
-  background: none;
+  background-size: 300%;
 }
 
 .Mobile p {

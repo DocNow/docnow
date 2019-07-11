@@ -11,12 +11,6 @@ import TabBar from './TabBar'
 import styles from './Header.css'
 
 export default class Header extends MediaQueryComponent {
-
-  constructor(props) {
-    super(props)
-    this.state = { headerStyle: styles.Header }
-  }
-
   componentDidMount() {
     this.setMediaQuery('(max-width: 480px)', styles.Header, styles.HeaderUnder480px)
   }
@@ -38,7 +32,7 @@ export default class Header extends MediaQueryComponent {
           notifications={this.props.notifications}
           isSuperUser={this.props.isSuperUser} />
       )
-      tabBar = <TabBar location={this.props.location} />
+      tabBar = <TabBar location={this.props.location} navigateTo={this.props.navigateTo} />
     }
 
     return (
@@ -65,5 +59,6 @@ Header.propTypes = {
   location: PropTypes.string,
   logoUrl: PropTypes.string,
   isSuperUser: PropTypes.bool,
-  notifications: PropTypes.number
+  notifications: PropTypes.number,
+  navigateTo: PropTypes.func
 }

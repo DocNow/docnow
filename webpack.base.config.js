@@ -32,7 +32,12 @@ module.exports = {
         test:  /\.jsx?$/,
         exclude: /node_modules/,
         use:  ['babel-loader', 'eslint-loader']
-			},
+      },
+      {
+        test: /\.svg$/,
+        exclude: /node_modules/,
+        loader: 'file-loader'
+      },
       {
         test:  /\.css$/,
         exclude: /node_modules/,
@@ -50,15 +55,11 @@ module.exports = {
         ]
       },
       {
-        test:  /\.css$/,
-        include: /node_modules\/@material/, // bypass for material components web CSS
+        test: /\.scss$/,
         use: [
-          {
-            loader: 'style-loader',
-          },
-          {
-            loader: 'css-loader'
-          }
+            "style-loader",
+            "css-loader",
+            { loader: 'sass-loader', options: { includePaths: ['./node_modules'] } }
         ]
       },
       {

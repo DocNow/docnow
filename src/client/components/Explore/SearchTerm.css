@@ -17,20 +17,29 @@
   outline: none;
 }
 
+.InCard {
+  max-width: 170px;
+}
+
+.InCard > div{
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+}
+
 .Hashtag {
-  background-color: lightblue;
+  background-color: lightblue !important;
 }
 
 .Phrase {
-  background-color: #cceecc;
+  background-color: #cceecc !important;
 }
 
 .Keyword {
-  background-color: #ccccee;
+  background-color: #ccccee !important;
 }
 
 .User {
-  background-color: yellow;
+  background-color: yellow !important;
 }
 
 .Input {

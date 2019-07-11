@@ -29,13 +29,13 @@
   display: inline;
 }
 
-.App button {
+/* .App button {
   color: #ffffff;
   display: inline-block;
   position: relative;
   height: 36px;
   padding: 0px 16px;
-  /* margin: 20px 5px 20px 5px; */
+  / * margin: 20px 5px 20px 5px; * /
   border: none;
   border-radius: 8px;
   background-color: #1da1f2;
@@ -59,7 +59,7 @@
   color: #ffffff !important;
   outline: none !important;
   background-color: #0f1282;
-}
+} */
 
 /*
 .App button i {
@@ -71,9 +71,9 @@
   color: #0f1282
 }
 
-.App main {
+/* .App main {
   margin: 20px 60px 20px 60px;
-}
+} */
 
 .AppUnder780px li {
   display: block;

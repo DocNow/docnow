@@ -1,17 +1,21 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import style from './SearchTerm.css'
+import '@material/react-chips/index.scss'
+import {Chip} from '@material/react-chips';
 
 export default class SearchTerm extends Component {
 
   constructor(props) {
     super(props)
     this.value = props.value
+    this.chip = React.createRef()
   }
 
-  componentDidMount() {
-    this.span.focus()
-  }
+  // componentDidMount() {
+  //   console.log(this.chip.current)
+  //   this.chip.current.focus()
+  // }
 
   shouldComponentUpdate(nextProps) {
     // prevent cursor from jumping around when editing
@@ -40,9 +44,8 @@ export default class SearchTerm extends Component {
   }
 
   click(e) {
-    e.stopPropagation()
     if (this.props.onClick) {
-      this.props.onClick(e)
+      this.props.onClick(e.target)
     }
   }
 
@@ -78,24 +81,25 @@ export default class SearchTerm extends Component {
     const cssClass = this.cssClass(type)
     const editable = this.props.onInput ? true : false
     return (
-      <span
+      <Chip 
+        label={this.props.value}
+        className={`${this.props.className} ${cssClass}`}
         spellCheck={false}
         contentEditable={editable}
         suppressContentEditableWarning={editable}
         onKeyDown={(e) => {this.keyDown(e)}}
-        onClick={(e) => {this.click(e)}}
+        onClick={(e) => this.click(e)}
         onInput={(e) => {this.update(e)}}
         data-type={type}
-        className={style.SearchTerm + ' ' + cssClass}
-        ref={(c) => { this.span = c }}
-        title={`${type} ${this.props.value}`}>
-        { this.props.value }
-      </span>
+        ref={this.chip}
+        title={`${type} ${this.props.value}`}
+      />
     )
   }
 }
 
 SearchTerm.propTypes = {
+  className: PropTypes.string,
   pos: PropTypes.number,
   type: PropTypes.string,
   value: PropTypes.string,

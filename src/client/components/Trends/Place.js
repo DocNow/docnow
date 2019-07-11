@@ -2,16 +2,31 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import FlipMove from 'react-flip-move'
 import SearchTerm from '../Explore/SearchTerm'
+import '@material/react-card/index.scss'
+import '@material/react-layout-grid/index.scss'
+import '@material/react-icon-button/index.scss'
+import '@material/react-material-icon/index.scss'
 
-import style from '../Card.css'
+import IconButton from '@material/react-icon-button'
+import MaterialIcon from '@material/react-material-icon'
+// import {Cell, Grid, Row} from '@material/react-layout-grid'
+import Card, {
+  CardPrimaryContent,
+  CardActions,
+  CardActionIcons
+} from "@material/react-card"
+
+import cardStyle from '../Card.css'
+import placeStyle from './Place.css'
+import searchTermStyle from '../Explore/SearchTerm.css'
 
 export default class Place extends Component {
 
   createSearch(e) {
     this.props.createSearch([
       {
-        type: e.target.getAttribute('data-type'),
-        value: e.target.innerText
+        type: e.parentNode.getAttribute('data-type'),
+        value: e.innerText
       }
     ])
   }
@@ -20,46 +35,55 @@ export default class Place extends Component {
     let trends = null
     let remove = null
     if (this.props.username) {
-      remove = <i className="fa fa-minus" aria-hidden="true" onClick={(e) => {e.preventDefault(); this.props.deleteTrend(this.props.placeId)}} />
+      remove = (<IconButton 
+        onClick={() => {this.props.deleteTrend(this.props.placeId)}}><MaterialIcon icon="remove" /></IconButton>)
       trends = this.props.trends.map((trend, i) => {
         return (
-          <li key={ trend.name + trend.text }>
-            <SearchTerm
-              key={`t-${i}`}
-              onClick={(e) => {this.createSearch(e)}}
-              value={trend.name} />
-            &nbsp;
-            <bdo title={trend.name + ' tweets in the last 24 hours'}>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
-          </li>
-        )
+          <div key={`t-${i}`} className={placeStyle.Trend}>
+            <div className={placeStyle.TrendTerm}>
+              <SearchTerm
+                className={searchTermStyle.InCard}
+                onClick={(e) => {this.createSearch(e)}}
+                value={trend.name} />
+            </div>
+            <div className={placeStyle.TrendCount}>
+              <bdo title={trend.name + ' tweets in the last 24 hours'}>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
+            </div>
+          </div>)
       })
     } else {
-      trends = this.props.trends.map(trend => {
+      trends = this.props.trends.map((trend, i) => {
         return (
-          <li key={ trend.name + trend.text }>
-            <span>{ trend.name }</span>
-            &nbsp;
-            <bdo>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
-          </li>
-        )
+          <div key={`t-${i}`} className={placeStyle.Trend}>
+            <div className={placeStyle.TrendTerm}>
+              { trend.name }
+            </div>
+            <div className={searchTermStyle.InCard}>
+              <bdo>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
+            </div>
+          </div>)
       })
     }
 
     return (
-      <div className={style.Card}>
-        <div className={style.Data}>
+      <Card outlined className={cardStyle.Card} >
+        <CardPrimaryContent className={cardStyle.Scroll}>
           <FlipMove
-            typeName="ul"
+            style={{padding: '24px'}}
             duration={2000}
             enterAnimation="elevator"
             leaveAnimation="fade">
             { trends }
           </FlipMove>
-        </div>
-        <div className={style.CardTitle}>
-          <h2>{this.props.name} {remove}</h2>
-        </div>
-      </div>
+        </CardPrimaryContent>
+
+        <CardActions>
+          <h2 className={cardStyle.PlaceHeader}>{this.props.name} </h2>
+          <CardActionIcons>
+            {remove}
+          </CardActionIcons>
+        </CardActions>
+      </Card>
     )
   }
 }
