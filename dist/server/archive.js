@@ -47,7 +47,7 @@ function () {
       _regenerator["default"].mark(function _callee2(search) {
         var _this = this;
 
-        var user, projectDir, userDataDir, archivesDir, searchDir, tweetIdsPath, builder, metadata;
+        var user, projectDir, userDataDir, archivesDir, searchDir, tweetsPath, builder, metadata;
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -67,10 +67,10 @@ function () {
                 }
 
                 _context2.next = 10;
-                return this.saveTweetIds(search, searchDir);
+                return this.saveTweets(search, searchDir);
 
               case 10:
-                tweetIdsPath = _context2.sent;
+                tweetsPath = _context2.sent;
                 _context2.next = 13;
                 return this.saveUrls(search, searchDir);
 
@@ -86,7 +86,7 @@ function () {
                   }).join(' ')
                 };
                 _context2.next = 17;
-                return builder.build(tweetIdsPath, metadata, searchDir);
+                return builder.build(tweetsPath, metadata, searchDir);
 
               case 17:
                 return _context2.abrupt("return", new Promise(function (resolve) {
@@ -168,9 +168,9 @@ function () {
       return close;
     }()
   }, {
-    key: "saveTweetIds",
+    key: "saveTweets",
     value: function () {
-      var _saveTweetIds = (0, _asyncToGenerator2["default"])(
+      var _saveTweets = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
       _regenerator["default"].mark(function _callee5(search, searchDir) {
         var _this2 = this;
@@ -185,25 +185,28 @@ function () {
                   var _ref2 = (0, _asyncToGenerator2["default"])(
                   /*#__PURE__*/
                   _regenerator["default"].mark(function _callee4(resolve) {
-                    var idsPath, fh;
+                    var tweetsPath, fh;
                     return _regenerator["default"].wrap(function _callee4$(_context4) {
                       while (1) {
                         switch (_context4.prev = _context4.next) {
                           case 0:
-                            idsPath = _path["default"].join(searchDir, 'ids.csv');
-                            fh = _fs["default"].createWriteStream(idsPath);
-                            _context4.next = 4;
+                            tweetsPath = _path["default"].join(searchDir, 'tweets.csv');
+                            fh = _fs["default"].createWriteStream(tweetsPath);
+                            fh.write("id,screen_name,retweet\r\n");
+                            _context4.next = 5;
                             return _this2.db.getAllTweets(search, function (tweet) {
-                              fh.write(tweet.id + '\r\n');
+                              var isRetweet = tweet.retweet ? true : false;
+                              var row = [tweet.id, tweet.user.screenName, isRetweet];
+                              fh.write(row.join(',') + '\r\n');
                             });
 
-                          case 4:
+                          case 5:
                             fh.end('');
                             fh.on('close', function () {
-                              resolve(idsPath);
+                              resolve(tweetsPath);
                             });
 
-                          case 6:
+                          case 7:
                           case "end":
                             return _context4.stop();
                         }
@@ -224,11 +227,11 @@ function () {
         }, _callee5);
       }));
 
-      function saveTweetIds(_x2, _x3) {
-        return _saveTweetIds.apply(this, arguments);
+      function saveTweets(_x2, _x3) {
+        return _saveTweets.apply(this, arguments);
       }
 
-      return saveTweetIds;
+      return saveTweets;
     }()
   }, {
     key: "saveUrls",
