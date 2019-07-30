@@ -16,8 +16,8 @@ describe('archive', function() {
     await db.setupIndexes()
 
     await db.addSettings({
-        appKey: process.env.CONSUMER_KEY,
-        appSecret: process.env.CONSUMER_SECRET
+      appKey: process.env.CONSUMER_KEY,
+      appSecret: process.env.CONSUMER_SECRET
     })
 
     testUser = await db.addUser({

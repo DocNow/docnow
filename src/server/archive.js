@@ -24,7 +24,7 @@ export class Archive {
       fs.mkdirSync(searchDir)
     }
 
-    const tweetIdsPath = await this.saveTweetIds(search, searchDir)
+    const tweetsPath = await this.saveTweets(search, searchDir)
     await this.saveUrls(search, searchDir)
     const builder = new Builder()
     const metadata = {
@@ -34,7 +34,7 @@ export class Archive {
       endDate: search.updated,
       searchQuery: search.query.map(q => q.value).join(' ')
     }
-    await builder.build(tweetIdsPath, metadata, searchDir)
+    await builder.build(tweetsPath, metadata, searchDir)
 
     return new Promise((resolve) => {
       const zipPath = path.join(archivesDir, `${search.id}.zip`)
@@ -62,17 +62,20 @@ export class Archive {
     this.db.close()
   }
 
-  async saveTweetIds(search, searchDir) {
+  async saveTweets(search, searchDir) {
     return new Promise(async (resolve) => {
-      const idsPath = path.join(searchDir, 'ids.csv')
-      const fh = fs.createWriteStream(idsPath)
+      const tweetsPath = path.join(searchDir, 'tweets.csv')
+      const fh = fs.createWriteStream(tweetsPath)
+      fh.write("id,screen_name,retweet\r\n")
 
       await this.db.getAllTweets(search, (tweet) => {
-        fh.write(tweet.id + '\r\n')
+        const isRetweet = tweet.retweet ? true : false
+        const row = [tweet.id, tweet.user.screenName, isRetweet]
+        fh.write(row.join(',') + '\r\n')
       })
 
       fh.end('')
-      fh.on('close', () => {resolve(idsPath)})
+      fh.on('close', () => {resolve(tweetsPath)})
     })
   }
 
