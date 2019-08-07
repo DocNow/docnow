@@ -2,8 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
 import '@material/react-text-field/index.scss'
-// import TextField, {Input} from '@material/react-text-field'
-// import MaterialIcon from '@material/react-material-icon'
 
 import styles from './AddPlace.css'
 
@@ -41,14 +39,13 @@ export default class AddPlace extends Component {
 
   render() {
 
-    const inputProps = {
-      placeholder: 'ADD PLACE'
-    }
-    // let placeDisabled = false
+    const inputProps = { }
+    inputProps.disabled = false
+    let addBtnActive = true
 
     if (this.props.places.length >= this.props.limit) {
       inputProps.disabled = true
-      // placeDisabled = true
+      addBtnActive = styles.NoClick
     }
     return (
       <div className={styles.AddPlace}>
@@ -57,37 +54,26 @@ export default class AddPlace extends Component {
           sortItems={this.sortPlaces}
           items={Object.keys(this.props.world)}
           shouldItemRender={this.matchInputToTerm}
-          renderMenu={items => {
-            return <ul className={`mdc-list`}>{items}</ul>
-          }}
           renderItem={(item, isHighlighted) => (
-            <li key={item} className="mdc-list-item" style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
-              <span className="mdc-list-item__text">{item}</span>
-            </li>
+            <div key={item} style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
+              {item}
+            </div>
           )}
           value={this.props.newPlace}
           onChange={(event, value) => this.props.updateNewTrend(value)}
           onSelect={value => this.props.updateNewTrend(value)}
-          
-          inputProps={inputProps} >
-        </Autocomplete>
-        <button onClick={ this.checkPlace }>+</button>
+          inputProps={inputProps}
+          renderInput={props => {
+            return (<div className="mdc-text-field mdc-text-field--with-trailing-icon">
+              <input {...props} className="mdc-text-field__input" tabIndex="0" placeholder="Add Place"/>
+              <i className={`material-icons mdc-text-field__icon ${addBtnActive}`} tabIndex="1" onClick={ this.checkPlace }>add</i>
+              <div className="mdc-line-ripple"/>
+            </div>)
+          }} />
       </div>
     )
   }
 }
-
-/*
-renderInput={(props) => {
-            return (
-              <div className={styles.AddPlace}>
-                <TextField label={props.placeholder}>
-                  <Input {...props} />
-                </TextField>
-              </div>
-            )
-          }}
-*/
 
 AddPlace.propTypes = {
   limit: PropTypes.number,
