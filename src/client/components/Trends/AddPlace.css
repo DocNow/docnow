@@ -14,8 +14,3 @@
 .AddPlace input::placeholder {
   opacity: 100 !important;
 }
-
-.ListPlaces {
-  height: 235px;
-  overflow-y: scroll;
-}
