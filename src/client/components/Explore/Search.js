@@ -103,6 +103,7 @@ export default class Search extends Component {
           <SearchQuery
             updateSearchTerm={this.props.updateSearchTerm}
             addSearchTerm={this.props.addSearchTerm}
+            focusSearchTerm={this.props.focusSearchTerm}
             query={this.props.query}
             active={this.props.active}
             createSearch={this.props.createSearch} />
@@ -205,5 +206,6 @@ Search.propTypes = {
   updateSearch: PropTypes.func,
   updateSearchTerm: PropTypes.func,
   addSearchTerm: PropTypes.func,
+  focusSearchTerm: PropTypes.func,
   saveSearch: PropTypes.func,
 }

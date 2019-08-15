@@ -1,20 +1,11 @@
 .SearchTerm {
-  min-width: 5px;
-  padding: 3px;
-  margin: 3px;
-  border-radius: 4px;
-  background-color: #C8D2D3;
-  line-height: 14px;
-}
-
-.SearchTerm:hover {
-  margin-right: 2px;
-  border: 1px solid gray;
+  outline: none;
   cursor: pointer;
 }
 
-.SearchTerm:focus {
-  outline: none;
+input.SearchTerm {
+  border: 0 transparent;
+  background-color: transparent;
 }
 
 .InCard {
@@ -40,12 +31,4 @@
 
 .User {
   background-color: yellow !important;
-}
-
-.Input {
-  background-color: white;
-  border: none;
-  border-radius: none;
-  margin: 0px;
-  padding: 0px;
 }

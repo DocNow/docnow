@@ -5,37 +5,51 @@ import SearchTerm from './SearchTerm'
 import style from './SearchTerm.css'
 import styleQuery from './SearchQuery.css'
 
-export default class SearchQuery extends Component {
+import {ChipSet, Chip} from '@material/react-chips';
 
-  onClick() {
-    this.props.addSearchTerm({value: ' ', type: 'input'})
+export default class SearchQuery extends Component {
+  constructor(props) {
+    super(props)
+    this.box = React.createRef()
+  }
+
+  onClick(e) {
+    // Make sure the user has clicked on the box and not on a SearchTerm
+    if (e.target.tagName !== 'INPUT' && !e.target.classList.contains('mdc-chip')) {
+      this.props.addSearchTerm({value: '', type: 'input'})
+    }
   }
 
   render() {
-    let placeHolder = <span>&nbsp;</span>
+    let placeHolder = ''
     if (this.props.query.length === 0 && ! this.props.active) {
       placeHolder = (
         <div>
-          enter a <span className={style.SearchTerm + ' ' + style.Keyword}>keyword</span>
-          <span className={style.SearchTerm + ' ' + style.Phrase}>a phrase</span>
-          <span className={style.SearchTerm + ' ' + style.Hashtag}>#hashtag</span>
-          <span className={style.SearchTerm + ' ' + style.User}>@user</span>
+          enter a <Chip className={style.SearchTerm + ' ' + style.Keyword} label="keyword"/>
+          <Chip className={style.SearchTerm + ' ' + style.Phrase} label="a phrase"/>
+          <Chip className={style.SearchTerm + ' ' + style.Hashtag} label="#hashtag"/>
+          <Chip className={style.SearchTerm + ' ' + style.User} label="@user"/>
         </div>
       )
     }
     return (
-      <div onClick={(e) => {this.onClick(e)}} className={styleQuery.SearchQuery}>
+      <div id="box" onClick={(e) => {this.onClick(e)}} className={styleQuery.SearchQuery}>
         {placeHolder}
-        {this.props.query.map((term, i) => (
-          <SearchTerm
-            key={`t${i}`}
-            pos={i}
-            type={term.type}
-            onInput={this.props.updateSearchTerm}
-            value={term.value}
-            createSearch={this.props.createSearch}
-            query={this.props.query} />
-        ))}
+        <ChipSet input>
+          {this.props.query.map((term, i) => (
+            <SearchTerm
+              id={`t${i}`}
+              key={`t${i}`}
+              pos={i}
+              focused={term.focused}
+              type={term.type}
+              onInput={this.props.updateSearchTerm}
+              value={term.value}
+              createSearch={this.props.createSearch}
+              query={this.props.query}
+              focusSearchTerm={this.props.focusSearchTerm} />
+          ))}
+        </ChipSet>
       </div>
     )
   }
@@ -46,6 +60,7 @@ SearchQuery.propTypes = {
   query: PropTypes.array,
   updateSearchTerm: PropTypes.func,
   addSearchTerm: PropTypes.func,
+  focusSearchTerm: PropTypes.func,
   active: PropTypes.bool,
   createSearch: PropTypes.func,
 }
