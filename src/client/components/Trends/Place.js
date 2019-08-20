@@ -4,12 +4,10 @@ import FlipMove from 'react-flip-move'
 import SearchTerm from '../Explore/SearchTerm'
 import '@material/react-card/index.scss'
 import '@material/react-layout-grid/index.scss'
-import '@material/react-icon-button/index.scss'
-import '@material/react-material-icon/index.scss'
 
+import '@material/react-icon-button/index.scss'
 import IconButton from '@material/react-icon-button'
-import MaterialIcon from '@material/react-material-icon'
-// import {Cell, Grid, Row} from '@material/react-layout-grid'
+
 import Card, {
   CardPrimaryContent,
   CardActions,
@@ -36,7 +34,7 @@ export default class Place extends Component {
     let remove = null
     if (this.props.username) {
       remove = (<IconButton 
-        onClick={() => {this.props.deleteTrend(this.props.placeId)}}><MaterialIcon icon="remove" /></IconButton>)
+        onClick={() => {this.props.deleteTrend(this.props.placeId)}}><ion-icon name="remove"></ion-icon></IconButton>)
       trends = this.props.trends.map((trend, i) => {
         return (
           <div key={`t-${i}`} className={placeStyle.Trend}>

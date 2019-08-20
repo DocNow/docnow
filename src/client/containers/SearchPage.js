@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import Search from '../components/Explore/Search'
 import { createSearch, getSearch, getTweets, getUsers, getHashtags,
   getUrls, getImages, getVideos, refreshSearch, updateSearch, activateSearch,
-  updateSearchTerm, addSearchTerm, resetTwitterSearch, saveSearch } from '../actions/search'
+  updateSearchTerm, addSearchTerm, focusSearchTerm, resetTwitterSearch, saveSearch } from '../actions/search'
 
 const mapStateToProps = (state) => {
   return {
@@ -36,6 +36,7 @@ const actions = {
   activateSearch,
   updateSearchTerm,
   addSearchTerm,
+  focusSearchTerm,
   resetTwitterSearch,
   saveSearch,
 }

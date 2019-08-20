@@ -55,7 +55,7 @@ export default class User extends Component {
         </div>
         <p>{this.props.data.description}</p>
         <div className={style.Inline}>
-          <i className="fa fa-map-marker" aria-hidden="true" />
+          <ion-icon name="pin"></ion-icon>
           &nbsp;
           {this.props.data.location}
         </div>
@@ -66,7 +66,7 @@ export default class User extends Component {
         </div>
         <div className={style.UserStats}>
           <div className={style.Inline}>
-            <i className="fa fa-twitter" aria-hidden="true" />
+            <ion-icon name="pin"></ion-icon>
             {this.props.data.tweetsInSearch}
           </div>
           <div className={style.Inline}>

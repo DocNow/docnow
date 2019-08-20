@@ -2,43 +2,56 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import style from './SearchTerm.css'
 import '@material/react-chips/index.scss'
-import {Chip} from '@material/react-chips';
 
 export default class SearchTerm extends Component {
 
   constructor(props) {
     super(props)
-    this.value = props.value
     this.chip = React.createRef()
   }
 
-  // componentDidMount() {
-  //   console.log(this.chip.current)
-  //   this.chip.current.focus()
-  // }
+  componentDidMount() {
+    this.chip.current.focus()
+  }
 
-  shouldComponentUpdate(nextProps) {
-    // prevent cursor from jumping around when editing
-    if (nextProps.value === this.value) {
-      return false
-    } else {
-      return true
+  componentDidUpdate() {
+    if (this.props.focused) {
+      this.chip.current.focus()
     }
   }
 
   keyDown(e) {
-    if (e.key === 'Enter') {
-      this.props.createSearch(this.props.query)
-      e.stopPropagation()
+    const key = e.which || e.keyCode
+    switch (key) {
+      case 13:
+        // Enter
+        if (this.props.pos === 0 && this.props.value === '') {break}
+        this.props.createSearch(this.props.query)
+        break
+      case 37:
+        // Left Arrow
+        if (e.target.selectionStart === 0) {
+          // focus preceding
+          this.props.focusSearchTerm(this.props.pos - 1, false)
+        }
+        break
+      case 39:
+        // Right Arrow
+        if (e.target.selectionStart === e.target.value.length) {
+          // focus next
+          this.props.focusSearchTerm(this.props.pos + 1, true)
+        }
+        break
+      default:
+        // no-op
     }
+    e.stopPropagation()
   }
 
   update(e) {
-    const newValue = e.target.innerText
-    this.value = newValue
     this.props.onInput({
       type: this.props.type,
-      value: newValue,
+      value: e.target.value,
       pos: this.props.pos
     })
   }
@@ -50,10 +63,12 @@ export default class SearchTerm extends Component {
   }
 
   guessType() {
-    if (this.props.value.startsWith('#')) {
-      return 'hashtag'
-    } else if (this.props.value.match(/ /)) {
+    if (this.props.value.match(/ /g)) {
       return 'phrase'
+    } else if (this.props.value.startsWith('#')) {
+      return 'hashtag'
+    } else if (this.props.value.startsWith('@')) {
+      return 'user'
     } else {
       return 'keyword'
     }
@@ -69,31 +84,39 @@ export default class SearchTerm extends Component {
         return style.Phrase
       case 'user':
         return style.User
-      case 'input':
-        return style.Input
       default:
         return ''
     }
   }
 
   render() {
-    const type = this.props.type || this.guessType()
+    const type = this.guessType()
     const cssClass = this.cssClass(type)
-    const editable = this.props.onInput ? true : false
+    const otherClassNames = this.props.className ? this.props.className : ''
+    let chip = (
+      <span className={`mdc-chip__text ${style.SearchTerm} ${otherClassNames}`}
+          ref={this.chip}          
+          onClick={(e) => this.click(e)}          
+          data-type={type}>
+          {this.props.value}</span>
+    )
+    if (this.props.onInput) {
+      chip = (
+        <input className={`mdc-chip__text ${style.SearchTerm} ${otherClassNames}`}
+          spellCheck={false}
+          ref={this.chip}
+          data-type={type}
+          onKeyDown={(e) => {this.keyDown(e)}}
+          onChange={(e) => {this.update(e)}}
+          onBlur={(e) => {this.update(e)}}
+          value={this.props.value}
+          style={{width: `${this.props.value.length || 1}ch`}}/>
+      )
+    }
     return (
-      <Chip 
-        label={this.props.value}
-        className={`${this.props.className} ${cssClass}`}
-        spellCheck={false}
-        contentEditable={editable}
-        suppressContentEditableWarning={editable}
-        onKeyDown={(e) => {this.keyDown(e)}}
-        onClick={(e) => this.click(e)}
-        onInput={(e) => {this.update(e)}}
-        data-type={type}
-        ref={this.chip}
-        title={`${type} ${this.props.value}`}
-      />
+      <span className={`mdc-chip ${cssClass}`}>
+        {chip}
+      </span>
     )
   }
 }
@@ -101,10 +124,12 @@ export default class SearchTerm extends Component {
 SearchTerm.propTypes = {
   className: PropTypes.string,
   pos: PropTypes.number,
+  focused: PropTypes.object,
   type: PropTypes.string,
   value: PropTypes.string,
   onInput: PropTypes.func,
   onClick: PropTypes.func,
   createSearch: PropTypes.func,
   query: PropTypes.array,
+  focusSearchTerm: PropTypes.func,
 }

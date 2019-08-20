@@ -50,7 +50,7 @@ export default class SearchList extends Component {
                 </Link>
               </div>
               <div className={style.GridCount}>
-                <i className="fa fa-twitter" />
+                <ion-icon name="logo-twitter"></ion-icon>
                 &nbsp;
                 { search.tweetCount.toLocaleString() }
               </div>

@@ -28,7 +28,7 @@ export default class DownloadOptions extends Component {
     return (
       <div className={style.DownloadOptions}>
         <button type="button" onClick={onClick}>
-          <i className="fa fa-download" aria-hidden="true" />
+          <ion-icon name="download"></ion-icon>
           &nbsp;
           { text }
         </button>

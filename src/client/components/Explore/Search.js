@@ -12,6 +12,9 @@ import SearchQuery from './SearchQuery'
 import styles from './Search.css'
 import card from '../Card.css'
 
+import '@material/react-fab/index.scss';
+import Fab from '@material/react-fab'
+
 export default class Search extends Component {
 
   constructor(props) {
@@ -68,30 +71,30 @@ export default class Search extends Component {
   }
 
   render() {
-    const spin = this.props.active ? ' fa-spin' : ''
+    const spin = this.props.active ? styles.Spin : ''
     const style = this.props.tweets.length === 0 ? {display: 'none'} : {}
     const disabled = this.props.query.length === 0
 
     let controls = (
       <div className={styles.Controls}>
-        <button title="Search" disabled={disabled} onClick={() => {this.search()}}>
-          <i className="fa fa-search" aria-hidden="true" />
-        </button>
-        <button title="Update Search" disabled={disabled} onClick={() => {this.update()}}>
-          <i className={'fa fa-refresh' + spin} aria-hidden="true" />
-        </button>
-        <button title="Save Search" onClick={() => {this.save()}}>
-          <i className="fa fa-archive" aria-hidden="true" />
-        </button>
+        <Fab mini title="Search" disabled={disabled}
+          onClick={() => {this.search()}}
+          icon={<span><ion-icon name="search"/></span>} />
+        <Fab mini title="Update Search" disabled={disabled}
+          onClick={() => {this.update()}}
+          icon={<span className={spin}><ion-icon name="sync"/></span>} />
+        <Fab mini title="Update Search" disabled={disabled}
+          onClick={() => {this.save()}}
+          icon={<span><ion-icon name="filing"/></span>} />
       </div>
     )
 
     if (! this.props.searchId) {
       controls = (
         <div className={styles.Controls}>
-          <button title="Search" disabled={disabled} onClick={() => {this.search()}}>
-            <i className="fa fa-search" aria-hidden="true" />
-          </button>
+          <Fab mini title="Search" disabled={disabled}
+            onClick={() => {this.search()}}
+            icon={<span><ion-icon name="search"/></span>} />
         </div>
       )
     }
@@ -103,6 +106,7 @@ export default class Search extends Component {
           <SearchQuery
             updateSearchTerm={this.props.updateSearchTerm}
             addSearchTerm={this.props.addSearchTerm}
+            focusSearchTerm={this.props.focusSearchTerm}
             query={this.props.query}
             active={this.props.active}
             createSearch={this.props.createSearch} />
@@ -205,5 +209,6 @@ Search.propTypes = {
   updateSearch: PropTypes.func,
   updateSearchTerm: PropTypes.func,
   addSearchTerm: PropTypes.func,
+  focusSearchTerm: PropTypes.func,
   saveSearch: PropTypes.func,
 }

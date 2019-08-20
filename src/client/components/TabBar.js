@@ -6,7 +6,6 @@ import '@material/react-tab/index.scss'
 import '@material/react-tab-indicator/index.scss'
 import Tab from '@material/react-tab'
 import TabBar from '@material/react-tab-bar'
-import MaterialIcon from '@material/react-material-icon'
 import MediaQueryComponent from './MediaQueryComponent'
 
 import styles from './TabBar.css'
@@ -15,9 +14,9 @@ export default class TabBarComponent extends MediaQueryComponent {
   constructor(props) {
     super(props)
     this.links = [
-      {dest: '/', label: 'Trending', icon: 'timeline'},
+      {dest: '/', label: 'Trending', icon: 'analytics'},
       {dest: '/explore/', label: 'Explore', icon: 'search'}, 
-      {dest: '/searches/', label: 'Saved Seaches', icon: 'archive'}
+      {dest: '/searches/', label: 'Saved Searches', icon: 'filing'}
     ]
     this.handleActiveIndexUpdate = this.handleActiveIndexUpdate.bind(this)
   }
@@ -53,41 +52,14 @@ export default class TabBarComponent extends MediaQueryComponent {
       >{
         this.links.map((link, i) => {
           return (<Tab key={`l-${i}`}>
-            <MaterialIcon className="mdc-tab__icon" icon={link.icon} />
+            <ion-icon name={link.icon} style={{fontSize: '180%'}}></ion-icon>
+            &nbsp;
             <span className={`mdc-tab__text-label ${this.state.mediaStyle}`}>{link.label}</span>
           </Tab>)
         })
       }
       </TabBar>
     )
-
-    // return (
-    //   <div className={styles.TabBar}>
-    //     <ul>
-    //       <li>
-    //         <Link className={`${styles.Tab} ${trendsActive}`} to="/">
-    //           <i className="fa fa-area-chart" aria-hidden="true"/>
-    //           &nbsp;
-    //           Trending
-    //         </Link>
-    //       </li>
-    //       <li>
-    //         <Link className={`${styles.Tab} ${searchActive}`} to="/explore/">
-    //           <i className="fa fa-search" aria-hidden="true"/>
-    //           &nbsp;
-    //           Explore
-    //         </Link>
-    //       </li>
-    //       <li>
-    //         <Link className={`${styles.Tab} ${searchlistActive}`} to="/searches/">
-    //           <i className="fa fa-archive" aria-hidden="true"/>
-    //           &nbsp;
-    //           Saved Searches
-    //         </Link>
-    //       </li>
-    //     </ul>
-    //   </div>
-    // )
   }
 
 }

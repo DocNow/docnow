@@ -12,21 +12,21 @@ export default class TweetTabBar extends Component {
 
           <li>
             <a className={style.TweetTab + ' ' + style.TweetTabActive} href="/">
-              <i className="fa fa-archive" aria-hidden="true" />
+              <ion-icon name="filing"></ion-icon>
               All
             </a>
           </li>
 
           <li>
             <a className={style.TweetTab} href="exampleselected.html">
-              <i className="fa fa-check-square-o" aria-hidden="true" />
+              <ion-icon name="checkbox-outline"></ion-icon>
               Selected
             </a>
           </li>
 
           <li>
             <a  className={style.TweetTab} href="exampleannotated.html">
-              <i className="fa fa-comment" aria-hidden="true" />
+              <ion-icon name="chatbubbles"></ion-icon>
               Annotated
             </a>
           </li>

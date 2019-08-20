@@ -15,7 +15,7 @@ export default class ImageList extends Component {
         {this.props.images.map((image) => (
           <figure key={image.url} className={style.Image}>
             <img src={image.url} />
-            <figcaption><i className="fa fa-retweet" aria-hidden="true" /> {image.count} </figcaption>
+            <figcaption><ion-icon name="repeat"></ion-icon> {image.count} </figcaption>
           </figure>
         ))}
       </div>

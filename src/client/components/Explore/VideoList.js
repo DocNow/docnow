@@ -16,7 +16,7 @@ export default class VideoList extends Component {
           <div key={video.url} className={style.Video}>
             <video controls src={video.url} />
             <figcaption>
-              <i className="fa fa-retweet" aria-hidden="true" /> {video.count}
+              <ion-icon name="repeat"></ion-icon> {video.count}
             </figcaption>
           </div>
         ))}

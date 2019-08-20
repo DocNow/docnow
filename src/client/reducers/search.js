@@ -2,7 +2,7 @@ import {
   SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS, SET_TWITTER_SEARCH_USERS,
   SET_TWITTER_SEARCH_HASHTAGS, SET_TWITTER_SEARCH_URLS, SET_TWITTER_SEARCH_IMAGES,
   SET_TWITTER_SEARCH_VIDEOS, RESET_TWITTER_SEARCH, ACTIVATE_SEARCH,
-  UPDATE_SEARCH_TERM, REMOVE_SEARCH_TERM, ADD_SEARCH_TERM
+  UPDATE_SEARCH_TERM, REMOVE_SEARCH_TERM, ADD_SEARCH_TERM, FOCUS_SEARCH_TERM
 } from '../actions/search'
 
 const initialState = {
@@ -119,9 +119,14 @@ export default function user(state = initialState, action) {
       const newQuery = []
       state.query.forEach((term, pos) => {
         if (action.term.pos !== pos)  {
+          // Focus previous term as result of removing this one
+          const focused = pos === action.term.pos - 1 
+            ? { atStart: false }
+            : null
           newQuery.push({
             type: term.type,
             value: term.value,
+            focused,
             pos: pos
           })
         }
@@ -134,14 +139,35 @@ export default function user(state = initialState, action) {
     }
 
     case ADD_SEARCH_TERM: {
+      // Clean up terms before adding a new one
+      const cleanedQuery = state.query.filter(term => !term.value.match(/^\s+$/))
       return {
         ...state,
         queryUpdated: true,
         query: [
-          ...state.query,
+          ...cleanedQuery,
           action.term
         ]
       }
+    }
+
+    case FOCUS_SEARCH_TERM: {
+      if (action.pos >= 0 && action.pos < state.query.length) {
+        const focusedQuery = state.query.map((term, i) => {
+          let newTerm = term
+          if (i === action.pos) {
+            newTerm = {...term}
+            newTerm.focused = {atStart: action.atStart}
+          }
+          return newTerm
+        })
+        return {
+          ...state,
+          queryUpdated: false,
+          query: [...focusedQuery]
+        }
+      }
+      return state
     }
 
     default: {

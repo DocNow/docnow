@@ -44,7 +44,7 @@ export default class Editable extends Component {
         <span>
           {text}
           &nbsp;
-          <i onClick={(e) => {this.onClick(e)}} className="fa fa-edit" aria-hidden="true" />
+          <ion-icon name="create" onClick={(e) => {this.onClick(e)}}></ion-icon>
         </span>
       )
     }

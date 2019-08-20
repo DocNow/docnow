@@ -20,17 +20,17 @@ export default class AppBar extends Component {
 
       admin = (
         <Link to="/settings/">
-          <i className="fa fa-gears" aria-hidden="true" /> Settings {notifications}
+          <ion-icon name="settings"></ion-icon> Settings {notifications}
         </Link>
       )
     }
     return (
       <nav className={style.AppBar}>
           <a href="/auth/logout">
-            <i className="fa fa-sign-out" aria-hidden="true"/> Logout
+            <ion-icon name="log-out"></ion-icon> Logout
           </a>
           <Link to="/profile/">
-            <i className="fa fa-user" aria-hidden="true"/> Profile
+            <ion-icon name="contact"></ion-icon> Profile
           </Link>
           {admin}
       </nav>

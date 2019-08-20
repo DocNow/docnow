@@ -7,6 +7,9 @@ import AddPlace from './AddPlace'
 import card from '../Card.css'
 import style from './Trends.css'
 
+import '@material/react-button/index.scss'
+import Button from '@material/react-button'
+
 export default class Trends extends MediaQueryComponent {
 
   componentDidMount() {
@@ -35,9 +38,12 @@ export default class Trends extends MediaQueryComponent {
           <p>
           Welcome to DocNow, an social media appraisal tool.
           </p>
-          <button onClick={() => {window.location = '/auth/twitter'; return false}}>
-            <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
-          </button>
+          <Button 
+            raised
+            icon={<span><ion-icon name="logo-twitter"></ion-icon></span>}
+            onClick={() => {window.location = '/auth/twitter'; return false}}>
+            &nbsp; Login with Twitter
+          </Button>
         </div>
       )
     } else {

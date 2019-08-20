@@ -42,9 +42,13 @@ export default class Webpage extends Component {
       <div className={card.Card + ' ' +  selectedStyle}>
         <div className={style.Image}>
           <div className={style.Controls}>
-            <i onClick={() => {this.select()}} className={style.Add + ' fa fa-thumbs-up'} />
+            <span className={style.Add}>
+              <ion-icon name="thumbs-up" onClick={() => {this.select()}}></ion-icon>
+              </span>
             &nbsp;
-            <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-thumbs-down'}/>
+            <span className={style.Remove}>
+              <ion-icon name="thumbs-down" onClick={() => {this.deselect()}} className={style.Remove}></ion-icon>
+            </span>
           </div>
           <a href={this.props.url} target="_new">
             <img rel="noreferrer" src={img} />
@@ -62,7 +66,7 @@ export default class Webpage extends Component {
           <div
             className={style.Count}
             onClick={() => {this.showTweets()}}>
-            <i className="fa fa-twitter" />
+            <ion-icon name="logo-twitter"></ion-icon>
             &nbsp;
             {this.props.count}
           </div>
