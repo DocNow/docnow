@@ -4,7 +4,7 @@ import SearchTerm from './SearchTerm'
 
 import style from './SearchTerm.css'
 import styleQuery from './SearchQuery.css'
-
+import "@material/elevation/mdc-elevation.scss"
 import {ChipSet, Chip} from '@material/react-chips';
 
 export default class SearchQuery extends Component {
@@ -33,7 +33,7 @@ export default class SearchQuery extends Component {
       )
     }
     return (
-      <div id="box" onClick={(e) => {this.onClick(e)}} className={styleQuery.SearchQuery}>
+      <div id="box" onClick={(e) => {this.onClick(e)}} className={`mdc-elevation--z4 ${styleQuery.SearchQuery}`}>
         {placeHolder}
         <ChipSet input>
           {this.props.query.map((term, i) => (

@@ -12,6 +12,11 @@ import SearchQuery from './SearchQuery'
 import styles from './Search.css'
 import card from '../Card.css'
 
+import Card, {
+  CardPrimaryContent,
+  CardActions
+} from "@material/react-card"
+
 import '@material/react-fab/index.scss';
 import Fab from '@material/react-fab'
 
@@ -125,56 +130,70 @@ export default class Search extends Component {
 
         <div className={card.CardHolder} style={style}>
 
-          <div className={card.Card}>
-            <TweetList tweets={this.props.tweets} />
-            <div className={card.CardTitle}>
-              <h2>Tweets</h2>
-            </div>
-          </div>
+          <Card outlined className={card.Card} >
+            <CardPrimaryContent className={card.Scroll}>
+              <TweetList tweets={this.props.tweets} />
+            </CardPrimaryContent>
 
-          <div className={card.Card}>
-            <UserList
-              addSearchTerm={this.props.addSearchTerm}
-              users={this.props.users}/>
-            <div className={card.CardTitle}>
-              <h2>Users</h2>
-            </div>
-          </div>
+            <CardActions>
+              <h2 className={card.PlaceHeader}>Tweets</h2>
+            </CardActions>
+          </Card>
 
-          <div className={card.Card}>
-            <HashtagChart
-              addSearchTerm={this.props.addSearchTerm}
-              hashtags={this.props.hashtags}/>
-            <div className={card.CardTitle}>
-              <h2>Hashtags</h2>
-            </div>
-          </div>
+          <Card outlined className={card.Card} >
+            <CardPrimaryContent className={card.Scroll}>
+              <UserList
+                addSearchTerm={this.props.addSearchTerm}
+                users={this.props.users}/>
+            </CardPrimaryContent>
 
-          <div className={card.Card}>
-            <UrlList urls={this.props.urls} />
-            <div className={card.CardTitle}>
-              <h2>URLs</h2>
-            </div>
-          </div>
+            <CardActions>
+              <h2 className={card.PlaceHeader}>Users</h2>
+            </CardActions>
+          </Card>
 
-          <div className={card.Card}>
-            <ImageList images={this.props.images} />
-            <div className={card.CardTitle}>
-              <h2>Images</h2>
-            </div>
-          </div>
+          <Card outlined className={card.Card} >
+            <CardPrimaryContent className={card.Scroll}>
+              <HashtagChart
+                addSearchTerm={this.props.addSearchTerm}
+                hashtags={this.props.hashtags}/>
+            </CardPrimaryContent>
 
-          <div className={card.Card}>
-            <VideoList videos={this.props.videos} />
-            <div className={card.CardTitle}>
-              <h2>Video</h2>
-            </div>
-          </div>
+            <CardActions>
+              <h2 className={card.PlaceHeader}>Hashtags</h2>
+            </CardActions>
+          </Card>
+
+          <Card outlined className={card.Card} >
+            <CardPrimaryContent className={card.Scroll}>
+              <UrlList urls={this.props.urls} />
+            </CardPrimaryContent>
+
+            <CardActions>
+              <h2 className={card.PlaceHeader}>URLs</h2>
+            </CardActions>
+          </Card>
+
+          <Card outlined className={card.Card} >
+            <CardPrimaryContent className={card.Scroll}>
+              <ImageList images={this.props.images} />
+            </CardPrimaryContent>
+
+            <CardActions>
+              <h2 className={card.PlaceHeader}>Images</h2>
+            </CardActions>
+          </Card>
+
+          <Card outlined className={card.Card} >
+            <CardPrimaryContent className={card.Scroll}>
+              <VideoList videos={this.props.videos} />
+            </CardPrimaryContent>
+
+            <CardActions>
+              <h2 className={card.PlaceHeader}>Video</h2>
+            </CardActions>
+          </Card>
         </div>
-
-        <br />
-        <br />
-        <br />
 
       </div>
     )
