@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import exploreStyles from './Explore.css'
 import styles from './HashtagChart.css'
+import animations from '../animations.css'
 
 import 'd3-transition'
 import { max } from 'd3-array'
@@ -90,11 +92,13 @@ export default class Hashtags extends Component {
   render() {
     let loader = null
     if (this.props.hashtags.length === 0) {
-      loader = 'Loading...'
+      loader = (<span className={`${animations.Spin} ${exploreStyles.Loader}`}>
+        <ion-icon name="logo-ionic"></ion-icon>
+      </span>)
     }
 
     return (
-      <div className={styles.HashtagsCard}>
+      <div className={`${styles.HashtagsCard} ${exploreStyles.InnerCard}`}>
         {loader}
         <svg ref={node => {this.node = node}} height={800} />
       </div>

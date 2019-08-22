@@ -12,7 +12,7 @@
 .Tweet p {
   margin: 5px;
   font-size: 11pt;
-  color: #000000;
+  color: #333;
 }
 
 .Tweet img {
@@ -44,7 +44,7 @@
 }
 
 .TweetStats {
-  height: 20px;
+  height: 2em;
   border-top: 1px solid #CCCCCC;
   background-color: #ffffff;
   display: flex;

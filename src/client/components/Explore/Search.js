@@ -11,6 +11,7 @@ import SearchQuery from './SearchQuery'
 
 import styles from './Search.css'
 import card from '../Card.css'
+import animations from '../animations.css'
 
 import Card, {
   CardPrimaryContent,
@@ -76,7 +77,7 @@ export default class Search extends Component {
   }
 
   render() {
-    const spin = this.props.active ? styles.Spin : ''
+    const spin = this.props.active ? animations.Spin : ''
     const style = this.props.tweets.length === 0 ? {display: 'none'} : {}
     const disabled = this.props.query.length === 0
 

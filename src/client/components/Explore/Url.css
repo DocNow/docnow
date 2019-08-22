@@ -1,2 +1,5 @@
 .Url {
+  margin-bottom: .5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

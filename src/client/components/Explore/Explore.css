@@ -1,0 +1,12 @@
+.InnerCard {
+  background-color: #333;
+}
+
+.Loader {
+  color: #fff;
+  font-size: 30pt;
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  padding: 120px;
+}

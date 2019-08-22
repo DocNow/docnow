@@ -3,9 +3,9 @@
   margin-top: 2px;
   margin-left: 2px;
   margin-bottom: 2px;
-  padding: 2px;
+  padding: .5em;
   font-size: 10pt;
-  width: 97%;
+  width: 94%;
 }
 
 .User img {
@@ -42,21 +42,19 @@
 }
 
 .UserStats {
-  height: 25px;
-  border-top: 1px solid #CCCCCC;
+  height: 2em;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   padding-right: 10px;
   align-items: center;
 }
 
 .TwitterUserStats {
-  height: 25px;
+  height: 3em;
   display: flex;
   justify-content: space-around;
   padding-right: 10px;
   align-items: center;
-  padding-bottom: 5px;
 }
 
 .Inline {

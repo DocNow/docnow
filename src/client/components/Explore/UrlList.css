@@ -1,24 +1,11 @@
 .UrlList {
-  height: 274px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  background-color: #000000;
-}
-
-.UrlList::-webkit-scrollbar {
-  width: 15px;
-  background-color: #eeeeee;
-}
-
-.UrlList::-webkit-scrollbar-thumb {
-  background-color: #000000;
+  background-color: #ffffff;
+  padding: 5px
 }
 
 .UrlList ul {
   width: 97%;
-  background-color: #ffffff;
   margin: 2px;
-  padding: 5px;
 }
 
 .UrlList li {

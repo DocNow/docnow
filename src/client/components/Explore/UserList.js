@@ -2,17 +2,20 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import User from './User'
 
-import style from './UserList.css'
+import exploreStyles from './Explore.css'
+import animations from '../animations.css'
 
 export default class UserList extends Component {
 
   render() {
     let loader = null
     if (this.props.users.length === 0) {
-      loader = 'Loading...'
+      loader = (<span className={`${animations.Spin} ${exploreStyles.Loader}`}>
+          <ion-icon name="logo-ionic"></ion-icon>
+        </span>)
     }
     return (
-      <div className={ style.UserList }>
+      <div className={ exploreStyles.InnerCard }>
         {loader}
         {this.props.users.map(user => {
           return (

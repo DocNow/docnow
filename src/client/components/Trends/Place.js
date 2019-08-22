@@ -65,7 +65,7 @@ export default class Place extends Component {
 
     return (
       <Card outlined className={cardStyle.Card} >
-        <CardPrimaryContent className={cardStyle.Scroll}>
+        <CardPrimaryContent className={`${cardStyle.Scroll} ${cardStyle.innerCard}`}>
           <FlipMove
             style={{padding: '24px'}}
             duration={2000}

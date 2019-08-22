@@ -49,7 +49,7 @@ export default class Trends extends MediaQueryComponent {
     } else {
       newLocation = (
         <AddPlace
-          limit={5}
+          limit={6}
           places={this.props.trends}
           world={this.props.world}
           newPlace={this.props.newPlace}
@@ -76,8 +76,8 @@ export default class Trends extends MediaQueryComponent {
                 username={this.props.username}
                 createSearch={this.props.createSearch}/>
             ))}
-          </div>
-          {newLocation}
+            {newLocation}
+          </div>          
         </div>
       </div>
     )

@@ -58,6 +58,15 @@ export default class AddPlace extends Component {
           sortItems={this.sortPlaces}
           items={Object.keys(this.props.world)}
           shouldItemRender={this.matchInputToTerm}
+          menuStyle={{
+            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 2px 12px',
+            background: 'rgba(255, 255, 255, 0.9) none repeat scroll 0% 0%',
+            padding: '2px',
+            fontSize: '90%',
+            position: 'fixed',
+            overflow: 'auto',
+            maxHeight: '140px'
+          }}
           renderItem={(item, isHighlighted) => (
             <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
               {item}
