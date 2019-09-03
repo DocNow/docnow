@@ -2,6 +2,10 @@
   display: none;
 }
 
+.TabBar {
+  margin-bottom: 20px;
+}
+
 /* .TabBar {
   text-transform: uppercase;
   margin-left: 20px;

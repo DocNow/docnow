@@ -6,6 +6,7 @@ import user from './user'
 import trends from './trends'
 import search from './search'
 import searches from './searches'
+import users from './users'
 import webpages from './webpages'
 import queue from './queue'
 import tweets from './tweets'
@@ -17,6 +18,7 @@ export default (history) => combineReducers({
   trends,
   search,
   searches,
+  users,
   webpages,
   queue,
   tweets,

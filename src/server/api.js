@@ -351,4 +351,12 @@ app.get('/stats', async (req, res) => {
   }
 })
 
+app.get('/users', async (req, res) => {
+  if (req.user.isSuperUser) {
+    res.json(await db.getUsers())
+  } else {
+    res.status(401).json({error: 'Not Authorized'})
+  }
+})
+
 module.exports = app

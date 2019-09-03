@@ -158,8 +158,12 @@ export class Database {
     return this.get(USER, userId)
   }
 
-  getUsers() {
-    return this.search(USER, '*')
+  async getUsers() {
+    const users = await this.search(USER, '*')
+    for (const user of users) {
+      user.searches = await this.getUserSearches(user)
+    }
+    return users
   }
 
   getSuperUser() {
@@ -372,7 +376,6 @@ export class Database {
   }
 
   async getUserSearches(user) {
-    // const body = {query: {match: {creator: user.id, saved: true}}}
     const body = {
       query: {
         bool: {

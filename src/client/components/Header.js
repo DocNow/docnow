@@ -32,7 +32,10 @@ export default class Header extends MediaQueryComponent {
           notifications={this.props.notifications}
           isSuperUser={this.props.isSuperUser} />
       )
-      tabBar = <TabBar location={this.props.location} navigateTo={this.props.navigateTo} />
+      tabBar = <TabBar 
+        isSuperUser={this.props.isSuperUser}
+        location={this.props.location}
+        navigateTo={this.props.navigateTo} />
     }
 
     return (

@@ -48,14 +48,13 @@
       }
     },
     "test": {
-      "command": "npm run eslint:server && mocha --timeout 20000 --require @babel/register --require @babel/polyfill test/*",
+      "command": "npm run eslint:server && mocha --timeout 20000 --require @babel/register --require @babel/polyfill test/db",
       "env": {
         "NODE_ENV": "test"
       }
     }
   },
   "dependencies": {
-    "@material/react-text-field": "^0.13.0",
     "archiver": "^3.0.0",
     "better-npm-run": "0.1.1",
     "big-integer": "^1.6.43",
@@ -133,6 +132,8 @@
     "@material/react-layout-grid": "^0.14.1",
     "@material/react-tab": "^0.14.1",
     "@material/react-tab-bar": "^0.14.1",
+    "@material/react-text-field": "^0.13.0",
+    "@material-ui/core": "^4.4.0",
     "babel-eslint": "^10.0.1",
     "babel-loader": "^8.0.5",
     "eslint": "^5.16.0",

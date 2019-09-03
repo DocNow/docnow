@@ -16,8 +16,11 @@ export default class TabBarComponent extends MediaQueryComponent {
     this.links = [
       {dest: '/', label: 'Trending', icon: 'analytics'},
       {dest: '/explore/', label: 'Explore', icon: 'search'}, 
-      {dest: '/searches/', label: 'Saved Searches', icon: 'filing'}
+      {dest: '/searches/', label: 'Saved Searches', icon: 'filing'},
     ]
+    if (props.isSuperUser) {
+      this.links.push({dest: '/users/', label: 'Users', icon: 'person'})
+    }
     this.handleActiveIndexUpdate = this.handleActiveIndexUpdate.bind(this)
   }
 
@@ -41,12 +44,16 @@ export default class TabBarComponent extends MediaQueryComponent {
       case '/searches/':
         activeIndex = 2
         break
+      case '/users/':
+        activeIndex = 3
+        break
       default:
         break
     }
 
     return (
       <TabBar
+        className={styles.TabBar}
         activeIndex={activeIndex}
         handleActiveIndexUpdate={this.handleActiveIndexUpdate}
       >{

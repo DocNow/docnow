@@ -1,5 +1,6 @@
 export const GET_USER = 'GET_USER'
 export const SET_USER = 'SET_USER'
+export const UPDATE_USER = 'UPDATE_USER'
 export const UPDATE_USER_SETTINGS = 'UPDATE_USER_SETTINGS'
 export const SAVE_USER_SETTINGS = 'SAVE_USER_SETTINGS'
 
@@ -52,4 +53,14 @@ export const getUser = () => {
         }
       })
   }
+}
+
+export const updateUser = (user) => {
+  const opts = {
+    method: 'PUT',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(user),
+    credentials: 'same-origin'
+  }
+  fetch(`/api/v1/user/${user.id}`, opts)
 }
