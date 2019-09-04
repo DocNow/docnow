@@ -17,6 +17,9 @@ export const getUsers = () => {
   }
 }
 
+// perhaps this belongs in actions/user.js but it is only
+// used by an admin to update another user
+
 export const updateUser = (user) => {
   return (dispatch) => {
     const opts = {
