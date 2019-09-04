@@ -62,6 +62,21 @@ app.put('/user', async (req, res) => {
   }
 })
 
+app.put('/user/:userId', async (req, res) => {
+  console.log('x')
+  if (req.user && req.user.isSuperUser) {
+    const user = await db.getUser(req.params.userId)
+    const newUser = {
+      ...user,
+      ...req.body
+    } 
+    await db.updateUser(newUser)
+    res.json(newUser)
+  } else {
+    res.status(401).json({error: 'Not Authorized'})
+  }
+})
+
 app.get('/settings', async (req, res) => {
   const settings = await db.getSettings()
   if (! settings || ! req.user) {

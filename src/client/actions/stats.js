@@ -11,7 +11,6 @@ export const getSystemStats = () => {
   return async (dispatch) => {
     const stats = await fetch('/api/v1/stats', {credentials: 'same-origin'})
       .then((resp) => {return resp.json()})
-    console.log(stats)
     dispatch(setSystemStats(stats))
   }
 }

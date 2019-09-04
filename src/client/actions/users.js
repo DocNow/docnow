@@ -16,3 +16,18 @@ export const getUsers = () => {
       })
   }
 }
+
+export const updateUser = (user) => {
+  return (dispatch) => {
+    const opts = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(user),
+      credentials: 'same-origin'
+    }
+    fetch(`/api/v1/user/${user.id}`, opts)
+      .then(() => {
+        dispatch(getUsers())
+      })
+  }
+}

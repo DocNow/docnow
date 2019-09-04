@@ -9,17 +9,23 @@ import TableRow from '@material-ui/core/TableRow'
 import Switch from '@material-ui/core/Switch'
 
 import style from './UserList.css'
-import { updateUser } from '../actions/user';
 
 export default class UserList extends Component {
+
+  constructor() {
+    super()
+    this.toggleActive = this.toggleActive.bind(this)
+  }
 
   componentDidMount() {
     if (this.props.users.length === 0) {
       this.tick()
     }
+
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
+
   }
 
   componentWillUnmount() {
@@ -30,8 +36,8 @@ export default class UserList extends Component {
     this.props.getUsers()
   }
 
-  updateActive(user) {
-    updateUser({id: user.id, active: false})
+  toggleActive(user) {
+    this.props.updateUser({id: user.id, active: ! user.active})
   }
 
   render() {
@@ -59,8 +65,8 @@ export default class UserList extends Component {
               <TableCell>{tweetCount}</TableCell>
               <TableCell>
                 <Switch
-                  onChange={this.updateActive(user)}
                   checked={user.active}
+                  onChange={() => {this.toggleActive(user)}}
                   color="primary" />
               </TableCell>
             </TableRow>
@@ -75,4 +81,5 @@ export default class UserList extends Component {
 UserList.propTypes = {
   users: PropTypes.array,
   getUsers: PropTypes.func,
+  updateUser: PropTypes.func, 
 }
