@@ -1,11 +1,10 @@
 .Wayback img {
-  height: 20px;
-  padding-left: 2px;
-  padding-right: 2px;
+  height: 24px;
+  width: 24px;
 }
 
 .WaybackFound {
-  background-color: lightgreen;
+  background-color: lightgreen !important;
 }
 
 .WaybackError img {

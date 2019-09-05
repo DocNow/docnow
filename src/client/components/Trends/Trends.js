@@ -36,7 +36,7 @@ export default class Trends extends MediaQueryComponent {
       introElement = (
         <div className={style.Intro}>
           <p>
-          Welcome to DocNow, an social media appraisal tool.
+          Welcome to DocNow, a social media appraisal tool.
           </p>
           <Button 
             raised

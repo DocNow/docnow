@@ -18,14 +18,14 @@ export default class TweetTabBar extends Component {
           </li>
 
           <li>
-            <a className={style.TweetTab} href="exampleselected.html">
+            <a className={style.TweetTab} href="#">
               <ion-icon name="checkbox-outline"></ion-icon>
               Selected
             </a>
           </li>
 
           <li>
-            <a  className={style.TweetTab} href="exampleannotated.html">
+            <a  className={style.TweetTab} href="#">
               <ion-icon name="chatbubbles"></ion-icon>
               Annotated
             </a>

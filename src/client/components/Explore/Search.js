@@ -89,7 +89,7 @@ export default class Search extends Component {
         <Fab mini title="Update Search" disabled={disabled}
           onClick={() => {this.update()}}
           icon={<span className={spin}><ion-icon name="sync"/></span>} />
-        <Fab mini title="Update Search" disabled={disabled}
+        <Fab mini title="Save Search" disabled={disabled}
           onClick={() => {this.save()}}
           icon={<span><ion-icon name="filing"/></span>} />
       </div>

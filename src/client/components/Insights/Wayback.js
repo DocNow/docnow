@@ -5,6 +5,8 @@ import moment from 'moment'
 import ia from '../../images/ia.png'
 import style from './Wayback.css'
 
+import IconButton from '@material-ui/core/IconButton'
+
 export default class Wayback extends Component {
 
   componentDidMount() {
@@ -20,25 +22,30 @@ export default class Wayback extends Component {
       const elapsed = moment(this.props.archive.time).fromNow()
       const title = `Last archived ${elapsed}`
       return (
-        <a className={style.Wayback + ' ' + style.WaybackFound}
+        <IconButton aria-label="view on Internet Archive" 
+          className={`${style.Wayback} ${style.WaybackFound}`}
           href={this.props.archive.url}
           target="_new">
           <img title={title} alt={title} src={ia} />
-        </a>
+        </IconButton>
       )
     } else if (this.props.archive && this.props.archive.error) {
       const title = 'Internet Archive cannot archive!'
       return (
-        <span className={style.Wayback + ' ' + style.WaybackError}>
-          <img onClick={() => {this.saveArchive()}} title={title} alt={title} src={ia} />
-        </span>
+        <IconButton aria-label="archive at Internet Archive"
+          className={`${style.Wayback} ${style.WaybackError}`}
+          onClick={() => {this.saveArchive()}}>
+          <img title={title} alt={title} src={ia} />
+        </IconButton>
       )
     } else {
       const title = 'Click to archive at Internet Archive'
       return (
-        <span className={style.Wayback}>
-          <img onClick={() => {this.saveArchive()}} title={title} alt={title} src={ia} />
-        </span>
+        <IconButton aria-label="archive at Internet Archive"
+          className={style.Wayback}
+          onClick={() => {this.saveArchive()}}>
+          <img title={title} alt={title} src={ia} />
+        </IconButton>
       )
     }
   }
