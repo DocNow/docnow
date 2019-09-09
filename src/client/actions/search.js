@@ -194,15 +194,6 @@ export const saveSearch = (search) => {
       })
   }
 
-  /*
-  return (dispatch) => {
-    dispatch(updateSearch({
-      ...search,
-      saved: true
-    }))
-    dispatch(push('/searches/'))
-  }
-  */
 }
 
 export const refreshSearch = (search) => {

@@ -24,7 +24,7 @@ export default class UserList extends Component {
 
     this.timerId = setInterval(() => {
       this.tick()
-    }, 3000)
+    }, 10000)
 
   }
 
@@ -37,7 +37,11 @@ export default class UserList extends Component {
   }
 
   toggleActive(user) {
-    this.props.updateUser({id: user.id, active: ! user.active})
+    if (user.active) {
+      this.props.deactivateUser(user)
+    } else {
+      this.props.activateUser(user)
+    }
   }
 
   render() {
@@ -81,5 +85,6 @@ export default class UserList extends Component {
 UserList.propTypes = {
   users: PropTypes.array,
   getUsers: PropTypes.func,
-  updateUser: PropTypes.func, 
+  activateUser: PropTypes.func,
+  deactivateUser: PropTypes.func
 }
