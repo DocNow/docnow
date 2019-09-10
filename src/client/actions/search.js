@@ -10,6 +10,7 @@ export const ACTIVATE_SEARCH = 'ACTIVATE_SEARCH'
 export const UPDATE_SEARCH_TERM = 'UPDATE_SEARCH_TERM'
 export const REMOVE_SEARCH_TERM = 'REMOVE_SEARCH_TERM'
 export const ADD_SEARCH_TERM = 'ADD_SEARCH_TERM'
+export const FOCUS_SEARCH_TERM = 'FOCUS_SEARCH_TERM'
 export const DELETE_SEARCH = 'DELETE_SEARCH'
 export const ADD_SEARCH = 'ADD_SEARCH'
 
@@ -77,7 +78,7 @@ export const activateSearch = () => {
 }
 
 export const updateSearchTerm = (term) => {
-  if (term.value === '') {
+  if (term.value.match(/^\s*$/) && term.pos > 0) {
     return {
       type: REMOVE_SEARCH_TERM,
       term
@@ -94,6 +95,14 @@ export const addSearchTerm = (term) => {
   return {
     type: ADD_SEARCH_TERM,
     term
+  }
+}
+
+export const focusSearchTerm = (pos, atStart) => {
+  return {
+    type: FOCUS_SEARCH_TERM,
+    pos,
+    atStart
   }
 }
 
@@ -185,15 +194,6 @@ export const saveSearch = (search) => {
       })
   }
 
-  /*
-  return (dispatch) => {
-    dispatch(updateSearch({
-      ...search,
-      saved: true
-    }))
-    dispatch(push('/searches/'))
-  }
-  */
 }
 
 export const refreshSearch = (search) => {

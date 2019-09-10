@@ -274,6 +274,20 @@ describe('database', function() {
     })
   })
 
+  it('should get users', async () => {
+
+    // save the search so it is returned with the user's searches
+    await db.updateSearch({...testSearch, saved: true})
+
+    const users = await db.getUsers()
+    if (users.length == 1) {
+      ok(users[0].id, 'user.id')
+      ok(users[0].searches.length > 0, 'user.searches')
+      ok(users[0].searches[0].id, 'search.id')
+      ok(users[0].searches[0].tweetCount > 0, 'search.tweetCount')
+    }
+  })
+
   it('should delete', async () => {
     const result = await db.deleteSearch(testSearch)
     ok(result, 'delete return value')

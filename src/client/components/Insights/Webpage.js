@@ -7,17 +7,38 @@ import style from './Webpage.css'
 import card from '../Card.css'
 import doc from '../../images/doc.png'
 
+import Card from '@material-ui/core/Card'
+import CardMedia from '@material-ui/core/CardMedia'
+import CardContent from '@material-ui/core/CardContent'
+import Typography from '@material-ui/core/Typography'
+import CardActions from '@material-ui/core/CardActions'
+import IconButton from '@material-ui/core/IconButton'
+import Button from '@material-ui/core/Button'
+import Checkbox from '@material-ui/core/Checkbox'
+
 export default class Webpage extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      selected: this.props.selected
+    }
+  }
 
   showTweets() {
     this.props.getTweetsForUrl(this.props.searchId, this.props.url)
   }
 
+  toggleSelect() {
+    return this.state.selected ? this.deselect() : this.select()
+  }
+
   select() {
+    this.setState({selected: true})
     this.props.selectWebpage(this.props.searchId, this.props.url)
   }
 
   deselect() {
+    this.setState({selected: false})
     this.props.deselectWebpage(this.props.searchId, this.props.url)
   }
 
@@ -31,44 +52,35 @@ export default class Webpage extends Component {
 
     const img = this.props.image || doc
 
-    let selectedStyle = style.Unselected
-    if (this.props.selected === true) {
-      selectedStyle = style.Selected
-    } else if (this.props.deselected === true) {
-      selectedStyle = style.Deselected
-    }
-
     return (
-      <div className={card.Card + ' ' +  selectedStyle}>
-        <div className={style.Image}>
-          <div className={style.Controls}>
-            <i onClick={() => {this.select()}} className={style.Add + ' fa fa-thumbs-up'} />
-            &nbsp;
-            <i onClick={() => {this.deselect()}} className={style.Remove + ' fa fa-thumbs-down'}/>
-          </div>
-          <a href={this.props.url} target="_new">
-            <img rel="noreferrer" src={img} />
-          </a>
-        </div>
-        <div className={style.Title}>
-          <a href={this.props.url} target="_new">
+      <Card className={`${card.Card} ${card.Scroll} ${style.Webpage}`}>
+        <CardMedia style={{paddingTop: '56.25%', position: 'relative'}} image={img}>
+          <Checkbox
+            style={{position: 'absolute', top: '5px', right: '5px'}}
+            checked={this.state.selected}
+            onChange={() => this.toggleSelect()}
+            inputProps={{
+              'aria-label': 'primary checkbox',
+            }}
+          />
+        </CardMedia>
+        <CardContent style={{overflowY: 'scroll', height: '46.75%'}}>
+          <Typography variant="h2" component="h2">
             {this.props.title}
-          </a>
-        </div>
-        <div className={style.Description}>
-          {this.props.description}
-        </div>
-        <div className={style.Stats}>
-          <div
-            className={style.Count}
-            onClick={() => {this.showTweets()}}>
-            <i className="fa fa-twitter" />
-            &nbsp;
-            {this.props.count}
-          </div>
-          <div className={style.WebsiteName}>
-            <a href={this.props.url} target="_new">{website}</a>
-          </div>
+          </Typography>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {this.props.description}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <IconButton aria-label="add to favorites" onClick={() => {this.showTweets()}}>
+            <ion-icon name="logo-twitter"></ion-icon>
+          </IconButton>
+          {this.props.count}
+          <Button size="small" color="primary" href={this.props.url} target="_new"
+            className={style.UrlButton}>
+            {website}
+          </Button>
           <LazyLoad offsetVertical={800}>
             <Wayback
               url={this.props.url}
@@ -76,8 +88,8 @@ export default class Webpage extends Component {
               checkArchive={this.props.checkArchive}
               saveArchive={this.props.saveArchive}/>
           </LazyLoad>
-        </div>
-      </div>
+        </CardActions>
+      </Card>
     )
   }
 }

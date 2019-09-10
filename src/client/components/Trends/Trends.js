@@ -7,6 +7,9 @@ import AddPlace from './AddPlace'
 import card from '../Card.css'
 import style from './Trends.css'
 
+import '@material/react-button/index.scss'
+import Button from '@material/react-button'
+
 export default class Trends extends MediaQueryComponent {
 
   componentDidMount() {
@@ -33,17 +36,20 @@ export default class Trends extends MediaQueryComponent {
       introElement = (
         <div className={style.Intro}>
           <p>
-          Welcome to DocNow, an social media appraisal tool.
+          Welcome to DocNow, a social media appraisal tool.
           </p>
-          <button onClick={() => {window.location = '/auth/twitter'; return false}}>
-            <i className="fa fa-twitter" aria-hidden="true"/>  Login with Twitter
-          </button>
+          <Button 
+            raised
+            icon={<span><ion-icon name="logo-twitter"></ion-icon></span>}
+            onClick={() => {window.location = '/auth/twitter'; return false}}>
+            &nbsp; Login with Twitter
+          </Button>
         </div>
       )
     } else {
       newLocation = (
         <AddPlace
-          limit={5}
+          limit={6}
           places={this.props.trends}
           world={this.props.world}
           newPlace={this.props.newPlace}
@@ -70,8 +76,8 @@ export default class Trends extends MediaQueryComponent {
                 username={this.props.username}
                 createSearch={this.props.createSearch}/>
             ))}
-          </div>
-          {newLocation}
+            {newLocation}
+          </div>          
         </div>
       </div>
     )

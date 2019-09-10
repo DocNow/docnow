@@ -12,12 +12,14 @@ import SearchPage from './SearchPage'
 import InsightsPage from './InsightsPage'
 import WebpagesPage from './WebpagesPage'
 import SearchListPage from './SearchListPage'
+import UserListPage from './UserListPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
 import { getSearches } from '../actions/searches'
 
 import styles from './App.css'
+import './App.scss'
 
 class App extends MediaQueryComponent {
 
@@ -53,6 +55,7 @@ class App extends MediaQueryComponent {
             <Route exact name="profile" path="/profile/" component={ProfilePage} />
             <Route exact name="explore" path="/explore/" component={SearchPage} />
             <Route exact name="searches" path="/searches/" component={SearchListPage} />
+            <Route exact name="users" path="/users/" component={UserListPage} />
             <Route exact name="insights" path="/search/:searchId/" component={InsightsPage} />
             <Route exact name="webpages" path="/search/:searchId/webpages/" component={WebpagesPage} />
           </Switch>

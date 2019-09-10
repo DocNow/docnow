@@ -23,11 +23,11 @@ export default class Tweet extends Component {
         <p>{this.props.data.text}</p>
         <div className={style.TweetStats}>
           <div className={style.Inline}>
-            <i className="fa fa-retweet" />
+            <ion-icon name="repeat"></ion-icon>&nbsp;
             {this.props.data.retweetCount}
           </div>
           <div className={style.Inline}>
-            <i className="fa fa-heart-o" />
+            <ion-icon name="heart-empty"></ion-icon>&nbsp;
             {this.props.data.likeCount}
           </div>
         </div>

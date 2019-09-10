@@ -32,7 +32,12 @@ module.exports = {
         test:  /\.jsx?$/,
         exclude: /node_modules/,
         use:  ['babel-loader', 'eslint-loader']
-			},
+      },
+      {
+        test: /\.svg$/,
+        exclude: /node_modules/,
+        loader: 'file-loader'
+      },
       {
         test:  /\.css$/,
         exclude: /node_modules/,
@@ -47,6 +52,14 @@ module.exports = {
               localIdentName: '[name]---[local]---[hash:base64:5]'
             }
           }
+        ]
+      },
+      {
+        test: /\.scss$/,
+        use: [
+            "style-loader",
+            "css-loader",
+            { loader: 'sass-loader', options: { includePaths: ['./node_modules'] } }
         ]
       },
       {

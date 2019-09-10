@@ -1,24 +1,11 @@
 .HashtagsCard {
-  height: 274px;
-  overflow-y: scroll;
-  overflow-x: hidden;
-  border-left: solid 2px #000000;
-  border-top: solid 2px #000000;
-  padding: 2px;
-}
-
-.HashtagsCard::-webkit-scrollbar {
-  width: 15px;
-  background-color: #eeeeee;
-}
-
-.HashtagsCard::-webkit-scrollbar-thumb {
-  background-color: #000000;
+  padding: 5px;
+  background-color: #fff;
 }
 
 rect {
   fill: #cdc9f1;
-  stroke: black;
+  stroke: #333;
   stroke-width: 1;
 }
 

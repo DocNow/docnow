@@ -1,11 +1,14 @@
 .Webpage {
-  width: 350px;
-  height: 300px;
-  border: thin solid gray;
-  margin: 20px;
-  padding: 10px;
+  height: 500px  
+}
+
+.UrlButton {
+  width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
   text-align: center;
-  font-size: 11pt;
 }
 
 .Unselected {

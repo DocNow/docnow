@@ -1,0 +1,20 @@
+.Scroll {
+  overflow-y: scroll
+}
+
+.PlaceHeader {
+  padding-left: 1em;
+}
+
+.Trend {
+  display: flex;
+}
+
+.TrendTerm {
+  flex: 9;
+  padding: 0 16px 16px 0
+}
+
+.TrendCount {
+  flex: 3;
+}

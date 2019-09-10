@@ -20,7 +20,7 @@ export default class TweetsModal extends Component {
     return (
       <Modal isOpen={this.props.isOpen} style={modalStyle} appElement={app}>
         <div className={style.CloseModal}>
-          <i className="fa fa-window-close" onClick={() => {this.props.close()}} />
+          <ion-icon name="close-circle" onClick={() => {this.props.close()}}></ion-icon>
         </div>
         <div className={style.Conversation}>
         { this.props.tweets.map((tweet) => {
@@ -31,7 +31,7 @@ export default class TweetsModal extends Component {
             className = style.Retweet
             userInfo = (
               <div className={style.UserProfile}>
-                <i className="fa fa-retweet" />
+                <ion-icon name="repeat"></ion-icon>
                 <img src={tweet.user.avatarUrl} />
                 <div>
                   <a target="_new" href={`https://twitter.com/${tweet.user.screenName}`}>

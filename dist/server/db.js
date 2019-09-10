@@ -219,9 +219,96 @@ function () {
     }
   }, {
     key: "getUsers",
-    value: function getUsers() {
-      return this.search(USER, '*');
-    }
+    value: function () {
+      var _getUsers = (0, _asyncToGenerator2["default"])(
+      /*#__PURE__*/
+      _regenerator["default"].mark(function _callee() {
+        var users, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, user;
+
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return this.search(USER, '*');
+
+              case 2:
+                users = _context.sent;
+                _iteratorNormalCompletion = true;
+                _didIteratorError = false;
+                _iteratorError = undefined;
+                _context.prev = 6;
+                _iterator = users[Symbol.iterator]();
+
+              case 8:
+                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
+                  _context.next = 16;
+                  break;
+                }
+
+                user = _step.value;
+                _context.next = 12;
+                return this.getUserSearches(user);
+
+              case 12:
+                user.searches = _context.sent;
+
+              case 13:
+                _iteratorNormalCompletion = true;
+                _context.next = 8;
+                break;
+
+              case 16:
+                _context.next = 22;
+                break;
+
+              case 18:
+                _context.prev = 18;
+                _context.t0 = _context["catch"](6);
+                _didIteratorError = true;
+                _iteratorError = _context.t0;
+
+              case 22:
+                _context.prev = 22;
+                _context.prev = 23;
+
+                if (!_iteratorNormalCompletion && _iterator["return"] != null) {
+                  _iterator["return"]();
+                }
+
+              case 25:
+                _context.prev = 25;
+
+                if (!_didIteratorError) {
+                  _context.next = 28;
+                  break;
+                }
+
+                throw _iteratorError;
+
+              case 28:
+                return _context.finish(25);
+
+              case 29:
+                return _context.finish(22);
+
+              case 30:
+                return _context.abrupt("return", users);
+
+              case 31:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee, this, [[6, 18, 22, 30], [23,, 25, 29]]);
+      }));
+
+      function getUsers() {
+        return _getUsers.apply(this, arguments);
+      }
+
+      return getUsers;
+    }()
   }, {
     key: "getSuperUser",
     value: function getSuperUser() {
@@ -246,27 +333,27 @@ function () {
 
       return new Promise(function (resolve) {
         _this7.getUsers().then(function (users) {
-          var _iteratorNormalCompletion = true;
-          var _didIteratorError = false;
-          var _iteratorError = undefined;
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
 
           try {
-            for (var _iterator = users[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              var user = _step.value;
+            for (var _iterator2 = users[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var user = _step2.value;
 
               _this7.importLatestTrendsForUser(user).then(resolve);
             }
           } catch (err) {
-            _didIteratorError = true;
-            _iteratorError = err;
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
           } finally {
             try {
-              if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-                _iterator["return"]();
+              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
+                _iterator2["return"]();
               }
             } finally {
-              if (_didIteratorError) {
-                throw _iteratorError;
+              if (_didIteratorError2) {
+                throw _iteratorError2;
               }
             }
           }
@@ -353,13 +440,13 @@ function () {
       var _this10 = this;
 
       var body = [];
-      var _iteratorNormalCompletion2 = true;
-      var _didIteratorError2 = false;
-      var _iteratorError2 = undefined;
+      var _iteratorNormalCompletion3 = true;
+      var _didIteratorError3 = false;
+      var _iteratorError3 = undefined;
 
       try {
-        for (var _iterator2 = trends[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
-          var trend = _step2.value;
+        for (var _iterator3 = trends[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          var trend = _step3.value;
           trend.id = (0, _utils.addPrefix)('trend', trend.id);
           trend.placeId = (0, _utils.addPrefix)('place', (0, _utils.stripPrefix)(trend.id));
           body.push({
@@ -372,16 +459,16 @@ function () {
           }, trend);
         }
       } catch (err) {
-        _didIteratorError2 = true;
-        _iteratorError2 = err;
+        _didIteratorError3 = true;
+        _iteratorError3 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-            _iterator2["return"]();
+          if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
+            _iterator3["return"]();
           }
         } finally {
-          if (_didIteratorError2) {
-            throw _iteratorError2;
+          if (_didIteratorError3) {
+            throw _iteratorError3;
           }
         }
       }
@@ -411,13 +498,13 @@ function () {
               // bulk insert all the places as separate
               // documents in elasticsearch
               var body = [];
-              var _iteratorNormalCompletion3 = true;
-              var _didIteratorError3 = false;
-              var _iteratorError3 = undefined;
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
 
               try {
-                for (var _iterator3 = places[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
-                  var place = _step3.value;
+                for (var _iterator4 = places[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                  var place = _step4.value;
                   place.id = (0, _utils.addPrefix)('place', place.id);
                   place.parentId = (0, _utils.addPrefix)('place', place.parent);
                   delete place.parent;
@@ -431,16 +518,16 @@ function () {
                   body.push(place);
                 }
               } catch (err) {
-                _didIteratorError3 = true;
-                _iteratorError3 = err;
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
               } finally {
                 try {
-                  if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
-                    _iterator3["return"]();
+                  if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+                    _iterator4["return"]();
                   }
                 } finally {
-                  if (_didIteratorError3) {
-                    throw _iteratorError3;
+                  if (_didIteratorError4) {
+                    throw _iteratorError4;
                   }
                 }
               }
@@ -515,17 +602,17 @@ function () {
     value: function () {
       var _deleteSearch = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee(search) {
+      _regenerator["default"].mark(function _callee2(search) {
         var resp;
-        return _regenerator["default"].wrap(function _callee$(_context) {
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
                 _logger["default"].info('deleting search', {
                   id: search.id
                 });
 
-                _context.next = 3;
+                _context2.next = 3;
                 return this.es["delete"]({
                   index: this.getIndex(SEARCH),
                   type: SEARCH,
@@ -533,15 +620,15 @@ function () {
                 });
 
               case 3:
-                resp = _context.sent;
-                return _context.abrupt("return", resp && resp.result === 'deleted');
+                resp = _context2.sent;
+                return _context2.abrupt("return", resp && resp.result === 'deleted');
 
               case 5:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
 
       function deleteSearch(_x) {
@@ -555,14 +642,13 @@ function () {
     value: function () {
       var _getUserSearches = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee2(user) {
-        var body, resp, searches, _iteratorNormalCompletion4, _didIteratorError4, _iteratorError4, _iterator4, _step4, hit, search, stats;
+      _regenerator["default"].mark(function _callee3(user) {
+        var body, resp, searches, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, hit, search, stats;
 
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                // const body = {query: {match: {creator: user.id, saved: true}}}
                 body = {
                   query: {
                     bool: {
@@ -581,7 +667,7 @@ function () {
                     created: 'desc'
                   }]
                 };
-                _context2.next = 3;
+                _context3.next = 3;
                 return this.es.search({
                   index: this.getIndex(SEARCH),
                   type: SEARCH,
@@ -589,77 +675,77 @@ function () {
                 });
 
               case 3:
-                resp = _context2.sent;
+                resp = _context3.sent;
                 searches = [];
-                _iteratorNormalCompletion4 = true;
-                _didIteratorError4 = false;
-                _iteratorError4 = undefined;
-                _context2.prev = 8;
-                _iterator4 = resp.hits.hits[Symbol.iterator]();
+                _iteratorNormalCompletion5 = true;
+                _didIteratorError5 = false;
+                _iteratorError5 = undefined;
+                _context3.prev = 8;
+                _iterator5 = resp.hits.hits[Symbol.iterator]();
 
               case 10:
-                if (_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done) {
-                  _context2.next = 20;
+                if (_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done) {
+                  _context3.next = 20;
                   break;
                 }
 
-                hit = _step4.value;
+                hit = _step5.value;
                 search = hit._source;
-                _context2.next = 15;
+                _context3.next = 15;
                 return this.getSearchStats(search);
 
               case 15:
-                stats = _context2.sent;
+                stats = _context3.sent;
                 searches.push((0, _objectSpread2["default"])({}, search, stats));
 
               case 17:
-                _iteratorNormalCompletion4 = true;
-                _context2.next = 10;
+                _iteratorNormalCompletion5 = true;
+                _context3.next = 10;
                 break;
 
               case 20:
-                _context2.next = 26;
+                _context3.next = 26;
                 break;
 
               case 22:
-                _context2.prev = 22;
-                _context2.t0 = _context2["catch"](8);
-                _didIteratorError4 = true;
-                _iteratorError4 = _context2.t0;
+                _context3.prev = 22;
+                _context3.t0 = _context3["catch"](8);
+                _didIteratorError5 = true;
+                _iteratorError5 = _context3.t0;
 
               case 26:
-                _context2.prev = 26;
-                _context2.prev = 27;
+                _context3.prev = 26;
+                _context3.prev = 27;
 
-                if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
-                  _iterator4["return"]();
+                if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
+                  _iterator5["return"]();
                 }
 
               case 29:
-                _context2.prev = 29;
+                _context3.prev = 29;
 
-                if (!_didIteratorError4) {
-                  _context2.next = 32;
+                if (!_didIteratorError5) {
+                  _context3.next = 32;
                   break;
                 }
 
-                throw _iteratorError4;
+                throw _iteratorError5;
 
               case 32:
-                return _context2.finish(29);
+                return _context3.finish(29);
 
               case 33:
-                return _context2.finish(26);
+                return _context3.finish(26);
 
               case 34:
-                return _context2.abrupt("return", searches);
+                return _context3.abrupt("return", searches);
 
               case 35:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this, [[8, 22, 26, 34], [27,, 29, 33]]);
+        }, _callee3, this, [[8, 22, 26, 34], [27,, 29, 33]]);
       }));
 
       function getUserSearches(_x2) {
@@ -673,30 +759,30 @@ function () {
     value: function () {
       var _getSearch = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee3(searchId) {
+      _regenerator["default"].mark(function _callee4(searchId) {
         var search, stats;
-        return _regenerator["default"].wrap(function _callee3$(_context3) {
+        return _regenerator["default"].wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
-                _context3.next = 2;
+                _context4.next = 2;
                 return this.get(SEARCH, searchId);
 
               case 2:
-                search = _context3.sent;
-                _context3.next = 5;
+                search = _context4.sent;
+                _context4.next = 5;
                 return this.getSearchStats(search);
 
               case 5:
-                stats = _context3.sent;
-                return _context3.abrupt("return", (0, _objectSpread2["default"])({}, search, stats));
+                stats = _context4.sent;
+                return _context4.abrupt("return", (0, _objectSpread2["default"])({}, search, stats));
 
               case 7:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
       function getSearch(_x3) {
@@ -716,11 +802,11 @@ function () {
     value: function () {
       var _getSearchSummary = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee4(search) {
+      _regenerator["default"].mark(function _callee5(search) {
         var body, resp, stats;
-        return _regenerator["default"].wrap(function _callee4$(_context4) {
+        return _regenerator["default"].wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 body = {
                   query: {
@@ -741,7 +827,7 @@ function () {
                     }
                   }
                 };
-                _context4.next = 3;
+                _context5.next = 3;
                 return this.es.search({
                   index: this.getIndex(TWEET),
                   type: TWEET,
@@ -749,23 +835,23 @@ function () {
                 });
 
               case 3:
-                resp = _context4.sent;
-                _context4.next = 6;
+                resp = _context5.sent;
+                _context5.next = 6;
                 return this.getSearchStats(search);
 
               case 6:
-                stats = _context4.sent;
-                return _context4.abrupt("return", (0, _objectSpread2["default"])({}, search, stats, {
+                stats = _context5.sent;
+                return _context5.abrupt("return", (0, _objectSpread2["default"])({}, search, stats, {
                   minDate: new Date(resp.aggregations.minDate.value),
                   maxDate: new Date(resp.aggregations.maxDate.value)
                 }));
 
               case 8:
               case "end":
-                return _context4.stop();
+                return _context5.stop();
             }
           }
-        }, _callee4, this);
+        }, _callee5, this);
       }));
 
       function getSearchSummary(_x4) {
@@ -779,38 +865,38 @@ function () {
     value: function () {
       var _getSearchStats = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee5(search) {
+      _regenerator["default"].mark(function _callee6(search) {
         var tweetCount, userCount, videoCount, imageCount, urlCount;
-        return _regenerator["default"].wrap(function _callee5$(_context5) {
+        return _regenerator["default"].wrap(function _callee6$(_context6) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context6.prev = _context6.next) {
               case 0:
-                _context5.next = 2;
+                _context6.next = 2;
                 return this.redis.getAsync((0, _redis.tweetsCountKey)(search));
 
               case 2:
-                tweetCount = _context5.sent;
-                _context5.next = 5;
+                tweetCount = _context6.sent;
+                _context6.next = 5;
                 return this.redis.zcardAsync((0, _redis.usersCountKey)(search));
 
               case 5:
-                userCount = _context5.sent;
-                _context5.next = 8;
+                userCount = _context6.sent;
+                _context6.next = 8;
                 return this.redis.zcardAsync((0, _redis.videosCountKey)(search));
 
               case 8:
-                videoCount = _context5.sent;
-                _context5.next = 11;
+                videoCount = _context6.sent;
+                _context6.next = 11;
                 return this.redis.zcardAsync((0, _redis.imagesCountKey)(search));
 
               case 11:
-                imageCount = _context5.sent;
-                _context5.next = 14;
+                imageCount = _context6.sent;
+                _context6.next = 14;
                 return this.redis.zcardAsync((0, _redis.urlsKey)(search));
 
               case 14:
-                urlCount = _context5.sent;
-                return _context5.abrupt("return", {
+                urlCount = _context6.sent;
+                return _context6.abrupt("return", {
                   tweetCount: parseInt(tweetCount || 0, 10),
                   imageCount: imageCount,
                   videoCount: videoCount,
@@ -820,10 +906,10 @@ function () {
 
               case 16:
               case "end":
-                return _context5.stop();
+                return _context6.stop();
             }
           }
-        }, _callee5, this);
+        }, _callee6, this);
       }));
 
       function getSearchStats(_x5) {
@@ -842,13 +928,13 @@ function () {
       var totalCount = search.count || 0;
       var maxTweetId = null;
       var queryParts = [];
-      var _iteratorNormalCompletion5 = true;
-      var _didIteratorError5 = false;
-      var _iteratorError5 = undefined;
+      var _iteratorNormalCompletion6 = true;
+      var _didIteratorError6 = false;
+      var _iteratorError6 = undefined;
 
       try {
-        for (var _iterator5 = search.query[Symbol.iterator](), _step5; !(_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done); _iteratorNormalCompletion5 = true) {
-          var term = _step5.value;
+        for (var _iterator6 = search.query[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
+          var term = _step6.value;
 
           if (term.type === 'keyword') {
             queryParts.push(term.value);
@@ -865,16 +951,16 @@ function () {
           }
         }
       } catch (err) {
-        _didIteratorError5 = true;
-        _iteratorError5 = err;
+        _didIteratorError6 = true;
+        _iteratorError6 = err;
       } finally {
         try {
-          if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
-            _iterator5["return"]();
+          if (!_iteratorNormalCompletion6 && _iterator6["return"] != null) {
+            _iterator6["return"]();
           }
         } finally {
-          if (_didIteratorError5) {
-            throw _iteratorError5;
+          if (_didIteratorError6) {
+            throw _iteratorError6;
           }
         }
       }
@@ -929,36 +1015,36 @@ function () {
       return new Promise(function (resolve, reject) {
         var bulk = [];
         var seenUsers = new Set();
-        var _iteratorNormalCompletion6 = true;
-        var _didIteratorError6 = false;
-        var _iteratorError6 = undefined;
+        var _iteratorNormalCompletion7 = true;
+        var _didIteratorError7 = false;
+        var _iteratorError7 = undefined;
 
         try {
-          for (var _iterator6 = tweets[Symbol.iterator](), _step6; !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-            var tweet = _step6.value;
+          for (var _iterator7 = tweets[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+            var tweet = _step7.value;
 
             _this15.tallyTweet(search, tweet);
 
-            var _iteratorNormalCompletion7 = true;
-            var _didIteratorError7 = false;
-            var _iteratorError7 = undefined;
+            var _iteratorNormalCompletion8 = true;
+            var _didIteratorError8 = false;
+            var _iteratorError8 = undefined;
 
             try {
-              for (var _iterator7 = tweet.urls[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
-                var url = _step7.value;
+              for (var _iterator8 = tweet.urls[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+                var url = _step8.value;
                 urlFetcher.add(search, url["long"], tweet.id);
               }
             } catch (err) {
-              _didIteratorError7 = true;
-              _iteratorError7 = err;
+              _didIteratorError8 = true;
+              _iteratorError8 = err;
             } finally {
               try {
-                if (!_iteratorNormalCompletion7 && _iterator7["return"] != null) {
-                  _iterator7["return"]();
+                if (!_iteratorNormalCompletion8 && _iterator8["return"] != null) {
+                  _iterator8["return"]();
                 }
               } finally {
-                if (_didIteratorError7) {
-                  throw _iteratorError7;
+                if (_didIteratorError8) {
+                  throw _iteratorError8;
                 }
               }
             }
@@ -985,16 +1071,16 @@ function () {
             }
           }
         } catch (err) {
-          _didIteratorError6 = true;
-          _iteratorError6 = err;
+          _didIteratorError7 = true;
+          _iteratorError7 = err;
         } finally {
           try {
-            if (!_iteratorNormalCompletion6 && _iterator6["return"] != null) {
-              _iterator6["return"]();
+            if (!_iteratorNormalCompletion7 && _iterator7["return"] != null) {
+              _iterator7["return"]();
             }
           } finally {
-            if (_didIteratorError6) {
-              throw _iteratorError6;
+            if (_didIteratorError7) {
+              throw _iteratorError7;
             }
           }
         }
@@ -1020,38 +1106,14 @@ function () {
     value: function tallyTweet(search, tweet) {
       this.redis.incr((0, _redis.tweetsCountKey)(search));
       this.redis.zincrby((0, _redis.usersCountKey)(search), 1, tweet.user.screenName);
-      var _iteratorNormalCompletion8 = true;
-      var _didIteratorError8 = false;
-      var _iteratorError8 = undefined;
-
-      try {
-        for (var _iterator8 = tweet.videos[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
-          var video = _step8.value;
-          this.redis.zincrby((0, _redis.videosCountKey)(search), 1, video);
-        }
-      } catch (err) {
-        _didIteratorError8 = true;
-        _iteratorError8 = err;
-      } finally {
-        try {
-          if (!_iteratorNormalCompletion8 && _iterator8["return"] != null) {
-            _iterator8["return"]();
-          }
-        } finally {
-          if (_didIteratorError8) {
-            throw _iteratorError8;
-          }
-        }
-      }
-
       var _iteratorNormalCompletion9 = true;
       var _didIteratorError9 = false;
       var _iteratorError9 = undefined;
 
       try {
-        for (var _iterator9 = tweet.images[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
-          var image = _step9.value;
-          this.redis.zincrby((0, _redis.imagesCountKey)(search), 1, image);
+        for (var _iterator9 = tweet.videos[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+          var video = _step9.value;
+          this.redis.zincrby((0, _redis.videosCountKey)(search), 1, video);
         }
       } catch (err) {
         _didIteratorError9 = true;
@@ -1064,6 +1126,30 @@ function () {
         } finally {
           if (_didIteratorError9) {
             throw _iteratorError9;
+          }
+        }
+      }
+
+      var _iteratorNormalCompletion10 = true;
+      var _didIteratorError10 = false;
+      var _iteratorError10 = undefined;
+
+      try {
+        for (var _iterator10 = tweet.images[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+          var image = _step10.value;
+          this.redis.zincrby((0, _redis.imagesCountKey)(search), 1, image);
+        }
+      } catch (err) {
+        _didIteratorError10 = true;
+        _iteratorError10 = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion10 && _iterator10["return"] != null) {
+            _iterator10["return"]();
+          }
+        } finally {
+          if (_didIteratorError10) {
+            throw _iteratorError10;
           }
         }
       }
@@ -1127,13 +1213,13 @@ function () {
     value: function () {
       var _getAllTweets = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee6(search, cb) {
+      _regenerator["default"].mark(function _callee7(search, cb) {
         var response, scrollId;
-        return _regenerator["default"].wrap(function _callee6$(_context6) {
+        return _regenerator["default"].wrap(function _callee7$(_context7) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context7.prev = _context7.next) {
               case 0:
-                _context6.next = 2;
+                _context7.next = 2;
                 return this.es.search({
                   index: this.getIndex(TWEET),
                   type: TWEET,
@@ -1143,7 +1229,7 @@ function () {
                 });
 
               case 2:
-                response = _context6.sent;
+                response = _context7.sent;
                 response.hits.hits.map(function (hit) {
                   cb(hit._source);
                 });
@@ -1151,39 +1237,39 @@ function () {
 
               case 5:
                 if (!true) {
-                  _context6.next = 14;
+                  _context7.next = 14;
                   break;
                 }
 
-                _context6.next = 8;
+                _context7.next = 8;
                 return this.es.scroll({
                   scrollId: scrollId,
                   scroll: '1m'
                 });
 
               case 8:
-                response = _context6.sent;
+                response = _context7.sent;
 
                 if (!(response.hits.hits.length === 0)) {
-                  _context6.next = 11;
+                  _context7.next = 11;
                   break;
                 }
 
-                return _context6.abrupt("break", 14);
+                return _context7.abrupt("break", 14);
 
               case 11:
                 response.hits.hits.map(function (hit) {
                   cb(hit._source);
                 });
-                _context6.next = 5;
+                _context7.next = 5;
                 break;
 
               case 14:
               case "end":
-                return _context6.stop();
+                return _context7.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee7, this);
       }));
 
       function getAllTweets(_x6, _x7) {
@@ -1197,17 +1283,17 @@ function () {
     value: function () {
       var _getTweetsForUrl = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee7(search, url) {
+      _regenerator["default"].mark(function _callee8(search, url) {
         var ids, body, resp;
-        return _regenerator["default"].wrap(function _callee7$(_context7) {
+        return _regenerator["default"].wrap(function _callee8$(_context8) {
           while (1) {
-            switch (_context7.prev = _context7.next) {
+            switch (_context8.prev = _context8.next) {
               case 0:
-                _context7.next = 2;
+                _context8.next = 2;
                 return urlFetcher.getTweetIdentifiers(search, url);
 
               case 2:
-                ids = _context7.sent;
+                ids = _context8.sent;
                 body = {
                   size: 100,
                   query: {
@@ -1228,7 +1314,7 @@ function () {
                     id: 'desc'
                   }]
                 };
-                _context7.next = 6;
+                _context8.next = 6;
                 return this.es.search({
                   index: this.getIndex(TWEET),
                   type: TWEET,
@@ -1236,17 +1322,17 @@ function () {
                 });
 
               case 6:
-                resp = _context7.sent;
-                return _context7.abrupt("return", resp.hits.hits.map(function (h) {
+                resp = _context8.sent;
+                return _context8.abrupt("return", resp.hits.hits.map(function (h) {
                   return h._source;
                 }));
 
               case 8:
               case "end":
-                return _context7.stop();
+                return _context8.stop();
             }
           }
-        }, _callee7, this);
+        }, _callee8, this);
       }));
 
       function getTweetsForUrl(_x8, _x9) {
@@ -1311,27 +1397,27 @@ function () {
               return h._source;
             }); // add the tweet counts per user that we got previously
 
-            var _iteratorNormalCompletion10 = true;
-            var _didIteratorError10 = false;
-            var _iteratorError10 = undefined;
+            var _iteratorNormalCompletion11 = true;
+            var _didIteratorError11 = false;
+            var _iteratorError11 = undefined;
 
             try {
-              for (var _iterator10 = users[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
-                var user = _step10.value;
+              for (var _iterator11 = users[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+                var user = _step11.value;
                 user.tweetsInSearch = counts.get(user.screenName);
               } // sort them by their counts
 
             } catch (err) {
-              _didIteratorError10 = true;
-              _iteratorError10 = err;
+              _didIteratorError11 = true;
+              _iteratorError11 = err;
             } finally {
               try {
-                if (!_iteratorNormalCompletion10 && _iterator10["return"] != null) {
-                  _iterator10["return"]();
+                if (!_iteratorNormalCompletion11 && _iterator11["return"] != null) {
+                  _iterator11["return"]();
                 }
               } finally {
-                if (_didIteratorError10) {
-                  throw _iteratorError10;
+                if (_didIteratorError11) {
+                  throw _iteratorError11;
                 }
               }
             }
@@ -1859,27 +1945,27 @@ function () {
     value: function () {
       var _mergeIndexes = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee8() {
+      _regenerator["default"].mark(function _callee9() {
         var results;
-        return _regenerator["default"].wrap(function _callee8$(_context8) {
+        return _regenerator["default"].wrap(function _callee9$(_context9) {
           while (1) {
-            switch (_context8.prev = _context8.next) {
+            switch (_context9.prev = _context9.next) {
               case 0:
-                _context8.next = 2;
+                _context9.next = 2;
                 return this.es.indices.forcemerge({
                   index: '_all'
                 });
 
               case 2:
-                results = _context8.sent;
-                return _context8.abrupt("return", results);
+                results = _context9.sent;
+                return _context9.abrupt("return", results);
 
               case 4:
               case "end":
-                return _context8.stop();
+                return _context9.stop();
             }
           }
-        }, _callee8, this);
+        }, _callee9, this);
       }));
 
       function mergeIndexes() {
@@ -1893,13 +1979,13 @@ function () {
     value: function () {
       var _getSystemStats = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee9() {
+      _regenerator["default"].mark(function _callee10() {
         var result, tweetCount, twitterUserCount, userCount;
-        return _regenerator["default"].wrap(function _callee9$(_context9) {
+        return _regenerator["default"].wrap(function _callee10$(_context10) {
           while (1) {
-            switch (_context9.prev = _context9.next) {
+            switch (_context10.prev = _context10.next) {
               case 0:
-                _context9.next = 2;
+                _context10.next = 2;
                 return this.es.search({
                   index: this.getIndex(TWEET),
                   type: TWEET,
@@ -1911,9 +1997,9 @@ function () {
                 });
 
               case 2:
-                result = _context9.sent;
+                result = _context10.sent;
                 tweetCount = result.hits.total;
-                _context9.next = 6;
+                _context10.next = 6;
                 return this.es.search({
                   index: this.getIndex(TWUSER),
                   type: TWUSER,
@@ -1925,9 +2011,9 @@ function () {
                 });
 
               case 6:
-                result = _context9.sent;
+                result = _context10.sent;
                 twitterUserCount = result.hits.total;
-                _context9.next = 10;
+                _context10.next = 10;
                 return this.es.search({
                   index: this.getIndex(USER),
                   type: USER,
@@ -1939,9 +2025,9 @@ function () {
                 });
 
               case 10:
-                result = _context9.sent;
+                result = _context10.sent;
                 userCount = result.hits.total;
-                return _context9.abrupt("return", {
+                return _context10.abrupt("return", {
                   tweetCount: tweetCount,
                   twitterUserCount: twitterUserCount,
                   userCount: userCount
@@ -1949,10 +2035,10 @@ function () {
 
               case 13:
               case "end":
-                return _context9.stop();
+                return _context10.stop();
             }
           }
-        }, _callee9, this);
+        }, _callee10, this);
       }));
 
       function getSystemStats() {

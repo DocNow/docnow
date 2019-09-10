@@ -1,6 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
+import '@material/react-text-field/index.scss'
+
+import '@material/react-fab/index.scss';
+import Fab from '@material/react-fab'
 
 import style from './AddPlace.css'
 
@@ -9,6 +13,7 @@ export default class AddPlace extends Component {
   constructor(props) {
     super(props)
     this.checkPlace = this.checkPlace.bind(this)
+    this.addPlaceInputRef = React.createRef()
   }
 
   matchInputToTerm(input, value) {
@@ -53,6 +58,15 @@ export default class AddPlace extends Component {
           sortItems={this.sortPlaces}
           items={Object.keys(this.props.world)}
           shouldItemRender={this.matchInputToTerm}
+          menuStyle={{
+            boxShadow: 'rgba(0, 0, 0, 0.1) 0px 2px 12px',
+            background: 'rgba(255, 255, 255, 0.9) none repeat scroll 0% 0%',
+            padding: '2px',
+            fontSize: '90%',
+            position: 'fixed',
+            overflow: 'auto',
+            maxHeight: '140px'
+          }}
           renderItem={(item, isHighlighted) => (
             <div style={{ background: isHighlighted ? 'lightgray' : 'white' }}>
               {item}
@@ -62,7 +76,11 @@ export default class AddPlace extends Component {
            onChange={(event, value) => this.props.updateNewTrend(value)}
            onSelect={value => this.props.updateNewTrend(value)}
            inputProps={inputProps} />
-        <button href="#" onClick={ this.checkPlace } className="Save" disabled={placeDisabled}><i className="fa fa-plus" aria-hidden="true"/></button>
+        <Fab
+          mini tabIndex="0"
+          icon={<span><ion-icon name="add"></ion-icon></span>} 
+          onClick={ this.checkPlace }
+          disabled={placeDisabled} />
       </div>
     )
   }

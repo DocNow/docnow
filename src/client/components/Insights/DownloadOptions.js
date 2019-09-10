@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import style from './DownloadOptions.css'
+import Button from '@material-ui/core/Button'
 
 export default class DownloadOptions extends Component {
 
@@ -27,11 +28,11 @@ export default class DownloadOptions extends Component {
 
     return (
       <div className={style.DownloadOptions}>
-        <button type="button" onClick={onClick}>
-          <i className="fa fa-download" aria-hidden="true" />
+        <Button variant="contained" onClick={onClick}>
+          <ion-icon name="download"></ion-icon>
           &nbsp;
           { text }
-        </button>
+        </Button>
       </div>
     )
   }

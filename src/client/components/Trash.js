@@ -1,26 +1,18 @@
-import React, { Component } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import style from './Trash.css'
 
-export default class Trash extends Component {
-
-  confirmDelete() {
-    this.props.deleteSearch({id: this.props.id})
-  }
-
-  render() {
-    return (
-      <i
-        title="Delete Search!"
-        className={style.Trash + ' fa fa-trash'}
-        aria-hidden="true"
-        onClick={() => {this.confirmDelete()}} />
-    )
-  }
-
+const Trash = ({id, deleteSearch}) => {
+  return (
+    <span className={style.Trash} onClick={() => deleteSearch({id})}>
+      <ion-icon title="Delete Search!" name="trash"></ion-icon>
+    </span>
+  )
 }
 
 Trash.propTypes = {
   id: PropTypes.string,
   deleteSearch: PropTypes.func
 }
+
+export default Trash
