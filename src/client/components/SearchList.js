@@ -66,6 +66,7 @@ export default class SearchList extends Component {
                     <SearchToggle
                       id={search.id}
                       active={search.active}
+                      user={this.props.user}
                       updateSearch={this.props.updateSearch} />
                   </div>
               <div className={style.GridActionsInner}>
@@ -88,4 +89,5 @@ SearchList.propTypes = {
   updateSearch: PropTypes.func,
   deleteSearch: PropTypes.func,
   getSearches: PropTypes.func,
+  user: PropTypes.object,
 }

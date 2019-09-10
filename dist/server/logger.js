@@ -20,7 +20,7 @@ if (env === 'development') {
   logger.add(new _winston["default"].transports.File({
     filename: logFile
   }));
-} else if (env === 'production') {
+} else {
   var _logFile = _path["default"].join(__dirname, '..', '..', 'app.log');
 
   logger.add(new _winston["default"].transports.File({

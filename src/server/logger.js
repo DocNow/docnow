@@ -9,7 +9,7 @@ if (env === 'development') {
 } else if (env === 'test') {
   const logFile = path.join(__dirname, '..', '..', 'test.log')
   logger.add(new winston.transports.File({filename: logFile}))
-} else if (env === 'production') {
+} else {
   const logFile = path.join(__dirname, '..', '..', 'app.log')
   logger.add(new winston.transports.File({filename: logFile}))
 }

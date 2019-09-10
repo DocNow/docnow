@@ -1,6 +1,7 @@
 import {
   SET_USER, UPDATE_USER_SETTINGS, SAVE_USER_SETTINGS,
-  SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS
+  SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS,
+  ACTIVATE_USER, DEACTIVATE_USER
 } from '../actions/user'
 
 const initialState = {
@@ -47,6 +48,28 @@ export default function user(state = initialState, action) {
       return {
         ...state,
         tweets: action.tweets
+      }
+    }
+
+    case ACTIVATE_USER: {
+      if (action.user.id === state.id) {
+        return {
+          ...state,
+          active: true
+        }
+      } else {
+        return state
+      }
+    }
+
+    case DEACTIVATE_USER: {
+      if (action.user.id === state.id) {
+        return {
+          ...state,
+          active: false
+        }
+      } else { 
+        return state
       }
     }
 
