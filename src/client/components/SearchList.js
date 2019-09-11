@@ -10,7 +10,9 @@ import style from './SearchList.css'
 export default class SearchList extends Component {
 
   componentDidMount() {
-    if (this.props.searches.length === 0) {
+    // if we don't have any list of searches or they are looking for a specific 
+    // users searches then fire off a request to get them immediately.
+    if (this.props.searches.length === 0 || this.props.forUserId) {
       this.tick()
     }
     this.timerId = setInterval(() => {
@@ -23,6 +25,7 @@ export default class SearchList extends Component {
   }
 
   tick() {
+    console.log('tick')
     const userId = this.props.forUserId || this.props.user.id
     this.props.getSearches(userId)
   }
