@@ -328,7 +328,15 @@ app.post('/logo', function (req, res) {
 });
 app.get('/searches', function (req, res) {
   if (req.user) {
-    db.getUserSearches(req.user).then(function (searches) {
+    var userId = req.user.id;
+
+    if (req.query.userId && req.user.isSuperUser) {
+      userId = req.query.userId;
+    }
+
+    db.getUserSearches({
+      id: userId
+    }).then(function (searches) {
       res.json(searches);
     });
   }
