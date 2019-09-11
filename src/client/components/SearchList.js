@@ -23,7 +23,8 @@ export default class SearchList extends Component {
   }
 
   tick() {
-    this.props.getSearches()
+    const userId = this.props.forUserId || this.props.user.id
+    this.props.getSearches(userId)
   }
 
   render() {
@@ -90,4 +91,5 @@ SearchList.propTypes = {
   deleteSearch: PropTypes.func,
   getSearches: PropTypes.func,
   user: PropTypes.object,
+  forUserId: PropTypes.string,
 }

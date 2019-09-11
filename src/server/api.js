@@ -173,7 +173,11 @@ app.post('/logo', (req, res) => {
 
 app.get('/searches', (req, res) => {
   if (req.user) {
-    db.getUserSearches(req.user).then((searches) => {
+    let userId = req.user.id
+    if (req.query.userId && req.user.isSuperUser) {
+      userId = req.query.userId
+    }
+    db.getUserSearches({id: userId}).then((searches) => {
       res.json(searches)
     })
   }

@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
 import Table from '@material-ui/core/Table'
@@ -63,7 +64,7 @@ export default class UserList extends Component {
           return (
             <TableRow key={user.twitterScreenName}>
               <TableCell><img src={user.twitterAvatarUrl} /></TableCell>
-              <TableCell>{user.name}</TableCell>
+              <TableCell><Link to={`/searches/${user.id}`}>{user.name}</Link></TableCell>
               <TableCell>{user.twitterScreenName}</TableCell>
               <TableCell>{user.searches.length}</TableCell>
               <TableCell>{tweetCount}</TableCell>

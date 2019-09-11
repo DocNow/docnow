@@ -4,10 +4,11 @@ import SearchList from '../components/SearchList'
 import { updateSearch, deleteSearch } from '../actions/search'
 import { getSearches } from '../actions/searches'
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   return {
     searches: state.searches,
-    user: state.user
+    user: state.user,
+    forUserId: ownProps.match.params.userId,
   }
 }
 

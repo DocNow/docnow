@@ -7,9 +7,14 @@ export const setSearches = (searches) => {
   }
 }
 
-export const getSearches = () => {
+export const getSearches = (userId) => {
   return (dispatch) => {
-    fetch('/api/v1/searches', {credentials: 'same-origin'})
+    let url = '/api/v1/searches'
+    if (userId) {
+      url += `?userId=${userId}`
+    }
+    console.log(url)
+    fetch(url, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setSearches(result))
