@@ -5,6 +5,8 @@ export const UPDATE_USER_SETTINGS = 'UPDATE_USER_SETTINGS'
 export const SAVE_USER_SETTINGS = 'SAVE_USER_SETTINGS'
 export const ACTIVATE_USER = 'ACTIVATE_USER'
 export const DEACTIVATE_USER = 'DEACTIVATE_USER'
+export const ACTIVATE_ADMIN = 'ACTIVATE_ADMIN'
+export const DEACTIVATE_ADMIN = 'DEACTIVATE_ADMIN'
 
 export const setUser = (user) => {
   return {
@@ -90,6 +92,26 @@ export const deactivateUser = (user) => {
   return (dispatch) => {
     dispatch({
       type: DEACTIVATE_USER,
+      user
+    })
+    dispatch(updateUser(user))
+  }
+}
+
+export const activateAdmin = (user) => {
+  return (dispatch) => {
+    dispatch({
+      type: ACTIVATE_ADMIN,
+      user
+    })
+    dispatch(updateUser(user))
+  }
+}
+
+export const deactivateAdmin = (user) => {
+  return (dispatch) => {
+    dispatch({
+      type: DEACTIVATE_ADMIN,
       user
     })
     dispatch(updateUser(user))

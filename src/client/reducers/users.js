@@ -1,5 +1,5 @@
 import { SET_USERS } from '../actions/users'
-import { ACTIVATE_USER, DEACTIVATE_USER } from '../actions/user'
+import { ACTIVATE_USER, DEACTIVATE_USER, ACTIVATE_ADMIN, DEACTIVATE_ADMIN } from '../actions/user'
 
 const initialState = []
 
@@ -24,6 +24,24 @@ export default function settings(state = initialState, action) {
       const user = newState.find(u => u.id == action.user.id)
       if (user) {
         user.active = false
+      }
+      return newState
+    }
+
+    case ACTIVATE_ADMIN: {
+      const newState = [...state]
+      const user = newState.find(u => u.id == action.user.id)
+      if (user) {
+        user.isSuperUser = true
+      }
+      return newState
+    }
+
+    case DEACTIVATE_ADMIN: {
+      const newState = [...state]
+      const user = newState.find(u => u.id == action.user.id)
+      if (user) {
+        user.isSuperUser = false
       }
       return newState
     }

@@ -16,6 +16,7 @@ export default class UserList extends Component {
   constructor() {
     super()
     this.toggleActive = this.toggleActive.bind(this)
+    this.toggleAdmin = this.toggleAdmin.bind(this)
   }
 
   componentDidMount() {
@@ -45,6 +46,14 @@ export default class UserList extends Component {
     }
   }
 
+  toggleAdmin(user) {
+    if (user.isSuperUser) {
+      this.props.deactivateAdmin(user)
+    } else {
+      this.props.activateAdmin(user)
+    }
+  }
+
   render() {
     return (
       <Table className={style.UserList}>
@@ -56,6 +65,8 @@ export default class UserList extends Component {
             <TableCell>Collections</TableCell>
             <TableCell>Tweets</TableCell>
             <TableCell>Active</TableCell>
+            <TableCell>Admin</TableCell>
+            <TableCell>Quota</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -74,6 +85,15 @@ export default class UserList extends Component {
                   onChange={() => {this.toggleActive(user)}}
                   color="primary" />
               </TableCell>
+              <TableCell>
+                <Switch
+                  checked={user.isSuperUser}
+                  onChange={() => {this.toggleAdmin(user)}}
+                  color="primary" />
+              </TableCell>
+              <TableCell>
+                <input value={user.tweetQuota} />
+              </TableCell>
             </TableRow>
           )
         })}
@@ -87,5 +107,7 @@ UserList.propTypes = {
   users: PropTypes.array,
   getUsers: PropTypes.func,
   activateUser: PropTypes.func,
-  deactivateUser: PropTypes.func
+  deactivateUser: PropTypes.func,
+  activateAdmin: PropTypes.func,
+  deactivateAdmin: PropTypes.func
 }
