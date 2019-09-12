@@ -8,8 +8,10 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Switch from '@material-ui/core/Switch'
+import TextField from '@material-ui/core/TextField'
 
 import style from './UserList.css'
+import { ServerStyleSheets } from '@material-ui/styles'
 
 export default class UserList extends Component {
 
@@ -17,6 +19,7 @@ export default class UserList extends Component {
     super()
     this.toggleActive = this.toggleActive.bind(this)
     this.toggleAdmin = this.toggleAdmin.bind(this)
+    this.udpateQuota = this.updateQuota.bind(this)
   }
 
   componentDidMount() {
@@ -54,19 +57,23 @@ export default class UserList extends Component {
     }
   }
 
+  updateQuota(user, quota) {
+    this.props.updateQuota(user, quota)
+  }
+
   render() {
     return (
       <Table className={style.UserList}>
         <TableHead>
           <TableRow>
-            <TableCell>Avatar</TableCell>
-            <TableCell>Username</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Collections</TableCell>
-            <TableCell>Tweets</TableCell>
-            <TableCell>Active</TableCell>
-            <TableCell>Admin</TableCell>
-            <TableCell>Quota</TableCell>
+            <TableCell className={style.Avatar}>Avatar</TableCell>
+            <TableCell className={style.Name}>Name</TableCell>
+            <TableCell className={style.Username}>Username</TableCell>
+            <TableCell className={style.Collections}>Collections</TableCell>
+            <TableCell className={style.Tweets}>Tweets</TableCell>
+            <TableCell className={style.Active}>Active</TableCell>
+            <TableCell className={style.Admin}>Admin</TableCell>
+            <TableCell className={style.Quota}>Quota</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -74,25 +81,28 @@ export default class UserList extends Component {
           const tweetCount = user.searches.map(s => s.tweetCount).reduce((a, b) => a + b, 0)
           return (
             <TableRow key={user.twitterScreenName}>
-              <TableCell><img src={user.twitterAvatarUrl} /></TableCell>
-              <TableCell><Link to={`/searches/${user.id}`}>{user.name}</Link></TableCell>
-              <TableCell>{user.twitterScreenName}</TableCell>
-              <TableCell>{user.searches.length}</TableCell>
-              <TableCell>{tweetCount}</TableCell>
-              <TableCell>
+              <TableCell className={style.Avatar}><img src={user.twitterAvatarUrl} /></TableCell>
+              <TableCell className={style.Name}><Link to={`/searches/${user.id}`}>{user.name}</Link></TableCell>
+              <TableCell className={style.Username}>{user.twitterScreenName}</TableCell>
+              <TableCell className={style.Collections}>{user.searches.length}</TableCell>
+              <TableCell className={style.Tweets}>{tweetCount}</TableCell>
+              <TableCell className={style.Active}>
                 <Switch
                   checked={user.active}
                   onChange={() => {this.toggleActive(user)}}
                   color="primary" />
               </TableCell>
-              <TableCell>
+              <TableCell className={ServerStyleSheets.Admin}>
                 <Switch
                   checked={user.isSuperUser}
                   onChange={() => {this.toggleAdmin(user)}}
                   color="primary" />
               </TableCell>
-              <TableCell>
-                <input value={user.tweetQuota} />
+              <TableCell className={style.Quota}>
+                <TextField
+                  className={style.TweetQuota}
+                  value={user.tweetQuota}
+                  onChange={(e) => {this.updateQuota(user, e.target.value)}} />
               </TableCell>
             </TableRow>
           )
@@ -109,5 +119,6 @@ UserList.propTypes = {
   activateUser: PropTypes.func,
   deactivateUser: PropTypes.func,
   activateAdmin: PropTypes.func,
-  deactivateAdmin: PropTypes.func
+  deactivateAdmin: PropTypes.func,
+  updateQuota: PropTypes.func
 }

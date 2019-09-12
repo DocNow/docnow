@@ -1,5 +1,18 @@
 .UserList {
-  max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+}
+
+.UserList .TweetQuota {
+  width: 5em;
+}
+
+@media screen and (max-width: 660px) {
+
+  .UserList .Avatar, .UserList .Name, .UserList .Collections, .UserList .Tweets {
+    display: none;
+  }
+
+  .UserList td {
+    padding: 5px;
+  }
+
 }

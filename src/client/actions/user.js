@@ -7,6 +7,7 @@ export const ACTIVATE_USER = 'ACTIVATE_USER'
 export const DEACTIVATE_USER = 'DEACTIVATE_USER'
 export const ACTIVATE_ADMIN = 'ACTIVATE_ADMIN'
 export const DEACTIVATE_ADMIN = 'DEACTIVATE_ADMIN'
+export const UPDATE_QUOTA = 'UPDATE_QUOTA'
 
 export const setUser = (user) => {
   return {
@@ -84,7 +85,7 @@ export const activateUser = (user) => {
       type: ACTIVATE_USER,
       user: user
     })
-    dispatch(updateUser(user))
+    dispatch(updateUser({...user, active: true}))
   }
 }
 
@@ -94,7 +95,7 @@ export const deactivateUser = (user) => {
       type: DEACTIVATE_USER,
       user
     })
-    dispatch(updateUser(user))
+    dispatch(updateUser({...user, active: false}))
   }
 }
 
@@ -104,7 +105,7 @@ export const activateAdmin = (user) => {
       type: ACTIVATE_ADMIN,
       user
     })
-    dispatch(updateUser(user))
+    dispatch(updateUser({...user, isSuperUser: true}))
   }
 }
 
@@ -114,6 +115,16 @@ export const deactivateAdmin = (user) => {
       type: DEACTIVATE_ADMIN,
       user
     })
-    dispatch(updateUser(user))
+    dispatch(updateUser({...user, isSuperUser: false}))
+  }
+}
+
+export const updateQuota = (user, quota) => {
+  return (dispatch) => {
+    dispatch({
+      type: UPDATE_QUOTA,
+      user
+    })
+    dispatch(updateUser({...user, tweetQuota: quota}))
   }
 }
