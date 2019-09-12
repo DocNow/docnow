@@ -67,8 +67,8 @@ export default class UserList extends Component {
         <TableHead>
           <TableRow>
             <TableCell className={style.Avatar}>Avatar</TableCell>
-            <TableCell className={style.Name}>Name</TableCell>
             <TableCell className={style.Username}>Username</TableCell>
+            <TableCell className={style.Name}>Name</TableCell>
             <TableCell className={style.Collections}>Collections</TableCell>
             <TableCell className={style.Tweets}>Tweets</TableCell>
             <TableCell className={style.Active}>Active</TableCell>
@@ -81,9 +81,9 @@ export default class UserList extends Component {
           const tweetCount = user.searches.map(s => s.tweetCount).reduce((a, b) => a + b, 0)
           return (
             <TableRow key={user.twitterScreenName}>
-              <TableCell className={style.Avatar}><img src={user.twitterAvatarUrl} /></TableCell>
-              <TableCell className={style.Name}><Link to={`/searches/${user.id}`}>{user.name}</Link></TableCell>
-              <TableCell className={style.Username}>{user.twitterScreenName}</TableCell>
+              <TableCell className={style.Avatar}><a href={`https://twitter.com/${user.twitterScreenName}`}><img src={user.twitterAvatarUrl} /></a></TableCell>
+              <TableCell className={style.Username}><Link to={`/searches/${user.id}`}>{user.twitterScreenName}</Link></TableCell>
+              <TableCell className={style.Name}>{user.name}</TableCell>
               <TableCell className={style.Collections}>{user.searches.length}</TableCell>
               <TableCell className={style.Tweets}>{tweetCount}</TableCell>
               <TableCell className={style.Active}>
