@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Message from './message'
-import style from './SearchToggle.css'
+import Switch from '@material-ui/core/Switch'
+import { ServerStyleSheets } from '@material-ui/styles'
 
 export default class SearchToggle extends Component {
 
@@ -31,19 +32,16 @@ export default class SearchToggle extends Component {
 
   render() {
     const title = this.props.active ? 'Stop Data Collection' : 'Start Data Collection'
+    const color = this.props.active ? 'primary' : 'secondary'
     const msg = this.state.error ? <Message type="error" text={this.state.error} onClose={this.resetError} /> : ''
 
     return (
       <>
-        <div className={style.SearchToggle}>
-          <label title={title} className={style.Switch}>
-            <input
-              type="checkbox"
-              checked={this.props.active}
-              onChange={(e) => {this.toggle(e)}} />
-            <span className={style.Slider + ' ' + style.Round} />
-          </label>
-        </div>
+        <Switch className={ServerStyleSheets.Admin}
+          checked={this.props.active}
+          color={color}
+          title={title}
+          onChange={(e) => {this.toggle(e)}} />
         {msg}
       </>
     )

@@ -3,9 +3,14 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
+import Table from '@material-ui/core/Table'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableHead from '@material-ui/core/TableHead'
+import TableRow from '@material-ui/core/TableRow'
+
 import Trash from './Trash'
 import SearchToggle from './SearchToggle'
-import style from './SearchList.css'
 
 export default class SearchList extends Component {
 
@@ -33,57 +38,56 @@ export default class SearchList extends Component {
   render() {
 
     return (
-      <div className={style.Grid}>
-        <div className={style.GridRow}>
-          <div className={style.GridItem}><h2>Title</h2></div>
-          <div className={style.GridItem}><h2>Tweet Count</h2></div>
-          <div className={style.GridItem}><h2>Created</h2></div>
-          <div className={style.GridItem}><h2>Last Update</h2></div>
-          <div className={style.GridItem}><h2>Actions</h2></div>
-          <div className={style.GridItem}><h2>Delete</h2></div>
-        </div>
-        {this.props.searches.map((search, i) => {
-          const rowClass = i % 2 === 0 ? style.GridRowGray : style.GridRow
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Title</TableCell>
+            <TableCell>Tweet Count</TableCell>
+            <TableCell>Created</TableCell>
+            <TableCell>Last Update</TableCell>
+            <TableCell>Actions</TableCell>
+            <TableCell>Delete</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+        {this.props.searches.map(search => {
           const created = moment(search.created).local().format('MMM D h:mm A')
           const updated = moment(search.updated).local().format('MMM D h:mm A')
           return (
-            <div key={search.id} className={rowClass}>
-              <div className={style.GridTitle}>
+            <TableRow key={search.id}>
+              <TableCell>
                 <Link to={`/search/${search.id}/`}>
                   {search.title}
                 </Link>
-              </div>
-              <div className={style.GridCount}>
+              </TableCell>
+              <TableCell>
                 <ion-icon name="logo-twitter"></ion-icon>
                 &nbsp;
                 { search.tweetCount.toLocaleString() }
-              </div>
-              <div className={style.GridActivity}>
+              </TableCell>
+              <TableCell>
                 {created}
-              </div>
-              <div className={style.GridActivity}>
+              </TableCell>
+              <TableCell>
                 {updated}
-              </div>
-              <div className={style.GridActions}>
-              <div className={style.GridRowInner}>
-                  <div className={style.GridActionsInner}>
-                    <SearchToggle
-                      id={search.id}
-                      active={search.active}
-                      user={this.props.user}
-                      updateSearch={this.props.updateSearch} />
-                  </div>
-              <div className={style.GridActionsInner}>
-                    <Trash
-                      id={search.id}
-                      deleteSearch={this.props.deleteSearch} />
-              </div>
-             </div>
-              </div>
-            </div>
+              </TableCell>
+              <TableCell>
+                <SearchToggle
+                  id={search.id}
+                  active={search.active}
+                  user={this.props.user}
+                  updateSearch={this.props.updateSearch} />
+              </TableCell>
+              <TableCell>
+                <Trash
+                  id={search.id}
+                  deleteSearch={this.props.deleteSearch} />
+              </TableCell>
+            </TableRow>
           )
         })}
-      </div>
+        </TableBody>
+      </Table>
     )
   }
 }
