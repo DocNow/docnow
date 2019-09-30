@@ -17,7 +17,6 @@
   vertical-align: middle;
   justify-content: center;
   text-decoration: none;
-  background-color: #e0e0e0;
 }
 
 .SearchTerm div::before, .SearchTerm div::after {
@@ -35,14 +34,13 @@ input.SearchTerm {
   background-color: transparent;
 }
 
-/* .InCard {
+.InCard {
   max-width: 170px;
-}
-
-.InCard > div{
   overflow-x: hidden;
   text-overflow: ellipsis;
-} */
+  padding: 5px;
+  cursor: pointer;
+}
 
 .Hashtag {
   background-color: lightblue !important;

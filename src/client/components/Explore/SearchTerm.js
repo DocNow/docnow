@@ -12,8 +12,10 @@ export default class SearchTerm extends Component {
 
   componentDidMount() {
     const input = this.chip.current.querySelector('input')
-    input.focus()
-    input.onkeydown = (e) => {this.keyDown(e)}
+    if (input) {
+      input.focus()
+      input.onkeydown = (e) => {this.keyDown(e)}
+    }    
   }
 
   componentDidUpdate() {

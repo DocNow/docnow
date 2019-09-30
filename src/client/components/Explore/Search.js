@@ -84,12 +84,15 @@ export default class Search extends Component {
     let controls = (
       <div className={styles.Controls}>
         <Fab mini title="Search" disabled={disabled}
+          tabIndex="0"
           onClick={() => {this.search()}}
           icon={<span><ion-icon name="search"/></span>} />
         <Fab mini title="Update Search" disabled={disabled}
+          tabIndex="0"
           onClick={() => {this.update()}}
           icon={<span className={spin}><ion-icon name="sync"/></span>} />
         <Fab mini title="Save Search" disabled={disabled}
+          tabIndex="0"
           onClick={() => {this.save()}}
           icon={<span><ion-icon name="filing"/></span>} />
       </div>
@@ -99,6 +102,7 @@ export default class Search extends Component {
       controls = (
         <div className={styles.Controls}>
           <Fab mini title="Search" disabled={disabled}
+            tabIndex="0"
             onClick={() => {this.search()}}
             icon={<span><ion-icon name="search"/></span>} />
         </div>
