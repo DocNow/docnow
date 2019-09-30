@@ -1,12 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import '@material/react-tab-bar/index.scss'
-import '@material/react-tab-scroller/index.scss'
-import '@material/react-tab/index.scss'
-import '@material/react-tab-indicator/index.scss'
-import Tab from '@material/react-tab'
-import TabBar from '@material/react-tab-bar'
 import MediaQueryComponent from './MediaQueryComponent'
+
+import Tabs from '@material-ui/core/Tabs'
+import Tab from '@material-ui/core/Tab'
 
 import styles from './TabBar.css'
 
@@ -21,19 +18,14 @@ export default class TabBarComponent extends MediaQueryComponent {
     if (props.isSuperUser) {
       this.links.push({dest: '/users/', label: 'Users', icon: 'person'})
     }
-    this.handleActiveIndexUpdate = this.handleActiveIndexUpdate.bind(this)
   }
 
   componentDidMount() {
     this.setMediaQuery('(max-width: 480px)', '', styles.NoLabel)
   }
 
-  handleActiveIndexUpdate(activeIndex) {
-    this.props.navigateTo(this.links[activeIndex].dest)
-  }
-
   render() {
-    let activeIndex = 0
+    let activeIndex = null
     switch (this.props.location) {
       case '/':
         activeIndex = 0
@@ -54,20 +46,28 @@ export default class TabBarComponent extends MediaQueryComponent {
     }
 
     return (
-      <TabBar
+      <Tabs
         className={styles.TabBar}
-        activeIndex={activeIndex}
-        handleActiveIndexUpdate={this.handleActiveIndexUpdate}
+        variant="fullWidth"
+        value={activeIndex}
+        indicatorColor="secondary"
+        textColor="secondary"
+        aria-label="nav tabs example"
       >{
         this.links.map((link, i) => {
-          return (<Tab key={`l-${i}`}>
-            <ion-icon name={link.icon} style={{fontSize: '180%'}}></ion-icon>
-            &nbsp;
-            <span className={`mdc-tab__text-label ${this.state.mediaStyle}`}>{link.label}</span>
-          </Tab>)
+          return (
+            <Tab key={`l-${i}`} component="a" onClick={e => {
+                e.preventDefault()
+                this.props.navigateTo(this.links[i].dest)
+              }}
+              className={styles.Tab}
+              icon={<ion-icon name={link.icon} style={{fontSize: '180%'}}></ion-icon>}
+              label={<span className={`${styles.Label} ${this.state.mediaStyle}`}>{link.label}</span>}
+              id={`nav-tab-${i}`}
+            />
+          )
         })
-      }
-      </TabBar>
+      }</Tabs>     
     )
   }
 
