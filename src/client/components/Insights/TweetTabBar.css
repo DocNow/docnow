@@ -13,7 +13,7 @@
   color: #cdc9f1;
 }
 
-.TweetTabBar a:hover, a:active {
+.TweetTabBar a:hover, .TweetTabBar a:active {
   color: #000000;
   font-weight: 600;
   padding: 10px;
