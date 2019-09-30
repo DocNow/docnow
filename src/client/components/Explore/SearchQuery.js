@@ -5,7 +5,6 @@ import SearchTerm from './SearchTerm'
 import style from './SearchTerm.css'
 import styleQuery from './SearchQuery.css'
 import "@material/elevation/mdc-elevation.scss"
-import {ChipSet, Chip} from '@material/react-chips';
 
 export default class SearchQuery extends Component {
   constructor(props) {
@@ -15,7 +14,7 @@ export default class SearchQuery extends Component {
 
   onClick(e) {
     // Make sure the user has clicked on the box and not on a SearchTerm
-    if (e.target.tagName !== 'INPUT' && !e.target.classList.contains('mdc-chip')) {
+    if (e.target.tagName !== 'INPUT') {
       this.props.addSearchTerm({value: '', type: 'input'})
     }
   }
@@ -25,17 +24,20 @@ export default class SearchQuery extends Component {
     if (this.props.query.length === 0 && ! this.props.active) {
       placeHolder = (
         <div>
-          enter a <Chip className={style.SearchTerm + ' ' + style.Keyword} label="keyword"/> &nbsp;
-          <Chip className={style.SearchTerm + ' ' + style.Phrase} label="a phrase"/> &nbsp;
-          <Chip className={style.SearchTerm + ' ' + style.Hashtag} label="#hashtag"/> &nbsp;
-          <Chip className={style.SearchTerm + ' ' + style.User} label="@user"/>
+          enter a <span className={style.SearchTerm + ' ' + style.Keyword}>&nbsp;keyword&nbsp;</span> &nbsp;
+          <span className={style.SearchTerm + ' ' + style.Phrase}>&nbsp;a phrase&nbsp;</span> &nbsp;
+          <span className={style.SearchTerm + ' ' + style.Hashtag}>&nbsp;#hashtag&nbsp;</span> &nbsp;
+          <span className={style.SearchTerm + ' ' + style.User}>&nbsp;@user&nbsp;</span>
         </div>
       )
     }
     return (
       <div id="box" onClick={(e) => {this.onClick(e)}} className={`mdc-elevation--z4 ${styleQuery.SearchQuery}`}>
         {placeHolder}
-        <ChipSet input>
+        <form noValidate autoComplete="off" style={{
+          display: 'flex',
+          justifyContent: 'left'
+        }}>
           {this.props.query.map((term, i) => (
             <SearchTerm
               id={`t${i}`}
@@ -49,7 +51,7 @@ export default class SearchQuery extends Component {
               query={this.props.query}
               focusSearchTerm={this.props.focusSearchTerm} />
           ))}
-        </ChipSet>
+        </form>
       </div>
     )
   }
