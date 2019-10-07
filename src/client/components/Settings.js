@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import style from './Settings.css'
+import TextField from '@material-ui/core/TextField'
+import Button from '@material-ui/core/Button'
 
 import LogoUpload from './LogoUpload'
 import MediaQueryComponent from '../components/MediaQueryComponent'
@@ -45,53 +47,70 @@ export default class Settings extends MediaQueryComponent {
 
         <div className={style.SystemSettings}>
 
-          <p>
-            <input onChange={this.props.updateSettings}
+            <TextField
                id="instanceTitle"
                name="instanceTitle"
-               type="text"
+               label="Instance Name"
+               helperText="A name to identify your DocNow instance."
                placeholder="My Community Group"
-               value={this.props.instanceTitle} />
+               value={this.props.instanceTitle}
+               onChange={this.props.updateSettings} />
+
             <br />
-            <label htmlFor="instanceTitle">Instance Name</label>
-          </p>
-
-          <LogoUpload
-            logoUrl={this.props.logoUrl}
-            updateSettings={this.props.updateSettings} />
-
-          <p>
-            <input onChange={this.props.updateSettings}
+        
+            <TextField
               id="appKey"
               name="appKey"
-              type="text"
-              value={this.props.appKey} />
-            <br />
-            <label htmlFor="appKey">Consumer Key</label>
-          </p>
+              label="Twitter App Consumer Key"
+              helperText="Find this in your Twitter App settings"
+              value={this.props.appKey}
+              onChange={this.props.updateSettings} />
 
-          <p>
-            <input
-              onChange={this.props.updateSettings}
+            <br />
+
+            <TextField
               id="appSecret"
               name="appSecret"
-              type="text"
-              value={this.props.appSecret} />
-            <br />
-            <label htmlFor="appSecret">Consumer Secret</label>
-          </p>
+              label="Twitter App Consumer Secret"
+              helperText="Find this in your Twitter App settings"
+              value={this.props.appSecret}
+              onChange={this.props.updateSettings} />
 
-          <p>
-            <button onClick={() => {
-              this.props.saveSettings().then(() => {
-                if (this.props.userLoggedIn) {
-                  this.props.returnHome()
-                } else {
-                  window.location = '/auth/twitter/'
-                }
-              })
-            }}>Save</button>
-          </p>
+            <br />
+
+            <TextField
+              id="defaultQuota"
+              name="defaultQuota"
+              label="Default Quota"
+              helperText="Maximum tweets collected per user"
+              value={this.props.defaultQuota}
+              onChange={this.props.updateSettings} />
+
+            <br />
+
+            <LogoUpload
+              logoUrl={this.props.logoUrl}
+              updateSettings={this.props.updateSettings} />
+
+            <br />
+
+            <Button 
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                this.props.saveSettings().then(() => {
+                  if (this.props.userLoggedIn) {
+                    this.props.returnHome()
+                  } else {
+                    window.location = '/auth/twitter/'
+                  }
+                })
+              }}>Save</Button>
+            
+            <br />
+            <br />
+            <br />
+            <br />
 
         </div>
 
@@ -118,12 +137,12 @@ Settings.propTypes = {
   logoUrl: PropTypes.string,
   appKey: PropTypes.string,
   appSecret: PropTypes.string,
+  defaultQuota: PropTypes.number,
   userLoggedIn: PropTypes.bool,
   isSuperUser: PropTypes.bool,
   tweetCount: PropTypes.number,
   twitterUserCount: PropTypes.number,
   userCount: PropTypes.number,
-
   getSettings: PropTypes.func,
   updateSettings: PropTypes.func,
   saveSettings: PropTypes.func,

@@ -3,13 +3,10 @@ export const SET_SETTINGS = 'SET_SETTINGS'
 export const UPDATE_SETTINGS = 'UPDATE_SETTINGS'
 export const SAVE_SETTINGS = 'SAVE_SETTINGS'
 
-export const setSettings = (logoUrl, instanceTitle, appKey, appSecret) => {
+export const setSettings = (settings) => {
   return {
     type: SET_SETTINGS,
-    instanceTitle,
-    logoUrl,
-    appKey,
-    appSecret
+    ...settings
   }
 }
 
@@ -18,9 +15,7 @@ export const getSettings = () => {
     fetch('/api/v1/settings', {credentials: 'same-origin'})
       .then(resp => resp.json())
       .then(result => {
-        dispatch(setSettings(
-          result.logoUrl || '', result.instanceTitle || '',
-          result.appKey || '', result.appSecret || ''))
+        dispatch(setSettings(result))
       })
   }
 }

@@ -12,13 +12,8 @@
   border: none;
   font-size: 18pt;
   border-bottom: thin solid grey;
-  width: 500px;
+  width: 700px;
   font-weight: bold;
-}
-
-.Settings label {
-  font-size: 12pt;
-  margin-bottom: 20px;
 }
 
 .SystemStats {
@@ -30,7 +25,6 @@
   text-align: right;
   padding: 10px;
   border: thin solid gray;
-  background-color: lightgreen;
   border-radius: 5px;
 }
 

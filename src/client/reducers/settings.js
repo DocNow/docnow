@@ -5,7 +5,8 @@ const initialState = {
   instanceTitle: '',
   appKey: '',
   appSecret: '',
-  updated: false
+  defaultQuota: 50000,
+  updated: false,
 }
 
 export default function settings(state = initialState, action) {
@@ -18,7 +19,8 @@ export default function settings(state = initialState, action) {
         logoFile: action.logoFile,
         instanceTitle: action.instanceTitle,
         appKey: action.appKey,
-        appSecret: action.appSecret
+        appSecret: action.appSecret,
+        defaultQuota: action.defaultQuota
       }
     }
 

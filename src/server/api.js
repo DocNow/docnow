@@ -99,7 +99,8 @@ app.put('/settings', async (req, res) => {
       logoUrl: req.body.logoUrl,
       instanceTitle: req.body.instanceTitle,
       appKey: req.body.appKey,
-      appSecret: req.body.appSecret}
+      appSecret: req.body.appSecret,
+      defaultQuota: parseInt(req.body.defaultQuota, 10)}
     await db.addSettings(settings)
     activateKeys()
     res.json({status: 'updated'})
