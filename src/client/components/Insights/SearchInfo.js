@@ -48,6 +48,7 @@ export default class SearchInfo extends Component {
             <SearchToggle
               active={this.props.search.active}
               id={this.props.search.id}
+              user={this.props.user}
               updateSearch={this.props.updateSearch} />
             &nbsp;
             &nbsp;
@@ -65,6 +66,7 @@ export default class SearchInfo extends Component {
 
 SearchInfo.propTypes = {
   search: PropTypes.object,
+  user: PropTypes.object,
   title: PropTypes.string,
   description: PropTypes.string,
   updateSearch: PropTypes.func,

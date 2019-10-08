@@ -4,6 +4,7 @@ import { Route, Switch } from 'react-router'
 import { push } from 'connected-react-router'
 import store from '../store'
 
+import ScrollToTop from '../components/ScrollToTop'
 import Header from './Header'
 import TrendsPage from './TrendsPage'
 import SettingsPage from './SettingsPage'
@@ -49,16 +50,18 @@ class App extends MediaQueryComponent {
       <div id="App" className={this.state.mediaStyle}>
         <Header />
         <main>
-          <Switch>
-            <Route exact name="trends" path="/" component={TrendsPage} />
-            <Route exact name="settings" path="/settings/" component={SettingsPage} />
-            <Route exact name="profile" path="/profile/" component={ProfilePage} />
-            <Route exact name="explore" path="/explore/" component={SearchPage} />
-            <Route exact name="searches" path="/searches/:userId?" component={SearchListPage} />
-            <Route exact name="users" path="/users/" component={UserListPage} />
-            <Route exact name="insights" path="/search/:searchId/" component={InsightsPage} />
-            <Route exact name="webpages" path="/search/:searchId/webpages/" component={WebpagesPage} />
-          </Switch>
+          <ScrollToTop>
+            <Switch>
+              <Route exact name="trends" path="/" component={TrendsPage} />
+              <Route exact name="settings" path="/settings/" component={SettingsPage} />
+              <Route exact name="profile" path="/profile/" component={ProfilePage} />
+              <Route exact name="explore" path="/explore/" component={SearchPage} />
+              <Route exact name="searches" path="/searches/:userId?" component={SearchListPage} />
+              <Route exact name="users" path="/users/" component={UserListPage} />
+              <Route exact name="insights" path="/search/:searchId/" component={InsightsPage} />
+              <Route exact name="webpages" path="/search/:searchId/webpages/" component={WebpagesPage} />
+            </Switch>
+          </ScrollToTop>
         </main>
       </div>
     )

@@ -18,9 +18,6 @@ export default class Webpages extends Component {
 
   componentDidMount() {
     this.tick()
-    this.props.resetWebpages()
-    this.props.resetTweets()
-    this.tick()
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
