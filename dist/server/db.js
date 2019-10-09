@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Database = void 0;
 
-var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/objectSpread"));
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -31,7 +31,10 @@ var _urlFetcher = require("./url-fetcher");
 
 var _utils = require("./utils");
 
-// elasticsearch doc types
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 var SETTINGS = 'settings';
 var USER = 'user';
 var PLACE = 'place';
@@ -696,7 +699,7 @@ function () {
 
               case 15:
                 stats = _context3.sent;
-                searches.push((0, _objectSpread2["default"])({}, search, stats));
+                searches.push(_objectSpread({}, search, {}, stats));
 
               case 17:
                 _iteratorNormalCompletion5 = true;
@@ -775,7 +778,7 @@ function () {
 
               case 5:
                 stats = _context4.sent;
-                return _context4.abrupt("return", (0, _objectSpread2["default"])({}, search, stats));
+                return _context4.abrupt("return", _objectSpread({}, search, {}, stats));
 
               case 7:
               case "end":
@@ -841,7 +844,7 @@ function () {
 
               case 6:
                 stats = _context5.sent;
-                return _context5.abrupt("return", (0, _objectSpread2["default"])({}, search, stats, {
+                return _context5.abrupt("return", _objectSpread({}, search, {}, stats, {
                   minDate: new Date(resp.aggregations.minDate.value),
                   maxDate: new Date(resp.aggregations.maxDate.value)
                 }));
@@ -968,7 +971,7 @@ function () {
       var q = queryParts.join(' OR ');
       return new Promise(function (resolve, reject) {
         _this14.getUser(search.creator).then(function (user) {
-          _this14.updateSearch((0, _objectSpread2["default"])({}, search, {
+          _this14.updateSearch(_objectSpread({}, search, {
             active: true
           })).then(function (newSearch) {
             _this14.getTwitterClientForUser(user).then(function (twtr) {
@@ -1175,9 +1178,8 @@ function () {
         },
         sort: {
           created: 'desc'
-        } // adjust the query and sorting if they don't want retweets
-
-      };
+        }
+      }; // adjust the query and sorting if they don't want retweets
 
       if (!includeRetweets) {
         body.query.bool.must_not = {

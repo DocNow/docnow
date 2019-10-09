@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.StreamLoader = exports.StreamLoaderController = void 0;
 
-var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/objectSpread"));
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -22,6 +22,10 @@ var _logger = _interopRequireDefault(require("./logger"));
 var _db = require("./db");
 
 var _redis = require("./redis");
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var START_STREAM = 'start-stream';
 var STOP_STREAM = 'stop-stream';
@@ -275,7 +279,7 @@ function () {
 
               case 3:
                 search = _context3.sent;
-                this.db.updateSearch((0, _objectSpread2["default"])({}, search, {
+                this.db.updateSearch(_objectSpread({}, search, {
                   active: false,
                   archived: false
                 }));
