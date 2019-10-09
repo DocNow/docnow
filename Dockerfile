@@ -1,4 +1,5 @@
-FROM node:8.4.0
+FROM node:12.11.1-alpine
+RUN apk add --no-cache bash
 RUN mkdir /code
 WORKDIR /code
 ADD . /code/
