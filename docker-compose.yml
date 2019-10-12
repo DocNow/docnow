@@ -29,7 +29,6 @@ services:
       context: .
     volumes:
       - ./src:/code/src
-      - ./node_modules:/code/node_modules
     links:
       - redis
       - elasticsearch
