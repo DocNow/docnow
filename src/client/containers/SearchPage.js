@@ -18,7 +18,7 @@ const mapStateToProps = (state) => {
     maxDate: state.search.maxDate,
     minDate: state.search.minDate,
     active: state.search.active,
-    tweetCount: state.search.tweetCount
+    tweetCount: state.search.tweetCount,
   }
 }
 

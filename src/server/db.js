@@ -115,6 +115,7 @@ export class Database {
   }
 
   addSettings(settings) {
+    settings.updated = new Date()
     return this.add(SETTINGS, 'settings', settings)
   }
 
@@ -130,10 +131,27 @@ export class Database {
     })
   }
 
-  addUser(user) {
+  async addUser(user) {
     user.id = uuid()
     user.places = []
+
+    const settings = await this.getSettings()
+    user.tweetQuota = settings.defaultQuota
+
+    const su = await this.getSuperUser()
+    user.isSuperUser = su ? false : true
+   
     log.info('creating user: ', {user: user})
+    await this.add(USER, user.id, user)
+
+    if (user.isSuperUser) {
+      this.loadPlaces()
+      return user 
+    } else {
+      return user
+    }
+
+    /*
     return new Promise((resolve) => {
       this.getSuperUser()
         .then((u) => {
@@ -148,6 +166,7 @@ export class Database {
             })
         })
     })
+    */
   }
 
   updateUser(user) {
@@ -405,6 +424,15 @@ export class Database {
     }
 
     return searches
+  }
+
+  async userOverQuota(user) {
+    const searches = await this.getUserSearches(user)
+    let total = 0
+    for (const s of searches) {
+      total += s.tweetCount
+    }
+    return total > user.tweetQuota
   }
 
   async getSearch(searchId) {

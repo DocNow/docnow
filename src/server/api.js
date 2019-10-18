@@ -52,6 +52,9 @@ app.get('/user', (req, res) => {
 
 app.put('/user', async (req, res) => {
   if (req.user) {
+    // user.searches is generated dynamically and shouldn't be persisted
+    delete req.user.searches
+
     const user = await db.getUser(req.user.id)
     const newUser = {
       ...user,
@@ -101,6 +104,7 @@ app.put('/settings', async (req, res) => {
       appKey: req.body.appKey,
       appSecret: req.body.appSecret,
       defaultQuota: parseInt(req.body.defaultQuota, 10)}
+
     await db.addSettings(settings)
     activateKeys()
     res.json({status: 'updated'})

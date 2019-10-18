@@ -30,7 +30,6 @@ export default class SearchList extends Component {
   }
 
   tick() {
-    console.log('tick')
     const userId = this.props.forUserId || this.props.user.id
     this.props.getSearches(userId)
   }
@@ -45,7 +44,7 @@ export default class SearchList extends Component {
             <TableCell>Tweet Count</TableCell>
             <TableCell>Created</TableCell>
             <TableCell>Last Update</TableCell>
-            <TableCell>Actions</TableCell>
+            <TableCell>Active</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
@@ -76,6 +75,7 @@ export default class SearchList extends Component {
                   id={search.id}
                   active={search.active}
                   user={this.props.user}
+                  searches={this.props.searches}
                   updateSearch={this.props.updateSearch} />
               </TableCell>
               <TableCell>

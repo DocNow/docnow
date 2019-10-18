@@ -8,12 +8,16 @@
   margin-bottom: 25px;
 }
 
+.Settings .Welcome {
+  width: 500px;
+}
+
 .Settings input {
   border: none;
   font-size: 18pt;
   border-bottom: thin solid grey;
-  width: 700px;
   font-weight: bold;
+  width: 700px;
 }
 
 .SystemStats {

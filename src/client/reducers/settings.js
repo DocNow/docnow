@@ -5,7 +5,7 @@ const initialState = {
   instanceTitle: '',
   appKey: '',
   appSecret: '',
-  defaultQuota: 50000,
+  defaultQuota: '',
   updated: false,
 }
 
@@ -20,7 +20,7 @@ export default function settings(state = initialState, action) {
         instanceTitle: action.instanceTitle,
         appKey: action.appKey,
         appSecret: action.appSecret,
-        defaultQuota: action.defaultQuota
+        defaultQuota: action.defaultQuota,
       }
     }
 

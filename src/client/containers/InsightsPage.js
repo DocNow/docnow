@@ -10,6 +10,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     searchId: ownProps.match.params.searchId,
     search: state.search,
+    searches: state.searches,
     user: state.user,
     webpages: state.webpages,
     archived: state.search.archived

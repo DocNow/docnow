@@ -112,8 +112,8 @@ export class Twitter {
     }
     log.info('starting stream for: ', {stream: params})
     const stream = this.twit.stream('statuses/filter', params)
-    stream.on('tweet', (tweet) => {
-      const result = cb(this.extractTweet(tweet))
+    stream.on('tweet', async (tweet) => {
+      const result = await cb(this.extractTweet(tweet))
       if (result === false) {
         log.info('stopping stream for: ', {stream: params})
         stream.stop()

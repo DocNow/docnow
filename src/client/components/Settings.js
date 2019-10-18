@@ -20,11 +20,15 @@ export default class Settings extends MediaQueryComponent {
 
   render() {
 
+    // if there isn't a user provide a welcome message to the first user
+    // who is presumed to be the admin.
+    
     let welcome = ''
-    if (! this.props.appKey && ! this.props.appSecret) {
+    if (! this.props.userLoggedIn) {
       welcome = (
-        <div>
-          <h1>Welcome!</h1>
+        <div className={style.Welcome}>
+          <br />
+          <b>Welcome!</b>
           <p>
             To setup DocNow, you will need to create a
             <em>Twitter application</em> and configure DocNow to use
@@ -43,74 +47,76 @@ export default class Settings extends MediaQueryComponent {
     return (
       <div className={this.state.mediaStyle}>
 
-        {welcome}
 
         <div className={style.SystemSettings}>
 
-            <TextField
-               id="instanceTitle"
-               name="instanceTitle"
-               label="Instance Name"
-               helperText="A name to identify your DocNow instance."
-               placeholder="My Community Group"
-               value={this.props.instanceTitle}
-               onChange={this.props.updateSettings} />
+          {welcome}
 
-            <br />
-        
-            <TextField
-              id="appKey"
-              name="appKey"
-              label="Twitter App Consumer Key"
-              helperText="Find this in your Twitter App settings"
-              value={this.props.appKey}
+          <TextField
+              id="instanceTitle"
+              name="instanceTitle"
+              label="Instance Name"
+              helperText="A name to identify your DocNow instance."
+              placeholder="My Community Group"
+              value={this.props.instanceTitle}
               onChange={this.props.updateSettings} />
 
-            <br />
+          <br />
+      
+          <TextField
+            id="appKey"
+            name="appKey"
+            label="Twitter App Consumer Key"
+            helperText="Find this in your Twitter App settings"
+            value={this.props.appKey}
+            onChange={this.props.updateSettings} />
 
-            <TextField
-              id="appSecret"
-              name="appSecret"
-              label="Twitter App Consumer Secret"
-              helperText="Find this in your Twitter App settings"
-              value={this.props.appSecret}
-              onChange={this.props.updateSettings} />
+          <br />
 
-            <br />
+          <TextField
+            id="appSecret"
+            name="appSecret"
+            label="Twitter App Consumer Secret"
+            helperText="Find this in your Twitter App settings"
+            value={this.props.appSecret}
+            onChange={this.props.updateSettings} />
 
-            <TextField
-              id="defaultQuota"
-              name="defaultQuota"
-              label="Default Quota"
-              helperText="Maximum tweets collected per user"
-              value={this.props.defaultQuota}
-              onChange={this.props.updateSettings} />
+          <br />
 
-            <br />
+          <TextField
+            id="defaultQuota"
+            name="defaultQuota"
+            label="Default Quota"
+            helperText="Maximum tweets collected per user"
+            placeholder={50000}
+            value={this.props.defaultQuota}
+            onChange={this.props.updateSettings} />
 
-            <LogoUpload
-              logoUrl={this.props.logoUrl}
-              updateSettings={this.props.updateSettings} />
+          <br />
 
-            <br />
+          <LogoUpload
+            logoUrl={this.props.logoUrl}
+            updateSettings={this.props.updateSettings} />
 
-            <Button 
-              variant="outlined"
-              color="primary"
-              onClick={() => {
-                this.props.saveSettings().then(() => {
-                  if (this.props.userLoggedIn) {
-                    this.props.returnHome()
-                  } else {
-                    window.location = '/auth/twitter/'
-                  }
-                })
-              }}>Save</Button>
-            
-            <br />
-            <br />
-            <br />
-            <br />
+          <br />
+
+          <Button 
+            variant="outlined"
+            color="primary"
+            onClick={() => {
+              this.props.saveSettings().then(() => {
+                if (this.props.userLoggedIn) {
+                  this.props.returnHome()
+                } else {
+                  window.location = '/auth/twitter/'
+                }
+              })
+            }}>Save</Button>
+          
+          <br />
+          <br />
+          <br />
+          <br />
 
         </div>
 

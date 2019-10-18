@@ -66,6 +66,7 @@ export default class Insights extends Component {
           title={this.props.search.title}
           description={this.props.search.description}
           search={this.props.search}
+          searches={this.props.searches}
           user={this.props.user}
           updateSearch={this.props.updateSearch}
           createArchive={this.props.createArchive} />
@@ -128,6 +129,7 @@ export default class Insights extends Component {
 Insights.propTypes = {
   searchId: PropTypes.string,
   search: PropTypes.object,
+  searches: PropTypes.array,
   user: PropTypes.object,
   webpages: PropTypes.array,
   getSearch: PropTypes.func,

@@ -214,6 +214,7 @@ Search.propTypes = {
   images: PropTypes.array,
   videos: PropTypes.array,
   active: PropTypes.bool,
+  searches: PropTypes.array,
 
   getSearch: PropTypes.func,
   resetTwitterSearch: PropTypes.func,

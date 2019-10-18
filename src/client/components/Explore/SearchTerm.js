@@ -110,7 +110,7 @@ export default class SearchTerm extends Component {
           onChange={(e) => {this.update(e)}}
           onBlur={(e) => {this.update(e)}}
           value={this.props.value}
-          style={{width: `${this.props.value.length || 1}ch`}}/>
+          style={{width: `${this.props.value.length - 1 || 1}ch`}}/>
       )
     }
     return (

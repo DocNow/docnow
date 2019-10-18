@@ -123,7 +123,8 @@ export const updateQuota = (user, quota) => {
   return (dispatch) => {
     dispatch({
       type: UPDATE_QUOTA,
-      user
+      user,
+      quota
     })
     dispatch(updateUser({...user, tweetQuota: quota}))
   }

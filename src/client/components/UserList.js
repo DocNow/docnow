@@ -101,7 +101,7 @@ export default class UserList extends Component {
               <TableCell className={style.Quota}>
                 <TextField
                   className={style.TweetQuota}
-                  value={user.tweetQuota}
+                  defaultValue={user.tweetQuota}
                   onChange={(e) => {this.updateQuota(user, e.target.value)}} />
               </TableCell>
             </TableRow>
