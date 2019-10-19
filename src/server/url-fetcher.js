@@ -43,10 +43,12 @@ export class UrlFetcher {
   }
 
   add(search, url, tweetId) {
-    const job = {search, url, tweetId}
-    this.incrSearchQueue(search)
-    this.incrUrlsCount(search)
-    return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
+    if (this.redis.connected) {
+      const job = {search, url, tweetId}
+      this.incrSearchQueue(search)
+      this.incrUrlsCount(search)
+      return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
+    }
   }
 
   async fetchJob() {

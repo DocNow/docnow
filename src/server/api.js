@@ -66,7 +66,6 @@ app.put('/user', async (req, res) => {
 })
 
 app.put('/user/:userId', async (req, res) => {
-  console.log('x')
   if (req.user && req.user.isSuperUser) {
     const user = await db.getUser(req.params.userId)
     const newUser = {

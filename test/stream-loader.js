@@ -15,7 +15,8 @@ describe('stream-loader', () => {
 
     await db.addSettings({
       appKey: process.env.CONSUMER_KEY,
-      appSecret: process.env.CONSUMER_SECRET
+      appSecret: process.env.CONSUMER_SECRET,
+      defaultTweetQuota: 10000
     })
 
     user = await db.addUser({
@@ -23,6 +24,7 @@ describe('stream-loader', () => {
       location: "Silver Spring, MD",
       twitterScreenName: "edsu",
       twitterUserId: "1234",
+      active: true,
       twitterAccessToken: process.env.ACCESS_TOKEN,
       twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET
     })

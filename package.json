@@ -48,7 +48,7 @@
       }
     },
     "test": {
-      "command": "npm run eslint:server && mocha --timeout 20000 --require @babel/register --require @babel/polyfill test/stream-loader.js",
+      "command": "npm run eslint:server && mocha --timeout 20000 --require @babel/register --require @babel/polyfill test/*",
       "env": {
         "NODE_ENV": "test"
       }

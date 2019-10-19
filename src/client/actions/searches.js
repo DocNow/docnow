@@ -13,7 +13,6 @@ export const getSearches = (userId) => {
     if (userId) {
       url += `?userId=${userId}`
     }
-    console.log(url)
     fetch(url, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {

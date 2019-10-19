@@ -136,7 +136,7 @@ export class Database {
     user.places = []
 
     const settings = await this.getSettings()
-    user.tweetQuota = settings.defaultQuota
+    user.tweetQuota = user.tweetQuota || settings.defaultQuota
 
     const su = await this.getSuperUser()
     user.isSuperUser = su ? false : true
