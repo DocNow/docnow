@@ -1,6 +1,7 @@
 .SearchTerm {
   outline: none;
   cursor: pointer;
+  text-align: center;
 }
 
 input.SearchTerm {
