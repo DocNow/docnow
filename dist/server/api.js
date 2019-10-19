@@ -77,23 +77,25 @@ function () {
         switch (_context.prev = _context.next) {
           case 0:
             if (!req.user) {
-              _context.next = 8;
+              _context.next = 9;
               break;
             }
 
-            _context.next = 3;
+            // user.searches is generated dynamically and shouldn't be persisted
+            delete req.user.searches;
+            _context.next = 4;
             return db.getUser(req.user.id);
 
-          case 3:
+          case 4:
             user = _context.sent;
             newUser = (0, _objectSpread2["default"])({}, user, req.body);
-            _context.next = 7;
+            _context.next = 8;
             return db.updateUser(newUser);
 
-          case 7:
+          case 8:
             res.json(newUser);
 
-          case 8:
+          case 9:
           case "end":
             return _context.stop();
         }
@@ -116,33 +118,31 @@ function () {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            console.log('x');
-
             if (!(req.user && req.user.isSuperUser)) {
-              _context2.next = 11;
+              _context2.next = 10;
               break;
             }
 
-            _context2.next = 4;
+            _context2.next = 3;
             return db.getUser(req.params.userId);
 
-          case 4:
+          case 3:
             user = _context2.sent;
             newUser = (0, _objectSpread2["default"])({}, user, req.body);
-            _context2.next = 8;
+            _context2.next = 7;
             return db.updateUser(newUser);
 
-          case 8:
+          case 7:
             res.json(newUser);
-            _context2.next = 12;
+            _context2.next = 11;
             break;
 
-          case 11:
+          case 10:
             res.status(401).json({
               error: 'Not Authorized'
             });
 
-          case 12:
+          case 11:
           case "end":
             return _context2.stop();
         }
@@ -220,7 +220,8 @@ function () {
               logoUrl: req.body.logoUrl,
               instanceTitle: req.body.instanceTitle,
               appKey: req.body.appKey,
-              appSecret: req.body.appSecret
+              appSecret: req.body.appSecret,
+              defaultQuota: parseInt(req.body.defaultQuota, 10)
             };
             _context4.next = 7;
             return db.addSettings(settings);

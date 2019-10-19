@@ -7,6 +7,10 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Twitter = void 0;
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/classCallCheck"));
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
@@ -202,17 +206,43 @@ function () {
       });
 
       var stream = this.twit.stream('statuses/filter', params);
-      stream.on('tweet', function (tweet) {
-        var result = cb(_this4.extractTweet(tweet));
+      stream.on('tweet',
+      /*#__PURE__*/
+      function () {
+        var _ref = (0, _asyncToGenerator2["default"])(
+        /*#__PURE__*/
+        _regenerator["default"].mark(function _callee(tweet) {
+          var result;
+          return _regenerator["default"].wrap(function _callee$(_context) {
+            while (1) {
+              switch (_context.prev = _context.next) {
+                case 0:
+                  _context.next = 2;
+                  return cb(_this4.extractTweet(tweet));
 
-        if (result === false) {
-          _logger["default"].info('stopping stream for: ', {
-            stream: params
-          });
+                case 2:
+                  result = _context.sent;
 
-          stream.stop();
-        }
-      });
+                  if (result === false) {
+                    _logger["default"].info('stopping stream for: ', {
+                      stream: params
+                    });
+
+                    stream.stop();
+                  }
+
+                case 4:
+                case "end":
+                  return _context.stop();
+              }
+            }
+          }, _callee);
+        }));
+
+        return function (_x) {
+          return _ref.apply(this, arguments);
+        };
+      }());
     }
   }, {
     key: "extractTweet",

@@ -119,14 +119,16 @@ function () {
   }, {
     key: "add",
     value: function add(search, url, tweetId) {
-      var job = {
-        search: search,
-        url: url,
-        tweetId: tweetId
-      };
-      this.incrSearchQueue(search);
-      this.incrUrlsCount(search);
-      return this.redis.lpushAsync('urlqueue', JSON.stringify(job));
+      if (this.redis.connected) {
+        var job = {
+          search: search,
+          url: url,
+          tweetId: tweetId
+        };
+        this.incrSearchQueue(search);
+        this.incrUrlsCount(search);
+        return this.redis.lpushAsync('urlqueue', JSON.stringify(job));
+      }
     }
   }, {
     key: "fetchJob",

@@ -155,55 +155,55 @@ function () {
     value: function () {
       var _startStream = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee2(searchId) {
+      _regenerator["default"].mark(function _callee3(searchId) {
         var _this2 = this;
 
         var search, user, t, track, tweets, lastUpdate;
-        return _regenerator["default"].wrap(function _callee2$(_context2) {
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context2.prev = _context2.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 _logger["default"].info('starting stream', {
                   searchId: searchId
                 });
 
-                _context2.next = 3;
+                _context3.next = 3;
                 return this.db.getSearch(searchId);
 
               case 3:
-                search = _context2.sent;
+                search = _context3.sent;
 
                 if (search) {
-                  _context2.next = 7;
+                  _context3.next = 7;
                   break;
                 }
 
                 _logger["default"].error('unable to find search for ' + searchId);
 
-                return _context2.abrupt("return");
+                return _context3.abrupt("return");
 
               case 7:
-                _context2.next = 9;
+                _context3.next = 9;
                 return this.db.getUser(search.creator);
 
               case 9:
-                user = _context2.sent;
+                user = _context3.sent;
 
                 if (user) {
-                  _context2.next = 13;
+                  _context3.next = 13;
                   break;
                 }
 
                 _logger["default"].error('unable to find user for ' + search.creator);
 
-                return _context2.abrupt("return");
+                return _context3.abrupt("return");
 
               case 13:
-                _context2.next = 15;
+                _context3.next = 15;
                 return this.db.getTwitterClientForUser(user);
 
               case 15:
-                t = _context2.sent;
+                t = _context3.sent;
                 track = search.query.map(function (term) {
                   return term.value;
                 }).join(',');
@@ -212,41 +212,105 @@ function () {
                 lastUpdate = new Date();
                 t.filter({
                   track: track
-                }, function (tweet) {
-                  tweets.push(tweet);
+                },
+                /*#__PURE__*/
+                function () {
+                  var _ref = (0, _asyncToGenerator2["default"])(
+                  /*#__PURE__*/
+                  _regenerator["default"].mark(function _callee2(tweet) {
+                    var elapsed, numTweets;
+                    return _regenerator["default"].wrap(function _callee2$(_context2) {
+                      while (1) {
+                        switch (_context2.prev = _context2.next) {
+                          case 0:
+                            tweets.push(tweet);
 
-                  if (!(_this2.active === true && _this2.activeStreams.has(searchId))) {
-                    _logger["default"].info('stream for ' + searchId + ' has been closed');
+                            if (_this2.active === true && _this2.activeStreams.has(searchId)) {
+                              _context2.next = 4;
+                              break;
+                            }
 
-                    return false;
-                  }
+                            _logger["default"].info('stream for ' + searchId + ' has been closed');
 
-                  var elapsed = new Date() - lastUpdate;
+                            return _context2.abrupt("return", false);
 
-                  if (tweets.length >= 100 || tweets.length > 0 && elapsed > 5000) {
-                    var numTweets = tweets.length;
+                          case 4:
+                            elapsed = new Date() - lastUpdate;
 
-                    _this2.db.loadTweets(search, tweets).then(function (resp) {
-                      if (resp.error) {
-                        _logger["default"].info('errors during load!');
-                      } else {
-                        _logger["default"].info('loaded ' + numTweets + ' tweets for ' + search.id);
+                            if (!(tweets.length >= 100 || tweets.length > 0 && elapsed > 5000)) {
+                              _context2.next = 25;
+                              break;
+                            }
+
+                            _context2.next = 8;
+                            return _this2.db.getUser(search.creator);
+
+                          case 8:
+                            user = _context2.sent;
+
+                            if (user.active) {
+                              _context2.next = 15;
+                              break;
+                            }
+
+                            _logger["default"].info("user is not active: ".concat(user.twitterScreenName));
+
+                            _this2.stopStream(searchId);
+
+                            return _context2.abrupt("return", false);
+
+                          case 15:
+                            _context2.next = 17;
+                            return _this2.db.userOverQuota(user);
+
+                          case 17:
+                            if (!_context2.sent) {
+                              _context2.next = 21;
+                              break;
+                            }
+
+                            _logger["default"].info("user is over quota ".concat(user.twitterScreenName));
+
+                            _this2.stopStream(searchId);
+
+                            return _context2.abrupt("return", false);
+
+                          case 21:
+                            numTweets = tweets.length;
+
+                            _this2.db.loadTweets(search, tweets).then(function (resp) {
+                              if (resp.error) {
+                                _logger["default"].info('errors during load!');
+                              } else {
+                                _logger["default"].info('loaded ' + numTweets + ' tweets for ' + search.id);
+                              }
+                            });
+
+                            tweets = [];
+                            lastUpdate = new Date();
+
+                          case 25:
+                            return _context2.abrupt("return", true);
+
+                          case 26:
+                          case "end":
+                            return _context2.stop();
+                        }
                       }
-                    });
+                    }, _callee2);
+                  }));
 
-                    tweets = [];
-                    lastUpdate = new Date();
-                  }
-
-                  return true;
-                });
+                  return function (_x2) {
+                    return _ref.apply(this, arguments);
+                  };
+                }());
 
               case 21:
               case "end":
-                return _context2.stop();
+                return _context3.stop();
             }
           }
-        }, _callee2, this);
+        }, _callee3, this);
       }));
 
       function startStream(_x) {
@@ -260,21 +324,21 @@ function () {
     value: function () {
       var _stopStream = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee3(searchId) {
+      _regenerator["default"].mark(function _callee4(searchId) {
         var search;
-        return _regenerator["default"].wrap(function _callee3$(_context3) {
+        return _regenerator["default"].wrap(function _callee4$(_context4) {
           while (1) {
-            switch (_context3.prev = _context3.next) {
+            switch (_context4.prev = _context4.next) {
               case 0:
                 _logger["default"].info('stopping stream', {
                   searchId: searchId
                 });
 
-                _context3.next = 3;
+                _context4.next = 3;
                 return this.db.getSearch(searchId);
 
               case 3:
-                search = _context3.sent;
+                search = _context4.sent;
                 this.db.updateSearch((0, _objectSpread2["default"])({}, search, {
                   active: false,
                   archived: false
@@ -283,13 +347,13 @@ function () {
 
               case 6:
               case "end":
-                return _context3.stop();
+                return _context4.stop();
             }
           }
-        }, _callee3, this);
+        }, _callee4, this);
       }));
 
-      function stopStream(_x2) {
+      function stopStream(_x3) {
         return _stopStream.apply(this, arguments);
       }
 
