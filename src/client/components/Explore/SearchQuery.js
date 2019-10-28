@@ -4,7 +4,7 @@ import SearchTerm from './SearchTerm'
 
 import style from './SearchTerm.css'
 import styleQuery from './SearchQuery.css'
-import "@material/elevation/mdc-elevation.scss"
+import Paper from '@material-ui/core/Paper'
 
 export default class SearchQuery extends Component {
   constructor(props) {
@@ -32,7 +32,7 @@ export default class SearchQuery extends Component {
       )
     }
     return (
-      <div id="box" onClick={(e) => {this.onClick(e)}} className={`mdc-elevation--z4 ${styleQuery.SearchQuery}`}>
+      <Paper id="box" elevation="4" onClick={(e) => {this.onClick(e)}} className={styleQuery.SearchQuery}>
         {placeHolder}
         <form noValidate autoComplete="off" style={{
           display: 'flex',
@@ -52,7 +52,7 @@ export default class SearchQuery extends Component {
               focusSearchTerm={this.props.focusSearchTerm} />
           ))}
         </form>
-      </div>
+      </Paper>
     )
   }
 

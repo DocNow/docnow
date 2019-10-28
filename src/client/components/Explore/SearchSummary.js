@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import moment from 'moment'
 
 import style from './SearchSummary.css'
-import "@material/elevation/mdc-elevation.scss"
+import Paper from '@material-ui/core/Paper'
+
 
 export default class SearchSummary extends Component {
 
@@ -17,7 +18,7 @@ export default class SearchSummary extends Component {
         </div>
       )
     } else if (this.props.id) {
-      return <div className={`mdc-elevation--z4 ${style.Summary}`}>Loading up to 1,000 recent tweets from Twitter matching your query</div>
+      return <Paper elevation="4" className={style.Summary}>Loading up to 1,000 recent tweets from Twitter matching your query</Paper>
     } else {
       return <div />
     }

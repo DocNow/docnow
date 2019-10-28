@@ -14,11 +14,13 @@
 .Controls button {
   margin-left: 10px;
   margin-right: 10px;
+  font-size: 1.5em;
+  padding-top: 5px;
 }
 
-.Controls button i {
-  padding-left: 0px !important;
-  padding-right: 0px;
+.SpinAdj {
+  width: 50px;
+  height: 35px;
 }
 
 time, .Count  {

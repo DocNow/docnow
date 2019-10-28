@@ -1,10 +1,9 @@
 .AddPlace {
-  width: 300px;
+  width: 320px;
   box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
   background-color: #ffffff;
   opacity: 0.9;
-  width: 300px;
   padding: 5px;
   margin-top: 25px;
   display: flex;
@@ -13,7 +12,8 @@
 }
 
 .AddPlace button {
-  margin-left: 5px;
+  margin-left: 10px;
+  font-size: 1.5em;
 }
 
 .AddPlace input {
@@ -23,7 +23,7 @@
   font-size: 14pt;
   height: 26px;
   width: 240px;
-  margin-top: 2px;
+  margin-top: 8px;
 }
 
 .AddPlace input option {

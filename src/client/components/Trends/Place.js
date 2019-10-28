@@ -2,17 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import FlipMove from 'react-flip-move'
 import SearchTerm from '../Explore/SearchTerm'
-import '@material/react-card/index.scss'
-import '@material/react-layout-grid/index.scss'
 
-import '@material/react-icon-button/index.scss'
-import IconButton from '@material/react-icon-button'
-
-import Card, {
-  CardPrimaryContent,
-  CardActions,
-  CardActionIcons
-} from "@material/react-card"
+import Card from '@material-ui/core/Card'
+import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
+import IconButton from '@material-ui/core/IconButton'
 
 import cardStyle from '../Card.css'
 import placeStyle from './Place.css'
@@ -33,7 +27,8 @@ export default class Place extends Component {
     let trends = null
     let remove = null
     if (this.props.username) {
-      remove = (<IconButton 
+      remove = (<IconButton
+        style={{marginLeft: 'auto'}}
         onClick={() => {this.props.deleteTrend(this.props.placeId)}}><ion-icon name="remove"></ion-icon></IconButton>)
       trends = this.props.trends.map((trend, i) => {
         return (
@@ -64,22 +59,19 @@ export default class Place extends Component {
     }
 
     return (
-      <Card outlined className={cardStyle.Card} >
-        <CardPrimaryContent className={`${cardStyle.Scroll} ${cardStyle.innerCard}`}>
+      <Card className={cardStyle.Card}>
+        <CardContent className={cardStyle.Scroll}>
           <FlipMove
-            style={{padding: '24px'}}
             duration={2000}
             enterAnimation="elevator"
             leaveAnimation="fade">
             { trends }
           </FlipMove>
-        </CardPrimaryContent>
+        </CardContent>
 
         <CardActions>
           <h2 className={cardStyle.PlaceHeader}>{this.props.name} </h2>
-          <CardActionIcons>
-            {remove}
-          </CardActionIcons>
+          {remove}
         </CardActions>
       </Card>
     )

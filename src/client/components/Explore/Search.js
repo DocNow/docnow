@@ -13,13 +13,11 @@ import styles from './Search.css'
 import card from '../Card.css'
 import animations from '../animations.css'
 
-import Card, {
-  CardPrimaryContent,
-  CardActions
-} from "@material/react-card"
+import Card from '@material-ui/core/Card'
+import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
 
-import '@material/react-fab/index.scss';
-import Fab from '@material/react-fab'
+import Fab from '@material-ui/core/Fab'
 
 export default class Search extends Component {
 
@@ -83,28 +81,33 @@ export default class Search extends Component {
 
     let controls = (
       <div className={styles.Controls}>
-        <Fab mini title="Search" disabled={disabled}
+        <Fab size="medium" title="Search" disabled={disabled}
           tabIndex="0"
-          onClick={() => {this.search()}}
-          icon={<span><ion-icon name="search"/></span>} />
-        <Fab mini title="Update Search" disabled={disabled}
+          onClick={() => {this.search()}}>
+            <ion-icon name="search"></ion-icon>
+          </Fab>
+        <Fab size="medium" title="Update Search" disabled={disabled}
           tabIndex="0"
-          onClick={() => {this.update()}}
-          icon={<span className={spin}><ion-icon name="sync"/></span>} />
-        <Fab mini title="Save Search" disabled={disabled}
+          onClick={() => {this.update()}}>
+            <span className={`${spin} ${styles.SpinAdj}`}><ion-icon name="sync"></ion-icon></span>
+          </Fab>
+        <Fab size="medium" title="Save Search" disabled={disabled}
           tabIndex="0"
-          onClick={() => {this.save()}}
-          icon={<span><ion-icon name="filing"/></span>} />
+          onClick={() => {this.save()}}>
+            <ion-icon name="filing"></ion-icon>
+          </Fab>
       </div>
     )
 
     if (! this.props.searchId) {
       controls = (
         <div className={styles.Controls}>
-          <Fab mini title="Search" disabled={disabled}
+          <Fab size="medium" title="Search" disabled={disabled}
+            color="primary"
             tabIndex="0"
-            onClick={() => {this.search()}}
-            icon={<span><ion-icon name="search"/></span>} />
+            onClick={() => {this.search()}}>
+              <ion-icon name="search"></ion-icon>
+          </Fab>
         </div>
       )
     }
@@ -136,9 +139,9 @@ export default class Search extends Component {
         <div className={card.CardHolder} style={style}>
 
           <Card outlined className={card.Card} >
-            <CardPrimaryContent className={card.Scroll}>
+            <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <TweetList tweets={this.props.tweets} />
-            </CardPrimaryContent>
+            </CardContent>
 
             <CardActions>
               <h2 className={card.PlaceHeader}>Tweets</h2>
@@ -146,11 +149,11 @@ export default class Search extends Component {
           </Card>
 
           <Card outlined className={card.Card} >
-            <CardPrimaryContent className={card.Scroll}>
+            <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <UserList
                 addSearchTerm={this.props.addSearchTerm}
                 users={this.props.users}/>
-            </CardPrimaryContent>
+            </CardContent>
 
             <CardActions>
               <h2 className={card.PlaceHeader}>Users</h2>
@@ -158,11 +161,11 @@ export default class Search extends Component {
           </Card>
 
           <Card outlined className={card.Card} >
-            <CardPrimaryContent className={card.Scroll}>
+            <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <HashtagChart
                 addSearchTerm={this.props.addSearchTerm}
                 hashtags={this.props.hashtags}/>
-            </CardPrimaryContent>
+            </CardContent>
 
             <CardActions>
               <h2 className={card.PlaceHeader}>Hashtags</h2>
@@ -170,9 +173,9 @@ export default class Search extends Component {
           </Card>
 
           <Card outlined className={card.Card} >
-            <CardPrimaryContent className={card.Scroll}>
+            <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <UrlList urls={this.props.urls} />
-            </CardPrimaryContent>
+            </CardContent>
 
             <CardActions>
               <h2 className={card.PlaceHeader}>URLs</h2>
@@ -180,9 +183,9 @@ export default class Search extends Component {
           </Card>
 
           <Card outlined className={card.Card} >
-            <CardPrimaryContent className={card.Scroll}>
+            <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <ImageList images={this.props.images} />
-            </CardPrimaryContent>
+            </CardContent>
 
             <CardActions>
               <h2 className={card.PlaceHeader}>Images</h2>
@@ -190,9 +193,9 @@ export default class Search extends Component {
           </Card>
 
           <Card outlined className={card.Card} >
-            <CardPrimaryContent className={card.Scroll}>
+            <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <VideoList videos={this.props.videos} />
-            </CardPrimaryContent>
+            </CardContent>
 
             <CardActions>
               <h2 className={card.PlaceHeader}>Video</h2>

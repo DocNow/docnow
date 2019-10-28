@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Autocomplete from 'react-autocomplete'
-import '@material/react-text-field/index.scss'
 
-import '@material/react-fab/index.scss';
-import Fab from '@material/react-fab'
+import Fab from '@material-ui/core/Fab'
 
 import style from './AddPlace.css'
 
@@ -77,10 +75,12 @@ export default class AddPlace extends Component {
            onSelect={value => this.props.updateNewTrend(value)}
            inputProps={inputProps} />
         <Fab
-          mini tabIndex="0"
-          icon={<span><ion-icon name="add"></ion-icon></span>} 
+          size="medium" tabIndex="0"
+          color="primary"
           onClick={ this.checkPlace }
-          disabled={placeDisabled} />
+          disabled={placeDisabled}>
+            <ion-icon name="add"></ion-icon>
+        </Fab>
       </div>
     )
   }

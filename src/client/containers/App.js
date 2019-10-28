@@ -20,7 +20,6 @@ import { getWorld } from '../actions/trends'
 import { getSearches } from '../actions/searches'
 
 import styles from './App.css'
-import './App.scss'
 
 class App extends MediaQueryComponent {
 

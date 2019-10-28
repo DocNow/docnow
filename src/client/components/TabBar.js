@@ -50,8 +50,8 @@ export default class TabBarComponent extends MediaQueryComponent {
         className={styles.TabBar}
         variant="fullWidth"
         value={activeIndex}
-        indicatorColor="secondary"
-        textColor="secondary"
+        indicatorColor="primary"
+        textColor="primary"
         aria-label="nav tabs example"
       >{
         this.links.map((link, i) => {
