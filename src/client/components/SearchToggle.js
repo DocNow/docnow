@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Message from './message'
+import Message from './Message'
 import Switch from '@material-ui/core/Switch'
 import { ServerStyleSheets } from '@material-ui/styles'
 

@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import style from './SearchTerm.css'
-import '@material/react-chips/index.scss'
+import TextField from '@material-ui/core/TextField'
 
 export default class SearchTerm extends Component {
 
@@ -11,12 +11,16 @@ export default class SearchTerm extends Component {
   }
 
   componentDidMount() {
-    this.chip.current.focus()
+    const input = this.chip.current.querySelector('input')
+    if (input) {
+      input.focus()
+      input.onkeydown = (e) => {this.keyDown(e)}
+    }    
   }
 
   componentDidUpdate() {
     if (this.props.focused) {
-      this.chip.current.focus()
+      this.chip.current.querySelector('input').focus()
     }
   }
 
@@ -94,27 +98,34 @@ export default class SearchTerm extends Component {
     const cssClass = this.cssClass(type)
     const otherClassNames = this.props.className ? this.props.className : ''
     let chip = (
-      <span className={`mdc-chip__text ${style.SearchTerm} ${otherClassNames}`}
+      <span className={`${style.SearchTerm} ${otherClassNames}`}
           ref={this.chip}          
           onClick={(e) => this.click(e)}          
           data-type={type}>
           {this.props.value}</span>
     )
     if (this.props.onInput) {
+      // chip = (
+      //   <input className={`mdc-chip__text ${style.SearchTerm} ${otherClassNames}`}
+      //     spellCheck={false}
+      //     ref={this.chip}
+      //     data-type={type}
+      //     onKeyDown={(e) => {this.keyDown(e)}}
+      //     onChange={(e) => {this.update(e)}}
+      //     onBlur={(e) => {this.update(e)}}
+      //     value={this.props.value}
+      //     style={{width: `${this.props.value.length || 1}ch`}}/>
+      // )
       chip = (
-        <input className={`mdc-chip__text ${style.SearchTerm} ${otherClassNames}`}
-          spellCheck={false}
+        <TextField
           ref={this.chip}
-          data-type={type}
-          onKeyDown={(e) => {this.keyDown(e)}}
-          onChange={(e) => {this.update(e)}}
-          onBlur={(e) => {this.update(e)}}
           value={this.props.value}
-          style={{width: `${this.props.value.length || 1}ch`}}/>
+          onChange={(e) => {this.update(e)}}
+        />
       )
     }
     return (
-      <span className={`mdc-chip ${cssClass}`}>
+      <span className={`${cssClass} ${style.SearchTerm} ${otherClassNames}`}>
         {chip}
       </span>
     )

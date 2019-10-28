@@ -1,7 +1,32 @@
 .SearchTerm {
   outline: none;
   cursor: pointer;
-  text-align: center;
+  color: rgba(0, 0, 0, 0.87);
+  border: none;
+  cursor: default;
+  height: 32px;
+  display: inline-flex;
+  outline: 0;
+  padding: 0;
+  font-size: 0.8125rem;
+  box-sizing: border-box;
+  transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
+  align-items: center;
+  white-space: nowrap;
+  border-radius: 16px;
+  vertical-align: middle;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.SearchTerm div::before, .SearchTerm div::after {
+  left: 6% !important;
+  right: auto !important;
+  width: 88%;
+}
+
+.SearchTerm input {
+  padding: 6px 15px 7px !important; 
 }
 
 input.SearchTerm {
@@ -11,11 +36,10 @@ input.SearchTerm {
 
 .InCard {
   max-width: 170px;
-}
-
-.InCard > div{
   overflow-x: hidden;
   text-overflow: ellipsis;
+  padding: 5px;
+  cursor: pointer;
 }
 
 .Hashtag {
