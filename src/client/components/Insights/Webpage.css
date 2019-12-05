@@ -1,5 +1,13 @@
 .Webpage {
-  height: 500px  
+  height: 445px;
+  max-height: 445px;
+}
+
+.Checkbox {
+  position: absolute !important;
+  top: 5px;
+  right: 5px;
+  background-color: #ededed !important;
 }
 
 .UrlButton {

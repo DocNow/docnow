@@ -54,9 +54,9 @@ export default class Webpage extends Component {
 
     return (
       <Card className={`${card.Card} ${card.Scroll} ${style.Webpage}`}>
-        <CardMedia style={{paddingTop: '56.25%', position: 'relative'}} image={img}>
+        <CardMedia style={{paddingTop: '160px', position: 'relative'}} image={img}>
           <Checkbox
-            style={{position: 'absolute', top: '5px', right: '5px'}}
+            className={style.Checkbox}
             checked={this.state.selected}
             onChange={() => this.toggleSelect()}
             inputProps={{
@@ -64,7 +64,7 @@ export default class Webpage extends Component {
             }}
           />
         </CardMedia>
-        <CardContent style={{overflowY: 'scroll', height: '46.75%'}}>
+        <CardContent style={{overflowY: 'scroll', height: '190px'}}>
           <Typography variant="h2" component="h2">
             {this.props.title}
           </Typography>
