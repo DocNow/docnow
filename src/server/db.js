@@ -859,7 +859,14 @@ export class Database {
     const body = {
       size: 0,
       query: {match: {search: search.id}},
-      aggregations: {videos: {terms: {field: 'videos', size: 100}}}
+      aggregations: {
+        videos: {
+          terms: {field: 'videos', size: 100},
+          aggregations: {
+            ids: {top_hits: {_source: {include: ['id']}}}
+          }
+        }
+      }
     }
     return new Promise((resolve, reject) => {
       this.es.search({
@@ -868,7 +875,10 @@ export class Database {
         body: body
       }).then((response) => {
         const videos = response.aggregations.videos.buckets.map((u) => {
-          return {url: u.key, count: u.doc_count}
+          const ids = u.ids.hits.hits.map((hit) => {
+            return hit._source.id
+          })
+          return {url: u.key, count: u.doc_count, ids}
         })
         resolve(videos)
       }).catch((err) => {
