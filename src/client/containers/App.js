@@ -12,6 +12,7 @@ import ProfilePage from './ProfilePage'
 import SearchPage from './SearchPage'
 import InsightsPage from './InsightsPage'
 import WebpagesPage from './WebpagesPage'
+import ImagesPage from './ImagesPage'
 import SearchListPage from './SearchListPage'
 import UserListPage from './UserListPage'
 import { getUser } from '../actions/user'
@@ -59,6 +60,7 @@ class App extends MediaQueryComponent {
               <Route exact name="users" path="/users/" component={UserListPage} />
               <Route exact name="insights" path="/search/:searchId/" component={InsightsPage} />
               <Route exact name="webpages" path="/search/:searchId/webpages/" component={WebpagesPage} />
+              <Route exact name="images" path="/search/:searchId/images/" component={ImagesPage} />
             </Switch>
           </ScrollToTop>
         </main>

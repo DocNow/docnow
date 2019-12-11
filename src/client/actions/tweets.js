@@ -23,3 +23,13 @@ export const getTweetsForUrl = (searchId, url) => {
       })
   }
 }
+
+export const getTweetsByIds = (searchId, ids) => {
+  return (dispatch) => {
+    fetch(`/api/v1/search/${searchId}/tweets?ids=${ids.join(',')}`, {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTweets(result))
+      })
+  }
+}

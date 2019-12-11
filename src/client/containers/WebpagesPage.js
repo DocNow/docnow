@@ -6,6 +6,7 @@ import { getQueueStats } from '../actions/queue'
 import { getSearch, updateSearch } from '../actions/search'
 import { getTweetsForUrl, resetTweets } from '../actions/tweets'
 import Webpages from '../components/Insights/Webpages'
+import { push } from 'connected-react-router'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -32,6 +33,12 @@ const actions = {
   updateSearch,
 }
 
-const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)
+const mapDispatchToProps = (dispatch) => {
+  return Object.assign( bindActionCreators(actions, dispatch), {
+    navigateTo: (location) => {
+      dispatch(push(location))
+    }
+  })
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Webpages)

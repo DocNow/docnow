@@ -4,6 +4,7 @@ import LazyLoad from 'react-lazy-load'
 import Wayback from './Wayback'
 
 import style from './Webpage.css'
+import cb from './Checkbox.css'
 import card from '../Card.css'
 import doc from '../../images/doc.png'
 
@@ -56,7 +57,7 @@ export default class Webpage extends Component {
       <Card className={`${card.Card} ${card.Scroll} ${style.Webpage}`}>
         <CardMedia style={{paddingTop: '160px', position: 'relative'}} image={img}>
           <Checkbox
-            className={style.Checkbox}
+            className={cb.Checkbox}
             checked={this.state.selected}
             onChange={() => this.toggleSelect()}
             inputProps={{
@@ -73,7 +74,7 @@ export default class Webpage extends Component {
           </Typography>
         </CardContent>
         <CardActions>
-          <IconButton aria-label="add to favorites" onClick={() => {this.showTweets()}}>
+          <IconButton aria-label="show tweets" onClick={() => {this.showTweets()}}>
             <ion-icon name="logo-twitter"></ion-icon>
           </IconButton>
           {this.props.count}

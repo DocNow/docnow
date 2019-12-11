@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import Webpage from './Webpage'
 import TweetsModal from './TweetsModal'
 import SearchInfo from './SearchInfo'
-import TweetTabBar from './TweetTabBar'
+import BackButton from './BackButton'
 
 import cardStyle from '../Card.css'
 import style from './Webpages.css'
@@ -60,7 +60,9 @@ export default class Webpages extends Component {
           search={this.props.search}
           updateSearch={this.props.updateSearch} />
 
-        <TweetTabBar />
+        <BackButton 
+          searchId={this.props.searchId}
+          navigateTo={this.props.navigateTo}/>
 
         <div className={style.Queue}>
           URLs Checked: {this.props.total - this.props.remaining}/{this.props.total}
@@ -111,4 +113,5 @@ Webpages.propTypes = {
   saveArchive: PropTypes.func,
   getSearch: PropTypes.func,
   updateSearch: PropTypes.func,
+  navigateTo: PropTypes.func
 }
