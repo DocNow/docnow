@@ -1452,6 +1452,64 @@ function () {
       return getTweetsForUrl;
     }()
   }, {
+    key: "getTweetsByIds",
+    value: function () {
+      var _getTweetsByIds = (0, _asyncToGenerator2["default"])(
+      /*#__PURE__*/
+      _regenerator["default"].mark(function _callee11(search, ids) {
+        var body, resp;
+        return _regenerator["default"].wrap(function _callee11$(_context11) {
+          while (1) {
+            switch (_context11.prev = _context11.next) {
+              case 0:
+                body = {
+                  size: 100,
+                  query: {
+                    bool: {
+                      must: [{
+                        match: {
+                          search: search.id
+                        }
+                      }],
+                      filter: {
+                        terms: {
+                          id: ids
+                        }
+                      }
+                    }
+                  },
+                  sort: [{
+                    id: 'desc'
+                  }]
+                };
+                _context11.next = 3;
+                return this.es.search({
+                  index: this.getIndex(TWEET),
+                  type: TWEET,
+                  body: body
+                });
+
+              case 3:
+                resp = _context11.sent;
+                return _context11.abrupt("return", resp.hits.hits.map(function (h) {
+                  return h._source;
+                }));
+
+              case 5:
+              case "end":
+                return _context11.stop();
+            }
+          }
+        }, _callee11, this);
+      }));
+
+      function getTweetsByIds(_x12, _x13) {
+        return _getTweetsByIds.apply(this, arguments);
+      }
+
+      return getTweetsByIds;
+    }()
+  }, {
     key: "getTwitterUsers",
     value: function getTwitterUsers(search) {
       var _this16 = this;
@@ -1643,6 +1701,15 @@ function () {
             terms: {
               field: 'images',
               size: 100
+            },
+            aggregations: {
+              ids: {
+                top_hits: {
+                  _source: {
+                    include: ['id']
+                  }
+                }
+              }
             }
           }
         }
@@ -1654,9 +1721,13 @@ function () {
           body: body
         }).then(function (response) {
           var images = response.aggregations.images.buckets.map(function (u) {
+            var ids = u.ids.hits.hits.map(function (hit) {
+              return hit._source.id;
+            });
             return {
               url: u.key,
-              count: u.doc_count
+              count: u.doc_count,
+              ids: ids
             };
           });
           resolve(images);
@@ -1684,6 +1755,15 @@ function () {
             terms: {
               field: 'videos',
               size: 100
+            },
+            aggregations: {
+              ids: {
+                top_hits: {
+                  _source: {
+                    include: ['id']
+                  }
+                }
+              }
             }
           }
         }
@@ -1695,9 +1775,13 @@ function () {
           body: body
         }).then(function (response) {
           var videos = response.aggregations.videos.buckets.map(function (u) {
+            var ids = u.ids.hits.hits.map(function (hit) {
+              return hit._source.id;
+            });
             return {
               url: u.key,
-              count: u.doc_count
+              count: u.doc_count,
+              ids: ids
             };
           });
           resolve(videos);
@@ -2055,27 +2139,27 @@ function () {
     value: function () {
       var _mergeIndexes = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee11() {
+      _regenerator["default"].mark(function _callee12() {
         var results;
-        return _regenerator["default"].wrap(function _callee11$(_context11) {
+        return _regenerator["default"].wrap(function _callee12$(_context12) {
           while (1) {
-            switch (_context11.prev = _context11.next) {
+            switch (_context12.prev = _context12.next) {
               case 0:
-                _context11.next = 2;
+                _context12.next = 2;
                 return this.es.indices.forcemerge({
                   index: '_all'
                 });
 
               case 2:
-                results = _context11.sent;
-                return _context11.abrupt("return", results);
+                results = _context12.sent;
+                return _context12.abrupt("return", results);
 
               case 4:
               case "end":
-                return _context11.stop();
+                return _context12.stop();
             }
           }
-        }, _callee11, this);
+        }, _callee12, this);
       }));
 
       function mergeIndexes() {
@@ -2089,13 +2173,13 @@ function () {
     value: function () {
       var _getSystemStats = (0, _asyncToGenerator2["default"])(
       /*#__PURE__*/
-      _regenerator["default"].mark(function _callee12() {
+      _regenerator["default"].mark(function _callee13() {
         var result, tweetCount, twitterUserCount, userCount;
-        return _regenerator["default"].wrap(function _callee12$(_context12) {
+        return _regenerator["default"].wrap(function _callee13$(_context13) {
           while (1) {
-            switch (_context12.prev = _context12.next) {
+            switch (_context13.prev = _context13.next) {
               case 0:
-                _context12.next = 2;
+                _context13.next = 2;
                 return this.es.search({
                   index: this.getIndex(TWEET),
                   type: TWEET,
@@ -2107,9 +2191,9 @@ function () {
                 });
 
               case 2:
-                result = _context12.sent;
+                result = _context13.sent;
                 tweetCount = result.hits.total;
-                _context12.next = 6;
+                _context13.next = 6;
                 return this.es.search({
                   index: this.getIndex(TWUSER),
                   type: TWUSER,
@@ -2121,9 +2205,9 @@ function () {
                 });
 
               case 6:
-                result = _context12.sent;
+                result = _context13.sent;
                 twitterUserCount = result.hits.total;
-                _context12.next = 10;
+                _context13.next = 10;
                 return this.es.search({
                   index: this.getIndex(USER),
                   type: USER,
@@ -2135,9 +2219,9 @@ function () {
                 });
 
               case 10:
-                result = _context12.sent;
+                result = _context13.sent;
                 userCount = result.hits.total;
-                return _context12.abrupt("return", {
+                return _context13.abrupt("return", {
                   tweetCount: tweetCount,
                   twitterUserCount: twitterUserCount,
                   userCount: userCount
@@ -2145,10 +2229,10 @@ function () {
 
               case 13:
               case "end":
-                return _context12.stop();
+                return _context13.stop();
             }
           }
-        }, _callee12, this);
+        }, _callee13, this);
       }));
 
       function getSystemStats() {
