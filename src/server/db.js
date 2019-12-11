@@ -701,6 +701,25 @@ export class Database {
     return resp.hits.hits.map((h) => {return h._source})
   }
 
+  async getTweetsByIds(search, ids) {
+    const body = {
+      size: 100,
+      query: {
+        bool: {
+          must: [{match: {search: search.id}}],
+          filter: {terms: {id: ids}}
+        }
+      },
+      sort: [{id: 'desc'}]
+    }
+    const resp = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: body
+    })
+    return resp.hits.hits.map((h) => {return h._source})
+  }
+
   getTwitterUsers(search) {
 
     // first get the user counts for tweets
@@ -807,7 +826,14 @@ export class Database {
     const body = {
       size: 0,
       query: {match: {search: search.id}},
-      aggregations: {images: {terms: {field: 'images', size: 100}}}
+      aggregations: {
+        images: {
+          terms: {field: 'images', size: 100},
+          aggregations: {
+            ids: {top_hits: {_source: {include: ['id']}}}
+          }
+        }
+      }
     }
     return new Promise((resolve, reject) => {
       this.es.search({
@@ -816,7 +842,10 @@ export class Database {
         body: body
       }).then((response) => {
         const images = response.aggregations.images.buckets.map((u) => {
-          return {url: u.key, count: u.doc_count}
+          const ids = u.ids.hits.hits.map((hit) => {
+            return hit._source.id
+          })
+          return {url: u.key, count: u.doc_count, ids}
         })
         resolve(images)
       }).catch((err) => {
