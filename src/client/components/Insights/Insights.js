@@ -112,17 +112,23 @@ export default class Insights extends Component {
           </div>
           <div className={card.SavedImageCard}>
             <img src={imageUrl} />
-              <h1>
-                <Link to={`/search/${this.props.searchId}/images/`}>
-                  {parseInt(this.props.search.imageCount, 10).toLocaleString()}
-                  <br />
-                  Images
-                </Link>
-              </h1>
+            <h1>
+              <Link to={`/search/${this.props.searchId}/images/`}>
+                {parseInt(this.props.search.imageCount, 10).toLocaleString()}
+                <br />
+                Images
+              </Link>
+            </h1>
           </div>
           <div className={card.SavedImageCard}>
             <video src={videoUrl} />
-            <h1><a href="/">{parseInt(this.props.search.videoCount, 10).toLocaleString()}<br />videos</a></h1>
+            <h1>
+              <Link to={`/search/${this.props.searchId}/videos/`}>
+                {parseInt(this.props.search.videoCount, 10).toLocaleString()}
+                <br />
+                Videos
+              </Link>
+            </h1>
           </div>
         </div>
 

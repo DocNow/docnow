@@ -36,7 +36,7 @@ input.SearchTerm {
 
 .InCard {
   max-width: 170px;
-  overflow-x: hidden;
+  overflow: hidden;
   text-overflow: ellipsis;
   padding: 5px;
   cursor: pointer;
