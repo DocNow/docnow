@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton'
 
 export default class Img extends Component {
   showTweets() {
-    this.props.getTweetsByIds(this.props.searchId, this.props.tweets)
+    this.props.getTweetsForImage(this.props.searchId, this.props.url)
   }
 
   render() {
@@ -32,6 +32,5 @@ Img.propTypes = {
   url: PropTypes.string,
   count: PropTypes.number,
   searchId: PropTypes.string,
-  tweets: PropTypes.array,
-  getTweetsByIds: PropTypes.func
+  getTweetsForImage: PropTypes.func
 }

@@ -69,9 +69,8 @@ export default class Videos extends Component {
                 key={i.url}
                 url={i.url}
                 count={i.count}
-                tweets={i.ids}
                 searchId={this.props.searchId}
-                getTweetsByIds={this.props.getTweetsByIds} />
+                getTweetsForVideo={this.props.getTweetsForVideo} />
             )
           })}
         </div>
@@ -86,7 +85,7 @@ Videos.propTypes = {
   search: PropTypes.object,
   getVideos: PropTypes.func,
   getSearch: PropTypes.func,
-  getTweetsByIds: PropTypes.func,
+  getTweetsForVideo: PropTypes.func,
   resetTweets: PropTypes.func,
   updateSearch: PropTypes.func,
   tweets: PropTypes.array,

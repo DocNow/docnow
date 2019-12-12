@@ -10,7 +10,7 @@ import IconButton from '@material-ui/core/IconButton'
 
 export default class Video extends Component {
   showTweets() {
-    this.props.getTweetsByIds(this.props.searchId, this.props.tweets)
+    this.props.getTweetsForVideo(this.props.searchId, this.props.url)
   }
 
   render() {
@@ -34,6 +34,5 @@ Video.propTypes = {
   url: PropTypes.string,
   count: PropTypes.number,
   searchId: PropTypes.string,
-  tweets: PropTypes.array,
-  getTweetsByIds: PropTypes.func
+  getTweetsForVideo: PropTypes.func
 }

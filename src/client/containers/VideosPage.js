@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getVideos, getSearch, updateSearch } from '../actions/search'
-import { getTweetsByIds, resetTweets } from '../actions/tweets'
+import { getTweetsForVideo, resetTweets } from '../actions/tweets'
 import Videos from '../components/Insights/Videos'
 import { push } from 'connected-react-router'
 
@@ -17,7 +17,7 @@ const mapStateToProps = (state, ownProps) => {
 const actions = {
   getSearch,
   getVideos,
-  getTweetsByIds,
+  getTweetsForVideo,
   resetTweets,
   updateSearch,
 }

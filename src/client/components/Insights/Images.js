@@ -69,9 +69,8 @@ export default class Images extends Component {
                 key={i.url}
                 url={i.url}
                 count={i.count}
-                tweets={i.ids}
                 searchId={this.props.searchId}
-                getTweetsByIds={this.props.getTweetsByIds} />
+                getTweetsForImage={this.props.getTweetsForImage} />
             )
           })}
         </div>
@@ -86,7 +85,7 @@ Images.propTypes = {
   search: PropTypes.object,
   getImages: PropTypes.func,
   getSearch: PropTypes.func,
-  getTweetsByIds: PropTypes.func,
+  getTweetsForImage: PropTypes.func,
   resetTweets: PropTypes.func,
   updateSearch: PropTypes.func,
   tweets: PropTypes.array,

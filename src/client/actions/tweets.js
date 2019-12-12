@@ -24,6 +24,26 @@ export const getTweetsForUrl = (searchId, url) => {
   }
 }
 
+export const getTweetsForImage = (searchId, image) => {
+  return (dispatch) => {
+    fetch(`/api/v1/search/${searchId}/tweets?image=${image}`, {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTweets(result))
+      })
+  }
+}
+
+export const getTweetsForVideo = (searchId, video) => {
+  return (dispatch) => {
+    fetch(`/api/v1/search/${searchId}/tweets?video=${video}`, {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTweets(result))
+      })
+  }
+}
+
 export const getTweetsByIds = (searchId, ids) => {
   return (dispatch) => {
     fetch(`/api/v1/search/${searchId}/tweets?ids=${ids.join(',')}`, {credentials: 'same-origin'})
