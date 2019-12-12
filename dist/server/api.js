@@ -432,6 +432,10 @@ app.get('/search/:searchId/tweets', function (req, res) {
         db.getTweetsForUrl(search, req.query.url).then(function (tweets) {
           res.json(tweets);
         });
+      } else if (req.query.ids) {
+        db.getTweetsByIds(search, req.query.ids.split(',')).then(function (tweets) {
+          res.json(tweets);
+        });
       } else {
         var includeRetweets = req.query.includeRetweets ? true : false;
         db.getTweets(search, includeRetweets).then(function (tweets) {
