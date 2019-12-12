@@ -23,11 +23,14 @@
 .Scroll {
   overflow-y: scroll;
   overflow-x: hidden;
-  max-height: 216px;
+  height: 210px;
+  max-height: 210px;
 }
 
 .NoPadding {
   padding: 0 !important;
+  height: 250px;
+  max-height: 250px;
 }
 
 .PlaceHeader {
