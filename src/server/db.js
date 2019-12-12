@@ -701,6 +701,44 @@ export class Database {
     return resp.hits.hits.map((h) => {return h._source})
   }
 
+  async getTweetsForImage(search, url) {
+    const body = {
+      size: 100,
+      query: {
+        bool: {
+          must: [{match: {search: search.id}}],
+          filter: {terms: {images: [url]}}
+        }
+      },
+      sort: [{id: 'desc'}]
+    }
+    const resp = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: body
+    })
+    return resp.hits.hits.map((h) => {return h._source})
+  }
+
+  async getTweetsForVideo(search, url) {
+    const body = {
+      size: 100,
+      query: {
+        bool: {
+          must: [{match: {search: search.id}}],
+          filter: {terms: {videos: [url]}}
+        }
+      },
+      sort: [{id: 'desc'}]
+    }
+    const resp = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: body
+    })
+    return resp.hits.hits.map((h) => {return h._source})
+  }
+
   async getTweetsByIds(search, ids) {
     const body = {
       size: 100,
@@ -828,10 +866,7 @@ export class Database {
       query: {match: {search: search.id}},
       aggregations: {
         images: {
-          terms: {field: 'images', size: 100},
-          aggregations: {
-            ids: {top_hits: {_source: {include: ['id']}}}
-          }
+          terms: {field: 'images', size: 100}
         }
       }
     }
@@ -842,10 +877,7 @@ export class Database {
         body: body
       }).then((response) => {
         const images = response.aggregations.images.buckets.map((u) => {
-          const ids = u.ids.hits.hits.map((hit) => {
-            return hit._source.id
-          })
-          return {url: u.key, count: u.doc_count, ids}
+          return {url: u.key, count: u.doc_count}
         })
         resolve(images)
       }).catch((err) => {
@@ -861,10 +893,7 @@ export class Database {
       query: {match: {search: search.id}},
       aggregations: {
         videos: {
-          terms: {field: 'videos', size: 100},
-          aggregations: {
-            ids: {top_hits: {_source: {include: ['id']}}}
-          }
+          terms: {field: 'videos', size: 100}
         }
       }
     }
@@ -875,10 +904,7 @@ export class Database {
         body: body
       }).then((response) => {
         const videos = response.aggregations.videos.buckets.map((u) => {
-          const ids = u.ids.hits.hits.map((hit) => {
-            return hit._source.id
-          })
-          return {url: u.key, count: u.doc_count, ids}
+          return {url: u.key, count: u.doc_count}
         })
         resolve(videos)
       }).catch((err) => {

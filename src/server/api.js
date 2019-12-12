@@ -253,6 +253,16 @@ app.get('/search/:searchId/tweets', (req, res) => {
             .then((tweets) => {
               res.json(tweets)
             })
+        } else if (req.query.image) {
+          db.getTweetsForImage(search, req.query.image)
+            .then((tweets) => {
+              res.json(tweets)
+            })          
+        } else if (req.query.video) {
+          db.getTweetsForVideo(search, req.query.video)
+            .then((tweets) => {
+              res.json(tweets)
+            })          
         } else if (req.query.ids) {
           db.getTweetsByIds(search, req.query.ids.split(','))
             .then((tweets) => {
