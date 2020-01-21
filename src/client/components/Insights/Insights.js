@@ -90,7 +90,13 @@ export default class Insights extends Component {
 
         <div className={card.CardHolder}>
           <div className={card.SavedShortCard}>
-            <h1><a href="/">{parseInt(this.props.search.tweetCount, 10).toLocaleString()}<br />tweets</a></h1>
+            <h1>
+              <Link to={`/search/${this.props.searchId}/tweets/`}>
+                {parseInt(this.props.search.tweetCount, 10).toLocaleString()}
+                <br />
+                tweets
+              </Link>
+            </h1>
           </div>
           <div className={card.SavedLongCard}>
             <TweetEmbed

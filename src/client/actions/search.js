@@ -231,9 +231,9 @@ export const deleteSearch = (search) => {
   }
 }
 
-export const getTweets = (id) => {
+export const getTweets = (id, includeRetweets = false, offset = 0) => {
   return (dispatch) => {
-    fetch('/api/v1/search/' + id + '/tweets', {credentials: 'same-origin'})
+    fetch(`/api/v1/search/${id}/tweets?offset=${offset}&includeRetweets=${includeRetweets}`, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchTweets(result))

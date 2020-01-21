@@ -1,0 +1,22 @@
+.Holder {
+  margin: 45px auto;
+  max-width: 80%;
+
+  line-height: 0;
+  column-count: 5;
+  column-gap: 0px;
+}
+
+.Controls {
+  margin: 45px auto;
+  max-width: 50%;
+}
+
+.Tile {
+  height: 325px !important;
+}
+
+.Refresh button {
+  font-size: 1.5em;
+  margin-right: 1em;
+}
