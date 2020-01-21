@@ -432,13 +432,22 @@ app.get('/search/:searchId/tweets', function (req, res) {
         db.getTweetsForUrl(search, req.query.url).then(function (tweets) {
           res.json(tweets);
         });
+      } else if (req.query.image) {
+        db.getTweetsForImage(search, req.query.image).then(function (tweets) {
+          res.json(tweets);
+        });
+      } else if (req.query.video) {
+        db.getTweetsForVideo(search, req.query.video).then(function (tweets) {
+          res.json(tweets);
+        });
       } else if (req.query.ids) {
         db.getTweetsByIds(search, req.query.ids.split(',')).then(function (tweets) {
           res.json(tweets);
         });
       } else {
         var includeRetweets = req.query.includeRetweets ? true : false;
-        db.getTweets(search, includeRetweets).then(function (tweets) {
+        var offset = req.query.offset ? req.query.offset : 0;
+        db.getTweets(search, includeRetweets, offset).then(function (tweets) {
           res.json(tweets);
         });
       }
