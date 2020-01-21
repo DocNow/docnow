@@ -270,7 +270,8 @@ app.get('/search/:searchId/tweets', (req, res) => {
             })          
         } else {
           const includeRetweets = req.query.includeRetweets ? true : false
-          db.getTweets(search, includeRetweets)
+          const offset = req.query.offset ? req.query.offset : 0
+          db.getTweets(search, includeRetweets, offset)
             .then((tweets) => {
               res.json(tweets)
             })
