@@ -8,7 +8,6 @@ import FormControl from '@material-ui/core/FormControl'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-import Fab from '@material-ui/core/Fab'
 import TablePagination from '@material-ui/core/TablePagination';
 
 import style from './Tweets.css' 
@@ -26,19 +25,13 @@ class Tweets extends Component {
     }
     this.tweets = this.props.search.tweets
     this.page = 0
-    this.searchUpdated = false
-    this.tweetCount = this.props.search.tweetCount
   }
 
-  componentDidUpdate(prevState) {
+  componentDidUpdate() {
     if (this.tweets.length > 0 && this.props.search.tweets.length > 0) {
       if (this.tweets[0].id !== this.props.search.tweets[0].id) {
         this.tweets = this.props.search.tweets
       }
-    }
-    if (prevState.tweetCount !== 0 && prevState.tweetCount < this.props.search.tweetCount ) {
-      this.searchUpdated = true
-      this.tweetCount = this.props.search.tweetCount
     }
   }
 
@@ -100,36 +93,10 @@ class Tweets extends Component {
     }    
   }
 
-  reset() {
-    this.tweets = this.props.search.tweets
-    this.page = 0
-    this.searchUpdated = false
-    this.tweetCount = 0
-  }
-
-  refreshTweets() {
-    // Redo search and reset pagination, etc
-    this.reset()
-    this.props.getTweets(this.props.searchId)
-  }
-
   render() {
     let tweets = this.tweets
     // Reduce tweets based on selected range
     tweets = tweets.filter((t, i) => i > this.state.rangeValue[0] && i <= this.state.rangeValue[1] + 1)
-
-    let updateSearch = null
-    if (this.state.searchUpdated) {
-      updateSearch = (
-        <div className={style.Refresh}>
-          <Fab size="medium" title="Refresh"
-            tabIndex="0" onClick={() => {this.refreshTweets()}}>
-            <ion-icon name="refresh"></ion-icon>
-          </Fab>
-          Search updated! Click here to refresh tweets.
-        </div>
-      )
-    }
 
     return (
       <div>
@@ -186,7 +153,6 @@ class Tweets extends Component {
               onChangePage={(e, p) => {this.handlePageChange(e, p)} }
             />
           </div>
-          {updateSearch} 
         </div>
 
 
