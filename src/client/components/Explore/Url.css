@@ -2,4 +2,10 @@
   margin-bottom: .5em;
   overflow: hidden;
   text-overflow: ellipsis;
+  border: thin solid gray;
+  padding: 2px;
+}
+
+.Number {
+  padding-right: 3px;
 }

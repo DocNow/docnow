@@ -7,10 +7,10 @@
 .App h2 {
   position: relative;
   text-transform: uppercase;
-  color: #444;
-  font-size: 16pt;
+  color: #000;
+  font-size: 14pt;
   font-stretch: expanded;
-  font-weight: 500;
+  font-weight: 300;
   margin-top: 5px;
   margin-bottom: 5px;
 }

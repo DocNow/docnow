@@ -4,7 +4,7 @@
 }
 
 rect {
-  fill: #cdc9f1;
+  fill: #abd6e8;
   stroke: #333;
   stroke-width: 1;
 }
@@ -16,6 +16,11 @@ text {
 .Active rect {
   cursor: pointer;
   fill: #1da1f2;
+}
+
+rect:hover {
+  fill: #1da1f2;
+  cursor: pointer;
 }
 
 .Active text {

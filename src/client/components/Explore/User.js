@@ -66,7 +66,7 @@ export default class User extends Component {
         </div>
         <div className={style.UserStats}>
           <div className={style.Inline}>
-            <ion-icon name="pin"></ion-icon>
+            <ion-icon name="logo-twitter"></ion-icon> &nbsp;
             {this.props.data.tweetsInSearch}
           </div>
           <div className={style.Inline}>

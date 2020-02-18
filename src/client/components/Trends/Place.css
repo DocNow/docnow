@@ -3,7 +3,8 @@
 }
 
 .PlaceHeader {
-  padding-left: 1em;
+  text-align: center;
+  border-top: thin solid gray; 
 }
 
 .Trend {

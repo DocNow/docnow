@@ -1,5 +1,6 @@
 .User {
   background-color: #ffffff;
+  border: thin solid gray;
   margin-top: 2px;
   margin-left: 2px;
   margin-bottom: 2px;
@@ -45,6 +46,8 @@
   height: 2em;
   display: flex;
   justify-content: space-around;
+  border-top: 1px solid #CCCCCC;
+  margin-top: 2px;
   padding-right: 10px;
   align-items: center;
 }
@@ -53,6 +56,8 @@
   height: 3em;
   display: flex;
   justify-content: space-around;
+  border-bottom: 1px solid #CCCCCC;
+  margin-top: 2px;
   padding-right: 10px;
   align-items: center;
 }

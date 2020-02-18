@@ -18,7 +18,7 @@ export default class Tweet extends Component {
           </div>
         </div>
         <div className={style.TweetTime}>
-          <a href={this.props.data.twitterUrl}>{created}</a>
+          {this.props.data.twitterUrl}{created}
         </div>
         <p>{this.props.data.text}</p>
         <div className={style.TweetStats}>

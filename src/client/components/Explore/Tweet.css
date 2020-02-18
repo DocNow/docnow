@@ -7,11 +7,12 @@
   padding: 2px;
   font-size: 10pt;
   width: 97%;
+  border: thin solid gray;
 }
 
 .Tweet p {
   margin: 5px;
-  font-size: 11pt;
+  font-size: 10pt;
   color: #333;
 }
 
