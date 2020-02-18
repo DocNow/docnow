@@ -18,25 +18,25 @@
   margin-left: 50px;
 }
 
-.SavedSearchInsightText i {
-  color: #1E77B6;
-  font-weight:100;
-  font-size: 12pt;
-}
 
 .SavedSearchInsightText a {
   color: #000000;
   text-decoration: none;
 }
 
-.SavedSearchButtons {
+/* .SavedSearchButtons {
   display: flex;
   align-items: center;
-}
+} */
 
 .SavedSearchButtons button {
   width: 120px;
   margin-right: 20px;
   margin-top: 5px;
-  margin-bottom: 5px;
+}
+
+.AlignTrash {
+  position: relative;
+  top: 5px;
+  padding-left: 5px;
 }

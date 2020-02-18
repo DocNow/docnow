@@ -64,7 +64,6 @@ export default class Insights extends Component {
 
         <SearchInfo
           title={this.props.search.title}
-          description={this.props.search.description}
           search={this.props.search}
           searches={this.props.searches}
           user={this.props.user}
@@ -73,73 +72,65 @@ export default class Insights extends Component {
 
         <TweetTabBar />
 
+      <div className={style.InsightsCard}>
+        <h2>{parseInt(this.props.search.tweetCount, 10).toLocaleString()} tweets</h2>
         <div className={card.CardHolder}>
-          <div className={card.SavedShortCard}>
-            <h1><a href="/">{this.props.search.userCount.toLocaleString()}<br />users</a></h1>
-          </div>
-          <div className={card.SavedLongCard}>
-           {this.props.search.users.slice(0, 78).map((u) => {
-             return (
-               <a key={u.screenName} href={`https://twitter.com/${u.screenName}`} target="_new">
-                 <img title={`${u.screenName} sent ${u.tweetsInSearch} tweets`} src={u.avatarUrl} />
-               </a>
-             )
-           })}
-          </div>
-        </div>
-
-        <div className={card.CardHolder}>
-          <div className={card.SavedShortCard}>
-            <h1>
-              <Link to={`/search/${this.props.searchId}/tweets/`}>
-                {parseInt(this.props.search.tweetCount, 10).toLocaleString()}
-                <br />
-                tweets
-              </Link>
-            </h1>
-          </div>
           <div className={card.SavedLongCard}>
             <TweetEmbed
               id={tweetIds[0]}
               options={{cards: 'hidden'}} />
           </div>
+        </div><hr/>
+        <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/tweets/`}>View Tweet Insights &rarr;</Link></h2>
         </div>
+      </div>
 
+      <div className={style.InsightsCard}>
+        <h2>{this.props.search.userCount.toLocaleString()} users</h2>
+        <div className={card.CardHolder}>
+          <div className={card.SavedLongCard}>
+           {this.props.search.users.slice(0, 100).map((u) => {
+             return (
+               <a key={u.screenName} href={`https://twitter.com/${u.screenName}`} target="_new">
+                 <img title={`@${u.screenName} (${u.tweetsInSearch} tweets)`} src={u.avatarUrl} />
+               </a>
+             )
+           })}
+          </div><br/>
+        </div><hr/>
+        <div className={style.ViewInsights}><h2><a href="/">View User Insights &rarr;</a></h2>
+        </div>
+      </div>
+
+      <div className={style.InsightsCard}>
+       <h2>{parseInt(this.props.search.urlCount, 10).toLocaleString()} Webpages</h2>
         <div className={card.CardHolder}>
           <div className={card.SavedImageCard}>
             <img src={webpageImageUrl} />
-            <h1>
-              <Link to={`/search/${this.props.searchId}/webpages/`}>
-                {parseInt(this.props.search.urlCount, 10).toLocaleString()}
-                <br />
-                Webpages
-              </Link>
-            </h1>
           </div>
-          <div className={card.SavedImageCard}>
-            <img src={imageUrl} />
-            <h1>
-              <Link to={`/search/${this.props.searchId}/images/`}>
-                {parseInt(this.props.search.imageCount, 10).toLocaleString()}
-                <br />
-                Images
-              </Link>
-            </h1>
-          </div>
-          <div className={card.SavedImageCard}>
-            <video src={videoUrl} />
-            <h1>
-              <Link to={`/search/${this.props.searchId}/videos/`}>
-                {parseInt(this.props.search.videoCount, 10).toLocaleString()}
-                <br />
-                Videos
-              </Link>
-            </h1>
-          </div>
+          </div><hr/>
+          <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/webpages/`}>View Webpage Insights &rarr;</Link></h2>
         </div>
-
-
       </div>
+
+      <div className={style.InsightsCard}>
+      <h2>{parseInt(this.props.search.imageCount, 10).toLocaleString()} Images</h2>
+        <div className={card.SavedImageCard}>
+            <img src={imageUrl} />
+        </div><hr/>
+        <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/images/`}>View Image Insights &rarr;</Link></h2>
+        </div>
+      </div>
+
+      <div className={style.InsightsCard}>
+      <h2>{parseInt(this.props.search.videoCount, 10).toLocaleString()} Videos</h2>
+        <div className={card.SavedImageCard}>
+          <video src={videoUrl} />
+        </div><hr/>
+        <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/videos/`}>View Video Insights &rarr;</Link></h2>
+        </div>
+      </div>
+    </div>
     )
   }
 }
