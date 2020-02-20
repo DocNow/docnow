@@ -105,28 +105,28 @@ select:disabled {
 
 .SavedImageCard {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  position: relative;
-  padding: 0;
-  border: none;
   overflow: hidden;
-  background-color: #ffffff;
-  height: 300px;
-  width: 300px;
-  margin-left: 60px;
+  height: 400x;
   margin-top: 20px;
 }
 
-.SavedImageCard img {
-  max-height: 200px;
-  max-width: 300px;
+.SavedImageCard img, .SavedImageCard video {
+  height: 100px;
+  margin: 5px;
+  border: thin solid gray;
 }
 
-.SavedImageCard video {
-  max-height: 200px;
-  max-width: 300px;
+.SavedImageCard a {
+  font-size: 10pt;
+  text-align: center;
+}
+
+.SavedImageCard a:hover img {
+  border-color: blue;
 }
 
 .SavedImageCard h1 {
