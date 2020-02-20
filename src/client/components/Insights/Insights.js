@@ -8,6 +8,12 @@ import TweetTabBar from './TweetTabBar'
 import card from '../Card.css'
 import style from './Insights.css'
 
+function getHostName(url) {
+  let hostname = new URL(url).host
+  hostname = hostname.replace(/^www\./, '')
+  return hostname
+}
+
 export default class Insights extends Component {
 
   componentDidMount() {
@@ -39,21 +45,6 @@ export default class Insights extends Component {
       return <div />
     }
 
-    let webpageImageUrls = []
-    if (this.props.webpages.length > 0) {
-      webpageImageUrls = this.props.webpages.slice(0, 3).map(w => w.image)
-    }
-
-    let imageUrls = []
-    if (this.props.search.images.length > 0) {
-      imageUrls = this.props.search.images.slice(0, 3).map(i => i.url)
-    }
-
-    let videoUrls = []
-    if (this.props.search.videos.length > 0) {
-      videoUrls = this.props.search.videos.slice(0, 3).map(v => v.url)
-    }
-
     let tweetIds = []
     if (this.props.search.tweets.length > 0) {
       tweetIds = this.props.search.tweets.map((t) => {return t.id})
@@ -76,9 +67,8 @@ export default class Insights extends Component {
         <h2>{parseInt(this.props.search.tweetCount, 10).toLocaleString()} tweets</h2>
         <div className={card.CardHolder}>
           <div className={card.SavedLongCard}>
-            <TweetEmbed
-              id={tweetIds[0]}
-              options={{cards: 'hidden'}} />
+            <TweetEmbed id={tweetIds[0]} options={{cards: 'hidden'}} />
+            <TweetEmbed id={tweetIds[1]} options={{cards: 'hidden'}} />
           </div>
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/tweets/`}>View Tweet Insights &rarr;</Link></h2>
@@ -106,8 +96,11 @@ export default class Insights extends Component {
        <h2>{parseInt(this.props.search.urlCount, 10).toLocaleString()} Webpages</h2>
         <div className={card.CardHolder}>
           <div className={card.SavedImageCard}>
-            {webpageImageUrls.map(w => (
-              <img key={w} src={w} />
+            {this.props.webpages.slice(0, 25).map(w => (
+              <a key={w.url} rel="noopener noreferrer" target="_blank" href={w.url}>
+                <img src={w.image} /><br />
+                {getHostName(w.url)}
+             </a>
             ))}
           </div>
           </div><hr/>
@@ -118,8 +111,8 @@ export default class Insights extends Component {
       <div className={style.InsightsCard}>
       <h2>{parseInt(this.props.search.imageCount, 10).toLocaleString()} Images</h2>
         <div className={card.SavedImageCard}>
-          {imageUrls.map(i => (
-             <img key={i} src={i} />
+          {this.props.search.images.slice(0, 25).map(i => (
+             <img key={i.url} src={i.url} />
           ))}
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/images/`}>View Image Insights &rarr;</Link></h2>
@@ -129,8 +122,8 @@ export default class Insights extends Component {
       <div className={style.InsightsCard}>
       <h2>{parseInt(this.props.search.videoCount, 10).toLocaleString()} Videos</h2>
         <div className={card.SavedImageCard}>
-          {videoUrls.map(v => (
-            <video key={v} src={v} />
+          {this.props.search.videos.slice(0, 25).map(v => (
+            <video controls key={v.url} src={v.url} />
           ))}
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/videos/`}>View Video Insights &rarr;</Link></h2>
