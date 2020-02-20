@@ -39,19 +39,19 @@ export default class Insights extends Component {
       return <div />
     }
 
-    let webpageImageUrl = ''
+    let webpageImageUrls = []
     if (this.props.webpages.length > 0) {
-      webpageImageUrl = this.props.webpages[0].image
+      webpageImageUrls = this.props.webpages.slice(0, 3).map(w => w.image)
     }
 
-    let imageUrl = ''
+    let imageUrls = []
     if (this.props.search.images.length > 0) {
-      imageUrl = this.props.search.images[0].url
+      imageUrls = this.props.search.images.slice(0, 3).map(i => i.url)
     }
 
-    let videoUrl = ''
+    let videoUrls = []
     if (this.props.search.videos.length > 0) {
-      videoUrl = this.props.search.videos[0].url
+      videoUrls = this.props.search.videos.slice(0, 3).map(v => v.url)
     }
 
     let tweetIds = []
@@ -106,7 +106,9 @@ export default class Insights extends Component {
        <h2>{parseInt(this.props.search.urlCount, 10).toLocaleString()} Webpages</h2>
         <div className={card.CardHolder}>
           <div className={card.SavedImageCard}>
-            <img src={webpageImageUrl} />
+            {webpageImageUrls.map(w => (
+              <img key={w} src={w} />
+            ))}
           </div>
           </div><hr/>
           <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/webpages/`}>View Webpage Insights &rarr;</Link></h2>
@@ -116,7 +118,9 @@ export default class Insights extends Component {
       <div className={style.InsightsCard}>
       <h2>{parseInt(this.props.search.imageCount, 10).toLocaleString()} Images</h2>
         <div className={card.SavedImageCard}>
-            <img src={imageUrl} />
+          {imageUrls.map(i => (
+             <img key={i} src={i} />
+          ))}
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/images/`}>View Image Insights &rarr;</Link></h2>
         </div>
@@ -125,7 +129,9 @@ export default class Insights extends Component {
       <div className={style.InsightsCard}>
       <h2>{parseInt(this.props.search.videoCount, 10).toLocaleString()} Videos</h2>
         <div className={card.SavedImageCard}>
-          <video src={videoUrl} />
+          {videoUrls.map(v => (
+            <video key={v} src={v} />
+          ))}
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/videos/`}>View Video Insights &rarr;</Link></h2>
         </div>
