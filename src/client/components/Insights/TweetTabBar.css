@@ -40,7 +40,7 @@
   font-weight: 600;
 }
 
-ion-icon {
+.TweetTabBar ion-icon {
   padding-right: 3px;
   position: relative;
   top: 3px;
