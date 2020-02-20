@@ -1,2 +1,35 @@
 .Insights {
+    padding: 20px;
+}
+
+.Insights h2 {
+    font-weight: 500 !important;
+}
+.Insights hr {
+  border-top: 1px solid lightgray;
+}
+
+.InsightsCard {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  padding: 10px;
+  border: thin solid gray;
+  border-radius: 4px;
+}
+
+.InsightsCard h2 {
+  text-align: center;
+}
+
+.ViewInsights h2 a {
+  text-align: center;
+  color: #3F51B5 !important;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.ViewInsights h2 a:hover {
+  text-align: center;
+  color: #cdc9f1 !important;
+  font-weight: 500;
 }

@@ -39,3 +39,9 @@
   border-bottom: 3px solid #cdc9f1;
   font-weight: 600;
 }
+
+.TweetTabBar ion-icon {
+  padding-right: 3px;
+  position: relative;
+  top: 3px;
+}

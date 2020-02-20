@@ -120,13 +120,11 @@ select:disabled {
 }
 
 .SavedImageCard img {
-  opacity: .4;
   max-height: 200px;
   max-width: 300px;
 }
 
 .SavedImageCard video {
-  opacity: .4;
   max-height: 200px;
   max-width: 300px;
 }
@@ -144,13 +142,9 @@ select:disabled {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: space-between;
-  padding: 0;
   box-sizing: border-box;
   border-radius: 2px;
   background-color: #ffffff;
-  height: 300px;
-  width: 660px;
   margin-top: 20px;
 }
 

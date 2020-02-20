@@ -36,27 +36,19 @@ export default class SearchInfo extends Component {
             <Editable
               text={this.props.title}
               update={(t) => {this.updateTitle(t)}} />
+              <span className={style.SavedSearchButtons}>
+                <SearchToggle
+                  active={this.props.search.active}
+                  id={this.props.search.id}
+                  searches={this.props.searches}
+                  user={this.props.user}
+                  updateSearch={this.props.updateSearch} />
+              </span>
           </h2>
-          <p>
-            <Editable
-              text={this.props.description}
-              update={(d) => {this.updateDescription(d)}}
-              placeholder="Please enter a description for your saved search." />
-          </p>
-          <p>Search started on {created}, last updated at {modified}</p>
-          <div className={style.SavedSearchButtons}>
-            <SearchToggle
-              active={this.props.search.active}
-              id={this.props.search.id}
-              searches={this.props.searches}
-              user={this.props.user}
-              updateSearch={this.props.updateSearch} />
-            &nbsp;
-            &nbsp;
-            &nbsp;
-            &nbsp;
+          <span>Started {created}, last updated {modified}</span>
+          <span className={style.AlignTrash}>
             <Trash />
-          </div>
+          </span>
         </div>
         <DownloadOptions />
       </div>
