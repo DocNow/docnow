@@ -35,6 +35,7 @@ export default class Hashtags extends Component {
 
     const g = select(node)
       .selectAll('g')
+      .attr('class', styles.Bar)
       .data(this.props.hashtags, key)
 
     g.select('rect')
@@ -52,15 +53,9 @@ export default class Hashtags extends Component {
 
     const gEnter = g.enter()
       .append('g')
-      .attr('class', 'bar')
+      .attr('class', styles.Bar)
       .attr('transform', (d, i) => {
         return 'translate(0,' + (i * 25) + ')'
-      })
-      .on('mouseover', () => {
-        select(this).classed(styles.Active, true)
-      })
-      .on('mouseout', () => {
-        select(this).classed(styles.Active, false)
       })
       .on('click', (d) => {
         that.props.addSearchTerm({
@@ -100,7 +95,9 @@ export default class Hashtags extends Component {
     return (
       <div className={`${styles.HashtagsCard} ${exploreStyles.InnerCard}`}>
         {loader}
-        <svg ref={node => {this.node = node}} height={800} />
+        <svg 
+          className={styles.HashtagChart} 
+          ref={node => {this.node = node}} />
       </div>
     )
   }
