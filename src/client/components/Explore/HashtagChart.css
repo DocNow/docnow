@@ -1,9 +1,10 @@
-.HashtagsCard {
+.HashtagChart {
   padding: 5px;
   background-color: #fff;
+  height: 800px;
 }
 
-rect {
+.Bar rect {
   fill: #abd6e8;
   stroke: #333;
   stroke-width: 1;
@@ -13,17 +14,10 @@ text {
   font-size: 10pt;
 }
 
-.Active rect {
-  cursor: pointer;
-  fill: #1da1f2;
-}
-
-rect:hover {
-  fill: #1da1f2;
+.Bar:hover {
   cursor: pointer;
 }
 
-.Active text {
-  cursor: pointer;
-  font-weight: bold;
+.Bar:hover rect {
+  fill: #1da1f2;
 }
