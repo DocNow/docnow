@@ -23,7 +23,19 @@ export default class Hashtags extends Component {
     const node = this.node
     const that = this
 
-    const maxX = max(this.props.hashtags.map((ht) => {return ht.count}))
+    // get a list of normalized hashtags in the current query
+    let queryHashtags = this.props.query.filter(q => q.type === 'hashtag')
+    queryHashtags = queryHashtags.map(h => (
+      h.value.toLowerCase().replace('#', '')
+    ))
+
+    // remove any of the query hashtags from the hashtags results so they
+    // don't skew the bar chart and dwarf other results
+    const hashtags = this.props.hashtags.filter(h => (
+      ! queryHashtags.includes(h.hashtag.toLowerCase())
+    ))
+
+    const maxX = max(hashtags.map((ht) => {return ht.count}))
     const xScale = scalePow()
       .exponent(0.5)
       .domain([0, maxX])
@@ -36,7 +48,10 @@ export default class Hashtags extends Component {
     const g = select(node)
       .selectAll('g')
       .attr('class', styles.Bar)
-      .data(this.props.hashtags, key)
+      .data(hashtags, key)
+
+    g.append('svg:title')
+      .text(d => `Add #${d.hashtag} to your query`)
 
     g.select('rect')
       .transition()
@@ -105,5 +120,6 @@ export default class Hashtags extends Component {
 
 Hashtags.propTypes = {
   hashtags: PropTypes.array,
-  addSearchTerm: PropTypes.func
+  addSearchTerm: PropTypes.func,
+  query: PropTypes.array
 }
