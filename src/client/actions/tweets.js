@@ -24,6 +24,16 @@ export const getTweetsForUrl = (searchId, url) => {
   }
 }
 
+export const getTweetsForUser = (searchId, user) => {
+  return (dispatch) => {
+    fetch(`/api/v1/search/${searchId}/tweets?user=${user}`, {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setTweets(result))
+      })
+  }
+}
+
 export const getTweetsForImage = (searchId, image) => {
   return (dispatch) => {
     fetch(`/api/v1/search/${searchId}/tweets?image=${image}`, {credentials: 'same-origin'})

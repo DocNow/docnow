@@ -11,6 +11,7 @@ import SettingsPage from './SettingsPage'
 import ProfilePage from './ProfilePage'
 import SearchPage from './SearchPage'
 import InsightsPage from './InsightsPage'
+import UsersPage from './UsersPage'
 import TweetsPage from './TweetsPage'
 import WebpagesPage from './WebpagesPage'
 import ImagesPage from './ImagesPage'
@@ -61,6 +62,7 @@ class App extends MediaQueryComponent {
               <Route exact name="searches" path="/searches/:userId?" component={SearchListPage} />
               <Route exact name="users" path="/users/" component={UserListPage} />
               <Route exact name="insights" path="/search/:searchId/" component={InsightsPage} />
+              <Route exact name="insightsUsers" path="/search/:searchId/users/" component={UsersPage} />
               <Route exact name="tweets" path="/search/:searchId/tweets/" component={TweetsPage} />
               <Route exact name="webpages" path="/search/:searchId/webpages/" component={WebpagesPage} />
               <Route exact name="images" path="/search/:searchId/images/" component={ImagesPage} />

@@ -88,7 +88,7 @@ export default class Insights extends Component {
            })}
           </div><br/>
         </div><hr/>
-        <div className={style.ViewInsights}><h2><a href="/">View User Insights &rarr;</a></h2>
+        <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/users/`}>View User Insights &rarr;</Link></h2>
         </div>
       </div>
 

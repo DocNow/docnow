@@ -720,6 +720,27 @@ export class Database {
     return resp.hits.hits.map((h) => {return h._source})
   }
 
+  async getTweetsForUser(search, handle) {
+    const body = {
+      size: 100,
+      query: {
+        bool: {
+          must: [
+            {match: {search: search.id}},
+            {match: {'user.screenName': handle}}
+          ],
+        }
+      },
+      sort: [{id: 'desc'}]
+    }
+    const resp = await this.es.search({
+      index: this.getIndex(TWEET),
+      type: TWEET,
+      body: body
+    })
+    return resp.hits.hits.map((h) => {return h._source})
+  }
+
   async getTweetsForVideo(search, url) {
     const body = {
       size: 100,
