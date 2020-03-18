@@ -1,10 +1,8 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-
-import style from './Profile.css'
-
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import style from './Profile.css'
 
 export default class Profile extends Component {
 
@@ -16,46 +14,47 @@ export default class Profile extends Component {
     }
 
     return (
+      <div className={style.Profile}>
 
-        <form className={style.Profile}>
-        <img src={this.props.user.twitterAvatarUrl} />
-        <p>
-          You are logged in with Twitter as @{this.props.user.twitterScreenName}.
-        </p>
-        <p>
+        <form>
 
-          <label htmlFor="userName">Your Name:</label>&nbsp;
-          <input type="text" id="userName" name="name" placeholder=""
-            onChange={this.props.updateUserSettings} value={this.props.user.name}/>
-        </p>
-        <p>
-          <label htmlFor="email">Email:</label>&nbsp;
-          <input placeholder="" id="email" name="email" type="email"
-            onChange={this.props.updateUserSettings} value={this.props.user.email}/>
-        </p>
+        <div className={style.TwitterInfo}>
+          <a href={`https://twitter.com/${this.props.user.twitterScreenName}`}>
+            <img 
+              title={`Linked to Twitter as @${this.props.user.twitterScreenName}`}
+              src={this.props.user.twitterAvatarUrl} />
+          </a>
+        </div>
 
         <div>
-          <button
-            type="button"
-            onClick={this.props.saveAllSettings}
-            disabled={disableSave}>
+          <TextField
+            name="name"
+            label="Name"
+            onChange={this.props.updateUserSettings}
+            value={this.props.user.name} />
+        </div>
+
+        <div>
+          <TextField
+            name="email"
+            label="Email"
+            onChange={this.props.updateUserSettings}
+            value={this.props.user.email} />
+        </div>
+
+        <div>
+          <Button 
+            color="primary"
+            variant="outlined"
+            disabled={disableSave}
+            onClick={this.props.saveAllSettings}>
             Save
-          </button>
+          </Button>
         </div>
-        <div>
-          <TextField
-          label="Name" onChange={this.props.updateUserSettings} value={this.props.user.name} />
-        </div>
-        <div>
-          <TextField
-          label="Email" onChange={this.props.updateUserSettings} value={this.props.user.email} />
-        </div>
-        <div>
-        <Button className="profilebutton" variant="contained" onClick={this.props.saveAllSettings}>
-          SAVE CHANGES
-        </Button>
-        </div>
-      </form>
+
+        </form>
+
+      </div>
     )
   }
 }
