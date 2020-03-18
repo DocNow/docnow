@@ -164,7 +164,8 @@ export default class Search extends Component {
             <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <HashtagChart
                 addSearchTerm={this.props.addSearchTerm}
-                hashtags={this.props.hashtags}/>
+                hashtags={this.props.hashtags}
+                query={this.props.query} />
             </CardContent>
 
             <CardActions>

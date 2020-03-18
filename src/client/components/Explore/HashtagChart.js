@@ -23,7 +23,19 @@ export default class Hashtags extends Component {
     const node = this.node
     const that = this
 
-    const maxX = max(this.props.hashtags.map((ht) => {return ht.count}))
+    // get a list of normalized hashtags in the current query
+    let queryHashtags = this.props.query.filter(q => q.type === 'hashtag')
+    queryHashtags = queryHashtags.map(h => (
+      h.value.toLowerCase().replace('#', '')
+    ))
+
+    // remove any of the query hashtags from the hashtags results so they
+    // don't skew the bar chart and dwarf other results
+    const hashtags = this.props.hashtags.filter(h => (
+      ! queryHashtags.includes(h.hashtag.toLowerCase())
+    ))
+
+    const maxX = max(hashtags.map((ht) => {return ht.count}))
     const xScale = scalePow()
       .exponent(0.5)
       .domain([0, maxX])
@@ -35,7 +47,11 @@ export default class Hashtags extends Component {
 
     const g = select(node)
       .selectAll('g')
-      .data(this.props.hashtags, key)
+      .attr('class', styles.Bar)
+      .data(hashtags, key)
+
+    g.append('svg:title')
+      .text(d => `Add #${d.hashtag} to your query`)
 
     g.select('rect')
       .transition()
@@ -52,15 +68,9 @@ export default class Hashtags extends Component {
 
     const gEnter = g.enter()
       .append('g')
-      .attr('class', 'bar')
+      .attr('class', styles.Bar)
       .attr('transform', (d, i) => {
         return 'translate(0,' + (i * 25) + ')'
-      })
-      .on('mouseover', () => {
-        select(this).classed(styles.Active, true)
-      })
-      .on('mouseout', () => {
-        select(this).classed(styles.Active, false)
       })
       .on('click', (d) => {
         that.props.addSearchTerm({
@@ -100,7 +110,9 @@ export default class Hashtags extends Component {
     return (
       <div className={`${styles.HashtagsCard} ${exploreStyles.InnerCard}`}>
         {loader}
-        <svg ref={node => {this.node = node}} height={800} />
+        <svg 
+          className={styles.HashtagChart} 
+          ref={node => {this.node = node}} />
       </div>
     )
   }
@@ -108,5 +120,6 @@ export default class Hashtags extends Component {
 
 Hashtags.propTypes = {
   hashtags: PropTypes.array,
-  addSearchTerm: PropTypes.func
+  addSearchTerm: PropTypes.func,
+  query: PropTypes.array
 }

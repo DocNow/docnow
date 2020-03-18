@@ -8,6 +8,12 @@ import TweetTabBar from './TweetTabBar'
 import card from '../Card.css'
 import style from './Insights.css'
 
+function getHostName(url) {
+  let hostname = new URL(url).host
+  hostname = hostname.replace(/^www\./, '')
+  return hostname
+}
+
 export default class Insights extends Component {
 
   componentDidMount() {
@@ -39,21 +45,6 @@ export default class Insights extends Component {
       return <div />
     }
 
-    let webpageImageUrl = ''
-    if (this.props.webpages.length > 0) {
-      webpageImageUrl = this.props.webpages[0].image
-    }
-
-    let imageUrl = ''
-    if (this.props.search.images.length > 0) {
-      imageUrl = this.props.search.images[0].url
-    }
-
-    let videoUrl = ''
-    if (this.props.search.videos.length > 0) {
-      videoUrl = this.props.search.videos[0].url
-    }
-
     let tweetIds = []
     if (this.props.search.tweets.length > 0) {
       tweetIds = this.props.search.tweets.map((t) => {return t.id})
@@ -76,9 +67,8 @@ export default class Insights extends Component {
         <h2>{parseInt(this.props.search.tweetCount, 10).toLocaleString()} tweets</h2>
         <div className={card.CardHolder}>
           <div className={card.SavedLongCard}>
-            <TweetEmbed
-              id={tweetIds[0]}
-              options={{cards: 'hidden'}} />
+            <TweetEmbed id={tweetIds[0]} options={{cards: 'hidden'}} />
+            <TweetEmbed id={tweetIds[1]} options={{cards: 'hidden'}} />
           </div>
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/tweets/`}>View Tweet Insights &rarr;</Link></h2>
@@ -98,7 +88,7 @@ export default class Insights extends Component {
            })}
           </div><br/>
         </div><hr/>
-        <div className={style.ViewInsights}><h2><a href="/">View User Insights &rarr;</a></h2>
+        <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/users/`}>View User Insights &rarr;</Link></h2>
         </div>
       </div>
 
@@ -106,7 +96,12 @@ export default class Insights extends Component {
        <h2>{parseInt(this.props.search.urlCount, 10).toLocaleString()} Webpages</h2>
         <div className={card.CardHolder}>
           <div className={card.SavedImageCard}>
-            <img src={webpageImageUrl} />
+            {this.props.webpages.slice(0, 25).map(w => (
+              <a key={w.url} rel="noopener noreferrer" target="_blank" href={w.url}>
+                <img src={w.image} /><br />
+                {getHostName(w.url)}
+             </a>
+            ))}
           </div>
           </div><hr/>
           <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/webpages/`}>View Webpage Insights &rarr;</Link></h2>
@@ -116,7 +111,9 @@ export default class Insights extends Component {
       <div className={style.InsightsCard}>
       <h2>{parseInt(this.props.search.imageCount, 10).toLocaleString()} Images</h2>
         <div className={card.SavedImageCard}>
-            <img src={imageUrl} />
+          {this.props.search.images.slice(0, 25).map(i => (
+             <img key={i.url} src={i.url} />
+          ))}
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/images/`}>View Image Insights &rarr;</Link></h2>
         </div>
@@ -125,7 +122,9 @@ export default class Insights extends Component {
       <div className={style.InsightsCard}>
       <h2>{parseInt(this.props.search.videoCount, 10).toLocaleString()} Videos</h2>
         <div className={card.SavedImageCard}>
-          <video src={videoUrl} />
+          {this.props.search.videos.slice(0, 25).map(v => (
+            <video controls key={v.url} src={v.url} />
+          ))}
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/videos/`}>View Video Insights &rarr;</Link></h2>
         </div>

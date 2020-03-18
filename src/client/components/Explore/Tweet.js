@@ -12,13 +12,11 @@ export default class Tweet extends Component {
           <img src={this.props.data.user.avatarUrl} />
           <div className={style.TweetName}>{this.props.data.user.name}</div>
           <div>
-            <a href={'https://twitter.com/' + this.props.data.user.screenName }>
               @{ this.props.data.user.screenName}
-            </a>
           </div>
         </div>
         <div className={style.TweetTime}>
-          {created}
+          <a href={this.props.data.twitterUrl}>{created}</a>
         </div>
         <p>{this.props.data.text}</p>
         <div className={style.TweetStats}>

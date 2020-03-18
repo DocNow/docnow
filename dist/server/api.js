@@ -432,6 +432,10 @@ app.get('/search/:searchId/tweets', function (req, res) {
         db.getTweetsForUrl(search, req.query.url).then(function (tweets) {
           res.json(tweets);
         });
+      } else if (req.query.user) {
+        db.getTweetsForUser(search, req.query.user).then(function (tweets) {
+          res.json(tweets);
+        });
       } else if (req.query.image) {
         db.getTweetsForImage(search, req.query.image).then(function (tweets) {
           res.json(tweets);
