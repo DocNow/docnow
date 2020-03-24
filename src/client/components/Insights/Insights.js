@@ -4,6 +4,12 @@ import PropTypes from 'prop-types'
 import SearchInfo from './SearchInfo'
 import TweetEmbed from 'react-tweet-embed'
 import TweetTabBar from './TweetTabBar'
+import HashtagChart from '../Explore/HashtagChart'
+
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+import CardActions from '@material-ui/core/CardActions'
+import IconButton from '@material-ui/core/IconButton'
 
 import card from '../Card.css'
 import style from './Insights.css'
@@ -15,6 +21,12 @@ function getHostName(url) {
 }
 
 export default class Insights extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      randomTweet: 0
+    }
+  }
 
   componentDidMount() {
     this.props.resetTwitterSearch()
@@ -24,6 +36,7 @@ export default class Insights extends Component {
     this.props.getImages(this.props.searchId)
     this.props.getVideos(this.props.searchId)
     this.props.getWebpages(this.props.searchId)
+    this.props.getHashtags(this.props.searchId)
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
@@ -38,6 +51,13 @@ export default class Insights extends Component {
     this.props.getSearch(this.props.searchId)
   }
 
+  showRandomTweet() {
+    if (this.props.search.tweets.length > 0) {
+      this.setState({randomTweet: Math.floor(Math.random() * this.props.search.tweets.length)})
+    }
+    return false
+  }
+
   render() {
 
     // don't render until we at least know the title of the search
@@ -46,9 +66,21 @@ export default class Insights extends Component {
     }
 
     let tweetIds = []
+    let sampleTweet = ''
     if (this.props.search.tweets.length > 0) {
       tweetIds = this.props.search.tweets.map((t) => {return t.id})
+      sampleTweet = (
+        <div>
+          <TweetEmbed id={tweetIds[this.state.randomTweet]} options={{cards: 'hidden'}} />
+          <IconButton aria-label="show random tweet" onClick={() => {
+            this.showRandomTweet()
+          }}>
+            <ion-icon name="refresh"></ion-icon>
+          </IconButton>
+        </div>
+      )
     }
+
 
     return (
       <div className={style.Insights}>
@@ -67,8 +99,20 @@ export default class Insights extends Component {
         <h2>{parseInt(this.props.search.tweetCount, 10).toLocaleString()} tweets</h2>
         <div className={card.CardHolder}>
           <div className={card.SavedLongCard}>
-            <TweetEmbed id={tweetIds[0]} options={{cards: 'hidden'}} />
-            <TweetEmbed id={tweetIds[1]} options={{cards: 'hidden'}} />
+            <div style={{display: 'flex'}}>
+              {sampleTweet}
+              <Card outlined className={card.Card} >
+                <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
+                  <HashtagChart
+                    addSearchTerm={() => { return false }}
+                    hashtags={this.props.search.hashtags}
+                    query={[]} />
+                </CardContent>
+                <CardActions>
+                  <h2 className={card.PlaceHeader}>Hashtags</h2>
+                </CardActions>
+              </Card>
+            </div>
           </div>
         </div><hr/>
         <div className={style.ViewInsights}><h2><Link to={`/search/${this.props.searchId}/tweets/`}>View Tweet Insights &rarr;</Link></h2>
@@ -148,5 +192,6 @@ Insights.propTypes = {
   getWebpages: PropTypes.func,
   resetTwitterSearch: PropTypes.func,
   updateSearch: PropTypes.func,
-  createArchive: PropTypes.func
+  createArchive: PropTypes.func,
+  getHashtags: PropTypes.func,
 }
