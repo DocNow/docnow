@@ -12,9 +12,12 @@ export default class DownloadOptions extends Component {
   render() {
     let text = 'Create Archive'
     let onClick = () => {this.createArchive()}
+    let disabled = false
+    let titleTxt = ''
 
     if (this.props.active) {
-      return (<div />)
+      disabled = true
+      titleTxt = <span className={style.DownloadInfo}>Stop the collection to download.</span>
     } else if (this.props.archiveStarted) {
       text = 'Creating Archive'
       onClick = null
@@ -28,11 +31,12 @@ export default class DownloadOptions extends Component {
 
     return (
       <div className={style.DownloadOptions}>
-        <Button variant="contained" onClick={onClick}>
+        <Button variant="contained" onClick={onClick} disabled={disabled}>
           <ion-icon name="download"></ion-icon>
           &nbsp;
           { text }
         </Button>
+        {titleTxt}
       </div>
     )
   }

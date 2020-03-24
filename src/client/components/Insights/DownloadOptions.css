@@ -7,4 +7,9 @@
 }
 
 .DownloadOptions button {
+  margin-right: 1em;
+}
+
+.DownloadInfo {
+  font-size: smaller;
 }
