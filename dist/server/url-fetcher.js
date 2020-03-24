@@ -21,9 +21,7 @@ var _logger = _interopRequireDefault(require("./logger"));
 
 var _redis = require("./redis");
 
-var UrlFetcher =
-/*#__PURE__*/
-function () {
+var UrlFetcher = /*#__PURE__*/function () {
   function UrlFetcher() {
     var concurrency = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 5;
     (0, _classCallCheck2["default"])(this, UrlFetcher);
@@ -36,9 +34,7 @@ function () {
   (0, _createClass2["default"])(UrlFetcher, [{
     key: "start",
     value: function () {
-      var _start = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee() {
+      var _start = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
         var promises, i;
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
@@ -87,9 +83,7 @@ function () {
   }, {
     key: "stop",
     value: function () {
-      var _stop = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee2() {
+      var _stop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
@@ -133,9 +127,7 @@ function () {
   }, {
     key: "fetchJob",
     value: function () {
-      var _fetchJob = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee3() {
+      var _fetchJob = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
         var result, item, job;
         return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
@@ -184,9 +176,7 @@ function () {
   }, {
     key: "processJob",
     value: function () {
-      var _processJob = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee4(job) {
+      var _processJob = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(job) {
         var metadata;
         return _regenerator["default"].wrap(function _callee4$(_context4) {
           while (1) {
@@ -269,9 +259,7 @@ function () {
   }, {
     key: "getMetadata",
     value: function () {
-      var _getMetadata = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee5(url) {
+      var _getMetadata = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(url) {
         var metadata, val, json;
         return _regenerator["default"].wrap(function _callee5$(_context5) {
           while (1) {
@@ -319,9 +307,7 @@ function () {
   }, {
     key: "saveMetadata",
     value: function () {
-      var _saveMetadata = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee6(job, metadata) {
+      var _saveMetadata = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(job, metadata) {
         var url;
         return _regenerator["default"].wrap(function _callee6$(_context6) {
           while (1) {
@@ -358,9 +344,7 @@ function () {
   }, {
     key: "tally",
     value: function () {
-      var _tally = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee7(job, metadata) {
+      var _tally = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(job, metadata) {
         return _regenerator["default"].wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
@@ -389,9 +373,7 @@ function () {
   }, {
     key: "queueStats",
     value: function () {
-      var _queueStats = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee8(search) {
+      var _queueStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(search) {
         var total, remaining;
         return _regenerator["default"].wrap(function _callee8$(_context8) {
           while (1) {
@@ -444,9 +426,7 @@ function () {
   }, {
     key: "getWebpages",
     value: function () {
-      var _getWebpages = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee9(search) {
+      var _getWebpages = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9(search) {
         var _this = this;
 
         var start,
@@ -531,9 +511,7 @@ function () {
   }, {
     key: "getWebpage",
     value: function () {
-      var _getWebpage = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee10(search, url) {
+      var _getWebpage = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10(search, url) {
         var json, metadata, selected, deselected;
         return _regenerator["default"].wrap(function _callee10$(_context10) {
           while (1) {
@@ -588,9 +566,7 @@ function () {
   }, {
     key: "selectWebpage",
     value: function () {
-      var _selectWebpage = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee11(search, url) {
+      var _selectWebpage = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee11(search, url) {
         return _regenerator["default"].wrap(function _callee11$(_context11) {
           while (1) {
             switch (_context11.prev = _context11.next) {
@@ -618,9 +594,7 @@ function () {
   }, {
     key: "deselectWebpage",
     value: function () {
-      var _deselectWebpage = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee12(search, url) {
+      var _deselectWebpage = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee12(search, url) {
         return _regenerator["default"].wrap(function _callee12$(_context12) {
           while (1) {
             switch (_context12.prev = _context12.next) {

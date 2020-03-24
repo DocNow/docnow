@@ -15,9 +15,7 @@ function main() {
 }
 
 function _main() {
-  _main = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee() {
+  _main = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
     var settings;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {

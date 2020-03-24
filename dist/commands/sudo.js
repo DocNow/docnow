@@ -13,9 +13,7 @@ function main(_x) {
 }
 
 function _main() {
-  _main = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee(screenName) {
+  _main = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(screenName) {
     var db, user;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {

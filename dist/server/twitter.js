@@ -34,9 +34,7 @@ function decode(s) {
   return entities.decode(s);
 }
 
-var Twitter =
-/*#__PURE__*/
-function () {
+var Twitter = /*#__PURE__*/function () {
   function Twitter() {
     var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     (0, _classCallCheck2["default"])(this, Twitter);
@@ -206,12 +204,8 @@ function () {
       });
 
       var stream = this.twit.stream('statuses/filter', params);
-      stream.on('tweet',
-      /*#__PURE__*/
-      function () {
-        var _ref = (0, _asyncToGenerator2["default"])(
-        /*#__PURE__*/
-        _regenerator["default"].mark(function _callee(tweet) {
+      stream.on('tweet', /*#__PURE__*/function () {
+        var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(tweet) {
           var result;
           return _regenerator["default"].wrap(function _callee$(_context) {
             while (1) {

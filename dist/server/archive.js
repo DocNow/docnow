@@ -9,7 +9,7 @@ exports.Archive = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/objectSpread"));
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
@@ -31,9 +31,11 @@ var _tweetArchive = _interopRequireDefault(require("tweet-archive"));
 
 var _db = require("./db");
 
-var Archive =
-/*#__PURE__*/
-function () {
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+var Archive = /*#__PURE__*/function () {
   function Archive() {
     (0, _classCallCheck2["default"])(this, Archive);
     this.db = new _db.Database();
@@ -42,9 +44,7 @@ function () {
   (0, _createClass2["default"])(Archive, [{
     key: "createArchive",
     value: function () {
-      var _createArchive = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee2(search) {
+      var _createArchive = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(search) {
         var _this = this;
 
         var user, projectDir, userDataDir, archivesDir, searchDir, tweetsPath, builder, metadata;
@@ -98,17 +98,13 @@ function () {
                   archive.pipe(zipOut);
                   archive.directory(searchDir, search.id);
                   archive.on('finish', function () {
-                    (0, _rimraf["default"])(searchDir, {},
-                    /*#__PURE__*/
-                    (0, _asyncToGenerator2["default"])(
-                    /*#__PURE__*/
-                    _regenerator["default"].mark(function _callee() {
+                    (0, _rimraf["default"])(searchDir, {}, /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
                       return _regenerator["default"].wrap(function _callee$(_context) {
                         while (1) {
                           switch (_context.prev = _context.next) {
                             case 0:
                               _context.next = 2;
-                              return _this.db.updateSearch((0, _objectSpread2["default"])({}, search, {
+                              return _this.db.updateSearch(_objectSpread({}, search, {
                                 archived: true,
                                 archiveStarted: false
                               }));
@@ -144,9 +140,7 @@ function () {
   }, {
     key: "close",
     value: function () {
-      var _close = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee3() {
+      var _close = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
         return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -170,21 +164,15 @@ function () {
   }, {
     key: "saveTweets",
     value: function () {
-      var _saveTweets = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee5(search, searchDir) {
+      var _saveTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(search, searchDir) {
         var _this2 = this;
 
         return _regenerator["default"].wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                return _context5.abrupt("return", new Promise(
-                /*#__PURE__*/
-                function () {
-                  var _ref2 = (0, _asyncToGenerator2["default"])(
-                  /*#__PURE__*/
-                  _regenerator["default"].mark(function _callee4(resolve) {
+                return _context5.abrupt("return", new Promise( /*#__PURE__*/function () {
+                  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(resolve) {
                     var tweetsPath, fh;
                     return _regenerator["default"].wrap(function _callee4$(_context4) {
                       while (1) {
@@ -236,21 +224,15 @@ function () {
   }, {
     key: "saveUrls",
     value: function () {
-      var _saveUrls = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee7(search, searchDir) {
+      var _saveUrls = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(search, searchDir) {
         var _this3 = this;
 
         return _regenerator["default"].wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
-                return _context7.abrupt("return", new Promise(
-                /*#__PURE__*/
-                function () {
-                  var _ref3 = (0, _asyncToGenerator2["default"])(
-                  /*#__PURE__*/
-                  _regenerator["default"].mark(function _callee6(resolve) {
+                return _context7.abrupt("return", new Promise( /*#__PURE__*/function () {
+                  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(resolve) {
                     var urlsPath, fh, offset, webpages, s;
                     return _regenerator["default"].wrap(function _callee6$(_context6) {
                       while (1) {

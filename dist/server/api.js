@@ -6,7 +6,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
-var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/objectSpread"));
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
@@ -27,6 +27,10 @@ var _archive = require("./archive");
 var _auth = require("./auth");
 
 var _streamLoader = require("./stream-loader");
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var app = (0, _express["default"])();
 var db = new _db.Database();
@@ -65,12 +69,8 @@ app.get('/user', function (req, res) {
     });
   }
 });
-app.put('/user',
-/*#__PURE__*/
-function () {
-  var _ref = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee(req, res) {
+app.put('/user', /*#__PURE__*/function () {
+  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res) {
     var user, newUser;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
@@ -88,7 +88,7 @@ function () {
 
           case 4:
             user = _context.sent;
-            newUser = (0, _objectSpread2["default"])({}, user, req.body);
+            newUser = _objectSpread({}, user, {}, req.body);
             _context.next = 8;
             return db.updateUser(newUser);
 
@@ -107,12 +107,8 @@ function () {
     return _ref.apply(this, arguments);
   };
 }());
-app.put('/user/:userId',
-/*#__PURE__*/
-function () {
-  var _ref2 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee2(req, res) {
+app.put('/user/:userId', /*#__PURE__*/function () {
+  var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(req, res) {
     var user, newUser;
     return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) {
@@ -128,7 +124,7 @@ function () {
 
           case 3:
             user = _context2.sent;
-            newUser = (0, _objectSpread2["default"])({}, user, req.body);
+            newUser = _objectSpread({}, user, {}, req.body);
             _context2.next = 7;
             return db.updateUser(newUser);
 
@@ -154,12 +150,8 @@ function () {
     return _ref2.apply(this, arguments);
   };
 }());
-app.get('/settings',
-/*#__PURE__*/
-function () {
-  var _ref3 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee3(req, res) {
+app.get('/settings', /*#__PURE__*/function () {
+  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(req, res) {
     var settings;
     return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) {
@@ -194,12 +186,8 @@ function () {
     return _ref3.apply(this, arguments);
   };
 }());
-app.put('/settings',
-/*#__PURE__*/
-function () {
-  var _ref4 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee4(req, res) {
+app.put('/settings', /*#__PURE__*/function () {
+  var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(req, res) {
     var superUser, settings;
     return _regenerator["default"].wrap(function _callee4$(_context4) {
       while (1) {
@@ -368,7 +356,8 @@ app.get('/search/:searchId', function (req, res) {
 app.put('/search/:searchId', function (req, res) {
   if (req.user) {
     db.getSearch(req.body.id).then(function (search) {
-      var newSearch = (0, _objectSpread2["default"])({}, search, req.body);
+      var newSearch = _objectSpread({}, search, {}, req.body);
+
       db.updateSearch(newSearch).then(function () {
         if (req.query.refreshTweets) {
           db.importFromSearch(search);
@@ -385,12 +374,8 @@ app.put('/search/:searchId', function (req, res) {
     });
   }
 });
-app["delete"]('/search/:searchId',
-/*#__PURE__*/
-function () {
-  var _ref5 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee5(req, res) {
+app["delete"]('/search/:searchId', /*#__PURE__*/function () {
+  var _ref5 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(req, res) {
     var search, result;
     return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) {
@@ -503,12 +488,8 @@ app.get('/search/:searchId/videos', function (req, res) {
     });
   }
 });
-app.get('/search/:searchId/webpages',
-/*#__PURE__*/
-function () {
-  var _ref6 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee6(req, res) {
+app.get('/search/:searchId/webpages', /*#__PURE__*/function () {
+  var _ref6 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(req, res) {
     var search, webpages;
     return _regenerator["default"].wrap(function _callee6$(_context6) {
       while (1) {
@@ -543,12 +524,8 @@ function () {
     return _ref6.apply(this, arguments);
   };
 }());
-app.put('/search/:searchId/webpages',
-/*#__PURE__*/
-function () {
-  var _ref7 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee7(req, res) {
+app.put('/search/:searchId/webpages', /*#__PURE__*/function () {
+  var _ref7 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(req, res) {
     var search, url;
     return _regenerator["default"].wrap(function _callee7$(_context7) {
       while (1) {
@@ -604,12 +581,8 @@ function () {
     return _ref7.apply(this, arguments);
   };
 }());
-app.get('/search/:searchId/queue',
-/*#__PURE__*/
-function () {
-  var _ref8 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee8(req, res) {
+app.get('/search/:searchId/queue', /*#__PURE__*/function () {
+  var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(req, res) {
     var search, result;
     return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
@@ -644,12 +617,8 @@ function () {
     return _ref8.apply(this, arguments);
   };
 }());
-app.get('/wayback/:url',
-/*#__PURE__*/
-function () {
-  var _ref9 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee9(req, res) {
+app.get('/wayback/:url', /*#__PURE__*/function () {
+  var _ref9 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9(req, res) {
     var result;
     return _regenerator["default"].wrap(function _callee9$(_context9) {
       while (1) {
@@ -679,12 +648,8 @@ function () {
     return _ref9.apply(this, arguments);
   };
 }());
-app.put('/wayback/:url',
-/*#__PURE__*/
-function () {
-  var _ref10 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee10(req, res) {
+app.put('/wayback/:url', /*#__PURE__*/function () {
+  var _ref10 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10(req, res) {
     var result;
     return _regenerator["default"].wrap(function _callee10$(_context10) {
       while (1) {
@@ -714,12 +679,8 @@ function () {
     return _ref10.apply(this, arguments);
   };
 }());
-app.get('/stats',
-/*#__PURE__*/
-function () {
-  var _ref11 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee11(req, res) {
+app.get('/stats', /*#__PURE__*/function () {
+  var _ref11 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee11(req, res) {
     return _regenerator["default"].wrap(function _callee11$(_context11) {
       while (1) {
         switch (_context11.prev = _context11.next) {
@@ -750,12 +711,8 @@ function () {
     return _ref11.apply(this, arguments);
   };
 }());
-app.get('/users',
-/*#__PURE__*/
-function () {
-  var _ref12 = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee12(req, res) {
+app.get('/users', /*#__PURE__*/function () {
+  var _ref12 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee12(req, res) {
     return _regenerator["default"].wrap(function _callee12$(_context12) {
       while (1) {
         switch (_context12.prev = _context12.next) {

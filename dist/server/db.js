@@ -7,7 +7,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.Database = void 0;
 
-var _objectSpread2 = _interopRequireDefault(require("@babel/runtime/helpers/objectSpread"));
+var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -31,6 +31,10 @@ var _urlFetcher = require("./url-fetcher");
 
 var _utils = require("./utils");
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
 // elasticsearch doc types
 var SETTINGS = 'settings';
 var USER = 'user';
@@ -41,9 +45,7 @@ var TWEET = 'tweet';
 var TWUSER = 'twuser';
 var urlFetcher = new _urlFetcher.UrlFetcher();
 
-var Database =
-/*#__PURE__*/
-function () {
+var Database = /*#__PURE__*/function () {
   function Database() {
     var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     (0, _classCallCheck2["default"])(this, Database);
@@ -183,9 +185,7 @@ function () {
   }, {
     key: "addUser",
     value: function () {
-      var _addUser = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee(user) {
+      var _addUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(user) {
         var settings, su;
         return _regenerator["default"].wrap(function _callee$(_context) {
           while (1) {
@@ -252,9 +252,7 @@ function () {
   }, {
     key: "getUsers",
     value: function () {
-      var _getUsers = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee2() {
+      var _getUsers = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
         var users, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, user;
 
         return _regenerator["default"].wrap(function _callee2$(_context2) {
@@ -632,9 +630,7 @@ function () {
   }, {
     key: "deleteSearch",
     value: function () {
-      var _deleteSearch = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee3(search) {
+      var _deleteSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(search) {
         var resp;
         return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
@@ -672,9 +668,7 @@ function () {
   }, {
     key: "getUserSearches",
     value: function () {
-      var _getUserSearches = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee4(user) {
+      var _getUserSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(user) {
         var body, resp, searches, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, hit, search, stats;
 
         return _regenerator["default"].wrap(function _callee4$(_context4) {
@@ -728,7 +722,7 @@ function () {
 
               case 15:
                 stats = _context4.sent;
-                searches.push((0, _objectSpread2["default"])({}, search, stats));
+                searches.push(_objectSpread({}, search, {}, stats));
 
               case 17:
                 _iteratorNormalCompletion5 = true;
@@ -789,9 +783,7 @@ function () {
   }, {
     key: "userOverQuota",
     value: function () {
-      var _userOverQuota = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee5(user) {
+      var _userOverQuota = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(user) {
         var searches, total, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, s;
 
         return _regenerator["default"].wrap(function _callee5$(_context5) {
@@ -867,9 +859,7 @@ function () {
   }, {
     key: "getSearch",
     value: function () {
-      var _getSearch = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee6(searchId) {
+      var _getSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6(searchId) {
         var search, stats;
         return _regenerator["default"].wrap(function _callee6$(_context6) {
           while (1) {
@@ -885,7 +875,7 @@ function () {
 
               case 5:
                 stats = _context6.sent;
-                return _context6.abrupt("return", (0, _objectSpread2["default"])({}, search, stats));
+                return _context6.abrupt("return", _objectSpread({}, search, {}, stats));
 
               case 7:
               case "end":
@@ -910,9 +900,7 @@ function () {
   }, {
     key: "getSearchSummary",
     value: function () {
-      var _getSearchSummary = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee7(search) {
+      var _getSearchSummary = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(search) {
         var body, resp, stats;
         return _regenerator["default"].wrap(function _callee7$(_context7) {
           while (1) {
@@ -951,7 +939,7 @@ function () {
 
               case 6:
                 stats = _context7.sent;
-                return _context7.abrupt("return", (0, _objectSpread2["default"])({}, search, stats, {
+                return _context7.abrupt("return", _objectSpread({}, search, {}, stats, {
                   minDate: new Date(resp.aggregations.minDate.value),
                   maxDate: new Date(resp.aggregations.maxDate.value)
                 }));
@@ -973,9 +961,7 @@ function () {
   }, {
     key: "getSearchStats",
     value: function () {
-      var _getSearchStats = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee8(search) {
+      var _getSearchStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(search) {
         var tweetCount, userCount, videoCount, imageCount, urlCount;
         return _regenerator["default"].wrap(function _callee8$(_context8) {
           while (1) {
@@ -1078,7 +1064,7 @@ function () {
       var q = queryParts.join(' OR ');
       return new Promise(function (resolve, reject) {
         _this13.getUser(search.creator).then(function (user) {
-          _this13.updateSearch((0, _objectSpread2["default"])({}, search, {
+          _this13.updateSearch(_objectSpread({}, search, {
             active: true
           })).then(function (newSearch) {
             _this13.getTwitterClientForUser(user).then(function (twtr) {
@@ -1285,9 +1271,8 @@ function () {
         },
         sort: {
           created: 'desc'
-        } // adjust the query and sorting if they don't want retweets
-
-      };
+        }
+      }; // adjust the query and sorting if they don't want retweets
 
       if (!includeRetweets) {
         body.query.bool.must_not = {
@@ -1321,9 +1306,7 @@ function () {
   }, {
     key: "getAllTweets",
     value: function () {
-      var _getAllTweets = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee9(search, cb) {
+      var _getAllTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9(search, cb) {
         var response, scrollId;
         return _regenerator["default"].wrap(function _callee9$(_context9) {
           while (1) {
@@ -1391,9 +1374,7 @@ function () {
   }, {
     key: "getTweetsForUrl",
     value: function () {
-      var _getTweetsForUrl = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee10(search, url) {
+      var _getTweetsForUrl = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10(search, url) {
         var ids, body, resp;
         return _regenerator["default"].wrap(function _callee10$(_context10) {
           while (1) {
@@ -1454,9 +1435,7 @@ function () {
   }, {
     key: "getTweetsForImage",
     value: function () {
-      var _getTweetsForImage = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee11(search, url) {
+      var _getTweetsForImage = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee11(search, url) {
         var body, resp;
         return _regenerator["default"].wrap(function _callee11$(_context11) {
           while (1) {
@@ -1512,9 +1491,7 @@ function () {
   }, {
     key: "getTweetsForUser",
     value: function () {
-      var _getTweetsForUser = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee12(search, handle) {
+      var _getTweetsForUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee12(search, handle) {
         var body, resp;
         return _regenerator["default"].wrap(function _callee12$(_context12) {
           while (1) {
@@ -1569,9 +1546,7 @@ function () {
   }, {
     key: "getTweetsForVideo",
     value: function () {
-      var _getTweetsForVideo = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee13(search, url) {
+      var _getTweetsForVideo = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee13(search, url) {
         var body, resp;
         return _regenerator["default"].wrap(function _callee13$(_context13) {
           while (1) {
@@ -1627,9 +1602,7 @@ function () {
   }, {
     key: "getTweetsByIds",
     value: function () {
-      var _getTweetsByIds = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee14(search, ids) {
+      var _getTweetsByIds = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee14(search, ids) {
         var body, resp;
         return _regenerator["default"].wrap(function _callee14$(_context14) {
           while (1) {
@@ -2284,9 +2257,7 @@ function () {
   }, {
     key: "mergeIndexes",
     value: function () {
-      var _mergeIndexes = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee15() {
+      var _mergeIndexes = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee15() {
         var results;
         return _regenerator["default"].wrap(function _callee15$(_context15) {
           while (1) {
@@ -2318,9 +2289,7 @@ function () {
   }, {
     key: "getSystemStats",
     value: function () {
-      var _getSystemStats = (0, _asyncToGenerator2["default"])(
-      /*#__PURE__*/
-      _regenerator["default"].mark(function _callee16() {
+      var _getSystemStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee16() {
         var result, tweetCount, twitterUserCount, userCount;
         return _regenerator["default"].wrap(function _callee16$(_context16) {
           while (1) {

@@ -49,9 +49,7 @@ function get(_x) {
 
 
 function _get() {
-  _get = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee(url) {
+  _get = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(url) {
     var json;
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
@@ -94,9 +92,7 @@ function saveArchive(_x2) {
 
 
 function _saveArchive() {
-  _saveArchive = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee2(url) {
+  _saveArchive = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(url) {
     var saveUrl, resp, location, iaUrl, time, metadata;
     return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) {
@@ -152,9 +148,7 @@ function memento(_x3) {
 
 
 function _memento() {
-  _memento = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee3(url) {
+  _memento = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(url) {
     var iaUrl, text, lines, links, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, line, match;
 
     return _regenerator["default"].wrap(function _callee3$(_context3) {
@@ -240,9 +234,7 @@ function closest(_x4) {
 }
 
 function _closest() {
-  _closest = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee4(url) {
+  _closest = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(url) {
     var refresh,
         result,
         today,
@@ -344,9 +336,7 @@ function close() {
 }
 
 function _close() {
-  _close = (0, _asyncToGenerator2["default"])(
-  /*#__PURE__*/
-  _regenerator["default"].mark(function _callee5() {
+  _close = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
     return _regenerator["default"].wrap(function _callee5$(_context5) {
       while (1) {
         switch (_context5.prev = _context5.next) {
