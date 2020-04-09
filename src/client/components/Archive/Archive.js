@@ -1,8 +1,9 @@
 import React from 'react'
 import MediaQueryComponent from '../MediaQueryComponent'
-import { HashRouter as Router, Route, Link } from "react-router-dom"
+import { HashRouter as Router, Route } from "react-router-dom"
 import InsightsBody from '../Insights/InsightsBody'
-import TweetsBody from '../Insights/TweetsBody' 
+import TweetsBody from '../Insights/TweetsBody'
+import Users from '../Insights/Users'
 
 import search from './data'
 import webpages from './webpages'
@@ -46,6 +47,17 @@ class App extends MediaQueryComponent {
                 tweetCount={search.tweetCount}
                 searchId={search.id}
                 getTweets={(s, i, o, p) => this.getTweets(s, i, o, p)}
+              />} />
+            <Route exact name="tweets" path="/search/:searchId/users/" component={() => <Users
+                searchId={search.id}
+                search={search}
+                getUsers={() => search.users}
+                getSearch={() => search}
+                getTweetsForUser={() => 3}
+                resetTweets={() => null}
+                updateSearch={() => null}
+                tweets={search.tweets}
+                navigateTo={() => null}
               />} />
           </Router>
         </main>
