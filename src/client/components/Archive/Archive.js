@@ -3,7 +3,7 @@ import MediaQueryComponent from '../MediaQueryComponent'
 import { HashRouter as Router, Route } from "react-router-dom"
 import InsightsBody from '../Insights/InsightsBody'
 import TweetsBody from '../Insights/TweetsBody'
-import Users from '../Insights/Users'
+import UsersBody from '../Insights/UsersBody'
 
 import search from './data'
 import webpages from './webpages'
@@ -15,8 +15,9 @@ class App extends MediaQueryComponent {
     super(props)
     // The Tweets Insights expects only 100 tweets at a time.
     this.state = {
-      tweets: search.tweets.slice(0, 101),
-      page: 0
+      ti_tweets: search.tweets.slice(0, 101),
+      ti_page: 0,
+      ui_tweets: []
     }
   }
 
@@ -26,9 +27,30 @@ class App extends MediaQueryComponent {
 
   getTweets(searchId, includeRetweets, offset, page) {
     this.setState({
-      tweets: search.tweets.slice(offset, offset + 101),
-      page
+      ti_tweets: search.tweets.slice(offset, offset + 101),
+      ti_page: page
     })
+  }
+
+  getTweetsForUser(searchId, user) {
+    // Locate tweets belonging to user (screenName), add ids to ui_tweets
+    const tweetsForUser = search.tweets.reduce((tweets, tweet) => {
+      if (tweet.user.screenName === user) {
+        const userInfo = {
+          avatarUrl: tweet.user.avatarUrl,
+          screenName: user,
+          name: tweet.user.name
+        }
+        const tweetForUser = {
+          id: tweet.id,
+          user: userInfo,
+          retweet: tweet.retweet
+        }
+        tweets.push(tweetForUser)
+      }
+      return tweets
+    }, [])
+    this.setState({ui_tweets: tweetsForUser})
   }
 
   render() {
@@ -42,22 +64,18 @@ class App extends MediaQueryComponent {
                 webpages={webpages}
               />} />
             <Route exact name="tweets" path="/search/:searchId/tweets/" component={() => <TweetsBody
-                tweets={this.state.tweets}
-                page={this.state.page}
+                tweets={this.state.ti_tweets}
+                page={this.state.ti_page}
                 tweetCount={search.tweetCount}
                 searchId={search.id}
                 getTweets={(s, i, o, p) => this.getTweets(s, i, o, p)}
               />} />
-            <Route exact name="tweets" path="/search/:searchId/users/" component={() => <Users
+            <Route exact name="tweets" path="/search/:searchId/users/" component={() => <UsersBody
                 searchId={search.id}
                 search={search}
-                getUsers={() => search.users}
-                getSearch={() => search}
-                getTweetsForUser={() => 3}
-                resetTweets={() => null}
-                updateSearch={() => null}
-                tweets={search.tweets}
-                navigateTo={() => null}
+                getTweetsForUser={(s, u) => this.getTweetsForUser(s, u)}
+                resetTweets={() => {this.setState({ui_tweets: []})}}
+                tweets={this.state.ui_tweets}
               />} />
           </Router>
         </main>

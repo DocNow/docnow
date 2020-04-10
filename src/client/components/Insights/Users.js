@@ -1,18 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import User from './User'
-import TweetsModal from './TweetsModal'
+import UsersBody from './UsersBody'
 import SearchInfo from './SearchInfo'
 import BackButton from './BackButton'
-
-import cardStyle from '../Card.css'
 
 export default class Users extends Component {
 
   constructor(props) {
     super(props)
     this.timerId = null
-    this.modalOpen = true
   }
 
   componentDidMount() {
@@ -37,20 +33,9 @@ export default class Users extends Component {
     }
   }
 
-  closeModal() {
-    this.props.resetTweets()
-  }
-
   render() {
-    const modalOpen = this.props.tweets.length > 0
-
     return (
       <div>
-
-        <TweetsModal
-          isOpen={modalOpen}
-          close={() => {this.closeModal()}}
-          tweets={this.props.tweets} />
 
         <SearchInfo
           title={this.props.search.title}
@@ -62,25 +47,13 @@ export default class Users extends Component {
           searchId={this.props.searchId}
           navigateTo={this.props.navigateTo}/>
 
-        <div className={cardStyle.CardHolder}>
-          {this.props.search.users.map((i) => {
-            return (
-              <User
-                key={i.id}
-                name={i.name}
-                screenName={i.screenName}
-                avatarUrl={i.avatarUrl}
-                url={i.url}
-                created={i.created}
-                desc={i.description}
-                count={i.tweetsInSearch}
-                friends={i.friendsCount}
-                followers={i.followersCount}
-                searchId={this.props.searchId}
-                getTweetsForUser={this.props.getTweetsForUser} />
-            )
-          })}
-        </div>
+        <UsersBody
+          searchId={this.props.searchId}
+          search={this.props.search}
+          getTweetsForUser={this.props.getTweetsForUser}
+          resetTweets={this.props.resetTweets}
+          tweets={this.props.tweets}
+        />
 
       </div>
     )
