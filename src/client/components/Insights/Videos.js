@@ -1,18 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Video from './Video'
-import TweetsModal from './TweetsModal'
+import VideosBody from './VideosBody'
 import SearchInfo from './SearchInfo'
 import BackButton from './BackButton'
-
-import cardStyle from '../Card.css'
 
 export default class Videos extends Component {
 
   constructor(props) {
     super(props)
     this.timerId = null
-    this.modalOpen = true
   }
 
   componentDidMount() {
@@ -42,16 +38,8 @@ export default class Videos extends Component {
   }
 
   render() {
-    const modalOpen = this.props.tweets.length > 0
-
     return (
       <div>
-
-        <TweetsModal
-          isOpen={modalOpen}
-          close={() => {this.closeModal()}}
-          tweets={this.props.tweets} />
-
         <SearchInfo
           title={this.props.search.title}
           description={this.props.search.description}
@@ -62,18 +50,12 @@ export default class Videos extends Component {
           searchId={this.props.searchId}
           navigateTo={this.props.navigateTo}/>
 
-        <div className={cardStyle.CardHolder}>
-          {this.props.search.videos.map((i) => {
-            return (
-              <Video
-                key={i.url}
-                url={i.url}
-                count={i.count}
-                searchId={this.props.searchId}
-                getTweetsForVideo={this.props.getTweetsForVideo} />
-            )
-          })}
-        </div>
+        <VideosBody
+          searchId={this.props.searchId}
+          search={this.props.search}
+          getTweetsForVideo={this.props.getTweetsForVideo}
+          resetTweets={this.props.resetTweets}
+          tweets={this.props.tweets} />
 
       </div>
     )

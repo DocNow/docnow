@@ -5,7 +5,7 @@ import TweetsModal from './TweetsModal'
 
 import cardStyle from '../Card.css'
 
-export default class Users extends Component {
+export default class UsersBody extends Component {
 
   constructor(props) {
     super(props)
@@ -52,7 +52,7 @@ export default class Users extends Component {
   }
 }
 
-Users.propTypes = {
+UsersBody.propTypes = {
   searchId: PropTypes.string,
   search: PropTypes.object,
   getTweetsForUser: PropTypes.func,

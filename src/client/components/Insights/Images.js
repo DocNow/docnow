@@ -1,18 +1,15 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Img from './Image'
-import TweetsModal from './TweetsModal'
 import SearchInfo from './SearchInfo'
 import BackButton from './BackButton'
+import ImagesBody from './ImagesBody'
 
-import cardStyle from '../Card.css'
 
 export default class Images extends Component {
 
   constructor(props) {
     super(props)
     this.timerId = null
-    this.modalOpen = true
   }
 
   componentDidMount() {
@@ -42,15 +39,8 @@ export default class Images extends Component {
   }
 
   render() {
-    const modalOpen = this.props.tweets.length > 0
-
     return (
       <div>
-
-        <TweetsModal
-          isOpen={modalOpen}
-          close={() => {this.closeModal()}}
-          tweets={this.props.tweets} />
 
         <SearchInfo
           title={this.props.search.title}
@@ -60,20 +50,14 @@ export default class Images extends Component {
 
         <BackButton 
           searchId={this.props.searchId}
-          navigateTo={this.props.navigateTo}/>
+          navigateTo={this.props.navigateTo} />
 
-        <div className={cardStyle.CardHolder}>
-          {this.props.search.images.map((i) => {
-            return (             
-              <Img
-                key={i.url}
-                url={i.url}
-                count={i.count}
-                searchId={this.props.searchId}
-                getTweetsForImage={this.props.getTweetsForImage} />
-            )
-          })}
-        </div>
+        <ImagesBody
+          searchId={this.props.searchId}
+          search={this.props.search}
+          getTweetsForImage={this.props.getTweetsForImage}
+          resetTweets={this.props.resetTweets}
+          tweets={this.props.tweets} />
 
       </div>
     )
