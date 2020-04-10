@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Webpage from './Webpage'
-import TweetsModal from './TweetsModal'
+import WebpagesBody from './WebpagesBody'
 import SearchInfo from './SearchInfo'
 import BackButton from './BackButton'
 
-import cardStyle from '../Card.css'
 import style from './Webpages.css'
 
 export default class Webpages extends Component {
@@ -13,7 +11,6 @@ export default class Webpages extends Component {
   constructor(props) {
     super(props)
     this.timerId = null
-    this.modalOpen = true
   }
 
   componentDidMount() {
@@ -44,15 +41,9 @@ export default class Webpages extends Component {
   }
 
   render() {
-    const modalOpen = this.props.tweets.length > 0
 
     return (
       <div>
-
-        <TweetsModal
-          isOpen={modalOpen}
-          close={() => {this.closeModal()}}
-          tweets={this.props.tweets} />
 
         <SearchInfo
           title={this.props.search.title}
@@ -68,27 +59,17 @@ export default class Webpages extends Component {
           URLs Checked: {this.props.total - this.props.remaining}/{this.props.total}
         </div>
 
-        <div className={cardStyle.CardHolder}>
-          {this.props.webpages.map((w) => (
-          <Webpage
-            key={w.url}
-            url={w.url}
-            title={w.title}
-            image={w.image}
-            count={w.count}
-            description={w.description}
-            keywords={w.keywords}
-            selected={w.selected}
-            deselected={w.deselected}
-            archive={w.archive}
-            checkArchive={this.props.checkArchive}
-            saveArchive={this.props.saveArchive}
-            searchId={this.props.searchId}
-            getTweetsForUrl={this.props.getTweetsForUrl}
-            selectWebpage={this.props.selectWebpage}
-            deselectWebpage={this.props.deselectWebpage} />
-          ))}
-        </div>
+        <WebpagesBody 
+          searchId={this.props.searchId}
+          search={this.props.search}
+          webpages={this.props.webpages}
+          getTweetsForUrl={this.props.getTweetsForUrl}
+          resetTweets={this.props.resetTweets}
+          tweets={this.props.tweets}
+          selectWebpage={this.props.selectWebpage}
+          deselectWebpage={this.props.deselectWebpage}
+          checkArchive={this.props.checkArchive}
+          saveArchive={this.props.saveArchive} />
 
       </div>
     )

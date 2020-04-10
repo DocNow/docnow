@@ -6,6 +6,7 @@ import TweetsBody from '../Insights/TweetsBody'
 import UsersBody from '../Insights/UsersBody'
 import ImagesBody from '../Insights/ImagesBody'
 import VideosBody from '../Insights/VideosBody'
+import WebpagesBody from '../Insights/WebpagesBody'
 
 import search from './data'
 import webpages from './webpages'
@@ -21,7 +22,8 @@ class App extends MediaQueryComponent {
       ti_page: 0,
       ui_tweets: [],
       ii_tweets: [],
-      vi_tweets: []
+      vi_tweets: [],
+      wi_tweets: []
     }
   }
 
@@ -89,6 +91,21 @@ class App extends MediaQueryComponent {
     this.setState({vi_tweets: tweetsForVid})
   }
 
+  getTweetsForUrl(searchId, url) {
+    // Locate tweets with image url, add them to ii_tweets
+    const tweetsForUrl = search.tweets.reduce((tweets, tweet) => {
+      if (tweet.urls.length > 0) {
+        if (tweet.urls.filter((u) => u.long === url).length !== -1) {
+          tweets.push(
+            this.makeModalData(tweet)
+          )
+        }
+      }
+      return tweets
+    }, [])
+    this.setState({wi_tweets: tweetsForUrl})
+  }
+
   render() {
     return (
       <div id="App" className={this.state.mediaStyle}>
@@ -126,6 +143,18 @@ class App extends MediaQueryComponent {
                 getTweetsForVideo={(s, u) => this.getTweetsForVideo(s, u)}
                 resetTweets={() => {this.setState({vi_tweets: []})}}
                 tweets={this.state.vi_tweets}
+              />} />
+              <Route exact name="tweets" path="/search/:searchId/webpages/" component={() => <WebpagesBody
+                searchId={search.id}
+                search={search}
+                webpages={webpages}
+                getTweetsForUrl={(s, u) => this.getTweetsForUrl(s, u)}
+                resetTweets={() => {this.setState({wi_tweets: []})}}
+                tweets={this.state.wi_tweets}
+                selectWebpage={() => null}
+                deselectWebpage={() => null}
+                checkArchive={() => null}
+                saveArchive={() => null}
               />} />
           </Router>
         </main>
