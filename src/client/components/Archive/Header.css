@@ -1,0 +1,28 @@
+.Title {
+  text-transform: uppercase;
+}
+
+.Description {
+  font-size: 110%;
+  margin-bottom: 2em;
+}
+
+.Metadata {
+  display: table
+}
+
+.Metadata > div {
+  line-height: 2em;
+  display: table-row
+}
+
+.Label {
+  display: table-cell;
+  padding-right: 1em;
+}
+
+.Query {
+  border: 1px solid grey;
+  border-radius: .5em;
+  padding: .2em;
+}

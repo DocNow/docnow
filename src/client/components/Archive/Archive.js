@@ -1,6 +1,7 @@
 import React from 'react'
 import MediaQueryComponent from '../MediaQueryComponent'
 import { HashRouter as Router, Route } from "react-router-dom"
+import Header from './Header'
 import InsightsBody from '../Insights/InsightsBody'
 import TweetsBody from '../Insights/TweetsBody'
 import UsersBody from '../Insights/UsersBody'
@@ -23,12 +24,23 @@ class App extends MediaQueryComponent {
       ui_tweets: [],
       ii_tweets: [],
       vi_tweets: [],
-      wi_tweets: []
+      wi_tweets: [],
+      isHome: true
     }
   }
 
   componentDidMount() {
     this.setMediaQuery('(max-width: 780px)', styles.App, styles.AppUnder780px)
+    if (window.location.hash.includes('#/search')) {
+      this.setState({isHome: false})
+    }
+    window.onhashchange = (e) => {
+      if (e.newURL.includes('#/search')) {
+        this.setState({isHome: false})
+      } else {
+        this.setState({isHome: true})
+      }
+    }
   }
 
   getTweets(searchId, includeRetweets, offset, page) {
@@ -107,55 +119,69 @@ class App extends MediaQueryComponent {
   }
 
   render() {
+    const header = <Header
+        title={search.title}
+        desc={search.description}
+        creator={search.creator}
+        searchQuery={search.query.map(q => q.value).join(' ')}
+        startDate={search.minDate}
+        endDate={search.maxDate}
+        isHome={this.state.isHome} />
     return (
       <div id="App" className={this.state.mediaStyle}>
         <main>
           <Router>
-            <Route exact name="trends" path="/" component={() => <InsightsBody
+            <Route exact name="trends" path="/" component={() => (
+              <div>{header} <InsightsBody
                 searchId={search.id}
                 search={search}
                 webpages={webpages}
-              />} />
-            <Route exact name="tweets" path="/search/:searchId/tweets/" component={() => <TweetsBody
+              /> </div>)} />
+            <Route exact name="tweets" path="/search/:searchId/tweets/" component={() => (
+              <div>{header} <TweetsBody
                 tweets={this.state.ti_tweets}
                 page={this.state.ti_page}
                 tweetCount={search.tweetCount}
                 searchId={search.id}
                 getTweets={(s, i, o, p) => this.getTweets(s, i, o, p)}
-              />} />
-            <Route exact name="tweets" path="/search/:searchId/users/" component={() => <UsersBody
+              /> </div>)} />
+            <Route exact name="tweets" path="/search/:searchId/users/" component={() => (
+              <div>{header} <UsersBody
                 searchId={search.id}
                 search={search}
                 getTweetsForUser={(s, u) => this.getTweetsForUser(s, u)}
                 resetTweets={() => {this.setState({ui_tweets: []})}}
                 tweets={this.state.ui_tweets}
-              />} />
-            <Route exact name="tweets" path="/search/:searchId/images/" component={() => <ImagesBody
+              /> </div>)} />
+            <Route exact name="tweets" path="/search/:searchId/images/" component={() => (
+              <div>{header} <ImagesBody
                 searchId={search.id}
                 search={search}
                 getTweetsForImage={(s, u) => this.getTweetsForImage(s, u)}
                 resetTweets={() => {this.setState({ii_tweets: []})}}
                 tweets={this.state.ii_tweets}
-              />} />
-            <Route exact name="tweets" path="/search/:searchId/videos/" component={() => <VideosBody
+              /> </div>)} />
+            <Route exact name="tweets" path="/search/:searchId/videos/" component={() => (
+              <div>{header} <VideosBody
                 searchId={search.id}
                 search={search}
                 getTweetsForVideo={(s, u) => this.getTweetsForVideo(s, u)}
                 resetTweets={() => {this.setState({vi_tweets: []})}}
                 tweets={this.state.vi_tweets}
-              />} />
-              <Route exact name="tweets" path="/search/:searchId/webpages/" component={() => <WebpagesBody
-                searchId={search.id}
-                search={search}
-                webpages={webpages}
-                getTweetsForUrl={(s, u) => this.getTweetsForUrl(s, u)}
-                resetTweets={() => {this.setState({wi_tweets: []})}}
-                tweets={this.state.wi_tweets}
-                selectWebpage={() => null}
-                deselectWebpage={() => null}
-                checkArchive={() => null}
-                saveArchive={() => null}
-              />} />
+              /> </div>)} />
+              <Route exact name="tweets" path="/search/:searchId/webpages/" component={() => (
+                <div>{header} <WebpagesBody
+                  searchId={search.id}
+                  search={search}
+                  webpages={webpages}
+                  getTweetsForUrl={(s, u) => this.getTweetsForUrl(s, u)}
+                  resetTweets={() => {this.setState({wi_tweets: []})}}
+                  tweets={this.state.wi_tweets}
+                  selectWebpage={() => null}
+                  deselectWebpage={() => null}
+                  checkArchive={() => null}
+                  saveArchive={() => null}
+                /> </div>)} />
           </Router>
         </main>
       </div>
