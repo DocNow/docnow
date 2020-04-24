@@ -9,8 +9,8 @@ import ImagesBody from '../Insights/ImagesBody'
 import VideosBody from '../Insights/VideosBody'
 import WebpagesBody from '../Insights/WebpagesBody'
 
-import search from './data'
-import webpages from './webpages'
+import search from './data/data'
+import webpages from './data/webpages'
 
 import styles from '../../containers/App.css'
 
