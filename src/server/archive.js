@@ -3,7 +3,8 @@ import path from 'path'
 import csv from 'csv-stringify/lib/sync'
 import rimraf from 'rimraf'
 import archiver from 'archiver'
-// import Builder from 'tweet-archive'
+import webpack from 'webpack'
+import wConfig from '../../webpack.archive.config'
 
 import { Database } from './db'
 
@@ -19,6 +20,8 @@ export class Archive {
     const userDataDir = path.join(projectDir, 'userData')
     const archivesDir = path.join(userDataDir, 'archives')
     const searchDir = path.join(archivesDir, search.id)
+    const dataDir = path.join(searchDir, 'data')
+    const tmpDir = path.join(projectDir, 'userData', 'archives', 'tmp')
  
     const data = {
       id: search.id,
@@ -38,11 +41,19 @@ export class Archive {
       fs.mkdirSync(searchDir)
     }
 
+    // Clean up tmp build dir in case it's still there
+    await this.cleanUp(tmpDir)
+
+    // create data folder in Archive client
+    const archiveDataDir = path.join(projectDir, 'src', 'client', 'components', 'Archive', 'data')
+    if (! fs.existsSync(archiveDataDir)) {
+      fs.mkdirSync(archiveDataDir)
+    }
+
     // get tweets
     // Create both a CSV file and get the list back
-    const tweetsData = await this.saveTweets(search, searchDir)
+    const tweetsData = await this.saveTweets(search, dataDir)
     data.tweets = tweetsData
-    // console.log(data.tweets)
     // get users
     const users = await this.db.getTwitterUsers(search)
     data.users = users
@@ -57,37 +68,70 @@ export class Archive {
     data.hashtags = hashtags
     // get webpages
     // Create both a CSV and a JSON file.
-    await this.saveUrls(search, searchDir)
+    await this.saveUrls(search, dataDir, archiveDataDir)
 
     // Create search JSON file.
-    await this.saveSearchData(data, searchDir)
+    await this.saveSearchData(data, dataDir, archiveDataDir)
 
-    return new Promise((resolve) => {
-      const zipPath = path.join(archivesDir, `${search.id}.zip`)
-      const zipOut = fs.createWriteStream(zipPath)
-      const archive = archiver('zip')
-      archive.pipe(zipOut)
-      archive.directory(searchDir, search.id)
+    return new Promise((resolve, reject) => {
 
-      archive.on('finish', () => {
-        rimraf(searchDir, {}, async () => {
-          await this.db.updateSearch({
-            ...search,
-            archived: true,
-            archiveStarted: false
-          })
-          resolve(zipPath)
+      webpack(wConfig, async (err, stats) => {
+        if (err || stats.hasErrors()) {
+          reject(err)
+        }
+
+        // Move from tmp and clean up
+        await this.moveAndCleanUp(tmpDir, searchDir)        
+
+        // Zip it up.
+        const zipPath = path.join(archivesDir, `${search.id}.zip`)
+        const zipOut = fs.createWriteStream(zipPath)
+        const archive = archiver('zip')
+        archive.pipe(zipOut)
+        archive.directory(searchDir, search.id)
+
+        archive.on('finish', () => {
+          rimraf(archiveDataDir, {}, async () => {
+            rimraf(searchDir, {}, async () => {
+              await this.db.updateSearch({
+                ...search,
+                archived: true,
+                archiveStarted: false
+              })
+              resolve(zipPath)
+            })
+          })        
         })
-      })
 
-      archive.finalize()
+        archive.finalize()
+      })
     })
   }
 
-  async saveTweets(search, searchDir) {
+  async moveAndCleanUp(tmpDir, searchDir) {
+    fs.readdir(tmpDir, (err, files) => {
+      if (err) {
+        throw err
+      }
+      for (const file of files) {
+        fs.rename(path.join(tmpDir, file), path.join(searchDir, file), (e) => {
+          if (e) {
+            throw e
+          }
+          this.cleanUp(tmpDir)
+        })
+      }
+    })
+  }
+
+  async cleanUp(tmpDir) {
+    return rimraf(tmpDir)
+  }
+
+  async saveTweets(search, dataDir) {
     return new Promise(async (resolve, reject) => {
       try {
-        const tweetsPath = path.join(searchDir, 'tweets.csv')
+        const tweetsPath = path.join(dataDir, 'tweets.csv')
         const fh = fs.createWriteStream(tweetsPath)
         fh.write("id,screen_name,retweet\r\n")
         const tweetsData = []
@@ -111,21 +155,21 @@ export class Archive {
     })
   }
 
-  async saveUrls(search, searchDir) {
+  async saveUrls(search, dataDir, archiveDataDir) {
     return new Promise(async (resolve, reject) => {
       try {
         let offset = 0
         // CSV
-        const urlsPath = path.join(searchDir, 'urls.csv')
+        const urlsPath = path.join(dataDir, 'webpages.csv')
         const fh = fs.createWriteStream(urlsPath)
         fh.write('url,title,count\r\n')
 
         // JSON
-        const urlsJSONPath = path.join(searchDir, 'webpages.json')
+        const urlsJSONPath = path.join(dataDir, 'webpages.json')
         const jsonFh = fs.createWriteStream(urlsJSONPath)
 
         // JS
-        const urlsJsPath = path.join(searchDir, 'webpages.js')
+        const urlsJsPath = path.join(archiveDataDir, 'webpages.js')
         const jsFh = fs.createWriteStream(urlsJsPath)
         jsFh.write('/* eslint-disable */\r\nexport default\r\n')
 
@@ -160,7 +204,7 @@ export class Archive {
     })
   }
 
-  async saveSearchData(data, searchDir) {
+  async saveSearchData(data, searchDir, archiveDataDir) {
     return new Promise(async (resolve, reject) => {
       try {
         // JSON
@@ -169,7 +213,7 @@ export class Archive {
         jsonFh.write(JSON.stringify(data))
       
         // JS
-        const searchJsPath = path.join(searchDir, 'data.js')
+        const searchJsPath = path.join(archiveDataDir, 'data.js')
         const jsFh = fs.createWriteStream(searchJsPath)
         jsFh.write('/* eslint-disable */\r\nexport default\r\n')
         jsFh.write(JSON.stringify(data))
