@@ -5,7 +5,7 @@
   "scripts": {
     "start": "better-npm-run start",
     "start:dev": "better-npm-run start:dev",
-    "build:archive": "webpack --optimize-minimize --config webpack.archive.config.js",
+    "build:archive": "webpack --config webpack.archive.config.js",
     "build:client": "webpack --optimize-minimize --config webpack.prod.config.js",
     "build:server": "babel src/server --out-dir dist/server",
     "build:commands": "babel src/commands --out-dir dist/commands",
