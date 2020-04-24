@@ -2,10 +2,15 @@ var path = require('path'),
     webpack = require('webpack'),
     HtmlWebpackPlugin = require('html-webpack-plugin')
 
-var DIST_DIR   = path.join(__dirname, 'dist/archive'),
+var DIST_DIR   = path.join(__dirname, 'userData/archives/tmp'),
     SRC_DIR = path.join(__dirname, 'src/client/components/Archive')
 
 module.exports = {
+
+  optimization: {
+    minimize: true
+  },
+
   context: SRC_DIR,
 
   entry: ['./index'],
