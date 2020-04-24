@@ -124,8 +124,8 @@ class App extends MediaQueryComponent {
         desc={search.description}
         creator={search.creator}
         searchQuery={search.query.map(q => q.value).join(' ')}
-        startDate={search.minDate}
-        endDate={search.maxDate}
+        startDate={search.startDate}
+        endDate={search.endDate}
         isHome={this.state.isHome} />
     return (
       <div id="App" className={this.state.mediaStyle}>
