@@ -1,4 +1,4 @@
-FROM node:8.4.0
+FROM node:12.16.3
 RUN mkdir /code
 WORKDIR /code
 ADD . /code/
