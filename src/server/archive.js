@@ -49,12 +49,13 @@ export class Archive {
     }
 
     // Clean up tmp build dir in case it's still there
+    // note: tmpDir needs to be unique. at least per search
     await this.cleanUp(tmpDir)
 
     // create data folder in Archive client
     const archiveDataDir = path.join(projectDir, 'src', 'client', 'components', 'Archive', 'data')
     if (! fs.existsSync(archiveDataDir)) {
-      fs.mkdirSync(archiveDataDir)
+      fs.mkdirSync(archiveDataDir, {recursive: true})
     }
 
     // get tweets
@@ -89,6 +90,7 @@ export class Archive {
     return new Promise((resolve, reject) => {
       webpack(wConfig, async (err, stats) => {
         if (err || stats.hasErrors()) {
+          console.error(`caught error during webpack: ${err}`)
           reject(err)
         }
 
@@ -125,21 +127,16 @@ export class Archive {
   }
 
   async moveAndCleanUp(tmpDir, searchDir) {
-    await fs.readdir(tmpDir, async (err, files) => {
-      if (err) {
-        throw err
+    const files = fs.readdirSync(tmpDir)
+    for (const file of files) {
+      const src = path.join(tmpDir, file)
+      const dst = path.join(searchDir, file)
+      try {
+        fs.copyFileSync(src, dst)
+      } catch (err) {
+        console.error(`unable to copy ${src} to ${dst}: ${err}`)
       }
-      // These files are not getting moved (renamed). Perhaps the ZIP file gets created before they're moved
-      // Check promises + async/awaits
-      // Trying to copy them instead of moving them since everything gets cleaned up (but these could be big files)
-      for (const file of files) {        
-        fs.copyFile(path.join(tmpDir, file), path.join(searchDir, file), (e) => {
-          if (e) {
-            throw e
-          }
-        })        
-      }
-    })
+    }
     await this.cleanUp(tmpDir)
   }
 
