@@ -24,7 +24,11 @@ export class Archive {
     const archivesDir = path.join(userDataDir, 'archives')
     const searchDir = path.join(archivesDir, search.id)
     const dataDir = path.join(searchDir, 'data')
-    const tmpDir = path.join(projectDir, 'userData', 'archives', 'tmp')
+
+    const appDir = path.join(projectDir, 'src', 'archive')
+    const appSrcDir = path.join(appDir, 'app')
+    const appBuildDir = path.join(appDir, search.id)
+    const appDataDir = path.join(appBuildDir, 'data')
  
     const data = {
       id: search.id,
@@ -40,22 +44,42 @@ export class Archive {
       title: search.title
     }
 
-    if (! fs.existsSync(searchDir)) {
-      fs.mkdirSync(searchDir)
+    try {
+      if (! fs.existsSync(searchDir)) {
+        fs.mkdirSync(searchDir)
+      }
+  
+      if (! fs.existsSync(dataDir)) {
+        fs.mkdirSync(dataDir)
+      }
+  
+      if (! fs.existsSync(appBuildDir)) {
+        fs.mkdirSync(appBuildDir)
+      }
+    } catch (e) {
+      console.error(e)
+      throw e
+    }    
+
+    // copy source of Archive app to unique directory
+    const files = fs.readdirSync(appSrcDir)
+    for (const file of files) {
+      const ext = path.extname(file).toLowerCase()
+      if (ext !== '.js' && ext !== '.html' && ext !== '.css') {
+        continue
+      }
+      const src = path.join(appSrcDir, file)
+      const dst = path.join(appBuildDir, file)
+      try {
+        fs.copyFileSync(src, dst)
+      } catch (err) {
+        console.error(`unable to copy ${src} to ${dst}: ${err}`)
+      }
     }
 
-    if (! fs.existsSync(dataDir)) {
-      fs.mkdirSync(dataDir)
-    }
-
-    // Clean up tmp build dir in case it's still there
-    // note: tmpDir needs to be unique. at least per search
-    await this.cleanUp(tmpDir)
-
-    // create data folder in Archive client
-    const archiveDataDir = path.join(projectDir, 'src', 'client', 'components', 'Archive', 'data')
-    if (! fs.existsSync(archiveDataDir)) {
-      fs.mkdirSync(archiveDataDir, {recursive: true})
+    // Create data dir in build
+    if (! fs.existsSync(appDataDir)) {
+      fs.mkdirSync(appDataDir)
     }
 
     // get tweets
@@ -80,24 +104,22 @@ export class Archive {
 
     // get webpages
     // Create both a CSV and a JSON file.
-    await this.saveUrls(search, dataDir, archiveDataDir)
+    await this.saveUrls(search, dataDir, appDataDir)
 
     log.info(`Archive: saved webpages`)
 
     // Create search JSON file.
-    await this.saveSearchData(data, dataDir, archiveDataDir)
+    await this.saveSearchData(data, dataDir, appDataDir)
 
     return new Promise((resolve, reject) => {
+      // Set webpack config to correct dirs
+      wConfig.context = appBuildDir
+      wConfig.output.path = searchDir
       webpack(wConfig, async (err, stats) => {
         if (err || stats.hasErrors()) {
           console.error(`caught error during webpack: ${err}`)
           reject(err)
         }
-
-        // Move from tmp and clean up
-        await this.moveAndCleanUp(tmpDir, searchDir)
-
-        log.info(`Archive: moved files before zip and cleaned up tmp`)
 
         // Zip it up.
         const zipPath = path.join(archivesDir, `${search.id}.zip`)
@@ -108,7 +130,7 @@ export class Archive {
 
         archive.on('finish', () => {
           log.info(`Archive: zip created, cleaning up.`)
-          rimraf(archiveDataDir, {}, async () => {
+          rimraf(appBuildDir, {}, async () => {
             rimraf(searchDir, {}, async () => {
               await this.db.updateSearch({
                 ...search,
@@ -123,28 +145,6 @@ export class Archive {
         archive.finalize()
       })
 
-    })
-  }
-
-  async moveAndCleanUp(tmpDir, searchDir) {
-    const files = fs.readdirSync(tmpDir)
-    for (const file of files) {
-      const src = path.join(tmpDir, file)
-      const dst = path.join(searchDir, file)
-      try {
-        fs.copyFileSync(src, dst)
-      } catch (err) {
-        console.error(`unable to copy ${src} to ${dst}: ${err}`)
-      }
-    }
-    await this.cleanUp(tmpDir)
-  }
-
-  async cleanUp(d) {
-    rimraf(d, {}, (err) => {
-      if (err) {
-        throw err
-      }
     })
   }
 
