@@ -5,6 +5,7 @@ import rimraf from 'rimraf'
 import archiver from 'archiver'
 import webpack from 'webpack'
 import wConfig from '../../webpack.archive.config'
+import log from './logger'
 
 import { Database } from './db'
 
@@ -15,6 +16,8 @@ export class Archive {
   }
 
   async createArchive(search) {
+    log.info(`Creating archive for ${search.id}`)
+
     const user = await this.db.getUser(search.creator)
     const projectDir = path.dirname(path.dirname(__dirname))
     const userDataDir = path.join(projectDir, 'userData')
@@ -41,6 +44,10 @@ export class Archive {
       fs.mkdirSync(searchDir)
     }
 
+    if (! fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir)
+    }
+
     // Clean up tmp build dir in case it's still there
     await this.cleanUp(tmpDir)
 
@@ -54,6 +61,7 @@ export class Archive {
     // Create both a CSV file and get the list back
     const tweetsData = await this.saveTweets(search, dataDir)
     data.tweets = tweetsData
+
     // get users
     const users = await this.db.getTwitterUsers(search)
     data.users = users
@@ -66,22 +74,28 @@ export class Archive {
     // get hashtags
     const hashtags = await this.db.getHashtags(search)
     data.hashtags = hashtags
+
+    log.info(`Archive: obtained search data.`)
+
     // get webpages
     // Create both a CSV and a JSON file.
     await this.saveUrls(search, dataDir, archiveDataDir)
+
+    log.info(`Archive: saved webpages`)
 
     // Create search JSON file.
     await this.saveSearchData(data, dataDir, archiveDataDir)
 
     return new Promise((resolve, reject) => {
-
       webpack(wConfig, async (err, stats) => {
         if (err || stats.hasErrors()) {
           reject(err)
         }
 
         // Move from tmp and clean up
-        await this.moveAndCleanUp(tmpDir, searchDir)        
+        await this.moveAndCleanUp(tmpDir, searchDir)
+
+        log.info(`Archive: moved files before zip and cleaned up tmp`)
 
         // Zip it up.
         const zipPath = path.join(archivesDir, `${search.id}.zip`)
@@ -91,6 +105,7 @@ export class Archive {
         archive.directory(searchDir, search.id)
 
         archive.on('finish', () => {
+          log.info(`Archive: zip created, cleaning up.`)
           rimraf(archiveDataDir, {}, async () => {
             rimraf(searchDir, {}, async () => {
               await this.db.updateSearch({
@@ -105,27 +120,35 @@ export class Archive {
 
         archive.finalize()
       })
+
     })
   }
 
   async moveAndCleanUp(tmpDir, searchDir) {
-    fs.readdir(tmpDir, (err, files) => {
+    await fs.readdir(tmpDir, async (err, files) => {
       if (err) {
         throw err
       }
-      for (const file of files) {
-        fs.rename(path.join(tmpDir, file), path.join(searchDir, file), (e) => {
+      // These files are not getting moved (renamed). Perhaps the ZIP file gets created before they're moved
+      // Check promises + async/awaits
+      // Trying to copy them instead of moving them since everything gets cleaned up (but these could be big files)
+      for (const file of files) {        
+        fs.copyFile(path.join(tmpDir, file), path.join(searchDir, file), (e) => {
           if (e) {
             throw e
           }
-          this.cleanUp(tmpDir)
-        })
+        })        
       }
     })
+    await this.cleanUp(tmpDir)
   }
 
-  async cleanUp(tmpDir) {
-    return rimraf(tmpDir)
+  async cleanUp(d) {
+    rimraf(d, {}, (err) => {
+      if (err) {
+        throw err
+      }
+    })
   }
 
   async saveTweets(search, dataDir) {
