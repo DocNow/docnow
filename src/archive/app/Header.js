@@ -5,8 +5,8 @@ import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
 
 import style from './Header.css'
-import iStyle from '../Insights/Insights.css'
-import dn from '../../images/dn.png'
+import iStyle from '../../client/components/Insights/Insights.css'
+import dn from '../../client/images/dn.png'
 
 export default class Header extends Component {
   constructor(props) {

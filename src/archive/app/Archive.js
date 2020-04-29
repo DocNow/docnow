@@ -1,18 +1,18 @@
 import React from 'react'
-import MediaQueryComponent from '../MediaQueryComponent'
+import MediaQueryComponent from '../../client/components/MediaQueryComponent'
 import { HashRouter as Router, Route } from "react-router-dom"
 import Header from './Header'
-import InsightsBody from '../Insights/InsightsBody'
-import TweetsBody from '../Insights/TweetsBody'
-import UsersBody from '../Insights/UsersBody'
-import ImagesBody from '../Insights/ImagesBody'
-import VideosBody from '../Insights/VideosBody'
-import WebpagesBody from '../Insights/WebpagesBody'
+import InsightsBody from '../../client/components/Insights/InsightsBody'
+import TweetsBody from '../../client/components/Insights/TweetsBody'
+import UsersBody from '../../client/components/Insights/UsersBody'
+import ImagesBody from '../../client/components/Insights/ImagesBody'
+import VideosBody from '../../client/components/Insights/VideosBody'
+import WebpagesBody from '../../client/components/Insights/WebpagesBody'
 
 import search from './data/data'
 import webpages from './data/webpages'
 
-import styles from '../../containers/App.css'
+import styles from '../../client/containers/App.css'
 
 class App extends MediaQueryComponent {
   constructor(props) {
