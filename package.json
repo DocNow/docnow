@@ -37,7 +37,7 @@
       }
     },
     "start:dev": {
-      "command": "nodemon src/commands/server.js --exec 'npm run eslint:server && babel-node' --ignore src/client --ignore userData",
+      "command": "nodemon src/commands/server.js --exec 'npm run eslint:server && babel-node' --ignore src/client --ignore userData --ignore src/archive",
       "env": {
         "NODE_ENV": "development"
       }
