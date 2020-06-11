@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import TextField from '@material-ui/core/TextField'
 
 export default class Editable extends Component {
 
@@ -17,6 +18,12 @@ export default class Editable extends Component {
     this.props.update(e.target.value)
   }
 
+  onBlur(e) {
+    this.editing = false
+    e.stopPropagation()
+    this.forceUpdate()
+  }
+
   keyDown(e) {
     if (e.key === 'Enter') {
       this.editing = false
@@ -30,13 +37,12 @@ export default class Editable extends Component {
       const text = this.props.text || ''
       const size = text.length || 10
       return (
-        <input
-          autoFocus="autofocus"
+        <TextField id="input-with-icon-grid" value={this.props.text}
           size={size}
-          type="text"
-          value={text}
-          onChange={(e) => {this.onChange(e)}}
-          onKeyDown={(e) => {this.keyDown(e)}} />
+          autoFocus="autofocus"
+          onChange={(e) => this.onChange(e)}
+          onBlur={(e) => this.onBlur(e)}
+          onKeyDown={(e) => {this.keyDown(e)}}/>
       )
     } else {
       const text = this.props.text || this.props.placeholder
@@ -53,6 +59,7 @@ export default class Editable extends Component {
 }
 
 Editable.propTypes = {
+  hideIcon: PropTypes.bool,
   text: PropTypes.string,
   update: PropTypes.func,
   placeholder: PropTypes.string

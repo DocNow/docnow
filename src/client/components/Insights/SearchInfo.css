@@ -24,19 +24,8 @@
   text-decoration: none;
 }
 
-/* .SavedSearchButtons {
-  display: flex;
-  align-items: center;
-} */
-
 .SavedSearchButtons button {
   width: 120px;
   margin-right: 20px;
   margin-top: 5px;
-}
-
-.AlignTrash {
-  position: relative;
-  top: 5px;
-  padding-left: 5px;
 }
