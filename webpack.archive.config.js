@@ -22,6 +22,10 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.NormalModuleReplacementPlugin(
+      /Insights\/Wayback.js/,
+      `${SRC_DIR}/override.js`
+    ),
     new webpack.EnvironmentPlugin(),
     new HtmlWebpackPlugin({
       template: 'index.html',
