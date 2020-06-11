@@ -1,14 +1,19 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import DownloadOptions from '../../containers/DownloadOptions'
-import Editable from '../Editable'
 import SearchToggle from '../SearchToggle'
 import Trash from '../Trash'
 import moment from 'moment'
+import Grid from '@material-ui/core/Grid'
+import Editable from '../Editable'
 
 import style from './SearchInfo.css'
 
 export default class SearchInfo extends Component {
+  constructor(props) {
+    super(props)
+    this.editing = false
+  }
 
   shouldComponentUpdate(nextProps) {
     if (nextProps.title === this.title) {
@@ -16,6 +21,10 @@ export default class SearchInfo extends Component {
     } else {
       return true
     }
+  }
+
+  setEditing(to) {
+    this.editing = to
   }
 
   updateTitle(title) {
@@ -32,23 +41,25 @@ export default class SearchInfo extends Component {
     return (
       <div className={style.SavedSearchInfo}>
         <div className={style.SavedSearchText}>
-          <h2>
-            <Editable
-              text={this.props.title}
-              update={(t) => {this.updateTitle(t)}} />
-              <span className={style.SavedSearchButtons}>
-                <SearchToggle
-                  active={this.props.search.active}
-                  id={this.props.search.id}
-                  searches={this.props.searches}
-                  user={this.props.user}
-                  updateSearch={this.props.updateSearch} />
-              </span>
-          </h2>
-          <span>Started {created}, last updated {modified}</span>
-          <span className={style.AlignTrash}>
-            <Trash />
-          </span>
+          <Grid container spacing={1} alignItems="flex-end">
+            <Grid item xs="2">
+              <SearchToggle
+                active={this.props.search.active}
+                id={this.props.search.id}
+                searches={this.props.searches}
+                user={this.props.user}
+                updateSearch={this.props.updateSearch} />              
+            </Grid>
+            <Grid item xs="10">
+              <h2>
+                <Editable
+                  text={this.props.title}
+                  update={(t) => {this.updateTitle(t)}} />
+              </h2>
+            </Grid>
+            <Grid item xs="2"><Trash /></Grid>
+            <Grid item xs="10">Started {created}, last updated {modified}</Grid>
+          </Grid>
         </div>
         <DownloadOptions />
       </div>
