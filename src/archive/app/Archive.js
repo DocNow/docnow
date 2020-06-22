@@ -9,10 +9,10 @@ import ImagesBody from '../../client/components/Insights/ImagesBody'
 import VideosBody from '../../client/components/Insights/VideosBody'
 import WebpagesBody from '../../client/components/Insights/WebpagesBody'
 
-import search from './data/data'
-import webpages from './data/webpages'
-
 import styles from '../../client/containers/App.css'
+
+const search = window.searchData
+const webpages = window.webpages
 
 class App extends MediaQueryComponent {
   constructor(props) {
