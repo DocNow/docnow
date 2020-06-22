@@ -3,8 +3,6 @@ import path from 'path'
 import csv from 'csv-stringify/lib/sync'
 import rimraf from 'rimraf'
 import archiver from 'archiver'
-import webpack from 'webpack'
-import wConfig from '../../webpack.archive.config'
 import log from './logger'
 
 import { Database } from './db'
@@ -25,10 +23,7 @@ export class Archive {
     const searchDir = path.join(archivesDir, search.id)
     const dataDir = path.join(searchDir, 'data')
 
-    const appDir = path.join(projectDir, 'src', 'archive')
-    const appSrcDir = path.join(appDir, 'app')
-    const appBuildDir = path.join(appDir, search.id)
-    const appDataDir = path.join(appBuildDir, 'data')
+    const appDir = path.join(archivesDir, 'base')
  
     const data = {
       id: search.id,
@@ -51,35 +46,26 @@ export class Archive {
   
       if (! fs.existsSync(dataDir)) {
         fs.mkdirSync(dataDir)
-      }
-  
-      if (! fs.existsSync(appBuildDir)) {
-        fs.mkdirSync(appBuildDir)
-      }
+      }      
     } catch (e) {
       console.error(e)
       throw e
     }    
 
-    // copy source of Archive app to unique directory
-    const files = fs.readdirSync(appSrcDir)
+    // copy pre-compiled Archive app to unique directory
+    const files = fs.readdirSync(appDir)
     for (const file of files) {
       const ext = path.extname(file).toLowerCase()
-      if (ext !== '.js' && ext !== '.html' && ext !== '.css') {
+      if (ext !== '.js' && ext !== '.map' && ext !== '.html' && ext !== '.css') {
         continue
       }
-      const src = path.join(appSrcDir, file)
-      const dst = path.join(appBuildDir, file)
+      const src = path.join(appDir, file)
+      const dst = path.join(searchDir, file)
       try {
         fs.copyFileSync(src, dst)
       } catch (err) {
         console.error(`unable to copy ${src} to ${dst}: ${err}`)
       }
-    }
-
-    // Create data dir in build
-    if (! fs.existsSync(appDataDir)) {
-      fs.mkdirSync(appDataDir)
     }
 
     // get tweets
@@ -90,12 +76,15 @@ export class Archive {
     // get users
     const users = await this.db.getTwitterUsers(search)
     data.users = users
+
     // get images
     const images = await this.db.getImages(search)
     data.images = images
+
     // get videos
     const videos = await this.db.getVideos(search)
     data.videos = videos
+
     // get hashtags
     const hashtags = await this.db.getHashtags(search)
     data.hashtags = hashtags
@@ -104,47 +93,35 @@ export class Archive {
 
     // get webpages
     // Create both a CSV and a JSON file.
-    await this.saveUrls(search, dataDir, appDataDir)
+    await this.saveUrls(search, dataDir, searchDir)
 
     log.info(`Archive: saved webpages`)
 
     // Create search JSON file.
-    await this.saveSearchData(data, dataDir, appDataDir)
+    await this.saveSearchData(data, dataDir, searchDir)
 
-    return new Promise((resolve, reject) => {
-      // Set webpack config to correct dirs
-      wConfig.context = appBuildDir
-      wConfig.output.path = searchDir
-      webpack(wConfig, async (err, stats) => {
-        if (err || stats.hasErrors()) {
-          console.error(`caught error during webpack: ${err}`)
-          reject(err)
-        }
+    return new Promise((resolve) => {
+      // Zip it up.
+      const zipPath = path.join(archivesDir, `${search.id}.zip`)
+      const zipOut = fs.createWriteStream(zipPath)
+      const archive = archiver('zip')
+      archive.pipe(zipOut)
+      archive.directory(searchDir, search.id)
 
-        // Zip it up.
-        const zipPath = path.join(archivesDir, `${search.id}.zip`)
-        const zipOut = fs.createWriteStream(zipPath)
-        const archive = archiver('zip')
-        archive.pipe(zipOut)
-        archive.directory(searchDir, search.id)
-
-        archive.on('finish', () => {
-          log.info(`Archive: zip created, cleaning up.`)
-          rimraf(appBuildDir, {}, async () => {
-            rimraf(searchDir, {}, async () => {
-              await this.db.updateSearch({
-                ...search,
-                archived: true,
-                archiveStarted: false
-              })
-              resolve(zipPath)
+      archive.on('finish', () => {
+        log.info(`Archive: zip created, cleaning up.`)
+        rimraf(searchDir, {}, async () => {
+          rimraf(searchDir, {}, async () => {
+            await this.db.updateSearch({
+              ...search,
+              archived: true,
+              archiveStarted: false
             })
-          })        
-        })
-
-        archive.finalize()
+            resolve(zipPath)
+          })
+        })        
       })
-
+      archive.finalize()
     })
   }
 
@@ -175,67 +152,63 @@ export class Archive {
     })
   }
 
-  async saveUrls(search, dataDir, archiveDataDir) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        let offset = 0
-        // CSV
-        const urlsPath = path.join(dataDir, 'webpages.csv')
-        const fh = fs.createWriteStream(urlsPath)
-        fh.write('url,title,count\r\n')
+  async saveUrls(search, dataDir, searchDir) {
+    return new Promise(async (resolve) => {
+      let offset = 0
+      // CSV
+      const urlsPath = path.join(dataDir, 'webpages.csv')
+      const fh = fs.createWriteStream(urlsPath)
+      fh.write('url,title,count\r\n')
 
-        // JSON
-        const urlsJSONPath = path.join(dataDir, 'webpages.json')
-        const jsonFh = fs.createWriteStream(urlsJSONPath)
+      // JSON
+      const urlsJSONPath = path.join(dataDir, 'webpages.json')
+      const jsonFh = fs.createWriteStream(urlsJSONPath)
 
-        // JS
-        const urlsJsPath = path.join(archiveDataDir, 'webpages.js')
-        const jsFh = fs.createWriteStream(urlsJsPath)
-        jsFh.write('/* eslint-disable */\r\nexport default\r\n')
+      // JS
+      const urlsJsPath = path.join(searchDir, 'webpages.js')
+      const jsFh = fs.createWriteStream(urlsJsPath)
+      jsFh.write('var webpages = ')
 
-        let webpages = []
-        while (true) {
-          webpages = await this.db.getWebpages(search, offset)
-          if (webpages.length === 0) {
-            break
-          }
-          // CSV
-          const s = csv(webpages, {columns: ['url', 'title', 'count']})
-          fh.write(s + '\r\n')
-          // JSON
-          jsonFh.write(JSON.stringify(webpages))
-          // JS
-          jsFh.write(JSON.stringify(webpages))
-          offset += 100
+      let webpages = []
+      while (true) {
+        webpages = await this.db.getWebpages(search, offset)
+        if (webpages.length === 0) {
+          break
         }
-        fh.end('')
-        jsonFh.end('')
-        jsFh.end('')
-        fh.on('close', () => {
-          jsonFh.on('close', () => {
-            jsFh.on('close', () => {
-              resolve(webpages)
-            })
+        // CSV
+        const s = csv(webpages, {columns: ['url', 'title', 'count']})
+        fh.write(s + '\r\n')
+        // JSON
+        jsonFh.write(JSON.stringify(webpages))
+        // JS
+        jsFh.write(JSON.stringify(webpages))
+        offset += 100
+      }
+      fh.end('')
+      jsonFh.end('')
+      jsFh.end('')
+      fh.on('close', () => {
+        jsonFh.on('close', () => {
+          jsFh.on('close', () => {
+            resolve(webpages)
           })
         })
-      } catch (err) {
-        reject(err)
-      }
+      })
     })
   }
 
-  async saveSearchData(data, searchDir, archiveDataDir) {
+  async saveSearchData(data, dataDir, searchDir) {
     return new Promise(async (resolve, reject) => {
       try {
         // JSON
-        const searchPath = path.join(searchDir, 'search.json')
+        const searchPath = path.join(dataDir, 'search.json')
         const jsonFh = fs.createWriteStream(searchPath)
         jsonFh.write(JSON.stringify(data))
       
         // JS
-        const searchJsPath = path.join(archiveDataDir, 'data.js')
+        const searchJsPath = path.join(searchDir, 'data.js')
         const jsFh = fs.createWriteStream(searchJsPath)
-        jsFh.write('/* eslint-disable */\r\nexport default\r\n')
+        jsFh.write('var searchData = ')
         jsFh.write(JSON.stringify(data))
   
         jsonFh.end('')
