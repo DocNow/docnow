@@ -82,7 +82,7 @@ export class Archive {
     await this.db.getAllTweets(search, (tweet) => {
       tweets.push({
         id: tweet.id,
-        retweet: tweet.retweet
+        retweet: tweet.retweet ? true : false
       })
     })
     return tweets

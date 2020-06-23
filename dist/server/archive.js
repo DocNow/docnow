@@ -211,7 +211,7 @@ var Archive = /*#__PURE__*/function () {
                 return this.db.getAllTweets(search, function (tweet) {
                   tweets.push({
                     id: tweet.id,
-                    retweet: tweet.retweet
+                    retweet: tweet.retweet ? true : false
                   });
                 });
 
