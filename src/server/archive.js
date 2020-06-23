@@ -95,7 +95,7 @@ export class Archive {
         // Write a JSON representation of the data
         const jsonPath = path.join(searchDir, 'data.json')
         const jsonFh = fs.createWriteStream(jsonPath)
-        jsonFh.write(JSON.stringify(data))
+        jsonFh.write(JSON.stringify(data, null, 2))
         jsonFh.end('')
       
         // Write a JS representation of the data
