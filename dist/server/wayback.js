@@ -16,6 +16,12 @@ var _logger = _interopRequireDefault(require("./logger"));
 
 var _redis = require("./redis");
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 var pool = new _http["default"].Agent({
   keepAlive: true,
   maxSockets: 1
@@ -149,7 +155,7 @@ function memento(_x3) {
 
 function _memento() {
   _memento = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(url) {
-    var iaUrl, text, lines, links, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, line, match;
+    var iaUrl, text, lines, links, _iterator, _step, line, match;
 
     return _regenerator["default"].wrap(function _callee3$(_context3) {
       while (1) {
@@ -165,66 +171,35 @@ function _memento() {
             text = _context3.sent;
             lines = text.split('\n');
             links = [];
-            _iteratorNormalCompletion = true;
-            _didIteratorError = false;
-            _iteratorError = undefined;
-            _context3.prev = 9;
+            _iterator = _createForOfIteratorHelper(lines);
 
-            for (_iterator = lines[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-              line = _step.value;
-              match = line.match(/<(.+)>; rel="(.+)"; datetime="(.+)",/);
+            try {
+              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                line = _step.value;
+                match = line.match(/<(.+)>; rel="(.+)"; datetime="(.+)",/);
 
-              if (match) {
-                links.push({
-                  url: match[1],
-                  rel: match[2],
-                  time: new Date(match[3])
-                });
+                if (match) {
+                  links.push({
+                    url: match[1],
+                    rel: match[2],
+                    time: new Date(match[3])
+                  });
+                }
               }
+            } catch (err) {
+              _iterator.e(err);
+            } finally {
+              _iterator.f();
             }
 
-            _context3.next = 17;
-            break;
-
-          case 13:
-            _context3.prev = 13;
-            _context3.t0 = _context3["catch"](9);
-            _didIteratorError = true;
-            _iteratorError = _context3.t0;
-
-          case 17:
-            _context3.prev = 17;
-            _context3.prev = 18;
-
-            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-              _iterator["return"]();
-            }
-
-          case 20:
-            _context3.prev = 20;
-
-            if (!_didIteratorError) {
-              _context3.next = 23;
-              break;
-            }
-
-            throw _iteratorError;
-
-          case 23:
-            return _context3.finish(20);
-
-          case 24:
-            return _context3.finish(17);
-
-          case 25:
             return _context3.abrupt("return", links);
 
-          case 26:
+          case 9:
           case "end":
             return _context3.stop();
         }
       }
-    }, _callee3, null, [[9, 13, 17, 25], [18,, 20, 24]]);
+    }, _callee3);
   }));
   return _memento.apply(this, arguments);
 }

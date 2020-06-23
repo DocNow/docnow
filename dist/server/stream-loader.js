@@ -329,7 +329,7 @@ var StreamLoader = /*#__PURE__*/function () {
 
               case 3:
                 search = _context4.sent;
-                this.db.updateSearch(_objectSpread({}, search, {
+                this.db.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
                   active: false,
                   archived: false
                 }));

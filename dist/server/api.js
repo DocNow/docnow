@@ -28,6 +28,12 @@ var _auth = require("./auth");
 
 var _streamLoader = require("./stream-loader");
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -88,7 +94,7 @@ app.put('/user', /*#__PURE__*/function () {
 
           case 4:
             user = _context.sent;
-            newUser = _objectSpread({}, user, {}, req.body);
+            newUser = _objectSpread(_objectSpread({}, user), req.body);
             _context.next = 8;
             return db.updateUser(newUser);
 
@@ -124,7 +130,7 @@ app.put('/user/:userId', /*#__PURE__*/function () {
 
           case 3:
             user = _context2.sent;
-            newUser = _objectSpread({}, user, {}, req.body);
+            newUser = _objectSpread(_objectSpread({}, user), req.body);
             _context2.next = 7;
             return db.updateUser(newUser);
 
@@ -235,28 +241,19 @@ app.put('/settings', /*#__PURE__*/function () {
 app.get('/world', function (req, res) {
   db.getPlaces().then(function (places) {
     var world = {};
-    var _iteratorNormalCompletion = true;
-    var _didIteratorError = false;
-    var _iteratorError = undefined;
+
+    var _iterator = _createForOfIteratorHelper(places),
+        _step;
 
     try {
-      for (var _iterator = places[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var place = _step.value;
         world[place.id] = place;
       }
     } catch (err) {
-      _didIteratorError = true;
-      _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-          _iterator["return"]();
-        }
-      } finally {
-        if (_didIteratorError) {
-          throw _iteratorError;
-        }
-      }
+      _iterator.f();
     }
 
     res.json(world);
@@ -356,7 +353,7 @@ app.get('/search/:searchId', function (req, res) {
 app.put('/search/:searchId', function (req, res) {
   if (req.user) {
     db.getSearch(req.body.id).then(function (search) {
-      var newSearch = _objectSpread({}, search, {}, req.body);
+      var newSearch = _objectSpread(_objectSpread({}, search), req.body);
 
       db.updateSearch(newSearch).then(function () {
         if (req.query.refreshTweets) {

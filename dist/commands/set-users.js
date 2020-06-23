@@ -14,13 +14,19 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 function main() {
   return _main.apply(this, arguments);
 }
 
 function _main() {
   _main = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
-    var db, users, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, user;
+    var db, users, _iterator, _step, user;
 
     return _regenerator["default"].wrap(function _callee$(_context) {
       while (1) {
@@ -32,75 +38,56 @@ function _main() {
 
           case 3:
             users = _context.sent;
-            _iteratorNormalCompletion = true;
-            _didIteratorError = false;
-            _iteratorError = undefined;
-            _context.prev = 7;
-            _iterator = users[Symbol.iterator]();
+            _iterator = _createForOfIteratorHelper(users);
+            _context.prev = 5;
 
-          case 9:
-            if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-              _context.next = 17;
+            _iterator.s();
+
+          case 7:
+            if ((_step = _iterator.n()).done) {
+              _context.next = 14;
               break;
             }
 
             user = _step.value;
             console.log(user.name, user.tweetQuota);
-            _context.next = 14;
-            return db.updateUser(_objectSpread({}, user, {
+            _context.next = 12;
+            return db.updateUser(_objectSpread(_objectSpread({}, user), {}, {
               tweetQuota: 50000
             }));
 
-          case 14:
-            _iteratorNormalCompletion = true;
-            _context.next = 9;
+          case 12:
+            _context.next = 7;
             break;
 
-          case 17:
-            _context.next = 23;
+          case 14:
+            _context.next = 19;
             break;
+
+          case 16:
+            _context.prev = 16;
+            _context.t0 = _context["catch"](5);
+
+            _iterator.e(_context.t0);
 
           case 19:
             _context.prev = 19;
-            _context.t0 = _context["catch"](7);
-            _didIteratorError = true;
-            _iteratorError = _context.t0;
 
-          case 23:
-            _context.prev = 23;
-            _context.prev = 24;
+            _iterator.f();
 
-            if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-              _iterator["return"]();
-            }
+            return _context.finish(19);
 
-          case 26:
-            _context.prev = 26;
-
-            if (!_didIteratorError) {
-              _context.next = 29;
-              break;
-            }
-
-            throw _iteratorError;
-
-          case 29:
-            return _context.finish(26);
-
-          case 30:
-            return _context.finish(23);
-
-          case 31:
+          case 22:
             console.log('closing');
-            _context.next = 34;
+            _context.next = 25;
             return db.close();
 
-          case 34:
+          case 25:
           case "end":
             return _context.stop();
         }
       }
-    }, _callee, null, [[7, 19, 23, 31], [24,, 26, 30]]);
+    }, _callee, null, [[5, 16, 19, 22]]);
   }));
   return _main.apply(this, arguments);
 }

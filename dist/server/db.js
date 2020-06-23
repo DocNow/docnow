@@ -35,6 +35,12 @@ function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (O
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 // elasticsearch doc types
 var SETTINGS = 'settings';
 var USER = 'user';
@@ -253,7 +259,7 @@ var Database = /*#__PURE__*/function () {
     key: "getUsers",
     value: function () {
       var _getUsers = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        var users, _iteratorNormalCompletion, _didIteratorError, _iteratorError, _iterator, _step, user;
+        var users, _iterator, _step, user;
 
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
@@ -264,73 +270,54 @@ var Database = /*#__PURE__*/function () {
 
               case 2:
                 users = _context2.sent;
-                _iteratorNormalCompletion = true;
-                _didIteratorError = false;
-                _iteratorError = undefined;
-                _context2.prev = 6;
-                _iterator = users[Symbol.iterator]();
+                _iterator = _createForOfIteratorHelper(users);
+                _context2.prev = 4;
 
-              case 8:
-                if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-                  _context2.next = 16;
+                _iterator.s();
+
+              case 6:
+                if ((_step = _iterator.n()).done) {
+                  _context2.next = 13;
                   break;
                 }
 
                 user = _step.value;
-                _context2.next = 12;
+                _context2.next = 10;
                 return this.getUserSearches(user);
 
-              case 12:
+              case 10:
                 user.searches = _context2.sent;
 
-              case 13:
-                _iteratorNormalCompletion = true;
-                _context2.next = 8;
+              case 11:
+                _context2.next = 6;
                 break;
 
-              case 16:
-                _context2.next = 22;
+              case 13:
+                _context2.next = 18;
                 break;
+
+              case 15:
+                _context2.prev = 15;
+                _context2.t0 = _context2["catch"](4);
+
+                _iterator.e(_context2.t0);
 
               case 18:
                 _context2.prev = 18;
-                _context2.t0 = _context2["catch"](6);
-                _didIteratorError = true;
-                _iteratorError = _context2.t0;
 
-              case 22:
-                _context2.prev = 22;
-                _context2.prev = 23;
+                _iterator.f();
 
-                if (!_iteratorNormalCompletion && _iterator["return"] != null) {
-                  _iterator["return"]();
-                }
+                return _context2.finish(18);
 
-              case 25:
-                _context2.prev = 25;
-
-                if (!_didIteratorError) {
-                  _context2.next = 28;
-                  break;
-                }
-
-                throw _iteratorError;
-
-              case 28:
-                return _context2.finish(25);
-
-              case 29:
-                return _context2.finish(22);
-
-              case 30:
+              case 21:
                 return _context2.abrupt("return", users);
 
-              case 31:
+              case 22:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[6, 18, 22, 30], [23,, 25, 29]]);
+        }, _callee2, this, [[4, 15, 18, 21]]);
       }));
 
       function getUsers() {
@@ -363,29 +350,19 @@ var Database = /*#__PURE__*/function () {
 
       return new Promise(function (resolve) {
         _this6.getUsers().then(function (users) {
-          var _iteratorNormalCompletion2 = true;
-          var _didIteratorError2 = false;
-          var _iteratorError2 = undefined;
+          var _iterator2 = _createForOfIteratorHelper(users),
+              _step2;
 
           try {
-            for (var _iterator2 = users[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
               var user = _step2.value;
 
               _this6.importLatestTrendsForUser(user).then(resolve);
             }
           } catch (err) {
-            _didIteratorError2 = true;
-            _iteratorError2 = err;
+            _iterator2.e(err);
           } finally {
-            try {
-              if (!_iteratorNormalCompletion2 && _iterator2["return"] != null) {
-                _iterator2["return"]();
-              }
-            } finally {
-              if (_didIteratorError2) {
-                throw _iteratorError2;
-              }
-            }
+            _iterator2.f();
           }
         })["catch"](function () {
           _logger["default"].info('no users to import trends for');
@@ -470,12 +447,12 @@ var Database = /*#__PURE__*/function () {
       var _this9 = this;
 
       var body = [];
-      var _iteratorNormalCompletion3 = true;
-      var _didIteratorError3 = false;
-      var _iteratorError3 = undefined;
+
+      var _iterator3 = _createForOfIteratorHelper(trends),
+          _step3;
 
       try {
-        for (var _iterator3 = trends[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+        for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
           var trend = _step3.value;
           trend.id = (0, _utils.addPrefix)('trend', trend.id);
           trend.placeId = (0, _utils.addPrefix)('place', (0, _utils.stripPrefix)(trend.id));
@@ -489,18 +466,9 @@ var Database = /*#__PURE__*/function () {
           }, trend);
         }
       } catch (err) {
-        _didIteratorError3 = true;
-        _iteratorError3 = err;
+        _iterator3.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion3 && _iterator3["return"] != null) {
-            _iterator3["return"]();
-          }
-        } finally {
-          if (_didIteratorError3) {
-            throw _iteratorError3;
-          }
-        }
+        _iterator3.f();
       }
 
       return new Promise(function (resolve, reject) {
@@ -528,12 +496,12 @@ var Database = /*#__PURE__*/function () {
               // bulk insert all the places as separate
               // documents in elasticsearch
               var body = [];
-              var _iteratorNormalCompletion4 = true;
-              var _didIteratorError4 = false;
-              var _iteratorError4 = undefined;
+
+              var _iterator4 = _createForOfIteratorHelper(places),
+                  _step4;
 
               try {
-                for (var _iterator4 = places[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                for (_iterator4.s(); !(_step4 = _iterator4.n()).done;) {
                   var place = _step4.value;
                   place.id = (0, _utils.addPrefix)('place', place.id);
                   place.parentId = (0, _utils.addPrefix)('place', place.parent);
@@ -548,18 +516,9 @@ var Database = /*#__PURE__*/function () {
                   body.push(place);
                 }
               } catch (err) {
-                _didIteratorError4 = true;
-                _iteratorError4 = err;
+                _iterator4.e(err);
               } finally {
-                try {
-                  if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
-                    _iterator4["return"]();
-                  }
-                } finally {
-                  if (_didIteratorError4) {
-                    throw _iteratorError4;
-                  }
-                }
+                _iterator4.f();
               }
 
               _this10.es.bulk({
@@ -669,7 +628,7 @@ var Database = /*#__PURE__*/function () {
     key: "getUserSearches",
     value: function () {
       var _getUserSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(user) {
-        var body, resp, searches, _iteratorNormalCompletion5, _didIteratorError5, _iteratorError5, _iterator5, _step5, hit, search, stats;
+        var body, resp, searches, _iterator5, _step5, hit, search, stats;
 
         return _regenerator["default"].wrap(function _callee4$(_context4) {
           while (1) {
@@ -703,75 +662,56 @@ var Database = /*#__PURE__*/function () {
               case 3:
                 resp = _context4.sent;
                 searches = [];
-                _iteratorNormalCompletion5 = true;
-                _didIteratorError5 = false;
-                _iteratorError5 = undefined;
-                _context4.prev = 8;
-                _iterator5 = resp.hits.hits[Symbol.iterator]();
+                _iterator5 = _createForOfIteratorHelper(resp.hits.hits);
+                _context4.prev = 6;
 
-              case 10:
-                if (_iteratorNormalCompletion5 = (_step5 = _iterator5.next()).done) {
-                  _context4.next = 20;
+                _iterator5.s();
+
+              case 8:
+                if ((_step5 = _iterator5.n()).done) {
+                  _context4.next = 17;
                   break;
                 }
 
                 hit = _step5.value;
                 search = hit._source;
-                _context4.next = 15;
+                _context4.next = 13;
                 return this.getSearchStats(search);
 
-              case 15:
+              case 13:
                 stats = _context4.sent;
-                searches.push(_objectSpread({}, search, {}, stats));
+                searches.push(_objectSpread(_objectSpread({}, search), stats));
+
+              case 15:
+                _context4.next = 8;
+                break;
 
               case 17:
-                _iteratorNormalCompletion5 = true;
-                _context4.next = 10;
+                _context4.next = 22;
                 break;
 
-              case 20:
-                _context4.next = 26;
-                break;
+              case 19:
+                _context4.prev = 19;
+                _context4.t0 = _context4["catch"](6);
+
+                _iterator5.e(_context4.t0);
 
               case 22:
                 _context4.prev = 22;
-                _context4.t0 = _context4["catch"](8);
-                _didIteratorError5 = true;
-                _iteratorError5 = _context4.t0;
 
-              case 26:
-                _context4.prev = 26;
-                _context4.prev = 27;
+                _iterator5.f();
 
-                if (!_iteratorNormalCompletion5 && _iterator5["return"] != null) {
-                  _iterator5["return"]();
-                }
+                return _context4.finish(22);
 
-              case 29:
-                _context4.prev = 29;
-
-                if (!_didIteratorError5) {
-                  _context4.next = 32;
-                  break;
-                }
-
-                throw _iteratorError5;
-
-              case 32:
-                return _context4.finish(29);
-
-              case 33:
-                return _context4.finish(26);
-
-              case 34:
+              case 25:
                 return _context4.abrupt("return", searches);
 
-              case 35:
+              case 26:
               case "end":
                 return _context4.stop();
             }
           }
-        }, _callee4, this, [[8, 22, 26, 34], [27,, 29, 33]]);
+        }, _callee4, this, [[6, 19, 22, 25]]);
       }));
 
       function getUserSearches(_x3) {
@@ -784,7 +724,7 @@ var Database = /*#__PURE__*/function () {
     key: "userOverQuota",
     value: function () {
       var _userOverQuota = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(user) {
-        var searches, total, _iteratorNormalCompletion6, _didIteratorError6, _iteratorError6, _iterator6, _step6, s;
+        var searches, total, _iterator6, _step6, s;
 
         return _regenerator["default"].wrap(function _callee5$(_context5) {
           while (1) {
@@ -796,58 +736,27 @@ var Database = /*#__PURE__*/function () {
               case 2:
                 searches = _context5.sent;
                 total = 0;
-                _iteratorNormalCompletion6 = true;
-                _didIteratorError6 = false;
-                _iteratorError6 = undefined;
-                _context5.prev = 7;
+                _iterator6 = _createForOfIteratorHelper(searches);
 
-                for (_iterator6 = searches[Symbol.iterator](); !(_iteratorNormalCompletion6 = (_step6 = _iterator6.next()).done); _iteratorNormalCompletion6 = true) {
-                  s = _step6.value;
-                  total += s.tweetCount;
+                try {
+                  for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
+                    s = _step6.value;
+                    total += s.tweetCount;
+                  }
+                } catch (err) {
+                  _iterator6.e(err);
+                } finally {
+                  _iterator6.f();
                 }
 
-                _context5.next = 15;
-                break;
-
-              case 11:
-                _context5.prev = 11;
-                _context5.t0 = _context5["catch"](7);
-                _didIteratorError6 = true;
-                _iteratorError6 = _context5.t0;
-
-              case 15:
-                _context5.prev = 15;
-                _context5.prev = 16;
-
-                if (!_iteratorNormalCompletion6 && _iterator6["return"] != null) {
-                  _iterator6["return"]();
-                }
-
-              case 18:
-                _context5.prev = 18;
-
-                if (!_didIteratorError6) {
-                  _context5.next = 21;
-                  break;
-                }
-
-                throw _iteratorError6;
-
-              case 21:
-                return _context5.finish(18);
-
-              case 22:
-                return _context5.finish(15);
-
-              case 23:
                 return _context5.abrupt("return", total > user.tweetQuota);
 
-              case 24:
+              case 7:
               case "end":
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[7, 11, 15, 23], [16,, 18, 22]]);
+        }, _callee5, this);
       }));
 
       function userOverQuota(_x4) {
@@ -875,7 +784,7 @@ var Database = /*#__PURE__*/function () {
 
               case 5:
                 stats = _context6.sent;
-                return _context6.abrupt("return", _objectSpread({}, search, {}, stats));
+                return _context6.abrupt("return", _objectSpread(_objectSpread({}, search), stats));
 
               case 7:
               case "end":
@@ -939,7 +848,7 @@ var Database = /*#__PURE__*/function () {
 
               case 6:
                 stats = _context7.sent;
-                return _context7.abrupt("return", _objectSpread({}, search, {}, stats, {
+                return _context7.abrupt("return", _objectSpread(_objectSpread(_objectSpread({}, search), stats), {}, {
                   minDate: new Date(resp.aggregations.minDate.value),
                   maxDate: new Date(resp.aggregations.maxDate.value)
                 }));
@@ -1024,12 +933,12 @@ var Database = /*#__PURE__*/function () {
       var totalCount = search.count || 0;
       var maxTweetId = null;
       var queryParts = [];
-      var _iteratorNormalCompletion7 = true;
-      var _didIteratorError7 = false;
-      var _iteratorError7 = undefined;
+
+      var _iterator7 = _createForOfIteratorHelper(search.query),
+          _step7;
 
       try {
-        for (var _iterator7 = search.query[Symbol.iterator](), _step7; !(_iteratorNormalCompletion7 = (_step7 = _iterator7.next()).done); _iteratorNormalCompletion7 = true) {
+        for (_iterator7.s(); !(_step7 = _iterator7.n()).done;) {
           var term = _step7.value;
 
           if (term.type === 'keyword') {
@@ -1047,24 +956,15 @@ var Database = /*#__PURE__*/function () {
           }
         }
       } catch (err) {
-        _didIteratorError7 = true;
-        _iteratorError7 = err;
+        _iterator7.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion7 && _iterator7["return"] != null) {
-            _iterator7["return"]();
-          }
-        } finally {
-          if (_didIteratorError7) {
-            throw _iteratorError7;
-          }
-        }
+        _iterator7.f();
       }
 
       var q = queryParts.join(' OR ');
       return new Promise(function (resolve, reject) {
         _this13.getUser(search.creator).then(function (user) {
-          _this13.updateSearch(_objectSpread({}, search, {
+          _this13.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
             active: true
           })).then(function (newSearch) {
             _this13.getTwitterClientForUser(user).then(function (twtr) {
@@ -1111,38 +1011,28 @@ var Database = /*#__PURE__*/function () {
       return new Promise(function (resolve, reject) {
         var bulk = [];
         var seenUsers = new Set();
-        var _iteratorNormalCompletion8 = true;
-        var _didIteratorError8 = false;
-        var _iteratorError8 = undefined;
+
+        var _iterator8 = _createForOfIteratorHelper(tweets),
+            _step8;
 
         try {
-          for (var _iterator8 = tweets[Symbol.iterator](), _step8; !(_iteratorNormalCompletion8 = (_step8 = _iterator8.next()).done); _iteratorNormalCompletion8 = true) {
+          for (_iterator8.s(); !(_step8 = _iterator8.n()).done;) {
             var tweet = _step8.value;
 
             _this14.tallyTweet(search, tweet);
 
-            var _iteratorNormalCompletion9 = true;
-            var _didIteratorError9 = false;
-            var _iteratorError9 = undefined;
+            var _iterator9 = _createForOfIteratorHelper(tweet.urls),
+                _step9;
 
             try {
-              for (var _iterator9 = tweet.urls[Symbol.iterator](), _step9; !(_iteratorNormalCompletion9 = (_step9 = _iterator9.next()).done); _iteratorNormalCompletion9 = true) {
+              for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
                 var url = _step9.value;
                 urlFetcher.add(search, url["long"], tweet.id);
               }
             } catch (err) {
-              _didIteratorError9 = true;
-              _iteratorError9 = err;
+              _iterator9.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion9 && _iterator9["return"] != null) {
-                  _iterator9["return"]();
-                }
-              } finally {
-                if (_didIteratorError9) {
-                  throw _iteratorError9;
-                }
-              }
+              _iterator9.f();
             }
 
             tweet.search = search.id;
@@ -1167,18 +1057,9 @@ var Database = /*#__PURE__*/function () {
             }
           }
         } catch (err) {
-          _didIteratorError8 = true;
-          _iteratorError8 = err;
+          _iterator8.e(err);
         } finally {
-          try {
-            if (!_iteratorNormalCompletion8 && _iterator8["return"] != null) {
-              _iterator8["return"]();
-            }
-          } finally {
-            if (_didIteratorError8) {
-              throw _iteratorError8;
-            }
-          }
+          _iterator8.f();
         }
 
         _this14.es.bulk({
@@ -1202,52 +1083,33 @@ var Database = /*#__PURE__*/function () {
     value: function tallyTweet(search, tweet) {
       this.redis.incr((0, _redis.tweetsCountKey)(search));
       this.redis.zincrby((0, _redis.usersCountKey)(search), 1, tweet.user.screenName);
-      var _iteratorNormalCompletion10 = true;
-      var _didIteratorError10 = false;
-      var _iteratorError10 = undefined;
+
+      var _iterator10 = _createForOfIteratorHelper(tweet.videos),
+          _step10;
 
       try {
-        for (var _iterator10 = tweet.videos[Symbol.iterator](), _step10; !(_iteratorNormalCompletion10 = (_step10 = _iterator10.next()).done); _iteratorNormalCompletion10 = true) {
+        for (_iterator10.s(); !(_step10 = _iterator10.n()).done;) {
           var video = _step10.value;
           this.redis.zincrby((0, _redis.videosCountKey)(search), 1, video);
         }
       } catch (err) {
-        _didIteratorError10 = true;
-        _iteratorError10 = err;
+        _iterator10.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion10 && _iterator10["return"] != null) {
-            _iterator10["return"]();
-          }
-        } finally {
-          if (_didIteratorError10) {
-            throw _iteratorError10;
-          }
-        }
+        _iterator10.f();
       }
 
-      var _iteratorNormalCompletion11 = true;
-      var _didIteratorError11 = false;
-      var _iteratorError11 = undefined;
+      var _iterator11 = _createForOfIteratorHelper(tweet.images),
+          _step11;
 
       try {
-        for (var _iterator11 = tweet.images[Symbol.iterator](), _step11; !(_iteratorNormalCompletion11 = (_step11 = _iterator11.next()).done); _iteratorNormalCompletion11 = true) {
+        for (_iterator11.s(); !(_step11 = _iterator11.n()).done;) {
           var image = _step11.value;
           this.redis.zincrby((0, _redis.imagesCountKey)(search), 1, image);
         }
       } catch (err) {
-        _didIteratorError11 = true;
-        _iteratorError11 = err;
+        _iterator11.e(err);
       } finally {
-        try {
-          if (!_iteratorNormalCompletion11 && _iterator11["return"] != null) {
-            _iterator11["return"]();
-          }
-        } finally {
-          if (_didIteratorError11) {
-            throw _iteratorError11;
-          }
-        }
+        _iterator11.f();
       }
     }
   }, {
@@ -1711,29 +1573,19 @@ var Database = /*#__PURE__*/function () {
               return h._source;
             }); // add the tweet counts per user that we got previously
 
-            var _iteratorNormalCompletion12 = true;
-            var _didIteratorError12 = false;
-            var _iteratorError12 = undefined;
+            var _iterator12 = _createForOfIteratorHelper(users),
+                _step12;
 
             try {
-              for (var _iterator12 = users[Symbol.iterator](), _step12; !(_iteratorNormalCompletion12 = (_step12 = _iterator12.next()).done); _iteratorNormalCompletion12 = true) {
+              for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
                 var user = _step12.value;
                 user.tweetsInSearch = counts.get(user.screenName);
               } // sort them by their counts
 
             } catch (err) {
-              _didIteratorError12 = true;
-              _iteratorError12 = err;
+              _iterator12.e(err);
             } finally {
-              try {
-                if (!_iteratorNormalCompletion12 && _iterator12["return"] != null) {
-                  _iterator12["return"]();
-                }
-              } finally {
-                if (_didIteratorError12) {
-                  throw _iteratorError12;
-                }
-              }
+              _iterator12.f();
             }
 
             users.sort(function (a, b) {
