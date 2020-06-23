@@ -251,7 +251,7 @@ var Archive = /*#__PURE__*/function () {
                               // Write a JSON representation of the data
                               jsonPath = _path["default"].join(searchDir, 'data.json');
                               jsonFh = _fs["default"].createWriteStream(jsonPath);
-                              jsonFh.write(JSON.stringify(data));
+                              jsonFh.write(JSON.stringify(data, null, 2));
                               jsonFh.end(''); // Write a JS representation of the data
 
                               jsPath = _path["default"].join(searchDir, 'data.js');
