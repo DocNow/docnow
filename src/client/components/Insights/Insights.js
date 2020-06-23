@@ -17,9 +17,12 @@ export default class Insights extends Component {
     this.props.getVideos(this.props.searchId)
     this.props.getWebpages(this.props.searchId)
     this.props.getHashtags(this.props.searchId)
+
+    /*
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
+    */
   }
 
   componentWillUnmount() {

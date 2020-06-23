@@ -2,7 +2,7 @@ var path = require('path'),
     webpack = require('webpack'),
     HtmlWebpackPlugin = require('html-webpack-plugin')
 
-var DIST_DIR   = path.join(__dirname, 'userData/archives/base'),
+var DIST_DIR   = path.join(__dirname, 'dist/archive'),
     SRC_DIR = path.join(__dirname, 'src/archive/app')
 
 module.exports = {

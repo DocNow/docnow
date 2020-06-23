@@ -12,7 +12,6 @@ import WebpagesBody from '../../client/components/Insights/WebpagesBody'
 import styles from '../../client/containers/App.css'
 
 const search = window.searchData
-const webpages = window.webpages
 
 class App extends MediaQueryComponent {
   constructor(props) {
@@ -135,7 +134,7 @@ class App extends MediaQueryComponent {
               <div>{header} <InsightsBody
                 searchId={search.id}
                 search={search}
-                webpages={webpages}
+                webpages={search.webpages}
               /> </div>)} />
             <Route exact name="tweets" path="/search/:searchId/tweets/" component={() => (
               <div>{header} <TweetsBody
@@ -173,7 +172,7 @@ class App extends MediaQueryComponent {
                 <div>{header} <WebpagesBody
                   searchId={search.id}
                   search={search}
-                  webpages={webpages}
+                  webpages={search.webpages}
                   getTweetsForUrl={(s, u) => this.getTweetsForUrl(s, u)}
                   resetTweets={() => {this.setState({wi_tweets: []})}}
                   tweets={this.state.wi_tweets}

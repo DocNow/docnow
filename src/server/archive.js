@@ -1,6 +1,5 @@
 import fs from 'fs'
 import path from 'path'
-import csv from 'csv-stringify/lib/sync'
 import rimraf from 'rimraf'
 import archiver from 'archiver'
 import log from './logger'
@@ -21,9 +20,7 @@ export class Archive {
     const userDataDir = path.join(projectDir, 'userData')
     const archivesDir = path.join(userDataDir, 'archives')
     const searchDir = path.join(archivesDir, search.id)
-    const dataDir = path.join(searchDir, 'data')
-
-    const appDir = path.join(archivesDir, 'base')
+    const appDir = path.join(projectDir, 'dist', 'archive')
  
     const data = {
       id: search.id,
@@ -43,14 +40,10 @@ export class Archive {
       if (! fs.existsSync(searchDir)) {
         fs.mkdirSync(searchDir)
       }
-  
-      if (! fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir)
-      }      
     } catch (e) {
       console.error(e)
       throw e
-    }    
+    }
 
     // copy pre-compiled Archive app to unique directory
     const files = fs.readdirSync(appDir)
@@ -68,37 +61,13 @@ export class Archive {
       }
     }
 
-    // get tweets
-    // Create both a CSV file and get the list back
-    const tweetsData = await this.saveTweets(search, dataDir)
-    data.tweets = tweetsData
-
-    // get users
-    const users = await this.db.getTwitterUsers(search)
-    data.users = users
-
-    // get images
-    const images = await this.db.getImages(search)
-    data.images = images
-
-    // get videos
-    const videos = await this.db.getVideos(search)
-    data.videos = videos
-
-    // get hashtags
-    const hashtags = await this.db.getHashtags(search)
-    data.hashtags = hashtags
-
-    log.info(`Archive: obtained search data.`)
-
-    // get webpages
-    // Create both a CSV and a JSON file.
-    await this.saveUrls(search, dataDir, searchDir)
-
-    log.info(`Archive: saved webpages`)
-
-    // Create search JSON file.
-    await this.saveSearchData(data, dataDir, searchDir)
+    data.tweets = await this.getAllTweetIds(search)
+    data.users = await this.db.getTwitterUsers(search)
+    data.images = await this.db.getImages(search)
+    data.videos = await this.db.getVideos(search)
+    data.hashtags = await this.db.getHashtags(search)
+    data.webpages = await this.db.getWebpages(search)
+    await this.saveData(data, searchDir)
 
     return new Promise((resolve) => {
       // Zip it up.
@@ -111,115 +80,53 @@ export class Archive {
       archive.on('finish', () => {
         log.info(`Archive: zip created, cleaning up.`)
         rimraf(searchDir, {}, async () => {
-          rimraf(searchDir, {}, async () => {
-            await this.db.updateSearch({
-              ...search,
-              archived: true,
-              archiveStarted: false
-            })
-            resolve(zipPath)
+          await this.db.updateSearch({
+            ...search,
+            archived: true,
+            archiveStarted: false
           })
-        })        
+          resolve(zipPath)
+        })
       })
       archive.finalize()
     })
   }
 
-  async saveTweets(search, dataDir) {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const tweetsPath = path.join(dataDir, 'tweets.csv')
-        const fh = fs.createWriteStream(tweetsPath)
-        fh.write("id,screen_name,retweet\r\n")
-        const tweetsData = []
-        await this.db.getAllTweets(search, (tweet) => {
-          // CSV
-          const isRetweet = tweet.retweet ? true : false
-          const row = [tweet.id, tweet.user.screenName, isRetweet]
-          fh.write(row.join(',') + '\r\n')
-          // JSON
-          tweetsData.push({
-            id: tweet.id,
-            retweet: tweet.retweet
-          })
-        })
-
-        fh.end('')
-        fh.on('close', () => {resolve(tweetsData)})
-      } catch (err) {
-        reject(err)
-      }
-    })
-  }
-
-  async saveUrls(search, dataDir, searchDir) {
-    return new Promise(async (resolve) => {
-      let offset = 0
-      // CSV
-      const urlsPath = path.join(dataDir, 'webpages.csv')
-      const fh = fs.createWriteStream(urlsPath)
-      fh.write('url,title,count\r\n')
-
-      // JSON
-      const urlsJSONPath = path.join(dataDir, 'webpages.json')
-      const jsonFh = fs.createWriteStream(urlsJSONPath)
-
-      // JS
-      const urlsJsPath = path.join(searchDir, 'webpages.js')
-      const jsFh = fs.createWriteStream(urlsJsPath)
-      jsFh.write('var webpages = ')
-
-      let webpages = []
-      while (true) {
-        webpages = await this.db.getWebpages(search, offset)
-        if (webpages.length === 0) {
-          break
-        }
-        // CSV
-        const s = csv(webpages, {columns: ['url', 'title', 'count']})
-        fh.write(s + '\r\n')
-        // JSON
-        jsonFh.write(JSON.stringify(webpages))
-        // JS
-        jsFh.write(JSON.stringify(webpages))
-        offset += 100
-      }
-      fh.end('')
-      jsonFh.end('')
-      jsFh.end('')
-      fh.on('close', () => {
-        jsonFh.on('close', () => {
-          jsFh.on('close', () => {
-            resolve(webpages)
-          })
-        })
+  async getAllTweetIds(search) {
+    const tweets = []
+    await this.db.getAllTweets(search, (tweet) => {
+      tweets.push({
+        id: tweet.id,
+        retweet: tweet.retweet
       })
     })
+    return tweets
   }
 
-  async saveSearchData(data, dataDir, searchDir) {
+  async saveData(data, searchDir) {
     return new Promise(async (resolve, reject) => {
       try {
-        // JSON
-        const searchPath = path.join(dataDir, 'search.json')
-        const jsonFh = fs.createWriteStream(searchPath)
+
+        // Write a JSON representation of the data
+        const jsonPath = path.join(searchDir, 'data.json')
+        const jsonFh = fs.createWriteStream(jsonPath)
         jsonFh.write(JSON.stringify(data))
+        jsonFh.end('')
       
-        // JS
-        const searchJsPath = path.join(searchDir, 'data.js')
-        const jsFh = fs.createWriteStream(searchJsPath)
+        // Write a JS representation of the data
+        const jsPath = path.join(searchDir, 'data.js')
+        const jsFh = fs.createWriteStream(jsPath)
         jsFh.write('var searchData = ')
         jsFh.write(JSON.stringify(data))
-  
-        jsonFh.end('')
         jsFh.end('')
+
         jsonFh.on('close', () => {
           jsFh.on('close', () => {
             resolve(data)
           })
         })
       } catch (err) {
-        reject(err)
+        reject(`unable to write archive: ${err}`)
       }
     })
   }
