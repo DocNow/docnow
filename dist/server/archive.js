@@ -171,19 +171,23 @@ var Archive = /*#__PURE__*/function () {
                 return this.saveData(data, searchDir);
 
               case 53:
+                _context.next = 55;
+                return this.saveIds(data, searchDir);
+
+              case 55:
                 // zip up the directory
                 zipPath = _path["default"].join(archivesDir, "".concat(search.id, ".zip"));
-                _context.next = 56;
+                _context.next = 58;
                 return this.writeZip(searchDir, zipPath);
 
-              case 56:
-                _context.next = 58;
+              case 58:
+                _context.next = 60;
                 return this.db.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
                   archived: true,
                   archiveStarted: false
                 }));
 
-              case 58:
+              case 60:
               case "end":
                 return _context.stop();
             }
@@ -232,6 +236,37 @@ var Archive = /*#__PURE__*/function () {
 
       return getAllTweetIds;
     }()
+  }, {
+    key: "saveIds",
+    value: function saveIds(search, searchDir) {
+      var tweetIdPath = _path["default"].join(searchDir, 'ids.txt');
+
+      return new Promise(function (resolve) {
+        var count = 0;
+
+        var fh = _fs["default"].createWriteStream(tweetIdPath);
+
+        var _iterator2 = _createForOfIteratorHelper(search.tweets),
+            _step2;
+
+        try {
+          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+            var tweet = _step2.value;
+            count += 1;
+            fh.write(tweet.id + '\r\n');
+          }
+        } catch (err) {
+          _iterator2.e(err);
+        } finally {
+          _iterator2.f();
+        }
+
+        fh.on('close', function () {
+          resolve(count);
+        });
+        fh.end();
+      });
+    }
   }, {
     key: "saveData",
     value: function () {

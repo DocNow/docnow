@@ -65,6 +65,9 @@ export class Archive {
     // save the gathered data to the archive snapshot
     await this.saveData(data, searchDir)
 
+    // write out an addition ids.txt file for the hydrator
+    await this.saveIds(data, searchDir)
+
     // zip up the directory
     const zipPath = path.join(archivesDir, `${search.id}.zip`)
     await this.writeZip(searchDir, zipPath)
@@ -86,6 +89,22 @@ export class Archive {
       })
     })
     return tweets
+  }
+
+  saveIds(search, searchDir) {
+    const tweetIdPath = path.join(searchDir, 'ids.txt')
+    return new Promise((resolve) => {
+      let count = 0
+      const fh = fs.createWriteStream(tweetIdPath)
+      for (const tweet of search.tweets) {
+        count += 1
+        fh.write(tweet.id + '\r\n')
+      }
+      fh.on('close', () => {
+        resolve(count)
+      })
+      fh.end()
+    })
   }
 
   async saveData(data, searchDir) {
