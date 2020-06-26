@@ -1,3 +1,4 @@
+import knex from 'knex'
 import uuid from 'uuid/v4'
 import elasticsearch from 'elasticsearch'
 import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
@@ -7,6 +8,7 @@ import log from './logger'
 import { Twitter } from './twitter'
 import { UrlFetcher } from './url-fetcher'
 import { addPrefix, stripPrefix } from './utils'
+import knexfile from '../../knexfile'
 
 // elasticsearch doc types
 
@@ -25,6 +27,9 @@ export class Database {
   constructor(opts = {}) {
     // setup redis
     this.redis = getRedis()
+
+    // setup postgres
+    this.pg = knex(knexfile)
 
     // setup elasticsearch
     const esOpts = opts.es || {}

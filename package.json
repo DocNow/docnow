@@ -21,7 +21,8 @@
     "sudo": "node dist/commands/sudo",
     "url-fetcher": "node dist/commands/url-fetcher",
     "stream-loader": "node dist/commands/stream-loader",
-    "users": "node dist/commands/users"
+    "users": "node dist/commands/users",
+    "migrate": "knex migrate:latest"
   },
   "betterScripts": {
     "build": {
@@ -72,6 +73,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.1",
     "html-entities": "^1.3.1",
+    "knex": "^0.21.1",
     "metaweb": "0.0.8",
     "mocha": "^6.2.3",
     "moment": "^2.26.0",
@@ -79,6 +81,7 @@
     "multiparty": "^4.2.1",
     "passport": "^0.4.1",
     "passport-twitter": "^1.0.4",
+    "pg": "^8.2.1",
     "react": "^16.13.1",
     "react-autocomplete": "^1.8.1",
     "react-dom": "^16.13.1",
