@@ -1,10 +1,12 @@
-exports.up = function(knex) {
+exports.up = knex => {
+
   return knex.schema
 
     .createTable('setting', table => {
       table.increments('id').primary()
-      table.string('name')
+      table.string('name').unique()
       table.string('value')
+      table.timestamp('created_at')
     })
 
     .createTable('user', table => {
@@ -112,7 +114,15 @@ exports.up = function(knex) {
     })
 }
 
-exports.down = function(knex) {
+exports.down = (knex) => {
   return knex.schema 
-    .dropTable('tweets') 
+    .dropTable('setting')
+    .dropTable('user')
+    .dropTable('place')
+    .dropTable('trend')
+    .dropTable('collection')
+    .dropTable('query')
+    .dropTable('tweet')
+    .dropTable('webpage')
+    .dropTable('hashtag')
 }

@@ -79,6 +79,7 @@
     "moment": "^2.26.0",
     "morgan": "^1.10.0",
     "multiparty": "^4.2.1",
+    "objection": "^2.2.0",
     "passport": "^0.4.1",
     "passport-twitter": "^1.0.4",
     "pg": "^8.2.1",

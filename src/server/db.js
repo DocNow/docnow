@@ -3,6 +3,8 @@ import uuid from 'uuid/v4'
 import elasticsearch from 'elasticsearch'
 import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
          tweetsCountKey, urlsKey } from './redis'
+import { Model } from 'objection'
+import Setting from './models/Setting'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -12,7 +14,6 @@ import knexfile from '../../knexfile'
 
 // elasticsearch doc types
 
-const SETTINGS = 'settings'
 const USER = 'user'
 const PLACE = 'place'
 const SEARCH = 'search'
@@ -22,14 +23,13 @@ const TWUSER = 'twuser'
 
 const urlFetcher = new UrlFetcher()
 
+Model.knex(knex(knexfile))
+
 export class Database {
 
   constructor(opts = {}) {
     // setup redis
     this.redis = getRedis()
-
-    // setup postgres
-    this.pg = knex(knexfile)
 
     // setup elasticsearch
     const esOpts = opts.es || {}
@@ -119,21 +119,34 @@ export class Database {
     })
   }
 
-  addSettings(settings) {
-    settings.updated = new Date()
-    return this.add(SETTINGS, 'settings', settings)
+  async addSettings(settings) {
+
+    // convert settings object into a sequence of name/value objects
+    const objects = []
+    for (const prop in settings) {
+      if (Object.prototype.hasOwnProperty.call(settings, prop)) {
+        objects.push({
+          name: prop,
+          value: settings[prop]
+        })
+      }
+    }
+
+    await Setting.transaction(async trx => {
+      await Setting.query(trx).delete()
+      await Setting.query(trx).insert(objects)
+    })
+
+    return settings
   }
 
-  getSettings() {
-    return new Promise((resolve) => {
-      this.get(SETTINGS, 'settings')
-        .then((settings) => {
-          resolve(settings)
-        })
-        .catch(() => {
-          resolve({})
-        })
-    })
+  async getSettings() {
+    const settings = {}
+    const rows = await Setting.query().select('name', 'value')
+    for (const row of rows) {
+      settings[row.name] = row.value
+    }
+    return settings
   }
 
   async addUser(user) {

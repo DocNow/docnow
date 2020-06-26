@@ -104,9 +104,14 @@ app.put('/settings', async (req, res) => {
       appSecret: req.body.appSecret,
       defaultQuota: parseInt(req.body.defaultQuota, 10)}
 
-    await db.addSettings(settings)
-    activateKeys()
-    res.json({status: 'updated'})
+    try {
+      await db.addSettings(settings)
+      activateKeys()
+      res.json({status: 'updated'})
+    } catch (err) {
+      console.error(err)
+      res.json({status: 'error'})
+    }
   }
 })
 
