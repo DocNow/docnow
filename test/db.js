@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.load()
+
 import fs from 'fs'
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'

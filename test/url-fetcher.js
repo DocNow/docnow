@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.load()
+
 import { ok, equal, deepEqual } from 'assert'
 import { UrlFetcher } from '../src/server/url-fetcher'
 

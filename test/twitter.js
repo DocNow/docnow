@@ -1,3 +1,6 @@
+import dotenv from 'dotenv'
+dotenv.load()
+
 import { ok, equal } from 'assert'
 import { Twitter } from '../src/server/twitter'
 
