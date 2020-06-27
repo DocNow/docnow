@@ -39,7 +39,7 @@ export class Twitter {
               type: place.placeType.name,
               country: place.country || '',
               countryCode: place.countryCode || '',
-              parent: place.parentid || ''
+              parentId: place.parentid || ''
             })
           }
           resolve(places)
@@ -47,11 +47,11 @@ export class Twitter {
     })
   }
 
-  getTrendsAtPlace(woeId) {
-    log.info('fetching trends for ' + woeId)
+  getTrendsAtPlace(id) {
+    log.info('fetching trends for ' + id)
     return new Promise(
       (resolve, reject) => {
-        this.twit.get('trends/place', {id: woeId})
+        this.twit.get('trends/place', {id: id})
           .then((resp) => {
             const place = {
               id: resp.data[0].locations[0].woeid,

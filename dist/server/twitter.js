@@ -77,7 +77,7 @@ var Twitter = /*#__PURE__*/function () {
                 type: place.placeType.name,
                 country: place.country || '',
                 countryCode: place.countryCode || '',
-                parent: place.parentid || ''
+                parentId: place.parentid || ''
               });
             }
           } catch (err) {
@@ -92,14 +92,14 @@ var Twitter = /*#__PURE__*/function () {
     }
   }, {
     key: "getTrendsAtPlace",
-    value: function getTrendsAtPlace(woeId) {
+    value: function getTrendsAtPlace(id) {
       var _this2 = this;
 
-      _logger["default"].info('fetching trends for ' + woeId);
+      _logger["default"].info('fetching trends for ' + id);
 
       return new Promise(function (resolve, reject) {
         _this2.twit.get('trends/place', {
-          id: woeId
+          id: id
         }).then(function (resp) {
           var place = {
             id: resp.data[0].locations[0].woeid,

@@ -5,6 +5,7 @@ import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
          tweetsCountKey, urlsKey } from './redis'
 import { Model } from 'objection'
 import Setting from './models/Setting'
+import Place from './models/Place'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -15,7 +16,6 @@ import knexfile from '../../knexfile'
 // elasticsearch doc types
 
 const USER = 'user'
-const PLACE = 'place'
 const SEARCH = 'search'
 const TREND = 'trend'
 const TWEET = 'tweet'
@@ -23,7 +23,8 @@ const TWUSER = 'twuser'
 
 const urlFetcher = new UrlFetcher()
 
-Model.knex(knex(knexfile))
+const db = knex(knexfile)
+Model.knex(db)
 
 export class Database {
 
@@ -48,6 +49,7 @@ export class Database {
   }
 
   close() {
+    db.destroy()
     this.redis.quit()
     urlFetcher.stop()
   }
@@ -168,23 +170,6 @@ export class Database {
     } else {
       return user
     }
-
-    /*
-    return new Promise((resolve) => {
-      this.getSuperUser()
-        .then((u) => {
-          user.isSuperUser = u ? false : true
-          this.add(USER, user.id, user)
-            .then(() => {
-              if (user.isSuperUser) {
-                this.loadPlaces().then(() => {resolve(user)})
-              } else {
-                resolve(user)
-              }
-            })
-        })
-    })
-    */
   }
 
   updateUser(user) {
@@ -316,51 +301,27 @@ export class Database {
     })
   }
 
-  loadPlaces() {
-    return new Promise((resolve, reject) => {
-      this.getSuperUser()
-        .then((user) => {
-          this.getTwitterClientForUser(user)
-            .then((t) => {
-              t.getPlaces().then((places) => {
+  async loadPlaces() {
+    // delete any places that are in the database already
+    await Place.query().delete()
 
-                // bulk insert all the places as separate
-                // documents in elasticsearch
+    // get the places from Twitter using the admin users's keys
+    const user = await this.getSuperUser()
+    const twitter = await this.getTwitterClientForUser(user)
+    const places = await twitter.getPlaces()
 
-                const body = []
-                for (const place of places) {
-                  place.id = addPrefix('place', place.id)
-                  place.parentId = addPrefix('place', place.parent)
-                  delete place.parent
-                  body.push({
-                    index: {
-                      _index: this.getIndex(PLACE),
-                      _type: 'place',
-                      _id: place.id
-                    }
-                  })
-                  body.push(place)
-                }
+    // insert them all into the database
+    await Place.query().insert(places)
 
-                this.es.bulk({body: body, refresh: 'wait_for'})
-                  .then(() => {
-                    resolve(places)
-                  })
-                  .catch(reject)
-              })
-            })
-            .catch(reject)
-        })
-        .catch(reject)
-    })
+    return places
   }
 
   getPlace(placeId) {
-    return this.search(PLACE, placeId, true)
+    return Place.query().select().where('woeId', '=', placeId)
   }
 
   getPlaces() {
-    return this.search(PLACE, '*')
+    return Place.query().select()
   }
 
   getTwitterClientForUser(user) {

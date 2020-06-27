@@ -1,6 +1,8 @@
 const dotenv = require('dotenv')
 dotenv.load()
 
+const { knexSnakeCaseMappers } = require('objection');
+
 module.exports = {
   client: 'pg',
   connection: {
@@ -11,5 +13,6 @@ module.exports = {
   },
   migrations: {
     directory: './src/server/migrations'
-  }
+  },
+  ...knexSnakeCaseMappers()
 }

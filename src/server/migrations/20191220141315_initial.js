@@ -23,8 +23,11 @@ exports.up = knex => {
 
     .createTable('place', table => {
       table.increments('id').primary()
-      table.string('woe_id').notNullable()
       table.string('name').notNullable()
+      table.string('type').notNullable()
+      table.string('country')
+      table.string('countryCode')
+      table.string('parentId')
     })
 
     .createTable('trend', table => {

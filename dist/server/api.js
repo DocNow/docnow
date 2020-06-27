@@ -206,7 +206,7 @@ app.put('/settings', /*#__PURE__*/function () {
             superUser = _context4.sent;
 
             if (!(!superUser || req.user && req.user.isSuperUser)) {
-              _context4.next = 9;
+              _context4.next = 16;
               break;
             }
 
@@ -217,21 +217,32 @@ app.put('/settings', /*#__PURE__*/function () {
               appSecret: req.body.appSecret,
               defaultQuota: parseInt(req.body.defaultQuota, 10)
             };
-            _context4.next = 7;
+            _context4.prev = 5;
+            _context4.next = 8;
             return db.addSettings(settings);
 
-          case 7:
+          case 8:
             (0, _auth.activateKeys)();
             res.json({
               status: 'updated'
             });
+            _context4.next = 16;
+            break;
 
-          case 9:
+          case 12:
+            _context4.prev = 12;
+            _context4.t0 = _context4["catch"](5);
+            console.error(_context4.t0);
+            res.json({
+              status: 'error'
+            });
+
+          case 16:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4);
+    }, _callee4, null, [[5, 12]]);
   }));
 
   return function (_x7, _x8) {
