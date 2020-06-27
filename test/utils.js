@@ -1,4 +1,7 @@
-import { equal, deepEqual } from 'assert'
+import dotenv from 'dotenv'
+dotenv.load()
+
+  import { equal, deepEqual } from 'assert'
 import { addPrefix, stripPrefix, addPrefixes } from '../src/server/utils'
 
 describe('utils', function() {
