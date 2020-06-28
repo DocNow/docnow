@@ -188,6 +188,9 @@ var Archive = /*#__PURE__*/function () {
                 }));
 
               case 60:
+                return _context.abrupt("return", zipPath);
+
+              case 61:
               case "end":
                 return _context.stop();
             }

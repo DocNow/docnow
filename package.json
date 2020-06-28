@@ -8,6 +8,7 @@
     "build:archive": "webpack --config webpack.archive.config.js",
     "build:client": "webpack --optimize-minimize --config webpack.prod.config.js",
     "build:server": "babel src/server --out-dir dist/server",
+    "build:env": "babel src/env.js --out-dir dist",
     "build:commands": "babel src/commands --out-dir dist/commands",
     "build": "better-npm-run build",
     "clean": "rimraf dist/*",
@@ -22,7 +23,7 @@
     "url-fetcher": "node dist/commands/url-fetcher",
     "stream-loader": "node dist/commands/stream-loader",
     "users": "node dist/commands/users",
-    "migrate": "knex migrate:latest"
+    "migrate": "node dist/commands/migrate"
   },
   "betterScripts": {
     "build": {
@@ -54,6 +55,9 @@
       "env": {
         "NODE_ENV": "test"
       }
+    },
+    "migrate": {
+
     }
   },
   "dependencies": {

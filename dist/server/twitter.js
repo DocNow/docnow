@@ -15,6 +15,8 @@ var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/cl
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
+require("../env");
+
 var _url = _interopRequireDefault(require("url"));
 
 var _twit = _interopRequireDefault(require("twit"));

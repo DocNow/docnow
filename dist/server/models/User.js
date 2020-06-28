@@ -19,6 +19,8 @@ function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Re
 var _require = require('objection'),
     Model = _require.Model;
 
+var Place = require('./Place');
+
 var User = /*#__PURE__*/function (_Model) {
   (0, _inherits2["default"])(User, _Model);
 
@@ -33,6 +35,22 @@ var User = /*#__PURE__*/function (_Model) {
     key: "tableName",
     get: function get() {
       return 'user';
+    }
+  }, {
+    key: "relationMappings",
+    get: function get() {
+      return {
+        relation: Model.HasManyRelation,
+        modelClass: Place,
+        join: {
+          from: 'user.id',
+          through: {
+            from: 'user_place.user_id',
+            to: 'user_place.place_id'
+          },
+          to: 'place.id'
+        }
+      };
     }
   }]);
   return User;
