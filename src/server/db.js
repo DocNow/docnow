@@ -18,7 +18,6 @@ import knexfile from '../../knexfile'
 
 // elasticsearch doc types
 
-const USER = 'user'
 const SEARCH = 'search'
 const TREND = 'trend'
 const TWEET = 'tweet'
@@ -1150,14 +1149,7 @@ export class Database {
     })
     const twitterUserCount = result.hits.total
 
-    result = await this.es.search({
-      index: this.getIndex(USER),
-      type: USER,
-      body: {
-        query: {match_all: {}}
-      }
-    })
-    const userCount = result.hits.total
+    const userCount = User.query().select().count()
 
     return {
       tweetCount: tweetCount,
