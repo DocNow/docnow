@@ -12,16 +12,18 @@ exports.up = knex => {
     .createTable('user', table => {
       table.increments('id').primary()
       table.datetime('created').defaultsTo(knex.fn.now())
-      table.datetime('updated').notNullable()
+      table.datetime('updated').defaultsTo(knex.fn.now())
       table.string('name')
       table.string('email')
       table.string('location')
       table.boolean('admin').defaultsTo(false)
-      table.integer('tweetQuota').notNullable()
+      table.integer('tweetQuota').defaultsTo(50000)
+      table.integer('twitterUserId').notNullable()
       table.string('twitterScreenName').notNullable()
-      table.string('twitterConsumerKey').notNullable()
-      table.string('twitterConsumerSecret').notNullable()
+      table.string('twitterAccessToken').notNullable()
+      table.string('twitterAccessTokenSecret').notNullable()
       table.boolean('isSuperUser').defaultsTo(false)
+      table.boolean('active').defaultsTo(false)
     })
 
     .createTable('place', table => {

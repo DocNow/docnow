@@ -1,3 +1,4 @@
+import '../env'
 import url from 'url'
 import Twit from 'twit'
 import log from './logger'

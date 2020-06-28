@@ -78,6 +78,8 @@ export class Archive {
       archived: true,
       archiveStarted: false
     })
+
+    return zipPath
   }
 
   async getAllTweetIds(search) {

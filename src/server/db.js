@@ -1,3 +1,5 @@
+import '../env'
+
 import knex from 'knex'
 import uuid from 'uuid/v4'
 import elasticsearch from 'elasticsearch'
@@ -6,6 +8,7 @@ import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
 import { Model } from 'objection'
 import Setting from './models/Setting'
 import Place from './models/Place'
+import User from './models/User'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -23,14 +26,18 @@ const TWUSER = 'twuser'
 
 const urlFetcher = new UrlFetcher()
 
-const db = knex(knexfile)
-Model.knex(db)
+// const db = knex(knexfile)
+// Model.knex(db)
 
 export class Database {
 
   constructor(opts = {}) {
     // setup redis
     this.redis = getRedis()
+
+    const pg = knex(knexfile)
+    Model.knex(pg)
+    this.pg = pg
 
     // setup elasticsearch
     const esOpts = opts.es || {}
@@ -49,24 +56,18 @@ export class Database {
   }
 
   close() {
-    db.destroy()
+    this.pg.destroy()
     this.redis.quit()
     urlFetcher.stop()
   }
 
-  clear() {
-    return new Promise((resolve, reject) => {
-      this.redis.flushdbAsync()
-        .then((didSucceed) => {
-          if (didSucceed === 'OK') {
-            this.deleteIndexes()
-              .then(resolve)
-              .catch(reject)
-          } else {
-            reject('redis flushdb failed')
-          }
-        })
-    })
+  async clear() {
+    await this.redis.flushdbAsync()
+    await this.deleteIndexes()
+    if (await this.pg.migrate.currentVersion() != "none") {
+      await this.pg.migrate.rollback(null, true)
+    }
+    await this.pg.migrate.latest()
   }
 
   add(type, id, doc) {
@@ -152,56 +153,59 @@ export class Database {
   }
 
   async addUser(user) {
-    user.id = uuid()
-    user.places = []
-
     const settings = await this.getSettings()
     user.tweetQuota = user.tweetQuota || settings.defaultQuota
 
     const su = await this.getSuperUser()
     user.isSuperUser = su ? false : true
    
-    log.info('creating user: ', {user: user})
-    await this.add(USER, user.id, user)
+    const newUser = await User.query().insert(user)
 
-    if (user.isSuperUser) {
-      this.loadPlaces()
-      return user 
-    } else {
-      return user
+    // once we have the first user we have keys to load places from Twitter
+    if (newUser.isSuperUser) {
+      await this.loadPlaces()
     }
+
+    return newUser
   }
 
-  updateUser(user) {
-    return this.add(USER, user.id, user)
+  async updateUser(user) {
+    const newUser = await User.query().update(user).where('id', user.id)
+    return newUser
   }
 
-  getUser(userId) {
-    return this.get(USER, userId)
+  async getUser(userId) {
+    const user = await User.query().first().where('id', '=', userId)
+    return user
   }
 
   async getUsers() {
+    const users = await User.query().select()
+
+    /*
     const users = await this.search(USER, '*')
+
     for (const user of users) {
       user.searches = await this.getUserSearches(user)
     }
+    */
     return users
   }
 
-  getSuperUser() {
-    return this.search(USER, 'isSuperUser:true', true)
+  async getSuperUser() {
+    const user = await User.query().first().where('isSuperUser', '=', true)
+    return user
   }
 
-  getUserByTwitterUserId(twitterUserId) {
-    return this.search(USER, `twitterUserId:${twitterUserId}`, true)
+  getUserByTwitterUserId(userId) {
+    return User.query().first().where('twitter_user_id', '=', userId)
   }
 
   getUserByTwitterScreenName(twitterScreenName) {
-    return this.search(USER, `twitterScreenName:${twitterScreenName}`, true)
+    return this.query().first().where('twitterScreeName', '=', twitterScreenName)
   }
 
   importLatestTrends() {
-    log.debug('importing trends')
     return new Promise((resolve) => {
       this.getUsers()
         .then((users) => {
@@ -317,7 +321,8 @@ export class Database {
   }
 
   getPlace(placeId) {
-    return Place.query().select().where('woeId', '=', placeId)
+    const place = Place.query().first().where('id', '=', placeId)
+    return place
   }
 
   getPlaces() {

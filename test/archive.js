@@ -1,12 +1,9 @@
-import dotenv from 'dotenv'
-dotenv.load()
-
 import fs from 'fs'
 import { Database } from '../src/server/db'
 import { ok } from 'assert'
 import { Archive } from '../src/server/archive'
 
-describe('archive', function() {
+describe('archive', () => {
 
   const db = new Database()
   const archive = new Archive()

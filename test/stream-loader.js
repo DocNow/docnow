@@ -1,6 +1,3 @@
-import dotenv from 'dotenv'
-dotenv.load()
-
 import { Database } from '../src/server/db'
 import { ok, equal, deepEqual } from 'assert'
 import { StreamLoader, StreamLoaderController } from '../src/server/stream-loader'
