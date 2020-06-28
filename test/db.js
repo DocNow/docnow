@@ -34,7 +34,7 @@ describe('database', () => {
     }, 2000)
   })
 
-  it('should add user', (done) => {
+  it('should add user', async () => {
     const user = {
       name: "Ed Summers",
       location: "Silver Spring, MD",
@@ -44,32 +44,20 @@ describe('database', () => {
       twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
       tweetQuota: 50000,
     }
-    db.addUser(user)
-      .then((newUser) => {
-        if (newUser) {
-          testUser = newUser
-          done()
-        }
-      })
-      .catch((msg) => {
-        console.log(msg)
-      })
+    const newUser = await db.addUser(user)
+    testUser = newUser
   })
 
-  it('should get user by id', (done) => {
-    db.getUser(testUser.id)
-      .then(user => {
-        equal(user.id, testUser.id)
-        equal(user.name, 'Ed Summers')
-        equal(user.twitterScreenName, 'edsu')
-        equal(user.twitterUserId, '1234')
-        equal(user.location, 'Silver Spring, MD')
-        equal(user.twitterAccessToken, process.env.ACCESS_TOKEN)
-        equal(user.twitterAccessTokenSecret, process.env.ACCESS_TOKEN_SECRET)
-        // equal(user.places.length, 0)
-        ok(user.isSuperUser)
-        done()
-      })
+  it('should get user by id', async () => {
+    const user = await db.getUser(testUser.id)
+    equal(user.id, testUser.id)
+    equal(user.name, 'Ed Summers')
+    equal(user.twitterScreenName, 'edsu')
+    equal(user.twitterUserId, '1234')
+    equal(user.location, 'Silver Spring, MD')
+    equal(user.twitterAccessToken, process.env.ACCESS_TOKEN)
+    equal(user.twitterAccessTokenSecret, process.env.ACCESS_TOKEN_SECRET)
+    ok(user.isSuperUser)
   })
 
   it('should look up by twitter user id', (done) => {
@@ -118,21 +106,25 @@ describe('database', () => {
     })
   })
   
+  it('should add user places', async () => {
+    const places = await db.getPlaces()
+    testUser.places = places.slice(0, 3)
+    await db.updateUser(testUser)
+  })
+
+  it('should get user places', async () => {
+    const u = await db.getUser(testUser.id)
+    equal(u.places.length, 3)
+    ok(u.places[0].name)
+  })
+
+  it('should get all users', async () => {
+    const users = await db.getUsers()
+    equal(users.length, 1)
+    equal(users[0].places.length, 3)
+  })
+
   /*
-
-  it('should add user places', (done) => {
-    testUser.places = ['place-1', 'place-2459115', 'place-23424819']
-    db.updateUser(testUser).then(() => {
-      done()
-    })
-  })
-
-  it('should get user places', (done) => {
-    db.getUser(testUser.id).then((u) => {
-      ok(u.places.length === 3)
-      done()
-    })
-  })
 
   it('should import latest trends', (done) => {
     db.importLatestTrends()

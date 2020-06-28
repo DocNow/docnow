@@ -170,25 +170,29 @@ export class Database {
   }
 
   async updateUser(user) {
-    const newUser = await User.query().update(user).where('id', user.id)
-    return newUser
+    // the order of places is defined by their position
+    // they will be defined based on their order
+    if (user.places) {
+      for (let pos = 0; pos < user.places.length; pos += 1) {
+        user.places[pos].position = pos
+      }
+    }
+
+    const u = await User.query()
+      .upsertGraph(user, {relate: true, unrelate: true, insertMissing: true})
+    return u
   }
 
   async getUser(userId) {
-    const user = await User.query().first().where('id', '=', userId)
-    return user
+    const users = await User.query()
+      .withGraphJoined('places')
+      .where('user.id', userId)
+    return users.length > 0 ? users[0] : null
   }
 
   async getUsers() {
-    const users = await User.query().select()
-
-    /*
-    const users = await this.search(USER, '*')
-
-    for (const user of users) {
-      user.searches = await this.getUserSearches(user)
-    }
-    */
+    const users = await User.query()
+      .withGraphJoined('places')
     return users
   }
 
