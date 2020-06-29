@@ -9,6 +9,7 @@ import { Model } from 'objection'
 import Setting from './models/Setting'
 import Place from './models/Place'
 import User from './models/User'
+import Trend from './models/Trend'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -208,38 +209,44 @@ export class Database {
     return this.query().first().where('twitterScreeName', '=', twitterScreenName)
   }
 
-  importLatestTrends() {
-    return new Promise((resolve) => {
-      this.getUsers()
-        .then((users) => {
-          for (const user of users) {
-            this.importLatestTrendsForUser(user).then(resolve)
+  async importLatestTrends() {
+    let trends = []
+    const seenPlaces = new Set()
+    for (const user of await this.getUsers()) {
+      if (user.places) {
+        for (const place of user.places) {
+          // only fetch the same place once per run
+          if (! seenPlaces.has(place.id)) {
+            trends = trends.concat(
+              await this.importLatestTrendsForPlace(place, user)
+            )
+            seenPlaces.add(place.id)
           }
-        })
-        .catch(() => {
-          log.info('no users to import trends for')
-          resolve()
-        })
-    })
+        }
+      }
+    }
+    return trends
   }
 
-  importLatestTrendsForUser(user) {
-    log.debug('importing trends', {user: user})
-    return new Promise((resolve, reject) => {
-      this.getTwitterClientForUser(user)
-        .then((twtr) => {
-          const placeIds = user.places.map(stripPrefix)
-          if (placeIds.length === 0) {
-            resolve([])
-          } else {
-            log.info('importing trends for ', {placeIds: placeIds})
-            Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
-              .then(this.saveTrends.bind(this))
-              .then(resolve)
-          }
+  async importLatestTrendsForPlace(place, user) {
+    const twitter =  await this.getTwitterClientForUser(user)
+    const allTrends = []
+    const created = new Date()
+    const trends = await twitter.getTrendsAtPlace(place.id)
+
+    for (const trend of trends) {
+      if (trend.tweets !== null) {
+        allTrends.push({
+          name: trend.name,
+          count: trend.tweets,
+          placeId: place.id,
+          created: created
         })
-        .catch(reject)
-    })
+      }
+    }
+
+    const newTrends = await Trend.query().insert(allTrends)
+    return newTrends
   }
 
   startTrendsWatcher(opts = {}) {
@@ -259,20 +266,26 @@ export class Database {
     }
   }
 
-  getTrendsForPlace(placeId) {
-    return new Promise((resolve) => {
-      this.search('trend', `placeId:${placeId}`, true)
-        .then((results) => {
-          const filtered = results.trends.filter((t) => {
-            return t.tweets > 0
-          })
-          filtered.sort((a, b) => {
-            return b.tweets - a.tweets
-          })
-          results.trends = filtered
-          resolve(results)
-        })
-    })
+  async getTrendsForPlace(placeId) {
+
+    // get the datetime of the latest import
+    const result = await Trend.query()
+      .max('created')
+      .where('placeId', placeId)
+
+    if (! result) {
+      return []
+    }
+
+    const lastImport = result[0].max
+    const trends = Trend.query()
+      .select()
+      .where({
+        'placeId': placeId,
+        'created': lastImport
+      })
+
+    return trends
   }
 
   getUserTrends(user) {

@@ -48,27 +48,18 @@ export class Twitter {
     })
   }
 
-  getTrendsAtPlace(id) {
+  async getTrendsAtPlace(id) {
     log.info('fetching trends for ' + id)
-    return new Promise(
-      (resolve, reject) => {
-        this.twit.get('trends/place', {id: id})
-          .then((resp) => {
-            const place = {
-              id: resp.data[0].locations[0].woeid,
-              name: resp.data[0].locations[0].name,
-              trends: []
-            }
-            for (const trend of resp.data[0].trends) {
-              place.trends.push({name: trend.name, tweets: trend.tweet_volume})
-            }
-            resolve(place)
-          })
-          .error((msg) => {
-            reject(msg)
-          })
+    const trends = []
+    try {
+      const resp = await this.twit.get('trends/place', {id: id})
+      for (const trend of resp.data[0].trends) {
+        trends.push({name: trend.name, tweets: trend.tweet_volume})
       }
-    )
+    } catch (e) {
+      console.log(`error when fetching trends: ${e}`)
+    }
+    return trends
   }
 
   search(opts, cb) {

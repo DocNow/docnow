@@ -124,27 +124,19 @@ describe('database', () => {
     equal(users[0].places.length, 3)
   })
 
+  it('should import latest trends', async () => {
+    const trends = await db.importLatestTrends()
+    ok(trends.length > 0)
+  })
+
+  it('should get trends for place', async () => {
+    const trends = await db.getTrendsForPlace('1')
+    ok(trends.length > 0)
+    ok(trends[0].name)
+    ok(trends[0].count)
+  })
+
   /*
-
-  it('should import latest trends', (done) => {
-    db.importLatestTrends()
-      .then((result) => {
-        equal(result.length, 3)
-        done()
-      })
-      .catch(console.log)
-  })
-
-  it('should get trends for place', (done) => {
-    db.getTrendsForPlace('place-1')
-      .then((result) => {
-        ok(result.trends.length > 0)
-        ok(result.trends[0].name)
-        ok(result.trends[0].tweets)
-        done()
-      })
-      .catch(console.log)
-  })
 
   it('should create search', (done) => {
     db.createSearch(testUser, [{type: 'keyword', value: 'obama'}])

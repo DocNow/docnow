@@ -37,6 +37,10 @@ exports.up = knex => {
 
     .createTable('trend', table => {
       table.increments('id').primary()
+      // don't let pg assign created because we need to query it precisely 
+      // and pg's precision is greater than the js Date object.
+      table.datetime('created').notNullable()
+      table.string('name').notNullable()
       table.integer('count').notNullable()
       table.integer('placeId').notNullable()
       table.foreign('placeId').references('id').inTable('place')
