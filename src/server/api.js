@@ -52,13 +52,11 @@ app.get('/user', (req, res) => {
 
 app.put('/user', async (req, res) => {
   if (req.user) {
-    // user.searches is generated dynamically and shouldn't be persisted
-    delete req.user.searches
-
+    // fold selected new values into the existing user
     const user = await db.getUser(req.user.id)
     const newUser = {
       ...user,
-      ...req.body
+      email: req.body.email,
     }
     await db.updateUser(newUser)
     res.json(newUser)
@@ -125,30 +123,38 @@ app.get('/world', (req, res) => {
   })
 })
 
-app.get('/trends', (req, res) => {
-  let lookup = null
+app.get('/trends', async (req, res) => {
+  let results = null
   if (req.user) {
-    lookup = db.getUserTrends(req.user)
+    results = await db.getUserTrends(req.user)
   } else {
-    lookup = db.getSuperUser().then((user) => {
-      return db.getUserTrends(user)
-    })
+    const user = await db.getSuperUser()
+    results = await db.getUserTrends(user)
   }
-  lookup.then((result) => { res.json(result) })
+  res.json(results)
 })
 
-app.put('/trends', (req, res) => {
-  db.getUser(req.user.id)
-    .then((user) => {
-      user.places = req.body
-      db.updateUser(user)
-        .then(() => {
-          db.importLatestTrendsForUser(user)
-            .then(() => {
-              res.json({status: 'updated'})
-            })
-        })
-    })
+app.put('/trends', async (req, res) => {
+  if (req.user) {
+    let user = await db.getUser(req.user.id)
+
+    // create sparse object of places with the place ids
+    const newPlaceIds = req.body
+    console.log(newPlaceIds)
+    user.places = newPlaceIds.map(placeId => ({id: placeId}))
+
+    // update the users place ids
+    user = await db.updateUser(user)
+
+    // load latest data for these places
+    for (const place of user.places) {
+      await db.importLatestTrendsForPlace(place, user)
+    }
+
+    res.json({status: 'updated'})
+  } else {
+    res.json({status: 'not logged in'})
+  }
 })
 
 app.post('/logo', (req, res) => {

@@ -41,7 +41,7 @@ export const removeTrend = (value) => {
 export const saveTrends = (placeId) => {
   return (dispatch, getState) => {
     const { trends } = getState()
-    const placeIds = trends.places.map((p) => { return p.placeId })
+    const placeIds = trends.places.map((p) => { return p.id })
 
     if (placeId) {
       placeIds.push(placeId)

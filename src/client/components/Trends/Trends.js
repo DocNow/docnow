@@ -67,7 +67,7 @@ export default class Trends extends MediaQueryComponent {
               <Place
                 key={place.name}
                 trends={place.trends}
-                placeId={place.placeId}
+                id={place.id}
                 name={place.name}
                 world={this.props.world}
                 deleteTrend={this.props.deleteTrend}

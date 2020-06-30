@@ -130,10 +130,16 @@ describe('database', () => {
   })
 
   it('should get trends for place', async () => {
-    const trends = await db.getTrendsForPlace('1')
+    const trends = await db.getRecentTrendsForPlace({id: 1})
     ok(trends.length > 0)
     ok(trends[0].name)
     ok(trends[0].count)
+  })
+
+  it('should get user trends', async () => {
+    const places = await db.getUserTrends(testUser)
+    equal(places.length, 3)
+    ok(places[0].trends.length > 0)
   })
 
   /*

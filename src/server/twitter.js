@@ -54,7 +54,7 @@ export class Twitter {
     try {
       const resp = await this.twit.get('trends/place', {id: id})
       for (const trend of resp.data[0].trends) {
-        trends.push({name: trend.name, tweets: trend.tweet_volume})
+        trends.push({name: trend.name, count: trend.tweet_volume})
       }
     } catch (e) {
       console.log(`error when fetching trends: ${e}`)

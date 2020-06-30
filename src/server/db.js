@@ -158,15 +158,20 @@ export class Database {
 
     const su = await this.getSuperUser()
     user.isSuperUser = su ? false : true
-   
-    const newUser = await User.query().insert(user)
+  
+    try {
+      const newUser = await User.query().insert(user)
 
-    // once we have the first user we have keys to load places from Twitter
-    if (newUser.isSuperUser) {
-      await this.loadPlaces()
+      // once we have the first user we have keys to load places from Twitter
+      if (newUser.isSuperUser) {
+        await this.loadPlaces()
+      }
+
+      return newUser
+    } catch (e) { 
+      console.error(e)
     }
 
-    return newUser
   }
 
   async updateUser(user) {
@@ -179,7 +184,7 @@ export class Database {
     }
 
     const u = await User.query()
-      .upsertGraph(user, {relate: true, unrelate: true, insertMissing: true})
+      .upsertGraph(user, {relate: true, unrelate: true})
     return u
   }
 
@@ -235,10 +240,10 @@ export class Database {
     const trends = await twitter.getTrendsAtPlace(place.id)
 
     for (const trend of trends) {
-      if (trend.tweets !== null) {
+      if (trend.count !== null) {
         allTrends.push({
           name: trend.name,
-          count: trend.tweets,
+          count: trend.count,
           placeId: place.id,
           created: created
         })
@@ -266,12 +271,12 @@ export class Database {
     }
   }
 
-  async getTrendsForPlace(placeId) {
+  async getRecentTrendsForPlace(place) {
 
     // get the datetime of the latest import
     const result = await Trend.query()
       .max('created')
-      .where('placeId', placeId)
+      .where('placeId', place.id)
 
     if (! result) {
       return []
@@ -281,17 +286,24 @@ export class Database {
     const trends = Trend.query()
       .select()
       .where({
-        'placeId': placeId,
+        'placeId': place.id,
         'created': lastImport
       })
+      .orderBy('count', 'desc')
 
     return trends
   }
 
-  getUserTrends(user) {
+  async getUserTrends(user) {
+    // return a list of places with their most recent trends
+    const results = []
     if (user && user.places) {
-      return Promise.all(user.places.map(this.getTrendsForPlace, this))
+      for (const place of user.places) {
+        place.trends = await this.getRecentTrendsForPlace(place)
+        results.push(place)
+      }
     }
+    return results
   }
 
   saveTrends(trends) {
