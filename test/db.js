@@ -1,4 +1,4 @@
-import { ok, equal } from 'assert'
+import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
 
 const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
@@ -142,32 +142,34 @@ describe('database', () => {
     ok(places[0].trends.length > 0)
   })
 
-  /*
-
-  it('should create search', (done) => {
-    db.createSearch(testUser, [{type: 'keyword', value: 'obama'}])
-      .then((search) => {
-        ok(search.id, 'search.id')
-        testSearch = search
-        done()
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  })
-
-  it('should get search', (done) => {
-    db.getSearch(testSearch.id).then((search) => {
-      equal(search.id, testSearch.id, 'search.id')
-      deepEqual(search.query, [{type: 'keyword', value: 'obama'}], 'search.query')
-      equal(search.creator, testUser.id, 'search.user')
-      equal(search.active, true, 'search.active')
-      equal(search.maxTweetId, null, 'search.maxTweetId')
-      ok(search.created, 'search.created')
-      testSearch = search
-      done()
+  it('should create search', async () => {
+    const search = await db.createSearch({
+      userId: testUser.id,
+      title: 'Test',
+      description: 'This is a test search!',
+      active: true,
+      queries: [{value: {or: [{type: 'keyword', value: 'obama'}]}}]
     })
+    ok(search.id, 'search.id')
+    testSearch = search
   })
+
+  it('should get search', async () => {
+    const search = await db.getSearch(testSearch.id)
+    equal(search.id, testSearch.id, 'search.id')
+    equal(search.creator.id, testUser.id, 'search.user')
+    equal(search.active, true, 'search.active')
+    equal(search.maxTweetId, null, 'search.maxTweetId')
+    ok(search.created, 'search.created')
+    deepEqual(
+      search.queries[0].value, 
+      {or: [{type: 'keyword', value: 'obama'}]},
+      'search.query'
+    )
+    testSearch = search
+  })
+
+  /*
 
   it('should import from search', function(done) {
     db.importFromSearch(testSearch, 200)

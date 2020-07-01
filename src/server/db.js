@@ -10,6 +10,7 @@ import Setting from './models/Setting'
 import Place from './models/Place'
 import User from './models/User'
 import Trend from './models/Trend'
+import Search from './models/Search'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -372,28 +373,23 @@ export class Database {
     })
   }
 
-  createSearch(user, query) {
-    return new Promise((resolve, reject) => {
-      const search = {
-        id: uuid(),
-        creator: user.id,
-        query: query,
-        created: new Date().toISOString(),
-        updated: new Date(),
-        maxTweetId: null,
-        active: true
-      }
-      this.es.create({
-        index: this.getIndex(SEARCH),
-        type: SEARCH,
-        id: search.id,
-        body: search
-      }).then(() => {
-        resolve(search)
-      }).catch((err) => {
-        reject(err)
-      })
-    })
+  createSearch(search) {
+    search.updated = new Date()
+    const newSearch = Search.query()
+      .upsertGraph(search, {relate: true, unrelate: true, insertMissing: true})
+    return newSearch
+  }
+
+  async getSearch(searchId) {
+    const search = await Search.query()
+      .findById(searchId)
+      .withGraphJoined('creator')
+      .withGraphJoined('queries')
+    const stats = await this.getSearchStats(search)
+    return {
+      ...search,
+      ...stats
+    }
   }
 
   async deleteSearch(search) {
@@ -445,15 +441,6 @@ export class Database {
       total += s.tweetCount
     }
     return total > user.tweetQuota
-  }
-
-  async getSearch(searchId) {
-    const search = await this.get(SEARCH, searchId)
-    const stats = await this.getSearchStats(search)
-    return {
-      ...search,
-      ...stats
-    }
   }
 
   updateSearch(search) {
