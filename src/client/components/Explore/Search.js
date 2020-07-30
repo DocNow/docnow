@@ -138,7 +138,7 @@ export default class Search extends Component {
 
         <div className={card.CardHolder} style={style}>
 
-          <Card outlined className={card.Card} >
+          <Card raised className={card.Card} >
             <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <TweetList tweets={this.props.tweets} />
             </CardContent>
@@ -148,7 +148,7 @@ export default class Search extends Component {
             </CardActions>
           </Card>
 
-          <Card outlined className={card.Card} >
+          <Card raised className={card.Card} >
             <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <UserList
                 addSearchTerm={this.props.addSearchTerm}
@@ -160,7 +160,7 @@ export default class Search extends Component {
             </CardActions>
           </Card>
 
-          <Card outlined className={card.Card} >
+          <Card raised className={card.Card} >
             <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <HashtagChart
                 addSearchTerm={this.props.addSearchTerm}
@@ -173,7 +173,7 @@ export default class Search extends Component {
             </CardActions>
           </Card>
 
-          <Card outlined className={card.Card} >
+          <Card raised className={card.Card} >
             <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <UrlList urls={this.props.urls} />
             </CardContent>
@@ -183,7 +183,7 @@ export default class Search extends Component {
             </CardActions>
           </Card>
 
-          <Card outlined className={card.Card} >
+          <Card raised className={card.Card} >
             <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <ImageList images={this.props.images} />
             </CardContent>
@@ -193,7 +193,7 @@ export default class Search extends Component {
             </CardActions>
           </Card>
 
-          <Card outlined className={card.Card} >
+          <Card raised className={card.Card} >
             <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
               <VideoList videos={this.props.videos} />
             </CardContent>

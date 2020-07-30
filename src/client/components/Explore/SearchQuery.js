@@ -32,7 +32,7 @@ export default class SearchQuery extends Component {
       )
     }
     return (
-      <Paper id="box" elevation="4" onClick={(e) => {this.onClick(e)}} className={styleQuery.SearchQuery}>
+      <Paper id="box" elevation={4} onClick={(e) => {this.onClick(e)}} className={styleQuery.SearchQuery}>
         {placeHolder}
         <form noValidate autoComplete="off" style={{
           display: 'flex',

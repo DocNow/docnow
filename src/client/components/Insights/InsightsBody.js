@@ -58,7 +58,7 @@ export default class InsightsBody extends Component {
             <div className={card.SavedLongCard}>
               <div style={{display: 'flex'}}>
                 {sampleTweet}
-                <Card outlined className={card.Card} >
+                <Card raised className={card.Card} >
                   <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
                     <HashtagChart
                       addSearchTerm={() => { return false }}

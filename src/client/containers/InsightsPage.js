@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getWebpages } from '../actions/webpages'
 import { getSearch, resetTwitterSearch, updateSearch, getTweets,
-         getUsers, getImages, getVideos, createArchive, getHashtags } from '../actions/search'
+         getUsers, getImages, getVideos, createArchive, getHashtags, deleteSearch } from '../actions/search'
 
 import Insights from '../components/Insights/Insights'
 
@@ -26,6 +26,7 @@ const actions = {
   getWebpages,
   resetTwitterSearch,
   updateSearch,
+  deleteSearch,
   createArchive,
   getHashtags
 }

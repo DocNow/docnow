@@ -3,3 +3,15 @@
   color: #ff0000;
   cursor: pointer;
 }
+
+.Modal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Paper {
+  background-color: #fff;
+  border: 2px solid #000;
+  padding: 1em;
+}
