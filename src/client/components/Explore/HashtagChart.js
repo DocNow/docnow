@@ -10,7 +10,11 @@ import { select } from 'd3-selection'
 import { scalePow } from 'd3-scale'
 
 export default class Hashtags extends Component {
-
+  constructor(props) {
+    super(props)
+    this.barStyle = this.props.readOnly ? styles.Bar : `${styles.Bar} ${styles.CanAdd}`
+  }
+  
   componentDidMount() {
     this.createBarChart()
   }
@@ -47,7 +51,7 @@ export default class Hashtags extends Component {
 
     const g = select(node)
       .selectAll('g')
-      .attr('class', styles.Bar)
+      .attr('class', this.barStyle)
       .data(hashtags, key)
 
     g.append('svg:title')
@@ -68,7 +72,7 @@ export default class Hashtags extends Component {
 
     const gEnter = g.enter()
       .append('g')
-      .attr('class', styles.Bar)
+      .attr('class', this.barStyle)
       .attr('transform', (d, i) => {
         return 'translate(0,' + (i * 25) + ')'
       })
@@ -119,6 +123,7 @@ export default class Hashtags extends Component {
 }
 
 Hashtags.propTypes = {
+  readOnly: PropTypes.bool,
   hashtags: PropTypes.array,
   addSearchTerm: PropTypes.func,
   query: PropTypes.array

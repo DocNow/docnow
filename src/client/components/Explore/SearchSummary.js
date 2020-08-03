@@ -18,7 +18,7 @@ export default class SearchSummary extends Component {
         </div>
       )
     } else if (this.props.id) {
-      return <Paper elevation="4" className={style.Summary}>Loading up to 1,000 recent tweets from Twitter matching your query</Paper>
+      return <Paper elevation={4} className={style.Summary}>Loading up to 1,000 recent tweets from Twitter matching your query</Paper>
     } else {
       return <div />
     }

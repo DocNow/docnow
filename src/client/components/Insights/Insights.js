@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import SearchInfo from './SearchInfo'
-import TweetTabBar from './TweetTabBar'
 
 import InsightsBody from './InsightsBody'
 
@@ -48,9 +47,8 @@ export default class Insights extends Component {
           searches={this.props.searches}
           user={this.props.user}
           updateSearch={this.props.updateSearch}
+          deleteSearch={this.props.deleteSearch}
           createArchive={this.props.createArchive} />
-
-        <TweetTabBar />
 
         <InsightsBody
           searchId={this.props.searchId}
@@ -75,6 +73,7 @@ Insights.propTypes = {
   getWebpages: PropTypes.func,
   resetTwitterSearch: PropTypes.func,
   updateSearch: PropTypes.func,
+  deleteSearch: PropTypes.func,
   createArchive: PropTypes.func,
   getHashtags: PropTypes.func,
 }

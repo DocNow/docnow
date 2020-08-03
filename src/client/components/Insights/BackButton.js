@@ -5,7 +5,7 @@ import Fab from '@material-ui/core/Fab'
 export default class BackButton extends Component {
   render() {
     return (
-      <div style={{margin: '0 auto', maxWidth: '800px'}}>
+      <div style={{margin: '0 auto', maxWidth: '80%', marginTop: '1em'}}>
         <Fab
           variant="extended"
           size="medium"

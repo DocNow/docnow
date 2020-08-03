@@ -14,10 +14,10 @@ text {
   font-size: 10pt;
 }
 
-.Bar:hover {
+.CanAdd:hover {
   cursor: pointer;
 }
 
-.Bar:hover rect {
+.CanAdd:hover rect {
   fill: #1da1f2;
 }

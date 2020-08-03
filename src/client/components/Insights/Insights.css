@@ -1,39 +1,19 @@
-.Insights {
-    padding: 20px;
-
+.CardLink a {
+  color: #000;
 }
 
-.Insights h2 {
-    font-weight: 500 !important;
-}
-.Insights hr {
-  border-top: 1px solid lightgray;
-}
-
-.InsightsCard {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  padding: 10px;
+.WebPreview {
+  background-color: #ffffff;
+  margin-top: 2px;
+  margin-left: 2px;
+  margin-bottom: 2px;
+  padding: 1em 0 1em 0;
+  font-size: 10pt;
+  width: 97%;
   border: thin solid gray;
-  border-radius: 4px;
-  max-width: 1160px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.InsightsCard h2 {
   text-align: center;
 }
 
-.ViewInsights h2 a {
-  text-align: center;
-  color: #3F51B5 !important;
-  font-weight: 500;
-  text-decoration: none;
-}
-
-.ViewInsights h2 a:hover {
-  text-align: center;
-  color: #cdc9f1 !important;
-  font-weight: 500;
+.WebPreview span {
+  display: block;
 }

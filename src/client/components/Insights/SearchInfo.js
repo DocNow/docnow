@@ -4,15 +4,23 @@ import DownloadOptions from '../../containers/DownloadOptions'
 import SearchToggle from '../SearchToggle'
 import Trash from '../Trash'
 import moment from 'moment'
-import Grid from '@material-ui/core/Grid'
 import Editable from '../Editable'
+import { Redirect } from 'react-router-dom'
 
-import style from './SearchInfo.css'
+import Table from '@material-ui/core/Table'
+import TableHead from '@material-ui/core/TableHead'
+import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
+
+// import style from './SearchInfo.css'
 
 export default class SearchInfo extends Component {
   constructor(props) {
     super(props)
     this.editing = false
+    this.state = {
+      goHome: false
+    }
   }
 
   shouldComponentUpdate(nextProps) {
@@ -28,41 +36,74 @@ export default class SearchInfo extends Component {
   }
 
   updateTitle(title) {
-    this.props.updateSearch({id: this.props.search.id, title: title})
+    const newTitle = title === '' ? 'untitled' : title
+    this.props.updateSearch({id: this.props.search.id, title: newTitle})
   }
 
   updateDescription(desc) {
     this.props.updateSearch({id: this.props.search.id, description: desc})
   }
 
+  delete(id) {
+    this.props.deleteSearch(id)
+    // navigate back to search list
+    this.setState({goHome: true})
+  }
+
   render() {
+    if (this.state.goHome) {
+      return <Redirect to="/searches" push={true} />
+    }
     const created = moment(this.props.search.created).local().format('MMM D h:mm A')
     const modified = moment(this.props.search.modified).local().format('MMM D h:mm A')
     return (
-      <div className={style.SavedSearchInfo}>
-        <div className={style.SavedSearchText}>
-          <Grid container spacing={1} alignItems="flex-end">
-            <Grid item xs="2">
-              <SearchToggle
-                active={this.props.search.active}
-                id={this.props.search.id}
-                searches={this.props.searches}
-                user={this.props.user}
-                updateSearch={this.props.updateSearch} />              
-            </Grid>
-            <Grid item xs="10">
-              <h2>
-                <Editable
-                  text={this.props.title}
-                  update={(t) => {this.updateTitle(t)}} />
-              </h2>
-            </Grid>
-            <Grid item xs="2"><Trash /></Grid>
-            <Grid item xs="10">Started {created}, last updated {modified}</Grid>
-          </Grid>
-        </div>
-        <DownloadOptions />
-      </div>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Title</TableCell>
+            <TableCell>Tweet Count</TableCell>
+            <TableCell>Created</TableCell>
+            <TableCell>Last Update</TableCell>
+            <TableCell>Active</TableCell>
+            <TableCell>Archive</TableCell>
+            <TableCell>Delete</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableRow>
+          <TableCell>
+            <Editable
+              text={this.props.title}
+              update={(t) => {this.updateTitle(t)}} />
+          </TableCell>
+          <TableCell>
+            <ion-icon name="logo-twitter"></ion-icon>
+            &nbsp;
+            { this.props.search.tweetCount.toLocaleString() }
+          </TableCell>
+          <TableCell>
+            {created}
+          </TableCell>
+          <TableCell>
+            {modified}
+          </TableCell>
+          <TableCell>
+            <SearchToggle
+              active={this.props.search.active}
+              id={this.props.search.id}
+              searches={this.props.searches}
+              user={this.props.user}
+              updateSearch={this.props.updateSearch} />  
+          </TableCell>
+          <TableCell>
+            <DownloadOptions />
+          </TableCell>
+          <TableCell>
+            <Trash
+              id={this.props.search.id}
+              deleteSearch={(id) => {this.delete(id)}} />
+          </TableCell>
+        </TableRow>
+      </Table>
     )
   }
 
@@ -75,5 +116,6 @@ SearchInfo.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   updateSearch: PropTypes.func,
+  deleteSearch: PropTypes.func,
   createArchive: PropTypes.func
 }

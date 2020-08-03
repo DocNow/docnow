@@ -2,6 +2,7 @@ import moment from 'moment'
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import DownloadOptions from '../containers/DownloadOptions'
 
 import Table from '@material-ui/core/Table'
 import TableBody from '@material-ui/core/TableBody'
@@ -45,6 +46,7 @@ export default class SearchList extends Component {
             <TableCell>Created</TableCell>
             <TableCell>Last Update</TableCell>
             <TableCell>Active</TableCell>
+            <TableCell>Archive</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
         </TableHead>
@@ -77,6 +79,13 @@ export default class SearchList extends Component {
                   user={this.props.user}
                   searches={this.props.searches}
                   updateSearch={this.props.updateSearch} />
+              </TableCell>
+              <TableCell>
+                <DownloadOptions
+                  id={search.id}
+                  active={search.active}
+                  archived={search.archived}
+                  archiveStarted={search.archiveStarted}/>
               </TableCell>
               <TableCell>
                 <Trash
