@@ -169,19 +169,12 @@ describe('database', () => {
     testSearch = search
   })
 
-  /*
-
-  it('should import from search', function(done) {
-    db.importFromSearch(testSearch, 200)
-      .then((num) => {
-        ok(num > 0, 'search found tweets')
-        done()
-      })
-      .catch((err) => {
-        console.log(err)
-      })
+  it('should import from search', async () => {
+    const numTweets = await db.importFromSearch(testSearch, 200)
+    ok(numTweets > 0, 'search found tweets')
   })
 
+  /*
   it('should get tweets', (done) => {
     // wait for indices to sync before querying
     setTimeout(() => {

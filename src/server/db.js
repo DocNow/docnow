@@ -1,7 +1,6 @@
 import '../env'
 
 import knex from 'knex'
-import uuid from 'uuid/v4'
 import elasticsearch from 'elasticsearch'
 import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
          tweetsCountKey, urlsKey } from './redis'
@@ -493,13 +492,13 @@ export class Database {
     }
   }
 
-  importFromSearch(search, maxTweets = 1000) {
+  async importFromSearch(search, maxTweets = 1000) {
     let count = 0
     let totalCount = search.count || 0
     let maxTweetId = null
 
     const queryParts = []
-    for (const term of search.query) {
+    for (const term of search.queries[0]) {
       if (term.type === 'keyword') {
         queryParts.push(term.value)
       } else if (term.type === 'user') {
@@ -515,39 +514,28 @@ export class Database {
     }
     const q = queryParts.join(' OR ')
 
+    const user = await this.getUser(search.creator)
+    const newSearch = await this.updateSearch({...search, active: true})
+    const twtr = await this.getTwitterClientForUser(user)
     return new Promise((resolve, reject) => {
-      this.getUser(search.creator).then((user) => {
-        this.updateSearch({...search, active: true})
-          .then((newSearch) => {
-            this.getTwitterClientForUser(user)
-              .then((twtr) => {
-                twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, (err, results) => {
-                  if (err) {
-                    reject(err)
-                  } else if (results.length === 0) {
-                    newSearch.count = totalCount
-                    newSearch.maxTweetId = maxTweetId
-                    newSearch.active = false
-                    this.updateSearch(newSearch)
-                      .then(() => {resolve(count)})
-                  } else {
-                    count += results.length
-                    totalCount += results.length
-                    if (maxTweetId === null) {
-                      maxTweetId = results[0].id
-                    }
-                    this.loadTweets(search, results)
-                      .then(() => {
-                        log.info('bulk loaded ' + results.items + ' objects')
-                      })
-                  }
-                })
-              })
-          })
-          .catch((e) => {
-            log.error('unable to update search: ', e)
-          })
-      })
+      twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, async (err, results) => {
+        if (err) {
+          reject(err)
+        } else if (results.length === 0) {
+          newSearch.count = totalCount
+          newSearch.maxTweetId = maxTweetId
+          newSearch.active = false
+          await this.updateSearch(newSearch)
+          resolve(count)
+        } else {
+          count += results.length
+          totalCount += results.length
+          if (maxTweetId === null) {
+            maxTweetId = results[0].id
+          }
+          await this.loadTweets(search, results)
+          log.info('bulk loaded ' + results.items + ' objects')
+        }
     })
   }
 
