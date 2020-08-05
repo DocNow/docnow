@@ -45,9 +45,9 @@ export default class InsightsBody extends Component {
       ? this.makeEmptyCardFor("webpages")
       : (<Card raised className={card.Card} >
         <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
-          {this.props.webpages.slice(0, 50).map(w => {
+          {this.props.webpages.slice(0, 50).map((w, i) => {
             if (w.image) {
-              return <div className={insightsStyle.WebPreview}>
+              return <div key={`wp${i}`} className={insightsStyle.WebPreview}>
                 <a key={w.url} rel="noopener noreferrer" target="_blank" href={w.url}>
                   <span><img src={w.image} width="200" onError={(e) => {
                     e.target.src = docImg
