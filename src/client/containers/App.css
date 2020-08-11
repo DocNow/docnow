@@ -10,11 +10,13 @@
   color: #000;
   font-size: 14pt;
   font-stretch: expanded;
-  font-weight: 300;
   margin-top: 5px;
   margin-bottom: 5px;
 }
 
+.App h2 a {
+  color: #0f1282;
+}
 .App h1 {
   text-transform: uppercase;
 }
@@ -40,4 +42,12 @@
 
 .AppUnder780px main {
   margin: 0px;
+}
+main {
+  background-color: #0f1282;;
+  min-height: 90vh;
+}
+
+table {
+  background-color: #fff;
 }
