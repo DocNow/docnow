@@ -1,10 +1,12 @@
 .Holder {
   margin: 45px auto;
-  max-width: 80%;
-
+  max-width: 90%;
+  background-color: #002984;
   line-height: 0;
-  column-count: 5;
-  column-gap: 0px;
+  column-width: 300px;
+  column-count: auto;
+  column-gap: 5px;
+  padding: 5px 5px 5px 5px;
 }
 
 .Controls {
