@@ -1,11 +1,11 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import TweetList from '../Explore/TweetList'
 import UserList from '../Explore/UserList'
 import HashtagChart from '../Explore/HashtagChart'
 import ImageList from '../Explore/ImageList'
 import VideoList from '../Explore/VideoList'
+import TweetEmbed from 'react-tweet-embed'
 
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -45,9 +45,9 @@ export default class InsightsBody extends Component {
       ? this.makeEmptyCardFor("webpages")
       : (<Card raised className={card.Card} >
         <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
-          {this.props.webpages.slice(0, 50).map(w => {
+          {this.props.webpages.slice(0, 50).map((w, i) => {
             if (w.image) {
-              return <div className={insightsStyle.WebPreview}>
+              return <div key={`wp${i}`} className={insightsStyle.WebPreview}>
                 <a key={w.url} rel="noopener noreferrer" target="_blank" href={w.url}>
                   <span><img src={w.image} width="200" onError={(e) => {
                     e.target.src = docImg
@@ -103,7 +103,9 @@ export default class InsightsBody extends Component {
       <div className={card.CardHolder} style={style}>
         <Card raised className={card.Card} >
           <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
-            <TweetList tweets={this.props.search.tweets.slice(0, 50)}/>
+            {this.props.search.tweets.slice(0, 10).map((t, i) => {
+              return <TweetEmbed key={`t${i}`} id={t.id} />
+            })}
           </CardContent>
           <CardActions>
             <h2 className={insightsStyle.CardLink}>

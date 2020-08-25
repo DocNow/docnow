@@ -95,7 +95,11 @@ export default class SearchInfo extends Component {
               updateSearch={this.props.updateSearch} />  
           </TableCell>
           <TableCell>
-            <DownloadOptions />
+            <DownloadOptions
+              id={this.props.search.id}
+              active={this.props.search.active}
+              archived={this.props.search.archived}
+              archiveStarted={this.props.search.archiveStarted}/>
           </TableCell>
           <TableCell>
             <Trash

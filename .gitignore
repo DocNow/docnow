@@ -3,3 +3,4 @@ env.sh
 dump.rdb
 *.log
 .env*
+.DS_Store
