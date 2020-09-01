@@ -68,6 +68,7 @@ exports.up = knex => {
       table.boolean('active').defaultTo(false)
       table.boolean('archived').defaultTo(false)
       table.boolean('archiveStarted').defaultTo(false)
+      table.string('maxTweetId', 30)
       table.foreign('user_id').references('id').inTable('user')
     })
 

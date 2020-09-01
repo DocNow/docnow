@@ -10,6 +10,7 @@ import Place from './models/Place'
 import User from './models/User'
 import Trend from './models/Trend'
 import Search from './models/Search'
+import Tweet from './models/Tweet'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -391,14 +392,9 @@ export class Database {
     }
   }
 
-  async deleteSearch(search) {
+  deleteSearch(search) {
     log.info('deleting search', {id: search.id})
-    const resp = await this.es.delete({
-      index: this.getIndex(SEARCH),
-      type: SEARCH,
-      id: search.id
-    })
-    return resp && resp.result === 'deleted'
+    return Search.query().del(search.id)
   }
 
   async getUserSearches(user) {
@@ -444,7 +440,10 @@ export class Database {
 
   updateSearch(search) {
     search.updated = new Date()
-    return this.add(SEARCH, search.id, search)
+    return Search.query().upsertGraphAndFetch(
+      search, 
+      {relate: true, unrelate: true}
+    )
   }
 
   async getSearchSummary(search) {
@@ -493,12 +492,18 @@ export class Database {
   }
 
   async importFromSearch(search, maxTweets = 1000) {
-    let count = 0
-    let totalCount = search.count || 0
-    let maxTweetId = null
 
+    // get the a twitter client for the user
+    const user = await this.getUser(search.creator.id)
+    const twtr = await this.getTwitterClientForUser(user)
+
+    // flag the search as active or running
+    await this.updateSearch({id: search.id, active: true})
+   
+    // determine the query to run
+    const lastQuery = search.queries[search.queries.length - 1]
     const queryParts = []
-    for (const term of search.queries[0]) {
+    for (const term of lastQuery.value.or) {
       if (term.type === 'keyword') {
         queryParts.push(term.value)
       } else if (term.type === 'user') {
@@ -514,86 +519,71 @@ export class Database {
     }
     const q = queryParts.join(' OR ')
 
-    const user = await this.getUser(search.creator)
-    const newSearch = await this.updateSearch({...search, active: true})
-    const twtr = await this.getTwitterClientForUser(user)
+    // run the search!
+    let maxTweetId = null
+    let count = 0
     return new Promise((resolve, reject) => {
       twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, async (err, results) => {
         if (err) {
           reject(err)
         } else if (results.length === 0) {
-          newSearch.count = totalCount
-          newSearch.maxTweetId = maxTweetId
-          newSearch.active = false
-          await this.updateSearch(newSearch)
+          await this.updateSearch({
+            id: search.id,
+            maxTweetId: maxTweetId,
+            active: false
+          })
           resolve(count)
         } else {
-          count += results.length
-          totalCount += results.length
           if (maxTweetId === null) {
             maxTweetId = results[0].id
           }
           await this.loadTweets(search, results)
-          log.info('bulk loaded ' + results.items + ' objects')
+          count += results.length
+          log.info(`bulk loaded ${results.length} tweets`)
         }
+      })
     })
   }
 
-  loadTweets(search, tweets) {
-    return new Promise((resolve, reject) => {
-      const bulk = []
-      const seenUsers = new Set()
+  async loadTweets(search, tweets) {
 
-      for (const tweet of tweets) {
+    // const users = new Map()
+    const tweetRows = []
+    // to do: need to insert users
+    // const userRows = []
 
-        this.tallyTweet(search, tweet)
+    for (const tweet of tweets) {
 
-        for (const url of tweet.urls) {
-          urlFetcher.add(search, url.long, tweet.id)
-        }
+      this.tallyTweet(search, tweet)
 
-        tweet.search = search.id
-        const id = search.id + ':' + tweet.id
-
-        bulk.push(
-          {
-            index: {
-              _index: this.getIndex(TWEET),
-              _type: 'tweet',
-              _id: id
-            }
-          },
-          tweet
-        )
-        if (! seenUsers.has(tweet.user.id)) {
-          bulk.push(
-            {
-              index: {
-                _index: this.getIndex(TWUSER),
-                _type: 'twuser',
-                _id: tweet.user.id,
-              }
-            },
-            tweet.user
-          )
-          seenUsers.add(tweet.user.id)
-        }
+      for (const url of tweet.urls) {
+        urlFetcher.add(search, url.long, tweet.id)
       }
 
-      this.es.bulk({
-        body: bulk,
-        refresh: 'wait_for'
-      }).then((resp) => {
-        if (resp.errors) {
-          reject('indexing error check elasticsearch log')
-        } else {
-          resolve(resp)
-        }
-      }).catch((elasticErr) => {
-        log.error(elasticErr.message)
-        reject(elasticErr.message)
+      tweetRows.push({
+        searchId: search.id,
+        tweetId: tweet.id,
+        screenName: tweet.user.screenName,
+        text: tweet.text,
+        retweetId: tweet.retweetId,
+        quoteId: tweet.quoteId,
+        retweetCount: tweet.retweetCount,
+        replyCount: tweet.replyCount,
+        quoteCount: tweet.quoteCount,
+        likeCount: tweet.likeCount,
+        replyToTweetId: tweet.replyToTweetId,
+        replyToUserId: tweet.replyToUserId,
+        imageCount: tweet.imageCount,
+        videoCount: tweet.videoCount,
+        language: tweet.language,
+        json: tweet
       })
-    })
+
+      // users[tweet.user.id] = tweet.user
+    }
+
+    const results = await Tweet.query().insert(tweetRows)  
+    return results.length
   }
 
   tallyTweet(search, tweet) {
@@ -607,7 +597,17 @@ export class Database {
     }
   }
 
-  getTweets(search, includeRetweets = true, offset = 0) {
+  // getTweets(search, includeRetweets = true, offset = 0) {
+  getTweets(search, includeRetweets = true) {
+    const where = {
+      searchId: search.id
+    }
+    if (! includeRetweets) {
+      where.retweetId = null
+    }
+    return Tweet.query().select().where(where)
+
+    /*
     const body = {
       from: offset,
       size: 100,
@@ -643,6 +643,7 @@ export class Database {
         reject(err)
       })
     })
+    */
   }
 
   async getAllTweets(search, cb) {

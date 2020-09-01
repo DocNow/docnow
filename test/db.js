@@ -174,33 +174,27 @@ describe('database', () => {
     ok(numTweets > 0, 'search found tweets')
   })
 
-  /*
-  it('should get tweets', (done) => {
-    // wait for indices to sync before querying
-    setTimeout(() => {
-      db.es.indices.refresh({index: '_all'})
-        .then(() => {
-          db.getTweets(testSearch).then((tweets) => {
-            ok(tweets.length >= 100, 'tweets.length')
-            ok(tweets[0].id, 'tweets[0].id')
-            done()
-          })
-        })
-      }, 200)
+  it('should get tweets and retweets', async () => {
+    const tweets = await db.getTweets(testSearch)
+    ok(tweets.length >= 100, 'tweets.length')
+    ok(tweets[0].id, 'tweets[0].id')
+
+    const retweets = await db.getTweets(testSearch, false)
+    ok(retweets.length < tweets.length)
+    ok(retweets[0].retweetId == null) 
   })
 
   it('should import more from search', function(done) {
-    // test assumes someone will tweet about obama aggregations
-    // 5 seconds from now...
-    db.getSearch(testSearch.id).then((search) => {
-      db.importFromSearch(search)
-        .then((num) => {
-          ok(num > 0)
-          done()
-        })
-      })
+    // assumes someone tweeted about obama in 5 seconds, but not more than 100
+    setTimeout(async () => {
+      const search = await db.getSearch(testSearch.id)
+      const num = await db.importFromSearch(search)
+      ok(num > 0 && num < 100)
+      done()
+    }, 5000)
   })
 
+  /*
   it('should get summary', (done) => {
     db.getSearch(testSearch.id).then((search) => {
       db.getSearchSummary(search).then((summ) => {
