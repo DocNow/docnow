@@ -207,9 +207,12 @@ export class Twitter {
     return ({
       id: t.id_str,
       text: decode(text),
+      language: t.lang,
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
+      retweetId: retweet ? retweet.id : null,
+      quoteId: quote ? quote.id : null,
       client: t.source ? t.source.match(/>(.+?)</)[1] : null,
       user: {
         id: t.user.id_str,

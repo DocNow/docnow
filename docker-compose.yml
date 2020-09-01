@@ -20,6 +20,7 @@ services:
       - bootstrap.memory_lock=true
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
       - xpack.security.enabled=false
+      - discovery.type=single-node
     ulimits:
       memlock:
         soft: -1
