@@ -20,7 +20,6 @@ import knexfile from '../../knexfile'
 
 // elasticsearch doc types
 
-const TREND = 'trend'
 const TWEET = 'tweet'
 
 const urlFetcher = new UrlFetcher()
@@ -303,33 +302,6 @@ export class Database {
       }
     }
     return results
-  }
-
-  saveTrends(trends) {
-    const body = []
-    for (const trend of trends) {
-      trend.id = addPrefix('trend', trend.id)
-      trend.placeId = addPrefix('place', stripPrefix(trend.id))
-      body.push(
-        {
-          index: {
-            _index: this.getIndex(TREND),
-            _type: 'trend',
-            _id: trend.id
-          },
-          refresh: 'wait_for'
-        },
-        trend
-      )
-    }
-    return new Promise((resolve, reject) => {
-      this.es.bulk({body: body, refresh: 'wait_for'})
-        .then(() => {resolve(trends)})
-        .catch((err) => {
-          log.error('bulk insert failed', err)
-          reject(err)
-        })
-    })
   }
 
   async loadPlaces() {
