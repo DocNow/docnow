@@ -84,12 +84,13 @@ export class Archive {
 
   async getAllTweetIds(search) {
     const tweets = []
-    await this.db.getAllTweets(search, (tweet) => {
+    for (const tweet of await this.db.getAllTweets(search)) {
       tweets.push({
         id: tweet.id,
         retweet: tweet.retweet ? true : false
       })
-    })
+    }
+    
     return tweets
   }
 
