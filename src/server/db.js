@@ -1028,11 +1028,11 @@ export class Database {
   }
 
   async getSystemStats() {
-    const tweetCount = await Tweet.query().select('id').count()
-    const userCount = await User.query().select('id').count()
+    const tweets = await Tweet.query().count().first()
+    const users = await User.query().count().first()
     return {
-      tweetCount: tweetCount,
-      userCount: userCount
+      tweetCount: tweets.count,
+      userCount: users.count
     }
   }
 
