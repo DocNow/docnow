@@ -22,7 +22,6 @@ import knexfile from '../../knexfile'
 
 const TREND = 'trend'
 const TWEET = 'tweet'
-const TWUSER = 'twuser'
 
 const urlFetcher = new UrlFetcher()
 
@@ -1029,29 +1028,10 @@ export class Database {
   }
 
   async getSystemStats() {
-    let result = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: {
-        query: {match_all: {}}
-      }
-    })
-    const tweetCount = result.hits.total
-
-    result = await this.es.search({
-      index: this.getIndex(TWUSER),
-      type: TWUSER,
-      body: {
-        query: {match_all: {}}
-      }
-    })
-    const twitterUserCount = result.hits.total
-
-    const userCount = User.query().select().count()
-
+    const tweetCount = await Tweet.query().select('id').count()
+    const userCount = await User.query().select('id').count()
     return {
       tweetCount: tweetCount,
-      twitterUserCount: twitterUserCount,
       userCount: userCount
     }
   }

@@ -281,19 +281,16 @@ describe('database', () => {
         done()
       })
   })
+  */
 
   it('should get stats', async() => {
     const stats = await db.getSystemStats()
     ok(stats.tweetCount > 0, 'stats.tweetCount')
-    ok(stats.twitterUserCount > 0, 'stats.twitterUserCount')
     ok(stats.userCount > 0, 'stats.userCount')
   })
-
-  */
 
   it('should close', async() => {
     await db.close()
   })
-
 
 })
