@@ -84,6 +84,7 @@ exports.up = knex => {
       table.increments('id').primary()
       table.string('tweetId', 30).notNullable()
       table.integer('searchId').notNullable()
+      table.datetime('created').notNullable()
       table.string('screenName').notNullable()
       table.text('text').notNullable()
       table.string('retweetId', 30)
