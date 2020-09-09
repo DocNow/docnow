@@ -194,7 +194,6 @@ describe('database', () => {
     }, 5000)
   })
 
-  /*
   it('should get summary', (done) => {
     db.getSearch(testSearch.id).then((search) => {
       db.getSearchSummary(search).then((summ) => {
@@ -207,16 +206,15 @@ describe('database', () => {
     })
   })
 
-  it('should get twitter users', (done) => {
-    db.getTwitterUsers(testSearch).then((users) => {
-      ok(users.length > 0, 'users.length')
-      ok(users[0].screenName, 'users[0].screenName')
-      ok(users[0].tweetsInSearch > 0, 'users[0].tweetsInSearch')
-      ok(users[0].tweetsInSearch >= users[1].tweetsInSearch)
-      done()
-    })
+  it('should get twitter users', async () => {
+    const users = await db.getTwitterUsers(testSearch)
+    ok(users.length > 0, 'users.length')
+    ok(users[0].screenName, 'users[0].screenName')
+    ok(users[0].tweetsInSearch > 0, 'users[0].tweetsInSearch')
+    ok(users[0].tweetsInSearch >= users[1].tweetsInSearch)
   })
 
+  /*
   it('should get hashtags', (done) => {
     db.getHashtags(testSearch).then((hashtags) => {
       // hopefully the test search pulled in some tweets with hashtags?

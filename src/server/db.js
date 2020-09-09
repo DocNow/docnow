@@ -20,7 +20,6 @@ import knexfile from '../../knexfile'
 
 // elasticsearch doc types
 
-const SEARCH = 'search'
 const TREND = 'trend'
 const TWEET = 'tweet'
 const TWUSER = 'twuser'
@@ -398,27 +397,14 @@ export class Database {
   }
 
   async getUserSearches(user) {
-    const body = {
-      query: {
-        bool: {
-          must: [
-            {match: {creator: user.id}},
-            {match: {saved: true}}
-          ]
-        }
-      },
-      sort: [{created: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(SEARCH),
-      type: SEARCH,
-      body: body
-    })
+    const results = await Search.query()
+      .where('userId', '=', user.id)
+      .withGraphJoined('creator')
+      .withGraphJoined('queries')
 
+    // add stats to each search
     const searches = []
-
-    for (const hit of resp.hits.hits) {
-      const search = hit._source
+    for (const search of results) {
       const stats = await this.getSearchStats(search)
       searches.push({
         ...search,
@@ -447,31 +433,20 @@ export class Database {
   }
 
   async getSearchSummary(search) {
-    const body = {
-      query: {
-        match: {
-          search: search.id
-        }
-      },
-      aggregations: {
-        minDate: {min: {field: 'created'}},
-        maxDate: {max: {field: 'created'}}
-      }
-    }
-
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
+    const results = await Tweet.query()
+      .min('created')
+      .max('created')
+      .count('id')
+      .where('searchId', search.id)
 
     const stats = await this.getSearchStats(search)
 
     return {
       ...search,
       ...stats,
-      minDate: new Date(resp.aggregations.minDate.value),
-      maxDate: new Date(resp.aggregations.maxDate.value)
+      count: results[0].count,
+      minDate: results[0].min,
+      maxDate: results[0].max
     }
   }
 
@@ -563,6 +538,7 @@ export class Database {
       tweetRows.push({
         searchId: search.id,
         tweetId: tweet.id,
+        created: tweet.created,
         screenName: tweet.user.screenName,
         text: tweet.text,
         retweetId: tweet.retweetId,
@@ -582,7 +558,8 @@ export class Database {
       // users[tweet.user.id] = tweet.user
     }
 
-    const results = await Tweet.query().insert(tweetRows)  
+    const results = await Tweet.query().insert(tweetRows)
+
     return results.length
   }
 
@@ -606,67 +583,10 @@ export class Database {
       where.retweetId = null
     }
     return Tweet.query().select().where(where)
-
-    /*
-    const body = {
-      from: offset,
-      size: 100,
-      query: {
-        bool: {
-          must: {
-            term: {
-              search: search.id
-            }
-          }
-        }
-      },
-      sort: {
-        created: 'desc'
-      }
-    }
-
-    // adjust the query and sorting if they don't want retweets
-    if (! includeRetweets) {
-      body.query.bool.must_not = {exists: {field: 'retweet'}}
-      body.sort = [{retweetCount: 'desc'}, {created: 'desc'}]
-    }
-
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        resolve(response.hits.hits.map((h) => {return h._source}))
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
-    */
   }
 
-  async getAllTweets(search, cb) {
-
-    let response = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      q: 'search:' + search.id,
-      scroll: '1m',
-      size: 100
-    })
-
-    response.hits.hits.map((hit) => {cb(hit._source)})
-    const scrollId = response._scroll_id
-
-    while (true) {
-      response = await this.es.scroll({scrollId: scrollId, scroll: '1m'})
-      if (response.hits.hits.length === 0) {
-        break
-      }
-      response.hits.hits.map((hit) => {cb(hit._source)})
-    }
-
+  async getAllTweets(search) {
+    return Tweet.query().where('searchId', search.id)
   }
 
   async getTweetsForUrl(search, url) {
@@ -767,60 +687,37 @@ export class Database {
     return resp.hits.hits.map((h) => {return h._source})
   }
 
-  getTwitterUsers(search) {
+  async getTwitterUsers(search) {
 
     // first get the user counts for tweets
 
-    let body = {
-      query: {match: {search: search.id}},
-      aggregations: {users: {terms: {field: 'user.screenName', size: 100}}}
+    let userCounts = await Tweet.query()
+      .select('screenName')
+      .count('* as total')
+      .where('searchId', search.id)
+      .groupBy('screenName')
+      .orderBy('total', 'DESC')
+      .limit(100)
+
+    // turn database results into a map of screename -> total
+    userCounts = new Map(userCounts.map(r => [r.screenName, r.total]))
+
+    // it might be more efficient to model users on import? 
+    // but perhaps its better to pull them out adhoc until
+    // we actually have a conversaton with them?
+
+    const users = await Tweet.query()
+      .select('json', 'screenName')
+      .where('searchId', search.id)
+      .whereIn('screenName', Array.from(userCounts.keys()))
+      .limit(100)
+
+    const results = []
+    for (const u of users) {
+      results.push({...u.json.user, tweetsInSearch: userCounts.get(u.screenName)})
     }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response1) => {
 
-        // with the list of users get the user information for them
-        const counts = new Map()
-        const buckets = response1.aggregations.users.buckets
-        buckets.map((c) => {counts.set(c.key, c.doc_count)})
-        const screenNames = Array.from(counts.keys())
-
-        body = {
-          size: 100,
-          query: {
-            constant_score: {
-              filter: {
-                terms: {
-                  'screenName': screenNames
-                }
-              }
-            }
-          }
-        }
-        this.es.search({
-          index: this.getIndex(TWUSER),
-          type: TWUSER,
-          body: body
-        }).then((response2) => {
-          const users = response2.hits.hits.map((h) => {return h._source})
-
-          // add the tweet counts per user that we got previously
-          for (const user of users) {
-            user.tweetsInSearch = counts.get(user.screenName)
-          }
-
-          // sort them by their counts
-          users.sort((a, b) => {return b.tweetsInSearch - a.tweetsInSearch})
-          resolve(users)
-        })
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+    return results
   }
 
   getHashtags(search) {
