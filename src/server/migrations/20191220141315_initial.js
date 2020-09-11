@@ -77,7 +77,10 @@ exports.up = knex => {
       table.integer('searchId').notNullable()
       table.datetime('created').defaultsTo(knex.fn.now())
       table.json('value').notNullable()
-      table.foreign('searchId').references('id').inTable('search')
+      table.foreign('searchId')
+        .references('id')
+        .inTable('search')
+        .onDelete('CASCADE')
     })
 
     .createTable('tweet', table => {
@@ -99,7 +102,33 @@ exports.up = knex => {
       table.integer('videoCount').defaultsTo(0)
       table.string('language', 10).notNullable()
       table.jsonb('json').notNullable()
-      table.foreign('searchId').references('id').inTable('search')
+      table.foreign('searchId')
+        .references('id')
+        .inTable('search')
+        .onDelete('CASCADE')
+    })
+
+    .createTable('tweetHashtag', table => {
+      table.integer('tweetId').notNullable()
+      table.string('name', 255).notNullable()
+      table.primary(['tweetId', 'name'])
+      table.index('name')
+      table.foreign('tweetId')
+        .references('id')
+        .inTable('tweet')
+        .onDelete('CASCADE')
+    })
+
+    .createTable('tweetUrl', table => {
+      table.integer('tweetId').notNullable()
+      table.string('url', 1024).notNullable()
+      table.enu('type', ['page', 'image', 'video']).notNullable()
+      table.primary(['tweetId', 'url', 'type'])
+      table.index('url')
+      table.foreign('tweetId')
+        .references('id')
+        .inTable('tweet')
+        .onDelete('CASCADE')
     })
 
     .createTable('webpage', table => {
@@ -111,26 +140,6 @@ exports.up = knex => {
       table.text('image')
     })
 
-    .createTable('tweetWebpage', table => {
-      table.integer('tweetId').notNullable()
-      table.integer('webpageId').notNullable()
-      table.foreign('tweetId').references('id').inTable('tweet')
-      table.foreign('webpageId').references('id').inTable('webpage')
-      table.primary(['tweetId', 'webpageId'])
-    })
-
-    .createTable('hashtag', table => {
-      table.string('name', 255).primary()
-      table.datetime('created').defaultsTo(knex.fn.now())
-    })
-
-    .createTable('tweetHashtag', table => {
-      table.integer('tweetId').notNullable()
-      table.string('hashtagName', 255).notNullable()
-      table.foreign('tweetId').references('id').inTable('tweet')
-      table.foreign('hashtagName').references('name').inTable('hashtag')
-      table.primary(['tweetId', 'hashtagName'])
-    })
 }
 
 exports.down = async (knex) => {
@@ -154,13 +163,11 @@ exports.down = async (knex) => {
     .table('tweet', table => {
       table.dropForeign(null, 'tweet_searchid_foreign')
     })
-    .table('tweet_webpage', table => {
-      table.dropForeign(null, 'tweetwebpage_tweetid_foreign')
-      table.dropForeign(null, 'tweetwebpage_webpageid_foreign')
+    .table('tweet_url', table => {
+      table.dropForeign(null, 'tweeturl_tweetid_foreign')
     })
     .table('tweet_hashtag', table => {
       table.dropForeign(null, 'tweethashtag_tweetid_foreign')
-      table.dropForeign(null, 'tweethashtag_hashtagname_foreign')
     })
     .dropTable('setting')
     .dropTable('userPlace')
@@ -171,7 +178,6 @@ exports.down = async (knex) => {
     .dropTable('query')
     .dropTable('tweet')
     .dropTable('webpage')
-    .dropTable('hashtag')
     .dropTable('tweetHashtag')
-    .dropTable('tweetWebpage')
+    .dropTable('tweetUrl')
 }

@@ -7,6 +7,7 @@ describe('database', () => {
 
   let testUser = null
   let testSearch = null
+  let testVideoSearch = null
 
   it('should clear', (done) => {
     db.clear().then(done)
@@ -214,7 +215,6 @@ describe('database', () => {
     ok(users[0].tweetsInSearch >= users[1].tweetsInSearch)
   })
 
-  /*
   it('should get hashtags', (done) => {
     db.getHashtags(testSearch).then((hashtags) => {
       // hopefully the test search pulled in some tweets with hashtags?
@@ -226,45 +226,89 @@ describe('database', () => {
     })
   })
 
-  it('should get urls', (done) => {
-    db.getUrls(testSearch).then((urls) => {
-      ok(urls.length > 0)
-      ok(urls[0].url.match(/^http/))
-      ok(urls[0].count > 0)
-      done()
-    })
+  it('should get urls', async () => {
+    // assumes that the collected tweets had at least one url
+    const urls = await db.getUrls(testSearch)
+    ok(urls.length > 0, 'got a url')
+    ok(urls[0].url.match(/^http/), 'looks like a url')
+    ok(urls[0].count > 0, 'the url count is set')
   })
 
-  it('should get images', (done) => {
-    db.getImages(testSearch).then((images) => {
-      if (images.length > 0) {
-        ok(images[0].url, 'image.url')
-      }
-      done()
-    })
+  it('should get images', async () => {
+    // assumes that the collected tweets had at least one image 
+    const images = await db.getImages(testSearch)
+    ok(images.length > 0, 'got an image')
+    ok(images[0].url, 'image.url')
+    ok(images[0].count > 0)
   })
 
-  it('should get videos', (done) => {
-    db.getVideos(testSearch).then((videos) => {
-      if (videos.length > 0) {
-        ok(videos[0].url, 'video.url')
+  it('should get videos', async () => {
+
+    // create a twitter query for some music videos?
+    const q = {
+      value: {
+        or: [
+          {type: 'keyword', value: 'music'},
+          {type: 'keyword', value: 'filter:videos'}
+        ]
       }
-      done()
+    }
+
+    testVideoSearch = await db.createSearch({
+      userId: testUser.id,
+      title: 'Video Test',
+      description: 'This is a test search for videos!',
+      active: true,
+      queries: [q]
     })
+
+    // fetch full representation from the database
+    testVideoSearch = await db.getSearch(testVideoSearch.id)
+
+    // do a search
+    const numTweets = await db.importFromSearch(testVideoSearch, 200)
+
+    // get the videos
+    const videos = await db.getVideos(testVideoSearch)
+
+    ok(videos.length > 0)
+    ok(videos[0].url, 'video.url')
+    ok(videos[0].count, 'videos.count')
+  })
+
+  it('should get tweets for url', async () => {
+    // get a url to test with
+    const urls = await db.getUrls(testSearch)
+    const url = urls[0].url
+
+    const tweets = await db.getTweetsForUrl(testSearch, url)
+    ok(tweets.length > 0)
+  })
+
+  it('should get tweets for image', async () => {
+    // get a url to test with
+    const images = await db.getImages(testSearch)
+    const image = images[0].url
+
+    const tweets = await db.getTweetsForImage(testSearch, image)
+    ok(tweets.length > 0)
+  })
+
+  it('should get tweets for video', async () => {
+    // get a url to test with
+    const videos = await db.getVideos(testVideoSearch)
+    const video = videos[0].url
+
+    const tweets = await db.getTweetsForVideo(testVideoSearch, video)
+    ok(tweets.length > 0)
   })
 
   it('should get users', async () => {
-
-    // save the search so it is returned with the user's searches
-    await db.updateSearch({...testSearch, saved: true})
-
     const users = await db.getUsers()
-    if (users.length == 1) {
-      ok(users[0].id, 'user.id')
-      ok(users[0].searches.length > 0, 'user.searches')
-      ok(users[0].searches[0].id, 'search.id')
-      ok(users[0].searches[0].tweetCount > 0, 'search.tweetCount')
-    }
+    ok(users[0].id, 'user.id')
+    ok(users[0].searches.length > 0, 'user.searches')
+    ok(users[0].searches[0].id, 'search.id')
+    ok(users[0].searches[0].tweetCount > 0, 'search.tweetCount')
   })
 
   it('should delete', async () => {
@@ -272,16 +316,10 @@ describe('database', () => {
     ok(result, 'delete return value')
   })
 
-  it('should be deleted', (done) => {
-    // fetching the search should throw an exception
-    db.getSearch(testSearch.id)
-      .then(() => {})
-      .catch((e) => {
-        ok(e.message === 'Not Found', 'search not found')
-        done()
-      })
+  it('should be deleted', async () => {
+    const result = await db.getSearch(testSearch.id)
+    ok(result === null)
   })
-  */
 
   it('should get stats', async() => {
     const stats = await db.getSystemStats()

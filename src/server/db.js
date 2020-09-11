@@ -11,11 +11,12 @@ import User from './models/User'
 import Trend from './models/Trend'
 import Search from './models/Search'
 import Tweet from './models/Tweet'
+import TweetHashtag from './models/TweetHashtag'
+import TweetUrl from './models/TweetUrl'
 
 import log from './logger'
 import { Twitter } from './twitter'
 import { UrlFetcher } from './url-fetcher'
-import { addPrefix, stripPrefix } from './utils'
 import knexfile from '../../knexfile'
 
 // elasticsearch doc types
@@ -196,6 +197,24 @@ export class Database {
   async getUsers() {
     const users = await User.query()
       .withGraphJoined('places')
+      .withGraphJoined('searches')
+
+    // this is a stop gap until redis goes away
+    // we need to add aggregate stats to each search
+    // maybe there should be a view for these?
+
+    for (const user of users) {
+      const searchesWithStats = []
+      for (const search of user.searches) {
+        const stats = await this.getSearchStats(search)
+        searchesWithStats.push({
+          ...search,
+          ...stats
+        })
+      }
+      user.searches = searchesWithStats
+    }
+
     return users
   }
 
@@ -355,6 +374,11 @@ export class Database {
       .findById(searchId)
       .withGraphJoined('creator')
       .withGraphJoined('queries')
+
+    if (! search) {
+      return null
+    }
+
     const stats = await this.getSearchStats(search)
     return {
       ...search,
@@ -364,7 +388,7 @@ export class Database {
 
   deleteSearch(search) {
     log.info('deleting search', {id: search.id})
-    return Search.query().del(search.id)
+    return Search.query().del().where('id', search.id)
   }
 
   async getUserSearches(user) {
@@ -438,7 +462,6 @@ export class Database {
   }
 
   async importFromSearch(search, maxTweets = 1000) {
-
     // get the a twitter client for the user
     const user = await this.getUser(search.creator.id)
     const twtr = await this.getTwitterClientForUser(user)
@@ -493,11 +516,7 @@ export class Database {
 
   async loadTweets(search, tweets) {
 
-    // const users = new Map()
     const tweetRows = []
-    // to do: need to insert users
-    // const userRows = []
-
     for (const tweet of tweets) {
 
       this.tallyTweet(search, tweet)
@@ -525,11 +544,41 @@ export class Database {
         language: tweet.language,
         json: tweet
       })
-
-      // users[tweet.user.id] = tweet.user
     }
 
-    const results = await Tweet.query().insert(tweetRows)
+    const results = await Tweet.query()
+      .insert(tweetRows)
+      .returning(['id', 'tweetId'])
+
+    // now we have the tweet id we can attach relevant 
+    // hashtags and urls
+
+    const hashtagRows = []
+    const urlRows = []
+    for (const row of results) {
+
+      // make sure the hashtags are unique!
+      const hashtags = new Set(row.json.hashtags)
+      for (const name of hashtags) {
+        hashtagRows.push({name: name, tweetId: row.id})
+      }
+
+      const urls = new Set(row.json.urls.map(r => r.long))
+      for (const url of urls) {
+        urlRows.push({url: url, type: 'page', tweetId: row.id})
+      }
+
+      for (const url of new Set(row.json.images)) {
+        urlRows.push({url: url, type: 'image', tweetId: row.id})
+      }
+
+      for (const url of new Set(row.json.videos)) {
+        urlRows.push({url: url, type: 'video', tweetId: row.id})
+      }
+
+    }
+    await TweetHashtag.query().insert(hashtagRows)
+    await TweetUrl.query().insert(urlRows)
 
     return results.length
   }
@@ -560,102 +609,39 @@ export class Database {
     return Tweet.query().where('searchId', search.id)
   }
 
-  async getTweetsForUrl(search, url) {
-    const ids = await urlFetcher.getTweetIdentifiers(search, url)
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [{match: {search: search.id}}],
-          filter: {terms: {id: ids}}
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
+  async getTweetsForUrl(search, url, type = 'page') {
+    const results = await Tweet.query()
+      .where({searchId: search.id, url: url, type: type})
+      .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
+      .select('json')
+      .limit(100)
+    return results.map(r => r.json)
   }
 
-  async getTweetsForImage(search, url) {
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [{match: {search: search.id}}],
-          filter: {terms: {images: [url]}}
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
+  getTweetsForImage(search, url) {
+    return this.getTweetsForUrl(search, url, 'image')
+  }
+
+  getTweetsForVideo(search, url) {
+    return this.getTweetsForUrl(search, url, 'video')
   }
 
   async getTweetsForUser(search, handle) {
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [
-            {match: {search: search.id}},
-            {match: {'user.screenName': handle}}
-          ],
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
-  }
-
-  async getTweetsForVideo(search, url) {
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [{match: {search: search.id}}],
-          filter: {terms: {videos: [url]}}
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
+    const tweets = await Tweet.query()
+      .where({searchId: search.id, screenName: handle})
+      .orderBy('id', 'DESC')
+      .limit(100)
+    
+    return tweets.map(t => t.json)
   }
 
   async getTweetsByIds(search, ids) {
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [{match: {search: search.id}}],
-          filter: {terms: {id: ids}}
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
+    const tweets = await Tweet.query()
+      .where('search', search.id)
+      .whereIn('tweetId', ids)
+      .orderBy('id', 'DESC')
+      .limit(100)
+    return tweets.map(t => t.json)
   }
 
   async getTwitterUsers(search) {
@@ -692,103 +678,58 @@ export class Database {
   }
 
   getHashtags(search) {
-    const body = {
-      size: 0,
-      query: {match: {search: search.id}},
-      aggregations: {hashtags: {terms: {field: 'hashtags', size: 100}}}
-    }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        const hashtags = response.aggregations.hashtags.buckets.map((ht) => {
-          return {hashtag: ht.key, count: ht.doc_count}
-        })
-        resolve(hashtags)
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+
+    /*
+      counts the number of times a hashtag appears in a search
+      by joining tweets and hashtags. some of the wonkiness of 
+      this query (the renaming name to hashtag) preserves the 
+      previous elasticsearch output that the rest of the 
+      application which expected:
+
+        [{hashtag: "foo", count: 12}, ...] and not
+
+      and not:
+
+        [{name: "foo", count: 12}]
+    */
+
+    return Tweet.query()
+      .where('searchId', search.id)
+      .join('tweetHashtag', 'tweet.id', 'tweetHashtag.tweetId')
+      .select('name as hashtag')
+      .count('name')
+      .groupBy('hashtag')
+      .orderBy('count', 'DESC')
   }
 
   getUrls(search) {
-    const body = {
-      size: 0,
-      query: {match: {search: search.id}},
-      aggregations: {urls: {terms: {field: 'urls.long', size: 100}}}
-    }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        const urls = response.aggregations.urls.buckets.map((u) => {
-          return {url: u.key, count: u.doc_count}
-        })
-        resolve(urls)
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+    return Tweet.query()
+      .where({searchId: search.id, type: 'page'})
+      .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
+      .select('url')
+      .count('url')
+      .groupBy('url')
+      .orderBy('count', 'DESC')
   }
 
   getImages(search) {
-    const body = {
-      size: 0,
-      query: {match: {search: search.id}},
-      aggregations: {
-        images: {
-          terms: {field: 'images', size: 100}
-        }
-      }
-    }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        const images = response.aggregations.images.buckets.map((u) => {
-          return {url: u.key, count: u.doc_count}
-        })
-        resolve(images)
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+    return Tweet.query()
+      .where({searchId: search.id, type: 'image'})
+      .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
+      .select('url')
+      .count('url')
+      .groupBy('url')
+      .orderBy('count', 'DESC')
   }
 
   getVideos(search) {
-    const body = {
-      size: 0,
-      query: {match: {search: search.id}},
-      aggregations: {
-        videos: {
-          terms: {field: 'videos', size: 100}
-        }
-      }
-    }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        const videos = response.aggregations.videos.buckets.map((u) => {
-          return {url: u.key, count: u.doc_count}
-        })
-        resolve(videos)
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+    return Tweet.query()
+      .where({searchId: search.id, type: 'video'})
+      .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
+      .select('url')
+      .count('url')
+      .groupBy('url')
+      .orderBy('count', 'DESC')
   }
 
   addUrl(search, url) {

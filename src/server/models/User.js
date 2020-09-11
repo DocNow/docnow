@@ -1,3 +1,4 @@
+const path = require('path')
 const { Model } = require('objection')
 const Place = require('./Place')
 
@@ -20,6 +21,14 @@ class User extends Model {
             extra: ['position']
           },
           to: 'place.id'
+        }
+      },
+      searches: {
+        relation: Model.HasManyRelation,
+        modelClass: path.join(__dirname, 'Search'), 
+        join: {
+          from: 'user.id',
+          to: 'search.user_id'
         }
       }
     }
