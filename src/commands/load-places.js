@@ -12,7 +12,7 @@ async function main() {
     }
   }
 
-  console.log('loaded ' + places.length + ' places.')
+  console.log(`added ${places.length} places`)
   await db.close()
 }
 

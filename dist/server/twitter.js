@@ -15,6 +15,8 @@ var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/cl
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
+require("../env");
+
 var _url = _interopRequireDefault(require("url"));
 
 var _twit = _interopRequireDefault(require("twit"));
@@ -77,7 +79,7 @@ var Twitter = /*#__PURE__*/function () {
                 type: place.placeType.name,
                 country: place.country || '',
                 countryCode: place.countryCode || '',
-                parent: place.parentid || ''
+                parentId: place.parentid || ''
               });
             }
           } catch (err) {
@@ -92,48 +94,70 @@ var Twitter = /*#__PURE__*/function () {
     }
   }, {
     key: "getTrendsAtPlace",
-    value: function getTrendsAtPlace(woeId) {
-      var _this2 = this;
+    value: function () {
+      var _getTrendsAtPlace = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(id) {
+        var trends, resp, _iterator2, _step2, trend;
 
-      _logger["default"].info('fetching trends for ' + woeId);
+        return _regenerator["default"].wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _logger["default"].info('fetching trends for ' + id);
 
-      return new Promise(function (resolve, reject) {
-        _this2.twit.get('trends/place', {
-          id: woeId
-        }).then(function (resp) {
-          var place = {
-            id: resp.data[0].locations[0].woeid,
-            name: resp.data[0].locations[0].name,
-            trends: []
-          };
+                trends = [];
+                _context.prev = 2;
+                _context.next = 5;
+                return this.twit.get('trends/place', {
+                  id: id
+                });
 
-          var _iterator2 = _createForOfIteratorHelper(resp.data[0].trends),
-              _step2;
+              case 5:
+                resp = _context.sent;
+                _iterator2 = _createForOfIteratorHelper(resp.data[0].trends);
 
-          try {
-            for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-              var trend = _step2.value;
-              place.trends.push({
-                name: trend.name,
-                tweets: trend.tweet_volume
-              });
+                try {
+                  for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                    trend = _step2.value;
+                    trends.push({
+                      name: trend.name,
+                      count: trend.tweet_volume
+                    });
+                  }
+                } catch (err) {
+                  _iterator2.e(err);
+                } finally {
+                  _iterator2.f();
+                }
+
+                _context.next = 13;
+                break;
+
+              case 10:
+                _context.prev = 10;
+                _context.t0 = _context["catch"](2);
+                console.log("error when fetching trends: ".concat(_context.t0));
+
+              case 13:
+                return _context.abrupt("return", trends);
+
+              case 14:
+              case "end":
+                return _context.stop();
             }
-          } catch (err) {
-            _iterator2.e(err);
-          } finally {
-            _iterator2.f();
           }
+        }, _callee, this, [[2, 10]]);
+      }));
 
-          resolve(place);
-        }).error(function (msg) {
-          reject(msg);
-        });
-      });
-    }
+      function getTrendsAtPlace(_x) {
+        return _getTrendsAtPlace.apply(this, arguments);
+      }
+
+      return getTrendsAtPlace;
+    }()
   }, {
     key: "search",
     value: function search(opts, cb) {
-      var _this3 = this;
+      var _this2 = this;
 
       var count = opts.count || 100;
       var params = {
@@ -154,14 +178,14 @@ var Twitter = /*#__PURE__*/function () {
           params: newParams
         });
 
-        _this3.twit.get('search/tweets', newParams).then(function (resp) {
+        _this2.twit.get('search/tweets', newParams).then(function (resp) {
           if (resp.data.errors) {
             cb(resp.data.errors[0], null);
           } else {
             var tweets = resp.data.statuses;
             var newTotal = total + tweets.length;
             cb(null, tweets.map(function (s) {
-              return _this3.extractTweet(s);
+              return _this2.extractTweet(s);
             }));
 
             if (tweets.length > 0 && newTotal < count) {
@@ -179,7 +203,7 @@ var Twitter = /*#__PURE__*/function () {
   }, {
     key: "filter",
     value: function filter(opts, cb) {
-      var _this4 = this;
+      var _this3 = this;
 
       var params = {
         track: opts.track,
@@ -193,17 +217,17 @@ var Twitter = /*#__PURE__*/function () {
 
       var stream = this.twit.stream('statuses/filter', params);
       stream.on('tweet', /*#__PURE__*/function () {
-        var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(tweet) {
+        var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(tweet) {
           var result;
-          return _regenerator["default"].wrap(function _callee$(_context) {
+          return _regenerator["default"].wrap(function _callee2$(_context2) {
             while (1) {
-              switch (_context.prev = _context.next) {
+              switch (_context2.prev = _context2.next) {
                 case 0:
-                  _context.next = 2;
-                  return cb(_this4.extractTweet(tweet));
+                  _context2.next = 2;
+                  return cb(_this3.extractTweet(tweet));
 
                 case 2:
-                  result = _context.sent;
+                  result = _context2.sent;
 
                   if (result === false) {
                     _logger["default"].info('stopping stream for: ', {
@@ -215,13 +239,13 @@ var Twitter = /*#__PURE__*/function () {
 
                 case 4:
                 case "end":
-                  return _context.stop();
+                  return _context2.stop();
               }
             }
-          }, _callee);
+          }, _callee2);
         }));
 
-        return function (_x) {
+        return function (_x2) {
           return _ref.apply(this, arguments);
         };
       }());
@@ -369,9 +393,12 @@ var Twitter = /*#__PURE__*/function () {
       return {
         id: t.id_str,
         text: decode(text),
+        language: t.lang,
         twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
         likeCount: t.favorite_count,
         retweetCount: t.retweet_count,
+        retweetId: retweet ? retweet.id : null,
+        quoteId: quote ? quote.id : null,
         client: t.source ? t.source.match(/>(.+?)</)[1] : null,
         user: {
           id: t.user.id_str,

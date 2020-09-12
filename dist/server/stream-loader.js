@@ -154,7 +154,7 @@ var StreamLoader = /*#__PURE__*/function () {
       var _startStream = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(searchId) {
         var _this2 = this;
 
-        var search, user, t, track, tweets, lastUpdate;
+        var search, user, t, lastQuery, track, tweets, lastUpdate;
         return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
@@ -179,30 +179,14 @@ var StreamLoader = /*#__PURE__*/function () {
                 return _context3.abrupt("return");
 
               case 7:
-                _context3.next = 9;
-                return this.db.getUser(search.creator);
-
-              case 9:
-                user = _context3.sent;
-
-                if (user) {
-                  _context3.next = 13;
-                  break;
-                }
-
-                _logger["default"].error('unable to find user for ' + search.creator);
-
-                return _context3.abrupt("return");
-
-              case 13:
-                _context3.next = 15;
+                user = search.creator;
+                _context3.next = 10;
                 return this.db.getTwitterClientForUser(user);
 
-              case 15:
+              case 10:
                 t = _context3.sent;
-                track = search.query.map(function (term) {
-                  return term.value;
-                }).join(',');
+                lastQuery = search.queries[search.queries.length - 1];
+                track = lastQuery.trackQuery();
                 tweets = [];
                 this.activeStreams.add(searchId);
                 lastUpdate = new Date();
@@ -210,7 +194,7 @@ var StreamLoader = /*#__PURE__*/function () {
                   track: track
                 }, /*#__PURE__*/function () {
                   var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(tweet) {
-                    var elapsed, numTweets;
+                    var elapsed, updatedUser, numTweets;
                     return _regenerator["default"].wrap(function _callee2$(_context2) {
                       while (1) {
                         switch (_context2.prev = _context2.next) {
@@ -235,17 +219,17 @@ var StreamLoader = /*#__PURE__*/function () {
                             }
 
                             _context2.next = 8;
-                            return _this2.db.getUser(search.creator);
+                            return _this2.db.getUser(user.id);
 
                           case 8:
-                            user = _context2.sent;
+                            updatedUser = _context2.sent;
 
-                            if (user.active) {
+                            if (updatedUser.active) {
                               _context2.next = 15;
                               break;
                             }
 
-                            _logger["default"].info("user is not active: ".concat(user.twitterScreenName));
+                            _logger["default"].info("user is not active: ".concat(updatedUser.twitterScreenName));
 
                             _this2.stopStream(searchId);
 
@@ -261,7 +245,7 @@ var StreamLoader = /*#__PURE__*/function () {
                               break;
                             }
 
-                            _logger["default"].info("user is over quota ".concat(user.twitterScreenName));
+                            _logger["default"].info("user is over quota ".concat(updatedUser.twitterScreenName));
 
                             _this2.stopStream(searchId);
 
@@ -297,7 +281,7 @@ var StreamLoader = /*#__PURE__*/function () {
                   };
                 }());
 
-              case 21:
+              case 17:
               case "end":
                 return _context3.stop();
             }

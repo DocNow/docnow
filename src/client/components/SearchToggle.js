@@ -54,7 +54,7 @@ export default class SearchToggle extends Component {
 }
 
 SearchToggle.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   updateSearch: PropTypes.func,
   active: PropTypes.bool,
   user: PropTypes.object,

@@ -29,7 +29,7 @@ export default class Place extends Component {
     if (this.props.username) {
       remove = (<IconButton
         style={{marginLeft: 'auto'}}
-        onClick={() => {this.props.deleteTrend(this.props.placeId)}}><ion-icon name="remove"></ion-icon></IconButton>)
+        onClick={() => {this.props.deleteTrend(this.props.id)}}><ion-icon name="remove"></ion-icon></IconButton>)
       trends = this.props.trends.map((trend, i) => {
         return (
           <div key={`t-${i}`} className={placeStyle.Trend}>
@@ -40,7 +40,7 @@ export default class Place extends Component {
                 value={trend.name} />
             </div>
             <div className={placeStyle.TrendCount}>
-              <bdo title={trend.name + ' tweets in the last 24 hours'}>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
+              <bdo title={trend.name + ' tweets in the last 24 hours'}>{ parseInt(trend.count, 10).toLocaleString() }</bdo>
             </div>
           </div>)
       })
@@ -52,7 +52,7 @@ export default class Place extends Component {
               { trend.name }
             </div>
             <div className={searchTermStyle.InCard}>
-              <bdo>{ parseInt(trend.tweets, 10).toLocaleString() }</bdo>
+              <bdo>{ parseInt(trend.count, 10).toLocaleString() }</bdo>
             </div>
           </div>)
       })
@@ -82,7 +82,7 @@ Place.propTypes = {
   trends: PropTypes.array,
   world: PropTypes.object,
   name: PropTypes.string,
-  placeId: PropTypes.string,
+  id: PropTypes.number,
   username: PropTypes.string,
   deleteTrend: PropTypes.func,
   createSearch: PropTypes.func

@@ -1,41 +1,35 @@
-import uuid from 'uuid/v4'
-import elasticsearch from 'elasticsearch'
+import '../env'
+
+import knex from 'knex'
+import { Model } from 'objection'
+import Setting from './models/Setting'
+import Place from './models/Place'
+import User from './models/User'
+import Trend from './models/Trend'
+import Search from './models/Search'
+import Tweet from './models/Tweet'
+import TweetHashtag from './models/TweetHashtag'
+import TweetUrl from './models/TweetUrl'
+
 import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
          tweetsCountKey, urlsKey } from './redis'
 
 import log from './logger'
 import { Twitter } from './twitter'
 import { UrlFetcher } from './url-fetcher'
-import { addPrefix, stripPrefix } from './utils'
-
-// elasticsearch doc types
-
-const SETTINGS = 'settings'
-const USER = 'user'
-const PLACE = 'place'
-const SEARCH = 'search'
-const TREND = 'trend'
-const TWEET = 'tweet'
-const TWUSER = 'twuser'
+import knexfile from '../../knexfile'
 
 const urlFetcher = new UrlFetcher()
 
 export class Database {
 
-  constructor(opts = {}) {
+  constructor() {
     // setup redis
     this.redis = getRedis()
 
-    // setup elasticsearch
-    const esOpts = opts.es || {}
-    esOpts.host = esOpts.host || process.env.ES_HOST || '127.0.0.1:9200'
-    log.info('connecting to elasticsearch:', esOpts)
-    if (process.env.NODE_ENV === 'test') {
-      this.esPrefix = 'test'
-    } else {
-      this.esPrefix = 'docnow'
-    }
-    this.es = new elasticsearch.Client(esOpts)
+    const pg = knex(knexfile)
+    Model.knex(pg)
+    this.pg = pg
   }
 
   getIndex(type) {
@@ -43,23 +37,17 @@ export class Database {
   }
 
   close() {
+    this.pg.destroy()
     this.redis.quit()
     urlFetcher.stop()
   }
 
-  clear() {
-    return new Promise((resolve, reject) => {
-      this.redis.flushdbAsync()
-        .then((didSucceed) => {
-          if (didSucceed === 'OK') {
-            this.deleteIndexes()
-              .then(resolve)
-              .catch(reject)
-          } else {
-            reject('redis flushdb failed')
-          }
-        })
-    })
+  async clear() {
+    await this.redis.flushdbAsync()
+    if (await this.pg.migrate.currentVersion() != "none") {
+      await this.pg.migrate.rollback(null, true)
+    }
+    await this.pg.migrate.latest()
   }
 
   add(type, id, doc) {
@@ -114,122 +102,157 @@ export class Database {
     })
   }
 
-  addSettings(settings) {
-    settings.updated = new Date()
-    return this.add(SETTINGS, 'settings', settings)
+  async addSettings(settings) {
+
+    // convert settings object into a sequence of name/value objects
+    const objects = []
+    for (const prop in settings) {
+      if (Object.prototype.hasOwnProperty.call(settings, prop)) {
+        objects.push({
+          name: prop,
+          value: settings[prop]
+        })
+      }
+    }
+
+    await Setting.transaction(async trx => {
+      await Setting.query(trx).delete()
+      await Setting.query(trx).insert(objects)
+    })
+
+    return settings
   }
 
-  getSettings() {
-    return new Promise((resolve) => {
-      this.get(SETTINGS, 'settings')
-        .then((settings) => {
-          resolve(settings)
-        })
-        .catch(() => {
-          resolve({})
-        })
-    })
+  async getSettings() {
+    const settings = {}
+    const rows = await Setting.query().select('name', 'value')
+    for (const row of rows) {
+      settings[row.name] = row.value
+    }
+    return settings
   }
 
   async addUser(user) {
-    user.id = uuid()
-    user.places = []
-
     const settings = await this.getSettings()
     user.tweetQuota = user.tweetQuota || settings.defaultQuota
 
     const su = await this.getSuperUser()
     user.isSuperUser = su ? false : true
-   
-    log.info('creating user: ', {user: user})
-    await this.add(USER, user.id, user)
+  
+    try {
+      const newUser = await User.query().insert(user)
 
-    if (user.isSuperUser) {
-      this.loadPlaces()
-      return user 
-    } else {
-      return user
+      // once we have the first user we have keys to load places from Twitter
+      if (newUser.isSuperUser) {
+        await this.loadPlaces()
+      }
+
+      return newUser
+    } catch (e) { 
+      console.error(e)
     }
 
-    /*
-    return new Promise((resolve) => {
-      this.getSuperUser()
-        .then((u) => {
-          user.isSuperUser = u ? false : true
-          this.add(USER, user.id, user)
-            .then(() => {
-              if (user.isSuperUser) {
-                this.loadPlaces().then(() => {resolve(user)})
-              } else {
-                resolve(user)
-              }
-            })
-        })
-    })
-    */
   }
 
-  updateUser(user) {
-    return this.add(USER, user.id, user)
+  async updateUser(user) {
+    // the order of places is defined by their position
+    // they will be defined based on their order
+    if (user.places) {
+      for (let pos = 0; pos < user.places.length; pos += 1) {
+        user.places[pos].position = pos
+      }
+    }
+    delete user.searches
+
+    const u = await User.query()
+      .allowGraph('places')
+      .upsertGraph(user, {relate: true, unrelate: true})
+
+    return u
   }
 
-  getUser(userId) {
-    return this.get(USER, userId)
+  async getUser(userId) {
+    const users = await User.query()
+      .withGraphJoined('places')
+      .where('user.id', userId)
+    return users.length > 0 ? users[0] : null
   }
 
   async getUsers() {
-    const users = await this.search(USER, '*')
+    const users = await User.query()
+      .withGraphJoined('places')
+      .withGraphJoined('searches')
+
+    // this is a stop gap until redis goes away
+    // we need to add aggregate stats to each search
+    // maybe there should be a view for these?
+
     for (const user of users) {
-      user.searches = await this.getUserSearches(user)
+      const searchesWithStats = []
+      for (const search of user.searches) {
+        const stats = await this.getSearchStats(search)
+        searchesWithStats.push({
+          ...search,
+          ...stats
+        })
+      }
+      user.searches = searchesWithStats
     }
+
     return users
   }
 
-  getSuperUser() {
-    return this.search(USER, 'isSuperUser:true', true)
+  async getSuperUser() {
+    const user = await User.query().first().where('isSuperUser', '=', true)
+    return user
   }
 
-  getUserByTwitterUserId(twitterUserId) {
-    return this.search(USER, `twitterUserId:${twitterUserId}`, true)
+  getUserByTwitterUserId(userId) {
+    return User.query().first().where('twitter_user_id', '=', userId)
   }
 
   getUserByTwitterScreenName(twitterScreenName) {
-    return this.search(USER, `twitterScreenName:${twitterScreenName}`, true)
+    return this.query().first().where('twitterScreeName', '=', twitterScreenName)
   }
 
-  importLatestTrends() {
-    log.debug('importing trends')
-    return new Promise((resolve) => {
-      this.getUsers()
-        .then((users) => {
-          for (const user of users) {
-            this.importLatestTrendsForUser(user).then(resolve)
+  async importLatestTrends() {
+    let trends = []
+    const seenPlaces = new Set()
+    for (const user of await this.getUsers()) {
+      if (user.places) {
+        for (const place of user.places) {
+          // only fetch the same place once per run
+          if (! seenPlaces.has(place.id)) {
+            trends = trends.concat(
+              await this.importLatestTrendsForPlace(place, user)
+            )
+            seenPlaces.add(place.id)
           }
-        })
-        .catch(() => {
-          log.info('no users to import trends for')
-          resolve()
-        })
-    })
+        }
+      }
+    }
+    return trends
   }
 
-  importLatestTrendsForUser(user) {
-    log.debug('importing trends', {user: user})
-    return new Promise((resolve, reject) => {
-      this.getTwitterClientForUser(user)
-        .then((twtr) => {
-          const placeIds = user.places.map(stripPrefix)
-          if (placeIds.length === 0) {
-            resolve([])
-          } else {
-            log.info('importing trends for ', {placeIds: placeIds})
-            Promise.all(placeIds.map(twtr.getTrendsAtPlace, twtr))
-              .then(this.saveTrends.bind(this))
-              .then(resolve)
-          }
+  async importLatestTrendsForPlace(place, user) {
+    const twitter =  await this.getTwitterClientForUser(user)
+    const allTrends = []
+    const created = new Date()
+    const trends = await twitter.getTrendsAtPlace(place.id)
+
+    for (const trend of trends) {
+      if (trend.count !== null) {
+        allTrends.push({
+          name: trend.name,
+          count: trend.count,
+          placeId: place.id,
+          created: created
         })
-        .catch(reject)
-    })
+      }
+    }
+
+    const newTrends = await Trend.query().insert(allTrends)
+    return newTrends
   }
 
   startTrendsWatcher(opts = {}) {
@@ -249,100 +272,63 @@ export class Database {
     }
   }
 
-  getTrendsForPlace(placeId) {
-    return new Promise((resolve) => {
-      this.search('trend', `placeId:${placeId}`, true)
-        .then((results) => {
-          const filtered = results.trends.filter((t) => {
-            return t.tweets > 0
-          })
-          filtered.sort((a, b) => {
-            return b.tweets - a.tweets
-          })
-          results.trends = filtered
-          resolve(results)
-        })
-    })
+  async getRecentTrendsForPlace(place) {
+
+    // get the datetime of the latest import
+    const result = await Trend.query()
+      .max('created')
+      .where('placeId', place.id)
+
+    if (! result) {
+      return []
+    }
+
+    const lastImport = result[0].max
+    const trends = Trend.query()
+      .select()
+      .where({
+        'placeId': place.id,
+        'created': lastImport
+      })
+      .orderBy('count', 'desc')
+
+    return trends
   }
 
-  getUserTrends(user) {
+  async getUserTrends(user) {
+    // return a list of places with their most recent trends
+    const results = []
     if (user && user.places) {
-      return Promise.all(user.places.map(this.getTrendsForPlace, this))
+      for (const place of user.places) {
+        place.trends = await this.getRecentTrendsForPlace(place)
+        results.push(place)
+      }
     }
+    return results
   }
 
-  saveTrends(trends) {
-    const body = []
-    for (const trend of trends) {
-      trend.id = addPrefix('trend', trend.id)
-      trend.placeId = addPrefix('place', stripPrefix(trend.id))
-      body.push(
-        {
-          index: {
-            _index: this.getIndex(TREND),
-            _type: 'trend',
-            _id: trend.id
-          },
-          refresh: 'wait_for'
-        },
-        trend
-      )
-    }
-    return new Promise((resolve, reject) => {
-      this.es.bulk({body: body, refresh: 'wait_for'})
-        .then(() => {resolve(trends)})
-        .catch((err) => {
-          log.error('bulk insert failed', err)
-          reject(err)
-        })
-    })
-  }
+  async loadPlaces() {
+    // delete any places that are in the database already
+    await Place.query().delete()
 
-  loadPlaces() {
-    return new Promise((resolve, reject) => {
-      this.getSuperUser()
-        .then((user) => {
-          this.getTwitterClientForUser(user)
-            .then((t) => {
-              t.getPlaces().then((places) => {
+    // get the places from Twitter using the admin users's keys
+    const user = await this.getSuperUser()
+    const twitter = await this.getTwitterClientForUser(user)
+    const places = await twitter.getPlaces()
 
-                // bulk insert all the places as separate
-                // documents in elasticsearch
+    // insert them all into the database
+    await Place.query().insert(places)
 
-                const body = []
-                for (const place of places) {
-                  place.id = addPrefix('place', place.id)
-                  place.parentId = addPrefix('place', place.parent)
-                  delete place.parent
-                  body.push({
-                    index: {
-                      _index: this.getIndex(PLACE),
-                      _type: 'place',
-                      _id: place.id
-                    }
-                  })
-                  body.push(place)
-                }
-
-                this.es.bulk({body: body, refresh: 'wait_for'})
-                  .then(() => {
-                    resolve(places)
-                  })
-                  .catch(reject)
-              })
-            })
-            .catch(reject)
-        })
-        .catch(reject)
-    })
+    return places
   }
 
   getPlace(placeId) {
-    return this.search(PLACE, placeId, true)
+    const place = Place.query().first().where('id', '=', placeId)
+    return place
   }
 
   getPlaces() {
-    return this.search(PLACE, '*')
+    return Place.query().select()
   }
 
   getTwitterClientForUser(user) {
@@ -360,62 +346,53 @@ export class Database {
     })
   }
 
-  createSearch(user, query) {
-    return new Promise((resolve, reject) => {
-      const search = {
-        id: uuid(),
-        creator: user.id,
-        query: query,
-        created: new Date().toISOString(),
-        updated: new Date(),
-        maxTweetId: null,
-        active: true
-      }
-      this.es.create({
-        index: this.getIndex(SEARCH),
-        type: SEARCH,
-        id: search.id,
-        body: search
-      }).then(() => {
-        resolve(search)
-      }).catch((err) => {
-        reject(err)
-      })
-    })
+  async createSearch(search) {
+    search.updated = new Date()
+    const s1 = await Search.query()
+      .upsertGraphAndFetch(search, {relate: true, unrelate: true, insertMissing: true})
+
+    const s2 = await Search.query()
+      .select()
+      .where('search.id', s1.id)
+      .withGraphJoined('creator')
+      .withGraphJoined('queries')
+      .first()
+
+    return s2
   }
 
-  async deleteSearch(search) {
+  async getSearch(searchId) {
+    const search = await Search.query()
+      .findById(searchId)
+      .withGraphJoined('creator')
+      .withGraphJoined('queries')
+
+    if (! search) {
+      return null
+    }
+
+    const stats = await this.getSearchStats(search)
+    return {
+      ...search,
+      ...stats
+    }
+  }
+
+  deleteSearch(search) {
     log.info('deleting search', {id: search.id})
-    const resp = await this.es.delete({
-      index: this.getIndex(SEARCH),
-      type: SEARCH,
-      id: search.id
-    })
-    return resp && resp.result === 'deleted'
+    return Search.query().del().where('id', search.id)
   }
 
   async getUserSearches(user) {
-    const body = {
-      query: {
-        bool: {
-          must: [
-            {match: {creator: user.id}},
-            {match: {saved: true}}
-          ]
-        }
-      },
-      sort: [{created: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(SEARCH),
-      type: SEARCH,
-      body: body
-    })
+    const results = await Search.query()
+      .where({userId: user.id, saved: true})
+      .withGraphJoined('creator')
+      .withGraphJoined('queries')
+      .orderBy('created', 'DESC')
 
+    // add stats to each search
     const searches = []
-
-    for (const hit of resp.hits.hits) {
-      const search = hit._source
+    for (const search of results) {
       const stats = await this.getSearchStats(search)
       searches.push({
         ...search,
@@ -435,47 +412,48 @@ export class Database {
     return total > user.tweetQuota
   }
 
-  async getSearch(searchId) {
-    const search = await this.get(SEARCH, searchId)
-    const stats = await this.getSearchStats(search)
-    return {
-      ...search,
-      ...stats
-    }
-  }
-
   updateSearch(search) {
-    search.updated = new Date()
-    return this.add(SEARCH, search.id, search)
+    // search properties are explicitly used to guard against trying
+    // to persist properties that were added by getSearchSummary
+    const safeSearch = this.removeStatsProps(search)
+    return Search.query()
+      .patch({...safeSearch, updated: new Date()})
+      .where('id', safeSearch.id)
   }
 
   async getSearchSummary(search) {
-    const body = {
-      query: {
-        match: {
-          search: search.id
-        }
-      },
-      aggregations: {
-        minDate: {min: {field: 'created'}},
-        maxDate: {max: {field: 'created'}}
-      }
-    }
+    const results = await Tweet.query()
+      .min('created')
+      .max('created')
+      .count('id')
+      .where('searchId', search.id)
 
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-
+    this.convertCounts(results)
     const stats = await this.getSearchStats(search)
 
     return {
       ...search,
       ...stats,
-      minDate: new Date(resp.aggregations.minDate.value),
-      maxDate: new Date(resp.aggregations.maxDate.value)
+      count: results[0].count,
+      minDate: results[0].min,
+      maxDate: results[0].max
     }
+  }
+
+  removeStatsProps(o) {
+    const newO = Object.assign({}, o)
+    const props = [
+      'count',
+      'minDate',
+      'maxDate',
+      'tweetCount',
+      'userCount', 
+      'videoCount',
+      'imageCount',
+      'urlCount'
+    ]
+    props.map(p => delete newO[p])
+    return newO
   }
 
   async getSearchStats(search) {
@@ -494,119 +472,111 @@ export class Database {
     }
   }
 
-  importFromSearch(search, maxTweets = 1000) {
-    let count = 0
-    let totalCount = search.count || 0
+  async importFromSearch(search, maxTweets = 1000) {
+    // get the a twitter client for the user
+    const user = await this.getUser(search.creator.id)
+    const twtr = await this.getTwitterClientForUser(user)
+
+    // flag the search as active or running
+    await this.updateSearch({id: search.id, active: true})
+   
+    // determine the query to run
+    const lastQuery = search.queries[search.queries.length - 1]
+    const q = lastQuery.searchQuery()
+
+    // run the search!
     let maxTweetId = null
-
-    const queryParts = []
-    for (const term of search.query) {
-      if (term.type === 'keyword') {
-        queryParts.push(term.value)
-      } else if (term.type === 'user') {
-        queryParts.push('@' + term.value)
-      } else if (term.type === 'phrase') {
-        queryParts.push(`"${term.value}"`)
-      } else if (term.type === 'hashtag') {
-        queryParts.push(term.value)
-      } else {
-        log.warn('search is missing a type: ', search)
-        queryParts.push(term.value)
-      }
-    }
-    const q = queryParts.join(' OR ')
-
+    let count = 0
     return new Promise((resolve, reject) => {
-      this.getUser(search.creator).then((user) => {
-        this.updateSearch({...search, active: true})
-          .then((newSearch) => {
-            this.getTwitterClientForUser(user)
-              .then((twtr) => {
-                twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, (err, results) => {
-                  if (err) {
-                    reject(err)
-                  } else if (results.length === 0) {
-                    newSearch.count = totalCount
-                    newSearch.maxTweetId = maxTweetId
-                    newSearch.active = false
-                    this.updateSearch(newSearch)
-                      .then(() => {resolve(count)})
-                  } else {
-                    count += results.length
-                    totalCount += results.length
-                    if (maxTweetId === null) {
-                      maxTweetId = results[0].id
-                    }
-                    this.loadTweets(search, results)
-                      .then(() => {
-                        log.info('bulk loaded ' + results.items + ' objects')
-                      })
-                  }
-                })
-              })
+      twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, async (err, results) => {
+        if (err) {
+          reject(err)
+        } else if (results.length === 0) {
+          await this.updateSearch({
+            id: search.id,
+            maxTweetId: maxTweetId,
+            active: false
           })
-          .catch((e) => {
-            log.error('unable to update search: ', e)
-          })
+          resolve(count)
+        } else {
+          if (maxTweetId === null) {
+            maxTweetId = results[0].id
+          }
+          await this.loadTweets(search, results)
+          count += results.length
+          log.info(`bulk loaded ${results.length} tweets`)
+        }
       })
     })
   }
 
-  loadTweets(search, tweets) {
-    return new Promise((resolve, reject) => {
-      const bulk = []
-      const seenUsers = new Set()
+  async loadTweets(search, tweets) {
 
-      for (const tweet of tweets) {
+    const tweetRows = []
+    for (const tweet of tweets) {
 
-        this.tallyTweet(search, tweet)
+      this.tallyTweet(search, tweet)
 
-        for (const url of tweet.urls) {
-          urlFetcher.add(search, url.long, tweet.id)
-        }
-
-        tweet.search = search.id
-        const id = search.id + ':' + tweet.id
-
-        bulk.push(
-          {
-            index: {
-              _index: this.getIndex(TWEET),
-              _type: 'tweet',
-              _id: id
-            }
-          },
-          tweet
-        )
-        if (! seenUsers.has(tweet.user.id)) {
-          bulk.push(
-            {
-              index: {
-                _index: this.getIndex(TWUSER),
-                _type: 'twuser',
-                _id: tweet.user.id,
-              }
-            },
-            tweet.user
-          )
-          seenUsers.add(tweet.user.id)
-        }
+      for (const url of tweet.urls) {
+        urlFetcher.add(search, url.long, tweet.id)
       }
 
-      this.es.bulk({
-        body: bulk,
-        refresh: 'wait_for'
-      }).then((resp) => {
-        if (resp.errors) {
-          reject('indexing error check elasticsearch log')
-        } else {
-          resolve(resp)
-        }
-      }).catch((elasticErr) => {
-        log.error(elasticErr.message)
-        reject(elasticErr.message)
+      tweetRows.push({
+        searchId: search.id,
+        tweetId: tweet.id,
+        created: tweet.created,
+        screenName: tweet.user.screenName,
+        text: tweet.text,
+        retweetId: tweet.retweetId,
+        quoteId: tweet.quoteId,
+        retweetCount: tweet.retweetCount,
+        replyCount: tweet.replyCount,
+        quoteCount: tweet.quoteCount,
+        likeCount: tweet.likeCount,
+        replyToTweetId: tweet.replyToTweetId,
+        replyToUserId: tweet.replyToUserId,
+        imageCount: tweet.imageCount,
+        videoCount: tweet.videoCount,
+        language: tweet.language,
+        json: tweet
       })
-    })
+    }
+
+    const results = await Tweet.query()
+      .insert(tweetRows)
+      .returning(['id', 'tweetId'])
+
+    // now we have the tweet id we can attach relevant 
+    // hashtags and urls
+
+    const hashtagRows = []
+    const urlRows = []
+    for (const row of results) {
+
+      // make sure the hashtags are unique!
+      const hashtags = new Set(row.json.hashtags)
+      for (const name of hashtags) {
+        hashtagRows.push({name: name, tweetId: row.id})
+      }
+
+      const urls = new Set(row.json.urls.map(r => r.long))
+      for (const url of urls) {
+        urlRows.push({url: url, type: 'page', tweetId: row.id})
+      }
+
+      for (const url of new Set(row.json.images)) {
+        urlRows.push({url: url, type: 'image', tweetId: row.id})
+      }
+
+      for (const url of new Set(row.json.videos)) {
+        urlRows.push({url: url, type: 'video', tweetId: row.id})
+      }
+
+    }
+    await TweetHashtag.query().insert(hashtagRows)
+    await TweetUrl.query().insert(urlRows)
+
+    return results.length
   }
 
   tallyTweet(search, tweet) {
@@ -620,319 +590,163 @@ export class Database {
     }
   }
 
-  getTweets(search, includeRetweets = true, offset = 0) {
-    const body = {
-      from: offset,
-      size: 100,
-      query: {
-        bool: {
-          must: {
-            term: {
-              search: search.id
-            }
-          }
-        }
-      },
-      sort: {
-        created: 'desc'
-      }
+  getTweets(search, includeRetweets = true) {
+    const where = {
+      searchId: search.id
     }
-
-    // adjust the query and sorting if they don't want retweets
     if (! includeRetweets) {
-      body.query.bool.must_not = {exists: {field: 'retweet'}}
-      body.sort = [{retweetCount: 'desc'}, {created: 'desc'}]
+      where.retweetId = null
     }
-
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        resolve(response.hits.hits.map((h) => {return h._source}))
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+    return this.pickJson(Tweet.query().select().where(where))
   }
 
-  async getAllTweets(search, cb) {
-
-    let response = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      q: 'search:' + search.id,
-      scroll: '1m',
-      size: 100
-    })
-
-    response.hits.hits.map((hit) => {cb(hit._source)})
-    const scrollId = response._scroll_id
-
-    while (true) {
-      response = await this.es.scroll({scrollId: scrollId, scroll: '1m'})
-      if (response.hits.hits.length === 0) {
-        break
-      }
-      response.hits.hits.map((hit) => {cb(hit._source)})
-    }
-
+  async getAllTweets(search) {
+    return this.pickJson(Tweet.query().where('searchId', search.id))
   }
 
-  async getTweetsForUrl(search, url) {
-    const ids = await urlFetcher.getTweetIdentifiers(search, url)
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [{match: {search: search.id}}],
-          filter: {terms: {id: ids}}
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
+  async getTweetsForUrl(search, url, type = 'page') {
+    return this.pickJson(
+      Tweet.query()
+        .where({searchId: search.id, url: url, type: type})
+        .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
+        .select('json')
+        .limit(100)
+    )
   }
 
-  async getTweetsForImage(search, url) {
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [{match: {search: search.id}}],
-          filter: {terms: {images: [url]}}
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
+  getTweetsForImage(search, url) {
+    return this.getTweetsForUrl(search, url, 'image')
+  }
+
+  getTweetsForVideo(search, url) {
+    return this.getTweetsForUrl(search, url, 'video')
   }
 
   async getTweetsForUser(search, handle) {
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [
-            {match: {search: search.id}},
-            {match: {'user.screenName': handle}}
-          ],
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
-  }
-
-  async getTweetsForVideo(search, url) {
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [{match: {search: search.id}}],
-          filter: {terms: {videos: [url]}}
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
+    return this.pickJson(
+      Tweet.query()
+        .where({searchId: search.id, screenName: handle})
+        .orderBy('id', 'DESC')
+        .limit(100)
+    )
   }
 
   async getTweetsByIds(search, ids) {
-    const body = {
-      size: 100,
-      query: {
-        bool: {
-          must: [{match: {search: search.id}}],
-          filter: {terms: {id: ids}}
-        }
-      },
-      sort: [{id: 'desc'}]
-    }
-    const resp = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: body
-    })
-    return resp.hits.hits.map((h) => {return h._source})
+    return this.pickJson(
+      Tweet.query()
+        .where('search', search.id)
+        .whereIn('tweetId', ids)
+        .orderBy('id', 'DESC')
+        .limit(100)
+    )
   }
 
-  getTwitterUsers(search) {
+  async getTwitterUsers(search) {
+
+    // maybe users should be modeled outside of the tweets they create?
 
     // first get the user counts for tweets
 
-    let body = {
-      query: {match: {search: search.id}},
-      aggregations: {users: {terms: {field: 'user.screenName', size: 100}}}
+    let userCounts = await Tweet.query()
+      .select('screenName')
+      .count('* as total')
+      .where('searchId', search.id)
+      .groupBy('screenName')
+      .orderBy('total', 'DESC')
+      .limit(100)
+
+    this.convertCounts(userCounts, 'total')
+
+    // turn database results into a map of screename -> total
+    userCounts = new Map(userCounts.map(r => [r.screenName, r.total]))
+
+    // it might be more efficient to model users on import? 
+    // but perhaps its better to pull them out adhoc until
+    // we actually have a conversaton with them?
+
+    const users = await Tweet.query()
+      .select('json', 'screenName')
+      .where('searchId', search.id)
+      .whereIn('screenName', Array.from(userCounts.keys()))
+
+    // seen is needed because we could get multiple tweets from the same user
+    // and would end up with more than one results for a user 
+    const seen = new Set()
+    const results = []
+    for (const u of users) {
+      if (! seen.has(u.screenName)) {
+        results.push({...u.json.user, tweetsInSearch: userCounts.get(u.screenName)})
+        seen.add(u.screenName)
+      } 
     }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response1) => {
 
-        // with the list of users get the user information for them
-        const counts = new Map()
-        const buckets = response1.aggregations.users.buckets
-        buckets.map((c) => {counts.set(c.key, c.doc_count)})
-        const screenNames = Array.from(counts.keys())
+    // sort them again
+    results.sort((a, b) => b.tweetsInSearch - a.tweetsInSearch)
 
-        body = {
-          size: 100,
-          query: {
-            constant_score: {
-              filter: {
-                terms: {
-                  'screenName': screenNames
-                }
-              }
-            }
-          }
-        }
-        this.es.search({
-          index: this.getIndex(TWUSER),
-          type: TWUSER,
-          body: body
-        }).then((response2) => {
-          const users = response2.hits.hits.map((h) => {return h._source})
-
-          // add the tweet counts per user that we got previously
-          for (const user of users) {
-            user.tweetsInSearch = counts.get(user.screenName)
-          }
-
-          // sort them by their counts
-          users.sort((a, b) => {return b.tweetsInSearch - a.tweetsInSearch})
-          resolve(users)
-        })
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+    return results
   }
 
-  getHashtags(search) {
-    const body = {
-      size: 0,
-      query: {match: {search: search.id}},
-      aggregations: {hashtags: {terms: {field: 'hashtags', size: 100}}}
-    }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        const hashtags = response.aggregations.hashtags.buckets.map((ht) => {
-          return {hashtag: ht.key, count: ht.doc_count}
-        })
-        resolve(hashtags)
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+  async getHashtags(search) {
+
+    /*
+      counts the number of times a hashtag appears in a search
+      by joining tweets and hashtags. some of the wonkiness of 
+      this query (the renaming name to hashtag) preserves the 
+      previous elasticsearch output that the rest of the 
+      application which expected:
+
+        [{hashtag: "foo", count: 12}, ...] and not
+
+      and not:
+
+        [{name: "foo", count: 12}]
+    */
+
+    const results = await Tweet.query()
+      .where('searchId', search.id)
+      .join('tweetHashtag', 'tweet.id', 'tweetHashtag.tweetId')
+      .select('name as hashtag')
+      .count('name')
+      .groupBy('hashtag')
+      .orderBy('count', 'DESC')
+    
+    return this.convertCounts(results)
   }
 
-  getUrls(search) {
-    const body = {
-      size: 0,
-      query: {match: {search: search.id}},
-      aggregations: {urls: {terms: {field: 'urls.long', size: 100}}}
-    }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        const urls = response.aggregations.urls.buckets.map((u) => {
-          return {url: u.key, count: u.doc_count}
-        })
-        resolve(urls)
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+  async getUrls(search) {
+    const results = await Tweet.query()
+      .where({searchId: search.id, type: 'page'})
+      .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
+      .select('url')
+      .count('url')
+      .groupBy('url')
+      .orderBy('count', 'DESC')
+
+    return this.convertCounts(results)
   }
 
-  getImages(search) {
-    const body = {
-      size: 0,
-      query: {match: {search: search.id}},
-      aggregations: {
-        images: {
-          terms: {field: 'images', size: 100}
-        }
-      }
-    }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        const images = response.aggregations.images.buckets.map((u) => {
-          return {url: u.key, count: u.doc_count}
-        })
-        resolve(images)
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+  async getImages(search) {
+    const results = await Tweet.query()
+      .where({searchId: search.id, type: 'image'})
+      .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
+      .select('url')
+      .count('url')
+      .groupBy('url')
+      .orderBy('count', 'DESC')
+
+    return this.convertCounts(results)
   }
 
-  getVideos(search) {
-    const body = {
-      size: 0,
-      query: {match: {search: search.id}},
-      aggregations: {
-        videos: {
-          terms: {field: 'videos', size: 100}
-        }
-      }
-    }
-    return new Promise((resolve, reject) => {
-      this.es.search({
-        index: this.getIndex(TWEET),
-        type: TWEET,
-        body: body
-      }).then((response) => {
-        const videos = response.aggregations.videos.buckets.map((u) => {
-          return {url: u.key, count: u.doc_count}
-        })
-        resolve(videos)
-      }).catch((err) => {
-        log.error(err)
-        reject(err)
-      })
-    })
+  async getVideos(search) {
+    const results = await Tweet.query()
+      .where({searchId: search.id, type: 'video'})
+      .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
+      .select('url')
+      .count('url')
+      .groupBy('url')
+      .orderBy('count', 'DESC')
+
+    return this.convertCounts(results)
   }
 
   addUrl(search, url) {
@@ -972,210 +786,26 @@ export class Database {
     return urlFetcher.deselectWebpage(search, url)
   }
 
-  /* elastic search index management */
-
-  setupIndexes() {
-    return this.es.indices.exists({index: this.getIndex(TWEET)})
-      .then((exists) => {
-        if (! exists) {
-          log.info('adding indexes')
-          this.addIndexes()
-        } else {
-          log.warn('indexes already present, not adding')
-        }
-      })
-      .catch((e) => {
-        log.error(e)
-      })
-  }
-
-  addIndexes() {
-    const indexMappings = this.getIndexMappings()
-    const promises = []
-    for (const name of Object.keys(indexMappings)) {
-      promises.push(this.addIndex(name, indexMappings[name]))
-    }
-    return Promise.all(promises)
-  }
-
-  addIndex(name, map) {
-    const prefixedName = this.getIndex(name)
-    const body = {mappings: {}}
-    body.mappings[name] = map
-    log.info(`creating index: ${prefixedName}`)
-    return this.es.indices.create({
-      index: prefixedName,
-      body: body
-    })
-  }
-
-  updateIndexes() {
-    const indexMappings = this.getIndexMappings()
-    const promises = []
-    for (const name of Object.keys(indexMappings)) {
-      promises.push(this.updateIndex(name, indexMappings[name]))
-    }
-    return Promise.all(promises)
-  }
-
-  updateIndex(name, map) {
-    const prefixedName = this.getIndex(name)
-    log.info(`updating index: ${prefixedName}`)
-    return this.es.indices.putMapping({
-      index: prefixedName,
-      type: name,
-      body: map
-    })
-  }
-
-  deleteIndexes() {
-    log.info('deleting all elasticsearch indexes')
-    return new Promise((resolve) => {
-      this.es.indices.delete({index: this.esPrefix + '*'})
-        .then(() => {
-          log.info('deleted indexes')
-          resolve()
-        })
-        .catch((err) => {
-          log.warn('indexes delete failed: ' + err)
-          resolve()
-        })
-    })
-  }
-
-  getIndexMappings() {
-    return {
-
-      settings: {
-        properties: {
-          type: {type: 'keyword'},
-          appKey: {type: 'keyword'},
-          appSecret: {type: 'keyword'}
-        }
-      },
-
-      user: {
-        properties: {
-          type: {type: 'keyword'},
-          places: {type: 'keyword'}
-        }
-      },
-
-      search: {
-        properties: {
-          id: {type: 'keyword'},
-          type: {type: 'keyword'},
-          title: {type: 'text'},
-          description: {type: 'text'},
-          created: {type: 'date', format: 'date_time'},
-          creator: {type: 'keyword'},
-          active: {type: 'boolean'},
-          saved: {type: 'boolean'},
-          'query.type': {type: 'keyword'},
-          'query.value': {type: 'keyword'},
-        }
-      },
-
-      place: {
-        properties: {
-          id: {type: 'keyword'},
-          type: {type: 'keyword'},
-          name: {type: 'text'},
-          country: {type: 'text'},
-          countryCode: {type: 'keyword'},
-          parentId: {type: 'keyword'}
-        }
-      },
-
-      trend: {
-        properties: {
-          id: {type: 'keyword'},
-          type: {type: 'keyword'},
-          'trends.name': {type: 'keyword'},
-          'trends.tweets': {type: 'integer'}
-        }
-      },
-
-      twuser: {
-        properties: {
-          id: {type: 'keyword'},
-          type: {type: 'keyword'},
-          screenName: {type: 'keyword'},
-          created: {type: 'date', format: 'date_time'},
-          updated: {type: 'date', format: 'date_time'}
-        }
-      },
-
-      tweet: {
-        properties: {
-          id: {type: 'keyword'},
-          type: {type: 'keyword'},
-          search: {type: 'keyword'},
-          retweetCount: {type: 'integer'},
-          likeCount: {type: 'integer'},
-          created: {type: 'date', format: 'date_time'},
-          client: {type: 'keyword'},
-          hashtags: {type: 'keyword'},
-          mentions: {type: 'keyword'},
-          geo: {type: 'geo_shape'},
-          videos: {type: 'keyword'},
-          images: {type: 'keyword'},
-          animatedGifs: {type: 'keyword'},
-          emojis: {type: 'keyword'},
-
-          country: {type: 'keyword'},
-          countryCode: {type: 'keyword'},
-          boundingBox: {type: 'geo_shape'},
-
-          'urls.short': {type: 'keyword'},
-          'urls.long': {type: 'keyword'},
-          'urls.hostname': {type: 'keyword'},
-          'user.screenName': {type: 'keyword'},
-          'quote.user.screenName': {type: 'keyword'},
-          'retweet.user.screenName': {type: 'keyword'}
-        }
-      }
-    }
-  }
-
-  async mergeIndexes() {
-    const results = await this.es.indices.forcemerge({index: '_all'})
-    return results
-  }
-
   async getSystemStats() {
-    let result = await this.es.search({
-      index: this.getIndex(TWEET),
-      type: TWEET,
-      body: {
-        query: {match_all: {}}
-      }
-    })
-    const tweetCount = result.hits.total
-
-    result = await this.es.search({
-      index: this.getIndex(TWUSER),
-      type: TWUSER,
-      body: {
-        query: {match_all: {}}
-      }
-    })
-    const twitterUserCount = result.hits.total
-
-    result = await this.es.search({
-      index: this.getIndex(USER),
-      type: USER,
-      body: {
-        query: {match_all: {}}
-      }
-    })
-    const userCount = result.hits.total
-
+    const tweets = await Tweet.query().count().first()
+    const users = await User.query().count().first()
     return {
-      tweetCount: tweetCount,
-      twitterUserCount: twitterUserCount,
-      userCount: userCount
+      tweetCount: Number.parseInt(tweets.count, 10),
+      userCount: Number.parseInt(users.count, 10)
     }
+  }
+
+  async pickJson(query) {
+    const results = await query
+    return results.map(o => o.json)
+  }
+
+  async convertCounts(l, prop = 'count') {
+    for (const o of l) {
+      o[prop] = Number.parseInt(o[prop], 10)
+    }
+    return l
   }
 
 }
+

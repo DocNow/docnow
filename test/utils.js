@@ -1,7 +1,7 @@
 import { equal, deepEqual } from 'assert'
 import { addPrefix, stripPrefix, addPrefixes } from '../src/server/utils'
 
-describe('utils', function() {
+describe('utils', () => {
 
   it('should addPrefix', () => {
     equal(addPrefix('foo', 'bar'), 'foo-bar')

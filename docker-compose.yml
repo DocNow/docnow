@@ -6,30 +6,31 @@ services:
     ports:
       - 6379:6379
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
+  db:
+    image: postgres
+    restart: always
     environment:
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - 9200:9200
+      POSTGRES_USER: "${DB_USERNAME}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_DATABASE}"
 
   app:
     environment:
       - REDIS_HOST=redis
-      - ES_HOST=elasticsearch:9200
+      - DB_HOSTNAME=db
+      - DB_USERNAME
+      - DB_PASSWORD
+      - DB_DATABASE
     ports:
       - 3000:3000
     build:
       context: .
     volumes:
       - ./src:/code/src
-    links:
+    depends_on:
+      - db
       - redis
-      - elasticsearch
-    entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- npm run start:dev
+    links:
+      - db
+      - redis
+    entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- ./entrypoint.sh

@@ -14,7 +14,6 @@ const mapStateToProps = (state) => {
     defaultQuota: state.settings.defaultQuota,
     userLoggedIn: state.user.twitterScreenName !== '',
     tweetCount: state.stats.tweetCount,
-    twitterUserCount: state.stats.twitterUserCount,
     userCount: state.stats.userCount,
   }
 }

@@ -57,8 +57,9 @@ if (isDevelopment) {
   })
 
   // log additional information about unhandled promises so they can be debugged
-  process.on('unhandledRejection', (reason, p) => {
-    log.warn('Unhandled Rejection at:', p, 'reason:', reason)
+  process.on('unhandledRejection', event => {
+    console.warn(event)
+    log.warn(`Unhandled promise rejection: ${event}`) 
   })
 } else {
   app.use(express.static(clientDir))

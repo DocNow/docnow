@@ -28,11 +28,11 @@ var activateKeys = function activateKeys() {
             var newUser = {
               name: profile.displayName,
               description: profile._json.description,
+              email: profile.email || '',
+              location: profile._json.location,
               twitterUserId: profile.id,
               twitterScreenName: profile.username,
-              twitterLocation: profile._json.location,
               twitterAvatarUrl: profile.photos[0].value,
-              twitterEmail: profile.email || '',
               twitterAccessToken: token,
               twitterAccessTokenSecret: tokenSecret
             };

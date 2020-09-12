@@ -1,7 +1,7 @@
 import { ok, equal } from 'assert'
 import { memento, closest, saveArchive, get, close } from '../src/server/wayback'
 
-describe('internet-archive', function() {
+describe('internet-archive', () => {
 
   it('should fetch history', async () => {
     const results = await memento('https://inkdroid.org')

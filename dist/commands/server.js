@@ -74,8 +74,10 @@ if (isDevelopment) {
     res.end();
   }); // log additional information about unhandled promises so they can be debugged
 
-  process.on('unhandledRejection', function (reason, p) {
-    _logger["default"].warn('Unhandled Rejection at:', p, 'reason:', reason);
+  process.on('unhandledRejection', function (event) {
+    console.warn(event);
+
+    _logger["default"].warn("Unhandled promise rejection: ".concat(event));
   });
 } else {
   app.use(_express["default"]["static"](clientDir));

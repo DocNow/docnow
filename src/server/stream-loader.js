@@ -90,14 +90,11 @@ export class StreamLoader {
       return
     }
 
-    let user = await this.db.getUser(search.creator)
-    if (! user) {
-      log.error('unable to find user for ' + search.creator)
-      return
-    }
-
+    const user = search.creator
     const t = await this.db.getTwitterClientForUser(user)
-    const track = search.query.map((term) => {return term.value}).join(',')
+
+    const lastQuery = search.queries[search.queries.length - 1]
+    const track = lastQuery.trackQuery()
     let tweets = []
 
     this.activeStreams.add(searchId)
@@ -117,13 +114,13 @@ export class StreamLoader {
       if (tweets.length >= 100 || (tweets.length > 0 && elapsed > 5000)) {
 
         // make sure we can continue to load tweets for this user
-        user = await this.db.getUser(search.creator)
-        if (! user.active) {
-          log.info(`user is not active: ${user.twitterScreenName}`)
+        const updatedUser = await this.db.getUser(user.id)
+        if (! updatedUser.active) {
+          log.info(`user is not active: ${updatedUser.twitterScreenName}`)
           this.stopStream(searchId)
           return false
         } else if (await this.db.userOverQuota(user)) {
-          log.info(`user is over quota ${user.twitterScreenName}`)
+          log.info(`user is over quota ${updatedUser.twitterScreenName}`)
           this.stopStream(searchId)
           return false
         }

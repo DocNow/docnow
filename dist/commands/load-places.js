@@ -50,7 +50,7 @@ function _main() {
               _iterator.f();
             }
 
-            console.log('loaded ' + places.length + ' places.');
+            console.log("added ".concat(places.length, " places"));
             _context.next = 9;
             return db.close();
 

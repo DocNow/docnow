@@ -61,7 +61,7 @@ var Archive = /*#__PURE__*/function () {
                 projectDir = _path["default"].dirname(_path["default"].dirname(__dirname));
                 userDataDir = _path["default"].join(projectDir, 'userData');
                 archivesDir = _path["default"].join(userDataDir, 'archives');
-                searchDir = _path["default"].join(archivesDir, search.id);
+                searchDir = _path["default"].join(archivesDir, search.id.toString());
                 appDir = _path["default"].join(projectDir, 'dist', 'archive'); // create a directory to write the data an archive app to
 
                 if (!_fs["default"].existsSync(searchDir)) {
@@ -120,7 +120,7 @@ var Archive = /*#__PURE__*/function () {
 
               case 29:
                 _context.next = 31;
-                return this.db.getUser(search.creator);
+                return this.db.getUser(search.creator.id);
 
               case 31:
                 user = _context.sent;
@@ -167,27 +167,37 @@ var Archive = /*#__PURE__*/function () {
 
               case 50:
                 data.webpages = _context.sent;
-                _context.next = 53;
+
+                _logger["default"].info("saving data to ".concat(searchDir)); // save the gathered data to the archive snapshot
+
+
+                _context.next = 54;
                 return this.saveData(data, searchDir);
 
-              case 53:
-                _context.next = 55;
+              case 54:
+                _logger["default"].info("saving ids to ".concat(searchDir)); // write out an addition ids.txt file for the hydrator
+
+
+                _context.next = 57;
                 return this.saveIds(data, searchDir);
 
-              case 55:
+              case 57:
                 // zip up the directory
                 zipPath = _path["default"].join(archivesDir, "".concat(search.id, ".zip"));
-                _context.next = 58;
+                _context.next = 60;
                 return this.writeZip(searchDir, zipPath);
 
-              case 58:
-                _context.next = 60;
+              case 60:
+                _context.next = 62;
                 return this.db.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
                   archived: true,
                   archiveStarted: false
                 }));
 
-              case 60:
+              case 62:
+                return _context.abrupt("return", zipPath);
+
+              case 63:
               case "end":
                 return _context.stop();
             }
@@ -205,24 +215,38 @@ var Archive = /*#__PURE__*/function () {
     key: "getAllTweetIds",
     value: function () {
       var _getAllTweetIds = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(search) {
-        var tweets;
+        var tweets, _iterator2, _step2, tweet;
+
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
                 tweets = [];
-                _context2.next = 3;
-                return this.db.getAllTweets(search, function (tweet) {
-                  tweets.push({
-                    id: tweet.id,
-                    retweet: tweet.retweet ? true : false
-                  });
-                });
-
-              case 3:
-                return _context2.abrupt("return", tweets);
+                _context2.t0 = _createForOfIteratorHelper;
+                _context2.next = 4;
+                return this.db.getAllTweets(search);
 
               case 4:
+                _context2.t1 = _context2.sent;
+                _iterator2 = (0, _context2.t0)(_context2.t1);
+
+                try {
+                  for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
+                    tweet = _step2.value;
+                    tweets.push({
+                      id: tweet.id,
+                      retweet: tweet.retweet ? true : false
+                    });
+                  }
+                } catch (err) {
+                  _iterator2.e(err);
+                } finally {
+                  _iterator2.f();
+                }
+
+                return _context2.abrupt("return", tweets);
+
+              case 8:
               case "end":
                 return _context2.stop();
             }
@@ -241,24 +265,26 @@ var Archive = /*#__PURE__*/function () {
     value: function saveIds(search, searchDir) {
       var tweetIdPath = _path["default"].join(searchDir, 'ids.txt');
 
+      _logger["default"].info("writing archive ids to ".concat(tweetIdPath));
+
       return new Promise(function (resolve) {
         var count = 0;
 
         var fh = _fs["default"].createWriteStream(tweetIdPath);
 
-        var _iterator2 = _createForOfIteratorHelper(search.tweets),
-            _step2;
+        var _iterator3 = _createForOfIteratorHelper(search.tweets),
+            _step3;
 
         try {
-          for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
-            var tweet = _step2.value;
+          for (_iterator3.s(); !(_step3 = _iterator3.n()).done;) {
+            var tweet = _step3.value;
             count += 1;
             fh.write(tweet.id + '\r\n');
           }
         } catch (err) {
-          _iterator2.e(err);
+          _iterator3.e(err);
         } finally {
-          _iterator2.f();
+          _iterator3.f();
         }
 
         fh.on('close', function () {
@@ -300,6 +326,7 @@ var Archive = /*#__PURE__*/function () {
                                 });
                               });
                             } catch (err) {
+                              console.log(err);
                               reject("unable to write archive: ".concat(err));
                             }
 

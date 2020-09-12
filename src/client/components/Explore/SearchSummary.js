@@ -26,7 +26,7 @@ export default class SearchSummary extends Component {
 }
 
 SearchSummary.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   maxDate: PropTypes.string,
   minDate: PropTypes.string,
   tweetCount: PropTypes.number,

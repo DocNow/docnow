@@ -124,10 +124,6 @@ export default class Settings extends MediaQueryComponent {
           <dl>
             <dd>{this.props.tweetCount.toLocaleString()}</dd>
             <dt>Tweets</dt>
-
-            <dd>{this.props.twitterUserCount.toLocaleString()}</dd>
-            <dt>Twitter Users</dt>
-
             <dd>{this.props.userCount.toLocaleString()}</dd>
             <dt>Instance Users</dt>
           </dl>
@@ -147,7 +143,6 @@ Settings.propTypes = {
   userLoggedIn: PropTypes.bool,
   isSuperUser: PropTypes.bool,
   tweetCount: PropTypes.number,
-  twitterUserCount: PropTypes.number,
   userCount: PropTypes.number,
   getSettings: PropTypes.func,
   updateSettings: PropTypes.func,

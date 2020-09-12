@@ -14,16 +14,11 @@ describe('twitter', () => {
     ok(t.twit)
   })
 
-  it('should fetch trends by place', (done) => {
-    t.getTrendsAtPlace(1)
-      .then((place) => {
-        equal(place.id, 1, 'place.id')
-        equal(place.name, 'Worldwide', 'place.name')
-        ok(place.trends.length > 0, 'place.trends')
-        ok(place.trends[0].name, 'place.trends[].name')
-        ok(place.trends[0].tweets >= 0, 'place.trends[].tweets')
-        done()
-      })
+  it('should fetch trends by place', async () => {
+    const trends = await t.getTrendsAtPlace(1)
+    ok(trends.length > 0, 'place.trends')
+    ok(trends[0].name, 'place.trends[].name')
+    ok(trends[0].count >= 0, 'place.trends[].count')
   })
 
 

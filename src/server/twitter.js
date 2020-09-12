@@ -1,3 +1,4 @@
+import '../env'
 import url from 'url'
 import Twit from 'twit'
 import log from './logger'
@@ -39,7 +40,7 @@ export class Twitter {
               type: place.placeType.name,
               country: place.country || '',
               countryCode: place.countryCode || '',
-              parent: place.parentid || ''
+              parentId: place.parentid || ''
             })
           }
           resolve(places)
@@ -47,27 +48,18 @@ export class Twitter {
     })
   }
 
-  getTrendsAtPlace(woeId) {
-    log.info('fetching trends for ' + woeId)
-    return new Promise(
-      (resolve, reject) => {
-        this.twit.get('trends/place', {id: woeId})
-          .then((resp) => {
-            const place = {
-              id: resp.data[0].locations[0].woeid,
-              name: resp.data[0].locations[0].name,
-              trends: []
-            }
-            for (const trend of resp.data[0].trends) {
-              place.trends.push({name: trend.name, tweets: trend.tweet_volume})
-            }
-            resolve(place)
-          })
-          .error((msg) => {
-            reject(msg)
-          })
+  async getTrendsAtPlace(id) {
+    log.info('fetching trends for ' + id)
+    const trends = []
+    try {
+      const resp = await this.twit.get('trends/place', {id: id})
+      for (const trend of resp.data[0].trends) {
+        trends.push({name: trend.name, count: trend.tweet_volume})
       }
-    )
+    } catch (e) {
+      console.log(`error when fetching trends: ${e}`)
+    }
+    return trends
   }
 
   search(opts, cb) {
@@ -215,9 +207,12 @@ export class Twitter {
     return ({
       id: t.id_str,
       text: decode(text),
+      language: t.lang,
       twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
       likeCount: t.favorite_count,
       retweetCount: t.retweet_count,
+      retweetId: retweet ? retweet.id : null,
+      quoteId: quote ? quote.id : null,
       client: t.source ? t.source.match(/>(.+?)</)[1] : null,
       user: {
         id: t.user.id_str,

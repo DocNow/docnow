@@ -2,7 +2,6 @@ import { SET_SYSTEM_STATS } from '../actions/stats'
 
 const initialState = {
   tweetCount: 0,
-  twitterUserCount: 0,
   userCount: 0
 }
 
