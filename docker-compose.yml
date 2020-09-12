@@ -14,24 +14,9 @@ services:
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       POSTGRES_DB: "${DB_DATABASE}"
 
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:6.6.1
-    environment:
-      - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
-      - xpack.security.enabled=false
-      - discovery.type=single-node
-    ulimits:
-      memlock:
-        soft: -1
-        hard: -1
-    ports:
-      - 9200:9200
-
   app:
     environment:
       - REDIS_HOST=redis
-      - ES_HOST=elasticsearch:9200
       - DB_HOSTNAME=db
       - DB_USERNAME
       - DB_PASSWORD
@@ -45,9 +30,7 @@ services:
     depends_on:
       - db
       - redis
-      - elasticsearch
     links:
       - db
       - redis
-      - elasticsearch
-    entrypoint: src/commands/wait-for-it.sh -t 120 elasticsearch:9200 -- ./entrypoint.sh
+    entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- ./entrypoint.sh
