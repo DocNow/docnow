@@ -8,7 +8,7 @@ before_script:
 - npm install
 - psql -c "CREATE DATABASE docnow" -U postgres
 - psql -c "CREATE USER docnow WITH PASSWORD 'docnow'"  -U postgres
-- psql -c "GRANT ALL PRIVILEGES ON docnow TO docnow" -U postgres
+- psql -c "GRANT ALL PRIVILEGES ON DATABASE docnow TO docnow" -U postgres
 script:
 - npm run test
 - npm run build
