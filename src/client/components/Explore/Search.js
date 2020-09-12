@@ -210,8 +210,9 @@ export default class Search extends Component {
 }
 
 Search.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   query: PropTypes.array,
+  queries: PropTypes.array,
   maxDate: PropTypes.string,
   minDate: PropTypes.string,
   tweetCount: PropTypes.number,

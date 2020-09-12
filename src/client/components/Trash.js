@@ -51,7 +51,7 @@ const Trash = ({id, deleteSearch}) => {
 }
 
 Trash.propTypes = {
-  id: PropTypes.string,
+  id: PropTypes.number,
   deleteSearch: PropTypes.func
 }
 

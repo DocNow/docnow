@@ -19,7 +19,7 @@ export class Archive {
     const projectDir = path.dirname(path.dirname(__dirname))
     const userDataDir = path.join(projectDir, 'userData')
     const archivesDir = path.join(userDataDir, 'archives')
-    const searchDir = path.join(archivesDir, search.id)
+    const searchDir = path.join(archivesDir, search.id.toString())
     const appDir = path.join(projectDir, 'dist', 'archive')
 
     // create a directory to write the data an archive app to
@@ -40,7 +40,7 @@ export class Archive {
     }
 
     // gather the data to be serialized
-    const user = await this.db.getUser(search.creator)
+    const user = await this.db.getUser(search.creator.id)
     const data = {
       id: search.id,
       creator: user.name,
@@ -61,10 +61,12 @@ export class Archive {
     data.videos = await this.db.getVideos(search)
     data.hashtags = await this.db.getHashtags(search)
     data.webpages = await this.db.getWebpages(search)
+    log.info(`saving data to ${searchDir}`)
 
     // save the gathered data to the archive snapshot
     await this.saveData(data, searchDir)
 
+    log.info(`saving ids to ${searchDir}`)
     // write out an addition ids.txt file for the hydrator
     await this.saveIds(data, searchDir)
 
@@ -96,6 +98,7 @@ export class Archive {
 
   saveIds(search, searchDir) {
     const tweetIdPath = path.join(searchDir, 'ids.txt')
+    log.info(`writing archive ids to ${tweetIdPath}`)
     return new Promise((resolve) => {
       let count = 0
       const fh = fs.createWriteStream(tweetIdPath)
@@ -133,6 +136,7 @@ export class Archive {
           })
         })
       } catch (err) {
+        console.log(err)
         reject(`unable to write archive: ${err}`)
       }
     })

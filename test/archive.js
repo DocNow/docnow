@@ -13,7 +13,6 @@ describe('archive', () => {
 
   it('should setup', async () => {
     await db.clear()
-    await db.setupIndexes()
 
     await db.addSettings({
       appKey: process.env.CONSUMER_KEY,
@@ -26,14 +25,17 @@ describe('archive', () => {
       twitterScreenName: "edsu",
       twitterUserId: "1234",
       twitterAccessToken: process.env.ACCESS_TOKEN,
-      twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET
+      twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET,
+      tweetQuota: 50000,
     })
 
-
-    testSearch = await db.createSearch(testUser, [
-      {type: 'keyword', value: 'obama'}
-    ])
-
+    testSearch = await db.createSearch({
+      userId: testUser.id,
+      title: 'Test',
+      description: 'this is a archive test search!',
+      active: true,
+      queries: [{value: {or: [{type: 'keyword', value: 'obama'}]}}]
+    })
     await db.importFromSearch(testSearch, 200)
   })
 

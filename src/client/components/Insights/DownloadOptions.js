@@ -44,7 +44,7 @@ export default class DownloadOptions extends Component {
 }
 
 DownloadOptions.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   active: PropTypes.bool,
   archived: PropTypes.bool,
   archiveStarted: PropTypes.bool,

@@ -107,5 +107,5 @@ SearchList.propTypes = {
   deleteSearch: PropTypes.func,
   getSearches: PropTypes.func,
   user: PropTypes.object,
-  forUserId: PropTypes.string,
+  forUserId: PropTypes.number,
 }

@@ -45,19 +45,16 @@
       }
     },
     "wtest": {
-      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 20000 --require @babel/polyfill --require @babel/register test/*'",
+      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 20000 --require @babel/polyfill --require @babel/register test/*.js'",
       "env": {
         "NODE_ENV": "test"
       }
     },
     "test": {
-      "command": "npm run eslint:server && mocha --timeout 20000 --require @babel/register --require @babel/polyfill test/*",
+      "command": "npm run eslint:server && mocha --timeout 20000 --require @babel/register --require @babel/polyfill test/*.js",
       "env": {
         "NODE_ENV": "test"
       }
-    },
-    "migrate": {
-
     }
   },
   "dependencies": {

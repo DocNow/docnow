@@ -2,7 +2,7 @@ import { Database } from '../src/server/db'
 import { ok, equal, deepEqual } from 'assert'
 import { StreamLoader, StreamLoaderController } from '../src/server/stream-loader'
 
-const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
+let db = new Database({redis: {db: 9}})
 let user = null
 let search = null
 
@@ -11,7 +11,6 @@ describe('stream-loader', () => {
   it('should setup', async () => {
 
     await db.clear()
-    await db.setupIndexes()
 
     await db.addSettings({
       appKey: process.env.CONSUMER_KEY,
@@ -29,9 +28,13 @@ describe('stream-loader', () => {
       twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET
     })
 
-    search = await db.createSearch(user, [
-      {type: 'keyword', value: 'obama'}
-    ])
+    search = await db.createSearch({
+      userId: user.id,
+      title: 'Stream Test',
+      description: 'This is a test stream!',
+      active: true,
+      queries: [{value: {or: [{type: 'keyword', value: 'obama'}]}}]
+    })
 
     const tweets = await db.getTweets(search)
     ok(tweets.length === 0, 'search has no tweets')
@@ -55,16 +58,20 @@ describe('stream-loader', () => {
     setTimeout(() => {
       controller.stop()
       loader.stop()
-      db.close()
-
       done()
     }, 15000)
   })
 
   it('should have saved tweets', (done) => {
     setTimeout(async () => {
+
+      // stopping the stream above closes the db so we need to reopen
+      db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
+
       const tweets = await db.getTweets(search)
       ok(tweets.length > 0, 'streamed tweets were saved')
+
+      db.close()
       done()
     }, 5000)
   })

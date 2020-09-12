@@ -1,5 +1,6 @@
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
+import { assert } from 'console'
 
 const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
 
@@ -11,10 +12,6 @@ describe('database', () => {
 
   it('should clear', (done) => {
     db.clear().then(done)
-  })
-
-  it('should setup indexes', (done) => {
-    db.setupIndexes().then(done)
   })
 
   it('should add settings', (done) => {
@@ -134,6 +131,7 @@ describe('database', () => {
     const trends = await db.getRecentTrendsForPlace({id: 1})
     ok(trends.length > 0)
     ok(trends[0].name)
+    ok(typeof(trends[0].count, 'number'))
     ok(trends[0].count)
   })
 
@@ -170,6 +168,25 @@ describe('database', () => {
     testSearch = search
   })
 
+  it('should update search', async () => {
+    await db.updateSearch({
+      id: testSearch.id,
+      title: 'Test Updated!',
+    })
+    const search = await db.getSearch(testSearch.id)
+    equal(search.title, 'Test Updated!')
+    equal(search.description, 'This is a test search!')
+  })
+
+  it('should ignore summary stats in update', async () => {
+    await db.updateSearch({
+      id: testSearch.id,
+      title: 'Test Updated!',
+      tweetCount: 123
+    })
+  })
+
+
   it('should import from search', async () => {
     const numTweets = await db.importFromSearch(testSearch, 200)
     ok(numTweets > 0, 'search found tweets')
@@ -198,6 +215,7 @@ describe('database', () => {
   it('should get summary', (done) => {
     db.getSearch(testSearch.id).then((search) => {
       db.getSearchSummary(search).then((summ) => {
+        ok(typeof(summ.count), 'number')
         ok(summ.count > 100, 'count')
         ok(summ.maxDate, 'maxDate')
         ok(summ.minDate, 'minDate')
@@ -220,6 +238,7 @@ describe('database', () => {
       // hopefully the test search pulled in some tweets with hashtags?
       if (hashtags.length > 0) {
         ok(hashtags[0].hashtag, '.hashtag text')
+        ok(typeof(hashtags[0].count) == 'number')
         ok(hashtags[0].count > 0, 'hashtag count')
       }
       done()
@@ -231,6 +250,7 @@ describe('database', () => {
     const urls = await db.getUrls(testSearch)
     ok(urls.length > 0, 'got a url')
     ok(urls[0].url.match(/^http/), 'looks like a url')
+    ok(typeof(urls[0].count), 'number')
     ok(urls[0].count > 0, 'the url count is set')
   })
 
@@ -239,6 +259,7 @@ describe('database', () => {
     const images = await db.getImages(testSearch)
     ok(images.length > 0, 'got an image')
     ok(images[0].url, 'image.url')
+    ok(typeof(images[0].count), 'number')
     ok(images[0].count > 0)
   })
 
@@ -273,6 +294,7 @@ describe('database', () => {
 
     ok(videos.length > 0)
     ok(videos[0].url, 'video.url')
+    ok(typeof(videos[0].count), 'number')
     ok(videos[0].count, 'videos.count')
   })
 
@@ -308,6 +330,7 @@ describe('database', () => {
     ok(users[0].id, 'user.id')
     ok(users[0].searches.length > 0, 'user.searches')
     ok(users[0].searches[0].id, 'search.id')
+    ok(typeof(users[0].searches[0].tweetCount), 'number')
     ok(users[0].searches[0].tweetCount > 0, 'search.tweetCount')
   })
 
@@ -323,7 +346,9 @@ describe('database', () => {
 
   it('should get stats', async() => {
     const stats = await db.getSystemStats()
+    ok(typeof(stats.tweetCount), 'number')
     ok(stats.tweetCount > 0, 'stats.tweetCount')
+    ok(typeof(stats.userCount), 'number')
     ok(stats.userCount > 0, 'stats.userCount')
   })
 

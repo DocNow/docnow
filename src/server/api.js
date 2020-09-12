@@ -15,7 +15,6 @@ const db = new Database()
 
 const streamLoader = new StreamLoaderController()
 
-db.setupIndexes()
 db.startTrendsWatcher({interval: 60 * 1000})
 
 app.get('/setup', (req, res) => {
@@ -200,7 +199,14 @@ app.get('/searches', (req, res) => {
 
 app.post('/searches', (req, res) => {
   if (req.user) {
-    db.createSearch(req.user, req.body.query)
+
+    const searchInfo = {
+      userId: req.user.id,
+      title: req.body.query.map(o => o.value).join(' '),
+      queries: [{value: {or: req.body.query}}]
+    }
+
+    db.createSearch(searchInfo)
       .then((search) => {
         db.importFromSearch(search)
         res.redirect(303, `/api/v1/search/${search.id}`)
@@ -214,13 +220,13 @@ app.post('/searches', (req, res) => {
 })
 
 
-app.get('/search/:searchId', (req, res) => {
+app.get('/search/:searchId', async (req, res) => {
   if (req.user) {
-    db.getSearch(req.params.searchId).then((search) => {
-      db.getSearchSummary(search).then((summ) => {
-        res.json(summ)
-      })
-    })
+    const search = await db.getSearch(req.params.searchId)
+    const summ = await db.getSearchSummary(search)
+    const lastQuery = summ.queries[summ.queries.length - 1]
+    summ.query = lastQuery.value.or
+    res.json(summ)
   }
 })
 

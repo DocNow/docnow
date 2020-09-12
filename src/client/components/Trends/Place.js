@@ -82,7 +82,7 @@ Place.propTypes = {
   trends: PropTypes.array,
   world: PropTypes.object,
   name: PropTypes.string,
-  id: PropTypes.string,
+  id: PropTypes.number,
   username: PropTypes.string,
   deleteTrend: PropTypes.func,
   createSearch: PropTypes.func
