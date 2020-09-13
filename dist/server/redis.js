@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.getRedis = getRedis;
-exports.videosCountKey = exports.imagesCountKey = exports.usersCountKey = exports.tweetsCountKey = exports.waybackKey = exports.deselectedUrlsKey = exports.selectedUrlsKey = exports.tweetsKey = exports.urlsCountKey = exports.queueCountKey = exports.urlsKey = exports.metadataKey = exports.urlKey = void 0;
+exports.waybackKey = exports.deselectedUrlsKey = exports.selectedUrlsKey = exports.tweetsKey = exports.urlsCountKey = exports.queueCountKey = exports.urlsKey = exports.metadataKey = exports.urlKey = void 0;
 
 var _redis = _interopRequireDefault(require("redis"));
 
@@ -97,34 +97,6 @@ exports.deselectedUrlsKey = deselectedUrlsKey;
 
 var waybackKey = function waybackKey(url) {
   return "wayback:".concat(url);
-}; // number of tweets in a search
-
-
-exports.waybackKey = waybackKey;
-
-var tweetsCountKey = function tweetsCountKey(search) {
-  return "tweetcount:".concat(search.id);
-}; // user counts for a search
-
-
-exports.tweetsCountKey = tweetsCountKey;
-
-var usersCountKey = function usersCountKey(search) {
-  return "usercounts:".concat(search.id);
-}; // image counts for a search
-
-
-exports.usersCountKey = usersCountKey;
-
-var imagesCountKey = function imagesCountKey(search) {
-  return "imagecounts:".concat(search.id);
-}; // video counts for a search
-
-
-exports.imagesCountKey = imagesCountKey;
-
-var videosCountKey = function videosCountKey(search) {
-  return "videocounts:".concat(search.id);
 };
 
-exports.videosCountKey = videosCountKey;
+exports.waybackKey = waybackKey;

@@ -30,7 +30,7 @@ provision and configure DocNow in the cloud.
 ## Development
 
 To set up DocNow on your workstation you will need to install [Git] and
-[Docker].  Once you've got them installed open a terminal window and follow
+[Docker]. Once you've got them installed open a terminal window and follow
 these instructions:
 
 1. git clone https://github.com/docnow/docnow
@@ -52,22 +52,6 @@ sysctl vm.overcommit_memory=1
 ```
 
 as `root` on the host machine
-
-The `elasticsearch` container will occasionally error out and can be
-[resolved](https://www.elastic.co/guide/en/elasticsearch/reference/current/vm-max-map-count.html) with:
-
-```bash
-sysctl -w vm.max_map_count=262144
-```
-
-as `root` on the host machine
-
-If you are not able to start new searches and get a warning from `elasticsearch` like this: `flood stage disk watermark [95%] exceeded on [...], all indices on this node will be marked read-only`, it can be [resolved](https://selleo.com/til/posts/esrgfyxjee-how-to-fix-elasticsearch-forbidden12index-read-only) with:
-
-```bash
-curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_cluster/settings -d '{ "transient": { "cluster.routing.allocation.disk.threshold_enabled": false } }'
-curl -XPUT -H "Content-Type: application/json" http://localhost:9200/_all/_settings -d '{"index.blocks.read_only_allow_delete": null}'
-```
 
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/

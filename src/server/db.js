@@ -22,12 +22,9 @@ const urlFetcher = new UrlFetcher()
 export class Database {
 
   constructor() {
-    // setup redis
     this.redis = getRedis()
-
-    const pg = knex(knexfile)
-    Model.knex(pg)
-    this.pg = pg
+    this.pg = knex(knexfile)
+    Model.knex(this.pg)
   }
 
   getIndex(type) {

@@ -1,6 +1,5 @@
 node_modules
-env.sh
-dump.rdb
 *.log
-.env*
 .DS_Store
+.env
+.env.test

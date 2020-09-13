@@ -21,6 +21,7 @@ services:
       - DB_USERNAME
       - DB_PASSWORD
       - DB_DATABASE
+      - NODE_ENV
     ports:
       - 3000:3000
     build:
