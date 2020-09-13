@@ -11,13 +11,11 @@ import Tweet from './models/Tweet'
 import TweetHashtag from './models/TweetHashtag'
 import TweetUrl from './models/TweetUrl'
 
-import { getRedis, usersCountKey, videosCountKey, imagesCountKey,
-         tweetsCountKey, urlsKey } from './redis'
-
 import log from './logger'
 import { Twitter } from './twitter'
 import { UrlFetcher } from './url-fetcher'
 import knexfile from '../../knexfile'
+import { getRedis } from './redis'
 
 const urlFetcher = new UrlFetcher()
 
@@ -202,17 +200,16 @@ export class Database {
     return users
   }
 
-  async getSuperUser() {
-    const user = await User.query().first().where('isSuperUser', '=', true)
-    return user
+  getSuperUser() {
+    return User.query().where('isSuperUser', '=', true).first()
   }
 
   getUserByTwitterUserId(userId) {
-    return User.query().first().where('twitter_user_id', '=', userId)
+    return User.query().where('twitter_user_id', '=', userId).first()
   }
 
   getUserByTwitterScreenName(twitterScreenName) {
-    return this.query().first().where('twitterScreeName', '=', twitterScreenName)
+    return this.query().where('twitterScreeName', '=', twitterScreenName).first()
   }
 
   async importLatestTrends() {
@@ -457,18 +454,30 @@ export class Database {
   }
 
   async getSearchStats(search) {
-    const tweetCount = await this.redis.getAsync(tweetsCountKey(search))
-    const userCount = await this.redis.zcardAsync(usersCountKey(search))
-    const videoCount = await this.redis.zcardAsync(videosCountKey(search))
-    const imageCount = await this.redis.zcardAsync(imagesCountKey(search))
-    const urlCount = await this.redis.zcardAsync(urlsKey(search))
+
+    // Perhaps there could be views of this data or it could be cached?
+
+    const results = await Tweet.query()
+      .countDistinct('screenName', {as: 'users'})
+      .count('tweetId', {as: 'tweets'})
+      .where({searchId: search.id})
+      .first()
+
+    const rows = await Tweet.query()
+      .join('tweetUrl', 'id', 'tweetUrl.tweetId')
+      .select('type')
+      .countDistinct('url')
+      .where({searchId: search.id})
+      .groupBy('type')
+
+    const urlCounts = new Map(rows.map(r => [r.type, r.count]))
 
     return {
-      tweetCount: parseInt(tweetCount || 0, 10),
-      imageCount: imageCount,
-      videoCount: videoCount,
-      userCount: userCount,
-      urlCount: urlCount
+      tweetCount: parseInt(results.tweets, 10),
+      userCount: parseInt(results.users, 10),
+      imageCount: parseInt(urlCounts.get('image'), 10),
+      videoCount: parseInt(urlCounts.get('video'), 10),
+      urlCount: parseInt(urlCounts.get('page'), 10)
     }
   }
 
@@ -514,8 +523,6 @@ export class Database {
 
     const tweetRows = []
     for (const tweet of tweets) {
-
-      this.tallyTweet(search, tweet)
 
       for (const url of tweet.urls) {
         urlFetcher.add(search, url.long, tweet.id)
@@ -577,17 +584,6 @@ export class Database {
     await TweetUrl.query().insert(urlRows)
 
     return results.length
-  }
-
-  tallyTweet(search, tweet) {
-    this.redis.incr(tweetsCountKey(search))
-    this.redis.zincrby(usersCountKey(search), 1, tweet.user.screenName)
-    for (const video of tweet.videos) {
-      this.redis.zincrby(videosCountKey(search), 1, video)
-    }
-    for (const image of tweet.images) {
-      this.redis.zincrby(imagesCountKey(search), 1, image)
-    }
   }
 
   getTweets(search, includeRetweets = true) {

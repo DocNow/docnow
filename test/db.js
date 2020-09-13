@@ -1,8 +1,7 @@
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
-import { assert } from 'console'
 
-const db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
+const db = new Database({redis: {db: 9}})
 
 describe('database', () => {
 

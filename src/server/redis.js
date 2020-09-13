@@ -49,15 +49,3 @@ export const deselectedUrlsKey = (search) => {return `urlsdeselected:${search.id
 
 // metadata for wayback information for a url
 export const waybackKey = (url) => {return `wayback:${url}`}
-
-// number of tweets in a search
-export const tweetsCountKey = (search) => {return `tweetcount:${search.id}`}
-
-// user counts for a search
-export const usersCountKey = (search) => {return `usercounts:${search.id}`}
-
-// image counts for a search
-export const imagesCountKey = (search) => {return `imagecounts:${search.id}`}
-
-// video counts for a search
-export const videosCountKey = (search) => {return `videocounts:${search.id}`}
