@@ -35,6 +35,7 @@ these instructions:
 
 1. git clone https://github.com/docnow/docnow
 1. cd docnow
+1. cp .env.docker .env
 1. docker-compose up
 1. make some ☕️
 1. open http://localhost:3000
