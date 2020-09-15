@@ -14,7 +14,7 @@ In order to modify or use the database you will need to do the following.
 2. Create a model
 3. Use the model
 
-### Create Migration
+### 1. Create Migration
 
 Database migrations are stored in `src/server/migrations`. You can create a new
 one by running this command where migration_name is replaced with a title for
@@ -56,7 +56,7 @@ When you are happy with the migration you can apply it to your database:
 
 		npx knex migrate:up --node_env development
 
-## Create Model
+## 2. Create Model
 
 It is often easier to use the database via an Objection model, which gives you a
 handy way of querying the database and getting back JavaScript objects for use
@@ -79,7 +79,7 @@ Things can get more fancy if you want to provide mappings to other models for
 one-to-many relationships and things like that, but that is the basic idea. See
 the [Objection Model] documentation for the details.
 
-## Use the Model
+## 3. Use the Model
 
 Now you can use the model by importing it and querying for data. You will most
 likely want to add this as a method to the Database class in `src/server/db.js`
