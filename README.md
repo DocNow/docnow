@@ -18,8 +18,8 @@ few components:
 
 * a client side application (React)
 * a server side REST API (Node)
-* a document database (ElasticSearch)
-* a messaging queue and stats database (Redis)
+* a database (PostgreSQL)
+* a messaging queue database (Redis)
 
 ## Production
 
@@ -43,15 +43,12 @@ If you run into an error above
 
 1. sh clean-up.sh
 
-### Other known issues
-
-The `redis` container will occasionally error out and can be resolved with:
+If you notice that the `redis` container occasionally errors out run this in the
+host operating system as root (not in the Redis container):
 
 ```bash
 sysctl vm.overcommit_memory=1
 ```
-
-as `root` on the host machine
 
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/
