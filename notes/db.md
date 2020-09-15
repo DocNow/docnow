@@ -66,7 +66,7 @@ So for our `widget` example above we would create a file `src/server/models/Widg
 ```javascript
 const { Model } = require('objection')
 
-class User extends Model {
+class Widget extends Model {
   static get tableName() {
     return 'widget'
   }
