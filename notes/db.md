@@ -38,21 +38,21 @@ widget we would have a migration that looks like:
 
 ```javascript
 exports.up = async (knex) => {
-	.createTable('widget', table => {
-		table.increments('id').primary()
-		table.text('name').notNullable()
-	})  
+  .createTable('widget', table => {
+    table.increments('id').primary()
+    table.text('name').notNullable()
+  })  
 }
 
 exports.down = async (knex) => {
   return knex.schema
-		.dropTable('widget')
+    .dropTable('widget')
 }
 ```
 
 When you are happy with the migration you can apply it to your database:
 
-		npx knex migrate:up --node_env development
+    npx knex migrate:up --node_env development
 
 ## 2. Create Model
 
