@@ -6,15 +6,13 @@ above Knex for turning database results into JavaScript objects. Most of the
 work of looking up things in the database is done in DocNow's [Database class]
 which contains application logic (looking up users and their collections, etc).
 
-## Modifying the Database
-
 In order to modify or use the database you will need to do the following. 
 
 1. Create a database migration
 2. Create a model
 3. Use the model
 
-### 1. Create Migration
+## 1. Create Migration
 
 Database migrations are stored in `src/server/migrations`. You can create a new
 one by running this command where migration_name is replaced with a title for
