@@ -3,7 +3,7 @@
 As of v0.1.0 the DocNow application sits on top of a PostgreSQL database. We use
 [Knex] to talk to the database from Node, and [Objection] as a simple layer
 above Knex for turning database results into JavaScript objects. Most of the
-work of looking up things in the database is done in DocNow's [Database class]
+work of looking up things in the database is done in DocNow's [Database] class
 which contains application logic (looking up users and their collections, etc).
 
 In order to modify or use the database you will need to do the following. 
