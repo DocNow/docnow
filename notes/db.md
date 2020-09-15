@@ -71,6 +71,8 @@ class Widget extends Model {
     return 'widget'
   }
 }
+
+module.exports = Widget
 ```
 
 Things can get more fancy if you want to provide mappings to other models for
