@@ -26,7 +26,7 @@ So lets say I was adding a new "widget" table to the database I would:
 
 This would create a time stamped file like:
 
-    ./src/server/migrations/20200915094827_add_widget.js
+    ./src/server/migrations/20200915094827_widget.js
 
 Then you populate the file with your schema changes. See the [Knex Schema]
 documentation to see all the options for how to create tables and relate them
