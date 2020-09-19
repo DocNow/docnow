@@ -254,12 +254,10 @@ var StreamLoader = /*#__PURE__*/function () {
                           case 21:
                             numTweets = tweets.length;
 
-                            _this2.db.loadTweets(search, tweets).then(function (resp) {
-                              if (resp.error) {
-                                _logger["default"].info('errors during load!');
-                              } else {
-                                _logger["default"].info('loaded ' + numTweets + ' tweets for ' + search.id);
-                              }
+                            _this2.db.loadTweets(search, tweets).then(function () {
+                              _logger["default"].info('loaded ' + numTweets + ' tweets for ' + search.id);
+                            })["catch"](function (e) {
+                              _logger["default"].error("error during stream loading: ".concat(e));
                             });
 
                             tweets = [];

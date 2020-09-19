@@ -598,7 +598,8 @@ app.get('/search/:searchId/tweets', function (req, res) {
       } else {
         var includeRetweets = req.query.includeRetweets ? true : false;
         var offset = req.query.offset ? req.query.offset : 0;
-        db.getTweets(search, includeRetweets, offset).then(function (tweets) {
+        var limit = req.query.limit ? req.query.limit : 100;
+        db.getTweets(search, includeRetweets, offset, limit).then(function (tweets) {
           res.json(tweets);
         });
       }
