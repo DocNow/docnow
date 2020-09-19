@@ -293,7 +293,8 @@ app.get('/search/:searchId/tweets', (req, res) => {
         } else {
           const includeRetweets = req.query.includeRetweets ? true : false
           const offset = req.query.offset ? req.query.offset : 0
-          db.getTweets(search, includeRetweets, offset)
+          const limit = req.query.limit ? req.query.limit : 100
+          db.getTweets(search, includeRetweets, offset, limit)
             .then((tweets) => {
               res.json(tweets)
             })

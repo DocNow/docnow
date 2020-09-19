@@ -398,11 +398,8 @@ export class Database {
   }
 
   async userOverQuota(user) {
-    const searches = await this.getUserSearches(user)
-    let total = 0
-    for (const s of searches) {
-      total += s.tweetCount
-    }
+    // const searches = await this.getUserSearches(user)
+    const total = Tweet.query().count().where({userId: user.id}).first()
     return total > user.tweetQuota
   }
 
@@ -594,14 +591,21 @@ export class Database {
 
   }
 
-  getTweets(search, includeRetweets = true) {
+  getTweets(search, includeRetweets = true, offset = 0, limit = 100) {
     const where = {
       searchId: search.id
     }
     if (! includeRetweets) {
       where.retweetId = null
     }
-    return this.pickJson(Tweet.query().select().where(where))
+    return this.pickJson(
+      Tweet
+        .query()
+        .select()
+        .where(where)
+        .offset(offset)
+        .limit(limit)
+    )
   }
 
   async getAllTweets(search) {
@@ -791,7 +795,7 @@ export class Database {
   }
 
   async getSystemStats() {
-    const tweets = await Tweet.query().count().first()
+    const tweets = await Tweet.query().select('id').count().first()
     const users = await User.query().count().first()
     return {
       tweetCount: Number.parseInt(tweets.count, 10),

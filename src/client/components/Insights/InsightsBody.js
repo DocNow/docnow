@@ -110,7 +110,7 @@ export default class InsightsBody extends Component {
           <CardActions>
             <h2 className={insightsStyle.CardLink}>
               <Link to={`/search/${this.props.searchId}/tweets/`}>
-                View {parseInt(this.props.search.tweets.length, 10).toLocaleString()} Tweets &rarr;
+                View {parseInt(this.props.search.tweetCount, 10).toLocaleString()} Tweets &rarr;
               </Link>
             </h2>
           </CardActions>
@@ -125,7 +125,7 @@ export default class InsightsBody extends Component {
 
           <CardActions>
             <h2 className={insightsStyle.CardLink}>
-              <Link to={`/search/${this.props.searchId}/users/`}>View {parseInt(this.props.search.users.length, 10).toLocaleString()} Users &rarr;</Link>
+              <Link to={`/search/${this.props.searchId}/users/`}>View {parseInt(this.props.search.userCount, 10).toLocaleString()} Users &rarr;</Link>
             </h2>
           </CardActions>
         </Card>

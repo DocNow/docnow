@@ -126,12 +126,10 @@ export class StreamLoader {
         }
 
         const numTweets = tweets.length
-        this.db.loadTweets(search, tweets).then((resp) => {
-          if (resp.error) {
-            log.info('errors during load!')
-          } else {
-            log.info('loaded ' + numTweets + ' tweets for ' + search.id)
-          }
+        this.db.loadTweets(search, tweets).then(() => {
+          log.info('loaded ' + numTweets + ' tweets for ' + search.id)
+        }).catch(e => {
+          log.error(`error during stream loading: ${e}`)
         })
         tweets = []
         lastUpdate = new Date()
