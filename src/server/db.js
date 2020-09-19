@@ -795,7 +795,7 @@ export class Database {
   }
 
   async getSystemStats() {
-    const tweets = await Tweet.query().select('id').count().first()
+    const tweets = await Tweet.query().count().first()
     const users = await User.query().count().first()
     return {
       tweetCount: Number.parseInt(tweets.count, 10),
