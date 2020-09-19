@@ -546,41 +546,52 @@ export class Database {
       })
     }
 
-    const results = await Tweet.query()
-      .insert(tweetRows)
-      .returning(['id', 'tweetId'])
+    try {
 
-    // now we have the tweet id we can attach relevant 
-    // hashtags and urls
+      await Tweet.transaction(async trx => {
 
-    const hashtagRows = []
-    const urlRows = []
-    for (const row of results) {
+        const results = await Tweet.query(trx)
+          .insert(tweetRows)
+          .returning(['id', 'tweetId'])
 
-      // make sure the hashtags are unique!
-      const hashtags = new Set(row.json.hashtags)
-      for (const name of hashtags) {
-        hashtagRows.push({name: name, tweetId: row.id})
-      }
+        // now we have the tweet id we can attach relevant 
+        // hashtags and urls
 
-      const urls = new Set(row.json.urls.map(r => r.long))
-      for (const url of urls) {
-        urlRows.push({url: url, type: 'page', tweetId: row.id})
-      }
+        const hashtagRows = []
+        const urlRows = []
+        for (const row of results) {
 
-      for (const url of new Set(row.json.images)) {
-        urlRows.push({url: url, type: 'image', tweetId: row.id})
-      }
+          // make sure the hashtags are unique!
+          const hashtags = new Set(row.json.hashtags)
+          for (const name of hashtags) {
+            hashtagRows.push({name: name, tweetId: row.id})
+          }
 
-      for (const url of new Set(row.json.videos)) {
-        urlRows.push({url: url, type: 'video', tweetId: row.id})
-      }
+          const urls = new Set(row.json.urls.map(r => r.long))
+          for (const url of urls) {
+            urlRows.push({url: url, type: 'page', tweetId: row.id})
+          }
 
+          for (const url of new Set(row.json.images)) {
+            urlRows.push({url: url, type: 'image', tweetId: row.id})
+          }
+
+          for (const url of new Set(row.json.videos)) {
+            urlRows.push({url: url, type: 'video', tweetId: row.id})
+          }
+
+        }
+
+        await TweetHashtag.query(trx).insert(hashtagRows)
+        await TweetUrl.query(trx).insert(urlRows)
+
+        return results.length
+      })
+
+    } catch (error) {
+      console.log(`loadTweets transaction failed: ${error}`)
     }
-    await TweetHashtag.query().insert(hashtagRows)
-    await TweetUrl.query().insert(urlRows)
 
-    return results.length
   }
 
   getTweets(search, includeRetweets = true) {
