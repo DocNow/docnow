@@ -1,4 +1,7 @@
-[![Build Status](https://travis-ci.org/DocNow/docnow.svg?branch=master)](https://travis-ci.org/DocNow/docnow)
+# docnow
+
+[![Build
+Status](https://travis-ci.org/DocNow/docnow.svg?branch=master)](https://travis-ci.org/DocNow/docnow)
 
 The web is a big and rapidly changing place, so it can be challenging to
 discover what resources related to a particular event or topic are in need of
