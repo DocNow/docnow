@@ -88,7 +88,7 @@ export default class Settings extends MediaQueryComponent {
             name="defaultQuota"
             label="Default Quota"
             helperText="Maximum tweets collected per user"
-            placeholder={50000}
+            defaultValue={50000}
             value={this.props.defaultQuota}
             onChange={this.props.updateSettings} />
 
