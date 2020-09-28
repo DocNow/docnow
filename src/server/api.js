@@ -99,7 +99,7 @@ app.put('/settings', async (req, res) => {
       instanceTitle: req.body.instanceTitle,
       appKey: req.body.appKey,
       appSecret: req.body.appSecret,
-      defaultQuota: parseInt(req.body.defaultQuota, 10)}
+      defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000}
 
     try {
       await db.addSettings(settings)
