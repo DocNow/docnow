@@ -47,11 +47,11 @@ export default class Settings extends MediaQueryComponent {
     return (
       <div className={this.state.mediaStyle}>
 
-
         <div className={style.SystemSettings}>
 
           {welcome}
 
+          <div>
           <TextField
               id="instanceTitle"
               name="instanceTitle"
@@ -60,73 +60,111 @@ export default class Settings extends MediaQueryComponent {
               placeholder="My Community Group"
               value={this.props.instanceTitle}
               onChange={this.props.updateSettings} />
+          </div>
 
-          <br />
-      
-          <TextField
-            id="appKey"
-            name="appKey"
-            label="Twitter App Consumer Key"
-            helperText="Find this in your Twitter App settings"
-            value={this.props.appKey}
-            onChange={this.props.updateSettings} />
+          <div>
+            <TextField
+                id="instanceInfoLink"
+                name="instanceInfoLink"
+                label="More Information Link"
+                helperText="A URL where users can learn more about you."
+                placeholder="https://example.org"
+                value={this.props.instanceInfoLink}
+                onChange={this.props.updateSettings} /> 
+          </div>
 
-          <br />
 
-          <TextField
-            id="appSecret"
-            name="appSecret"
-            label="Twitter App Consumer Secret"
-            helperText="Find this in your Twitter App settings"
-            value={this.props.appSecret}
-            onChange={this.props.updateSettings} />
+          <div>
+            <TextField
+              id="appKey"
+              name="appKey"
+              label="Twitter App Consumer Key"
+              helperText="Find this in your Twitter App settings"
+              value={this.props.appKey}
+              onChange={this.props.updateSettings} />
+          </div> 
 
-          <br />
+          <div>
+            <TextField
+              id="appSecret"
+              name="appSecret"
+              label="Twitter App Consumer Secret"
+              helperText="Find this in your Twitter App settings"
+              value={this.props.appSecret}
+              onChange={this.props.updateSettings} />
+          </div>
 
-          <TextField
-            id="defaultQuota"
-            name="defaultQuota"
-            label="Default Quota"
-            helperText="Maximum tweets collected per user"
-            defaultValue={50000}
-            value={this.props.defaultQuota}
-            onChange={this.props.updateSettings} />
+          <div>
+            <TextField
+              id="defaultQuota"
+              name="defaultQuota"
+              label="Default Quota"
+              helperText="Maximum tweets collected per user"
+              defaultValue={50000}
+              value={this.props.defaultQuota}
+              onChange={this.props.updateSettings} />
+          </div>
 
-          <br />
+          <div>
+            <LogoUpload
+              logoUrl={this.props.logoUrl}
+              updateSettings={this.props.updateSettings} />
+          </div>
 
-          <LogoUpload
-            logoUrl={this.props.logoUrl}
-            updateSettings={this.props.updateSettings} />
-
-          <br />
-
-          <Button 
-            variant="outlined"
-            color="primary"
-            onClick={() => {
-              this.props.saveSettings().then(() => {
-                if (this.props.userLoggedIn) {
-                  this.props.returnHome()
-                } else {
-                  window.location = '/auth/twitter/'
-                }
-              })
-            }}>Save</Button>
+          <div>
+            <Button 
+              variant="outlined"
+              color="primary"
+              onClick={() => {
+                this.props.saveSettings().then(() => {
+                  if (this.props.userLoggedIn) {
+                    this.props.returnHome()
+                  } else {
+                    window.location = '/auth/twitter/'
+                  }
+                })
+              }}>Save</Button>
+          </div>
           
-          <br />
-          <br />
-          <br />
-          <br />
-
         </div>
 
-        <div className={style.SystemStats}>
-          <dl>
-            <dd>{this.props.tweetCount.toLocaleString()}</dd>
-            <dt>Tweets</dt>
-            <dd>{this.props.userCount.toLocaleString()}</dd>
-            <dt>Instance Users</dt>
-          </dl>
+        <div>
+
+          <div className={style.SystemStats}>
+            <dl>
+              <dd>{this.props.tweetCount.toLocaleString()}</dd>
+              <dt>Tweets</dt>
+              <dd>{this.props.userCount.toLocaleString()}</dd>
+              <dt>Instance Users</dt>
+            </dl>
+          </div>
+
+          <div>
+            <TextField
+              id="instanceDescription"
+              name="instanceDescription"
+              label="Instance Desciption"
+              helperText="A public statement of the purpose of this instance of DocNow"
+              placeholder="This instance is being run by Centreville Public Library in order to collect and archive social media content relevant to the Centerville community."
+              value={this.props.instanceDescription}
+              multiline={true}
+              rows={5}
+              onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <TextField
+              id="instanceTweetText"
+              name="instanceTweetText"
+              label="Notification Tweet"
+              multiline={true}
+              rows={5}
+              helperText="A status message to send when announcing new data collection."
+              placeholder="Centerville Public Library is collecting {query}. To learn more click on the link below."
+              value={this.props.instanceTweetText}
+              onChange={this.props.updateSettings} />
+          </div>
+
         </div>
 
       </div>
