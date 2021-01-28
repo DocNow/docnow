@@ -19,8 +19,10 @@ export default class SearchToggle extends Component {
     if (! this.props.user.active) {
       this.setState({error: 'Your account is no longer active, please email admin.'})
     } else if (totalTweets > this.props.user.tweetQuota) {
-      const n = totalTweets - this.props.user.tweetQuota
-      this.setState({error: `You are over your quota of ${this.props.user.tweetQuota} tweets, please delete ${n} tweets.`})
+      this.setState({error: 
+        `You are over your quota of ${this.props.user.tweetQuota} tweets.
+        Delete one or more collections to start collecting again.`
+      })
     } else {
       this.props.updateSearch({
         id: this.props.id,
