@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Typography from '@material-ui/core/Typography'
 import style from './Profile.css'
 
 export default class Profile extends Component {
@@ -24,6 +25,12 @@ export default class Profile extends Component {
               title={`Linked to Twitter as @${this.props.user.twitterScreenName}`}
               src={this.props.user.twitterAvatarUrl} />
           </a>
+        </div>
+
+        <div>
+          <Typography variant="body1" gutterBottom>
+            Your max tweet quota: {this.props.user.tweetQuota}
+          </Typography>
         </div>
 
         <div>
