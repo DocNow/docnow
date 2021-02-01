@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 
 import path from 'path'
-import uuid from 'uuid/v4'
 import morgan from 'morgan'
 import webpack from 'webpack'
 import express from 'express'

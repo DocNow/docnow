@@ -14,22 +14,18 @@
 
 .Settings input {
   border: none;
-  font-size: 18pt;
+  font-size: 14pt;
   border-bottom: thin solid grey;
   font-weight: bold;
-  width: 700px;
+}
+
+.SystemSettings {
 }
 
 .SystemStats {
-  justify-content: right;
 }
 
 .SystemStats dl {
-  margin-left: 50px;
-  text-align: right;
-  padding: 10px;
-  border: thin solid gray;
-  border-radius: 5px;
 }
 
 .SystemStats dd {

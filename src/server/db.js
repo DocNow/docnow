@@ -169,7 +169,7 @@ export class Database {
   async getUser(userId) {
     const users = await User.query()
       .withGraphJoined('places')
-      .where('user.id', userId)
+      .where('user.id', Number(userId))
     return users.length > 0 ? users[0] : null
   }
 
