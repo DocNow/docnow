@@ -21,7 +21,7 @@ exports.up = knex => {
       table.string('location')
       table.string('email')
       table.string('description')
-      table.integer('twitterUserId').notNullable()
+      table.string('twitterUserId', 30).notNullable()
       table.string('twitterScreenName').notNullable()
       table.string('twitterAccessToken').notNullable()
       table.string('twitterAccessTokenSecret').notNullable()
