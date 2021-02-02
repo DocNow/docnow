@@ -17,6 +17,6 @@ jobs:
           NODE_ENV: test
           CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
           CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
-          ACCESS_KEY: ${{ ACCESS_KEY }}
-          ACCESS_KEY_SECRET: ${{ ACCESS_KEY_SECRET }}
+          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
+          ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
         run: docker-compose up --build --exit-code-from app
