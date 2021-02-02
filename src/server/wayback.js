@@ -43,7 +43,7 @@ async function saveArchive(url) {
   const saveUrl = `https://web.archive.org/save/` + url
   try {
     const resp = await request.get({url: saveUrl, resolveWithFullResponse: true})
-    const location = resp.headers['location']
+    const location = resp.headers.location
     const iaUrl = 'https://wayback.archive.org/' + location
     const time = moment(location.split('/')[2] + 'Z', 'YYYYMMDDhhmmssZ').toDate()
     const metadata = {url: iaUrl, time: time}
