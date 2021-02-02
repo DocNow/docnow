@@ -20,6 +20,10 @@ services:
       - DB_PASSWORD
       - DB_DATABASE
       - NODE_ENV
+      - CONSUMER_KEY
+      - CONSUMER_SECREt
+      - ACCESS_KEY
+      - ACCESS_KEY_SECRET
     ports:
       - 3000:3000
     build:
