@@ -21,7 +21,7 @@ services:
       - DB_DATABASE
       - NODE_ENV
       - CONSUMER_KEY
-      - CONSUMER_SECREt
+      - CONSUMER_SECRET
       - ACCESS_KEY
       - ACCESS_KEY_SECRET
     ports:
