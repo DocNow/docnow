@@ -10,9 +10,6 @@ jobs:
       - name: checkout git repository
         uses: actions/checkout@v2
 
-      - name: copy dotenv
-        run: cp .env.test .env
-
       - name: run tests in docker
         env:
           DB_HOSTNAME: db
@@ -23,5 +20,5 @@ jobs:
           CONSUMER_KEY: ${{ secrets.consumer_key }}
           CONSUMER_SECRET: ${{ secrets.consumer_secret }}
           ACCESS_KEY: ${{ secrets.access_key }}
-          ACCESS_KEY_SECRet: ${{ secrets.access_key_secret }}
+          ACCESS_KEY_SECRET: ${{ secrets.access_key_secret }}
         run: docker-compose up --build --exit-code-from app
