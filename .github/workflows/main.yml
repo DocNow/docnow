@@ -6,7 +6,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+
+      - name: checkout git repository
+        uses: actions/checkout@v2
 
       - name: run tests in docker
         env:

@@ -24,7 +24,7 @@ describe('internet-archive', () => {
 
   it('should archive a url', async () => {
     const t = (new Date).getTime()
-    const url = `http://blog.longnow.org/?t=${t}`
+    const url = `https://blog.longnow.org/?t=${t}`
 
     const result1 = await saveArchive(url)
     // sometimes saving to IA fails, and this can return null
