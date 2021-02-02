@@ -50,7 +50,7 @@ async function saveArchive(url) {
     save(url, metadata)
     return metadata
   } catch (e) {
-    log.warn(`got error when fetching ${saveUrl}`, e.response.statusCode)
+    log.warn(`got error when fetching ${saveUrl}`, e)
     return null
   }
 }
