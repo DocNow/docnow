@@ -1,0 +1,23 @@
+name: DocNow Test
+
+on: push
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - env:
+        DB_HOSTNAME: db
+        DB_USERNAME: docnow
+        DB_PASSWORD: docnow
+        DB_DATABASE: docnow_dev
+        NODE_ENV: test
+        CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
+        CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
+        ACCESS_KEY: ${{ ACCESS_KEY }}
+        ACCESS_KEY_SECRET: ${{ ACCESS_KEY_SECRET }}
+
+      - name: run tests in docker
+        run: docker-compose up --build --exit-code-from app
