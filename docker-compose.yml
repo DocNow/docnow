@@ -22,8 +22,8 @@ services:
       - NODE_ENV
       - CONSUMER_KEY
       - CONSUMER_SECRET
-      - ACCESS_KEY
-      - ACCESS_KEY_SECRET
+      - ACCESS_TOKEN
+      - ACCESS_TOKEN_SECRET
     ports:
       - 3000:3000
     build:
