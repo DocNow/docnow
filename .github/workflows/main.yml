@@ -10,6 +10,9 @@ jobs:
       - name: checkout git repository
         uses: actions/checkout@v2
 
+      - name: copy dotenv
+        run: cp .env.test .env
+
       - name: run tests in docker
         env:
           DB_HOSTNAME: db
