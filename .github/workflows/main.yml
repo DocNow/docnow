@@ -17,8 +17,8 @@ jobs:
           DB_PASSWORD: docnow
           DB_DATABASE: docnow_dev
           NODE_ENV: test
-          CONSUMER_KEY: ${{ secrets.CONSUMER_KEY }}
-          CONSUMER_SECRET: ${{ secrets.CONSUMER_SECRET }}
-          ACCESS_KEY: ${{ secrets.ACCESS_KEY }}
-          ACCESS_KEY_SECRET: ${{ secrets.ACCESS_KEY_SECRET }}
+          CONSUMER_KEY: ${{ secrets.consumer_key }}
+          CONSUMER_SECRET: ${{ secrets.consumer_secret }}
+          ACCESS_KEY: ${{ secrets.access_key }}
+          ACCESS_KEY_SECRet: ${{ secrets.access_key_secret }}
         run: docker-compose up --build --exit-code-from app
