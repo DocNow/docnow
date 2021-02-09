@@ -23,22 +23,10 @@ jobs:
           ACCESS_TOKEN_SECRET: ${{ secrets.access_token_secret }}
         run: docker-compose up --build --exit-code-from app
 
-      - name: notify slack success
-        if: success()
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
         env:
-          SLACK_BOT_TOKEN: ${{ secrets.slack_bot_token }}
-        uses: voxmedia/github-action-slack-notify-build@v1
-        with:
-          channel: development
-          status: SUCCESS
-          color: good
-
-      - name: notify slack fail
-        if: failure()
-        env:
-          SLACK_BOT_TOKEN: ${{ secrets.slack_bot_token }}
-        uses: voxmedia/github-action-slack-notify-build@v1
-        with:
-          channel: development
-          status: FAILED
-          color: danger
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_USERNAME: docnow-build
+          SLACK_ICON_EMOJI: ":test-tube:"
+          SLACK_COLOR: "${{ job.status == 'success' && 'good' || 'danger' }}"
