@@ -99,8 +99,12 @@ app.put('/settings', async (req, res) => {
       instanceTitle: req.body.instanceTitle,
       appKey: req.body.appKey,
       appSecret: req.body.appSecret,
-      defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000}
-
+      instanceInfoLink: req.body.instanceInfoLink,
+      instanceDescription: req.body.instanceDescription,
+      instanceTweetText: req.body.instanceTweetText,
+      defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000,
+    }
+    console.log(req.body)
     try {
       await db.addSettings(settings)
       activateKeys()
