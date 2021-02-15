@@ -19,12 +19,6 @@
   width: 500px;
 }
 
-/* .Settings input {
-  border: none;
-  font-size: 14pt;
-  border-bottom: thin solid grey;
-}*/
-
 .SettingsUnder780px input {
   width: 90%;
 }
