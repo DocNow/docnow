@@ -23,6 +23,10 @@ export default class SearchToggle extends Component {
         `You are over your quota of ${this.props.user.tweetQuota} tweets.
         Delete one or more collections to start collecting again.`
       })
+    } else if (!this.props.active && this.props.searches.filter(s => s.active).length === 2) {
+      this.setState({error: 
+        `You cannot have more than 2 active searches.`
+      })
     } else {
       this.props.updateSearch({
         id: this.props.id,
