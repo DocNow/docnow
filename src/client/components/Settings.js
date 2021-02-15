@@ -47,12 +47,13 @@ export default class Settings extends MediaQueryComponent {
     return (
       <div className={this.state.mediaStyle}>
 
-        <div className={style.SystemSettings}>
+        <div className={style.Settings}>
 
           {welcome}
 
           <div>
-          <TextField
+            <TextField
+              variant="outlined"
               id="instanceTitle"
               name="instanceTitle"
               label="Instance Name"
@@ -64,18 +65,47 @@ export default class Settings extends MediaQueryComponent {
 
           <div>
             <TextField
-                id="instanceInfoLink"
-                name="instanceInfoLink"
-                label="More Information Link"
-                helperText="A URL where users can learn more about you."
-                placeholder="https://example.org"
-                value={this.props.instanceInfoLink}
-                onChange={this.props.updateSettings} /> 
+              variant="outlined"
+              id="instanceInfoLink"
+              name="instanceInfoLink"
+              label="More Information Link"
+              helperText="A URL where users can learn more about you."
+              placeholder="https://example.org"
+              value={this.props.instanceInfoLink}
+              onChange={this.props.updateSettings} /> 
           </div>
-
 
           <div>
             <TextField
+              variant="outlined"
+              id="instanceDescription"
+              name="instanceDescription"
+              label="Instance Desciption"
+              helperText="A public statement of the purpose of this instance of DocNow"
+              placeholder="This instance is being run by Centreville Public Library in order to collect and archive social media content relevant to the Centerville community."
+              value={this.props.instanceDescription}
+              multiline={true}
+              rows={5}
+              onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <TextField
+              variant="outlined"
+              id="instanceTweetText"
+              name="instanceTweetText"
+              label="Notification Tweet"
+              multiline={true}
+              rows={5}
+              helperText="A status message to send when announcing new data collection."
+              placeholder="Centerville Public Library is collecting {query}. To learn more click on the link below."
+              value={this.props.instanceTweetText}
+              onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <TextField
+              variant="outlined"
               id="appKey"
               name="appKey"
               label="Twitter App Consumer Key"
@@ -86,6 +116,7 @@ export default class Settings extends MediaQueryComponent {
 
           <div>
             <TextField
+              variant="outlined"
               id="appSecret"
               name="appSecret"
               label="Twitter App Consumer Secret"
@@ -96,6 +127,7 @@ export default class Settings extends MediaQueryComponent {
 
           <div>
             <TextField
+              variant="outlined"
               id="defaultQuota"
               name="defaultQuota"
               label="Default Quota"
@@ -124,45 +156,6 @@ export default class Settings extends MediaQueryComponent {
                   }
                 })
               }}>Save</Button>
-          </div>
-          
-        </div>
-
-        <div>
-
-          <div className={style.SystemStats}>
-            <dl>
-              <dd>{this.props.tweetCount.toLocaleString()}</dd>
-              <dt>Tweets</dt>
-              <dd>{this.props.userCount.toLocaleString()}</dd>
-              <dt>Instance Users</dt>
-            </dl>
-          </div>
-
-          <div>
-            <TextField
-              id="instanceDescription"
-              name="instanceDescription"
-              label="Instance Desciption"
-              helperText="A public statement of the purpose of this instance of DocNow"
-              placeholder="This instance is being run by Centreville Public Library in order to collect and archive social media content relevant to the Centerville community."
-              value={this.props.instanceDescription}
-              multiline={true}
-              rows={5}
-              onChange={this.props.updateSettings} />
-          </div>
-
-          <div>
-            <TextField
-              id="instanceTweetText"
-              name="instanceTweetText"
-              label="Notification Tweet"
-              multiline={true}
-              rows={5}
-              helperText="A status message to send when announcing new data collection."
-              placeholder="Centerville Public Library is collecting {query}. To learn more click on the link below."
-              value={this.props.instanceTweetText}
-              onChange={this.props.updateSettings} />
           </div>
 
         </div>

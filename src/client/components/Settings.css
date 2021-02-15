@@ -1,58 +1,30 @@
 .Settings {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
-.Settings p {
-  margin-bottom: 25px;
+.Settings > div {
+  width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 30px;
+}
+
+.Settings input, .Settings textarea {
+  width: 500px;
 }
 
 .Settings .Welcome {
   width: 500px;
 }
 
-.Settings input {
+/* .Settings input {
   border: none;
   font-size: 14pt;
   border-bottom: thin solid grey;
-  font-weight: bold;
-}
-
-.SystemSettings {
-}
-
-.SystemStats {
-}
-
-.SystemStats dl {
-}
-
-.SystemStats dd {
-  font-size: 18pt;
-  margin-left: 0px;
-  font-weight: bold;
-}
-
-.SystemStats dt {
-  margin-bottom: 20px;
-}
-
-.SettingsUnder780px {
-  display: flex;
-  flex-direction: column;
-  justify-content: left;
-  margin: 5px;
-}
+}*/
 
 .SettingsUnder780px input {
   width: 90%;
-}
-
-.SettingsUnder780px dl {
-  text-align: left;
-  margin: 5px;
-  padding: 0px;
-  border: none;
-  background-color: white;
 }
