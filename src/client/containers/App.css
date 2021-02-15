@@ -6,13 +6,16 @@
 
 .App h2 {
   position: relative;
-  text-transform: uppercase;
   color: #000;
   font-size: 14pt;
   font-stretch: expanded;
-  font-weight: 300;
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.App h2 a {
+  color: #0f1282;
+  text-decoration: none;
 }
 
 .App h1 {

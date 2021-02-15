@@ -1,18 +1,21 @@
 .User {
   background-color: #ffffff;
-  border: thin solid gray;
-  margin-top: 2px;
-  margin-left: 2px;
-  margin-bottom: 2px;
+  border: thin solid rgb(204, 214, 221);
+  border-radius: 15px;
+  margin: 2px;
+  margin-top:6px;
   padding: 2px;
   font-size: 10pt;
   width: 94%;
+  padding-left: 2px;
+  margin-left: 5px;
 }
 
 .User img {
   display: inline-block;
   width: 33px;
   height: 33px;
+  border-radius: 50%;
 }
 
 .User a {
