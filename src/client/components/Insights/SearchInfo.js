@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import DownloadOptions from '../../containers/DownloadOptions'
 import SearchToggle from '../SearchToggle'
+import SearchPublic from '../SearchPublic'
 import Trash from '../Trash'
 import moment from 'moment'
 import Editable from '../Editable'
@@ -65,6 +66,7 @@ export default class SearchInfo extends Component {
             <TableCell>Created</TableCell>
             <TableCell>Last Update</TableCell>
             <TableCell>Active</TableCell>
+            <TableCell>Public</TableCell>
             <TableCell>Archive</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
@@ -93,6 +95,14 @@ export default class SearchInfo extends Component {
               searches={this.props.searches}
               user={this.props.user}
               updateSearch={this.props.updateSearch} />  
+          </TableCell>
+          <TableCell>
+            <SearchPublic
+              public={this.props.search.public}
+              id={this.props.search.id}
+              searches={this.props.searches}
+              user={this.props.user}
+              updateSearch={this.props.updateSearch} />
           </TableCell>
           <TableCell>
             <DownloadOptions

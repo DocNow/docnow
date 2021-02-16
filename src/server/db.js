@@ -397,6 +397,34 @@ export class Database {
     return searches
   }
 
+  async getPublicSearches() {
+    const results = await Search.query()
+      .whereNotNull("public")
+      .withGraphJoined('creator')
+      .withGraphJoined('queries')
+      .orderBy('created', 'DESC')
+
+    // remove all info except for the creator's name and id
+    results.map(s => {
+      s.creator = {
+        id: s.creator.id,
+        name: s.creator.name,
+      }
+    })
+
+    // add stats to each search
+    const searches = []
+    for (const search of results) {
+      const stats = await this.getSearchStats(search)
+      searches.push({
+        ...search,
+        ...stats
+      })
+    }
+
+    return searches
+  }
+
   async userOverQuota(user) {
     // const searches = await this.getUserSearches(user)
     const total = Tweet.query().count().where({userId: user.id}).first()
@@ -407,6 +435,7 @@ export class Database {
     // search properties are explicitly used to guard against trying
     // to persist properties that were added by getSearchSummary
     const safeSearch = this.removeStatsProps(search)
+    console.log(safeSearch)
     return Search.query()
       .patch({...safeSearch, updated: new Date()})
       .where('id', safeSearch.id)

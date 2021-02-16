@@ -190,12 +190,18 @@ app.post('/logo', (req, res) => {
 })
 
 app.get('/searches', (req, res) => {
-  if (req.user) {
+  // if the user is logged in and they aren't asking for public searches
+  if (req.user && ! req.query.public) {
     let userId = req.user.id
     if (req.query.userId && req.user.isSuperUser) {
       userId = req.query.userId
     }
-    db.getUserSearches({id: userId}).then((searches) => {
+    db.getUserSearches({id: userId}).then(searches => {
+      res.json(searches)
+    })
+  } else {
+    // otherwise they just get the public searches
+    db.getPublicSearches().then(searches => {
       res.json(searches)
     })
   }

@@ -12,6 +12,7 @@ import TableRow from '@material-ui/core/TableRow'
 
 import Trash from './Trash'
 import SearchToggle from './SearchToggle'
+import SearchPublic from './SearchPublic'
 
 export default class SearchList extends Component {
 
@@ -46,6 +47,7 @@ export default class SearchList extends Component {
             <TableCell>Created</TableCell>
             <TableCell>Last Update</TableCell>
             <TableCell>Active</TableCell>
+            <TableCell>Public</TableCell>
             <TableCell>Archive</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
@@ -81,6 +83,14 @@ export default class SearchList extends Component {
                   updateSearch={this.props.updateSearch} />
               </TableCell>
               <TableCell>
+                <SearchPublic
+                  id={search.id}
+                  public={search.public}
+                  user={this.props.user}
+                  searches={this.props.searches}
+                  updateSearch={this.props.updateSearch} />
+               </TableCell>
+               <TableCell>
                 <DownloadOptions
                   id={search.id}
                   active={search.active}

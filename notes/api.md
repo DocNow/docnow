@@ -25,9 +25,9 @@ Returns the users trending locations, or the application wide trends when
 a user is not logged in. If a list of place identifiers is PUT then
 the trending locations are updated to use those places.
 
-### /search *(POST)*
+### /searches *(GET, POST)*
 
-Post a query as JSON and get a redirect to a URL for the search result.
+Post a query as JSON and get a redirect to a URL for the search result. If a Get is used the logged in users searches are returned. If the user is not logged in only information about public searches will be returned. If the user is logged in and wants to get a list of public searches the `public=true` query parameter can be used.
 
 ### /search/{search-id} *(GET, PUT)*
 
