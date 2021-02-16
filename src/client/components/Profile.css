@@ -12,3 +12,13 @@
 .Profile div {
   margin-bottom: 10px;
 }
+
+.Inactive {
+  color: #fff;
+  margin: 24px 0;
+  padding: 12px 18px;
+  overflow: auto;
+  direction: ltr;
+  border-radius: 4px;
+  background-color: #272c34;
+}

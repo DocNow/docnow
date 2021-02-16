@@ -14,6 +14,13 @@ export default class Profile extends Component {
       disableSave = false
     }
 
+    const awaitingActivation = this.props.user.active ? ''
+      : <div className={style.Inactive}>
+        <Typography variant="body1" gutterBottom>
+          Your account is awaiting activation. The admin has been notified.
+        </Typography>
+      </div>
+
     return (
       <div className={style.Profile}>
 
@@ -26,6 +33,8 @@ export default class Profile extends Component {
               src={this.props.user.twitterAvatarUrl} />
           </a>
         </div>
+
+        {awaitingActivation}
 
         <div>
           <Typography variant="body1" gutterBottom>
