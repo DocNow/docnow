@@ -143,7 +143,7 @@ export default class Search extends Component {
               <TweetList tweets={this.props.tweets} />
             </CardContent>
 
-            <CardActions>
+            <CardActions className={card.CardActions}>
               <h2 className={card.PlaceHeader}>Tweets</h2>
             </CardActions>
           </Card>
@@ -155,7 +155,7 @@ export default class Search extends Component {
                 users={this.props.users}/>
             </CardContent>
 
-            <CardActions>
+            <CardActions className={card.CardActions}>
               <h2 className={card.PlaceHeader}>Users</h2>
             </CardActions>
           </Card>
@@ -168,7 +168,7 @@ export default class Search extends Component {
                 query={this.props.query} />
             </CardContent>
 
-            <CardActions>
+            <CardActions className={card.CardActions}>
               <h2 className={card.PlaceHeader}>Hashtags</h2>
             </CardActions>
           </Card>
@@ -178,7 +178,7 @@ export default class Search extends Component {
               <UrlList urls={this.props.urls} />
             </CardContent>
 
-            <CardActions>
+            <CardActions className={card.CardActions}>
               <h2 className={card.PlaceHeader}>URLs</h2>
             </CardActions>
           </Card>
@@ -188,7 +188,7 @@ export default class Search extends Component {
               <ImageList images={this.props.images} />
             </CardContent>
 
-            <CardActions>
+            <CardActions className={card.CardActions}>
               <h2 className={card.PlaceHeader}>Images</h2>
             </CardActions>
           </Card>
@@ -198,7 +198,7 @@ export default class Search extends Component {
               <VideoList videos={this.props.videos} />
             </CardContent>
 
-            <CardActions>
+            <CardActions className={card.CardActions}>
               <h2 className={card.PlaceHeader}>Video</h2>
             </CardActions>
           </Card>

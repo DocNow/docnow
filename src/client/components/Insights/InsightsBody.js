@@ -26,7 +26,7 @@ export default class InsightsBody extends Component {
           <ion-icon name="cloud-outline"></ion-icon>
         </span>
       </CardContent>
-      <CardActions>
+      <CardActions className={card.CardActions}>
           <h2 className={insightsStyle.CardLink}>
             This search has no {type}.
           </h2>
@@ -59,7 +59,7 @@ export default class InsightsBody extends Component {
           })}
         </CardContent>
 
-        <CardActions>
+        <CardActions className={card.CardActions}>
           <h2 className={insightsStyle.CardLink}>
             <Link to={`/search/${this.props.searchId}/webpages/`}>
               View {parseInt(this.props.search.urlCount, 10).toLocaleString()} Webpages &rarr;
@@ -75,7 +75,7 @@ export default class InsightsBody extends Component {
           <ImageList images={this.props.search.images.slice(0, 50)} />
         </CardContent>
 
-        <CardActions>
+        <CardActions className={card.CardActions}>
           <h2 className={insightsStyle.CardLink}>
             <Link to={`/search/${this.props.searchId}/images/`}>
               View {parseInt(this.props.search.imageCount, 10).toLocaleString()} Images &rarr;
@@ -91,7 +91,7 @@ export default class InsightsBody extends Component {
         <VideoList videos={this.props.search.videos.slice(0, 50)} />
       </CardContent>
 
-      <CardActions>
+      <CardActions className={card.CardActions}>
         <h2 className={insightsStyle.CardLink}>
           <Link to={`/search/${this.props.searchId}/videos/`}>
             View {parseInt(this.props.search.videoCount, 10).toLocaleString()} Videos &rarr;</Link>
@@ -107,7 +107,7 @@ export default class InsightsBody extends Component {
               return <TweetEmbed key={`t${i}`} id={t.id} />
             })}
           </CardContent>
-          <CardActions>
+          <CardActions className={card.CardActions}>
             <h2 className={insightsStyle.CardLink}>
               <Link to={`/search/${this.props.searchId}/tweets/`}>
                 View {parseInt(this.props.search.tweetCount, 10).toLocaleString()} Tweets &rarr;
@@ -123,7 +123,7 @@ export default class InsightsBody extends Component {
               users={this.props.search.users.slice(0, 50)}/>
           </CardContent>
 
-          <CardActions>
+          <CardActions className={card.CardActions}>
             <h2 className={insightsStyle.CardLink}>
               <Link to={`/search/${this.props.searchId}/users/`}>View {parseInt(this.props.search.userCount, 10).toLocaleString()} Users &rarr;</Link>
             </h2>
@@ -139,7 +139,7 @@ export default class InsightsBody extends Component {
               query={this.props.search.query} />
           </CardContent>
 
-          <CardActions>
+          <CardActions className={card.CardActions}>
             <h2 className={card.PlaceHeader}>Hashtags</h2>
           </CardActions>
         </Card>

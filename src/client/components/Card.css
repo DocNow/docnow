@@ -21,6 +21,10 @@
   margin-right: 15px;
 }
 
+.CardActions {
+  border-top: 1px solid #ccc;
+}
+
 .Scroll {
   overflow-y: scroll;
   overflow-x: hidden;
