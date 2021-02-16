@@ -7,18 +7,18 @@
   max-width: 1200px;
   margin: 0 auto;
   padding-bottom: 3em;
+
 }
 
 .Card {
   height: 300px;
+  border: thin solid gray;
   width: 300px;
-
   box-shadow: 0 8px 8px 0 rgba(0,0,0,0.2);
   transition: 0.3s;
   margin-top: 20px;
   margin-left: 15px;
   margin-right: 15px;
-  opacity: 0.9;
 }
 
 .Scroll {
@@ -32,6 +32,11 @@
   padding: 0 !important;
   height: 250px;
   max-height: 250px;
+}
+
+
+.MuiCardActions-root .MuiCardActions-spacing {
+  border-top: 1px solid gray;
 }
 
 
@@ -74,99 +79,8 @@ select:disabled {
   color: #666666;
 }
 
-.SavedShortCard {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  border: none;
-  overflow: hidden;
-  background-color: #ffffff;
-  height: 300px;
-  width: 300px;
-  margin-top: 20px;
-}
-
-.SavedShortGraphCard {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 0;
-  border: none;
-  overflow: hidden;
-  background-color: #ffffff;
-  height: 300px;
-  width: 300px;
-  margin-right: 60px;
-  margin-top: 20px;
-}
-
-.SavedImageCard {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  overflow: hidden;
-  height: 400x;
-  margin-top: 20px;
-}
-
-.SavedImageCard img, .SavedImageCard video {
-  height: 100px;
-  margin: 5px;
-  border: thin solid gray;
-}
-
-.SavedImageCard a {
-  font-size: 10pt;
-  text-align: center;
-}
-
-.SavedImageCard a:hover img {
-  border-color: blue;
-}
-
-.SavedImageCard h1 {
-  position: absolute;
-  background-color: rgba(255,255,255,0.6);
-  width: 300px;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-}
-
-.SavedLongCard {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  box-sizing: border-box;
-  border-radius: 2px;
-  background-color: #ffffff;
-  margin-top: 20px;
-}
-
-.SavedLongCard img {
-  max-width: 48px;
-}
-
 @media screen and (max-width: 660px) {
   .SavedLongCard {
     width: 300px;
   }
-}
-
-.CardHolder a {
-  text-decoration: none;
-  color: #1da1f2;
-}
-
-.SavedShortCard h1 {
-  text-align: center;
-}
-
-.SavedShortCard h1:hover {
-  color: #0f1282 !important;
 }
