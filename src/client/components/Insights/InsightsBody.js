@@ -49,7 +49,7 @@ export default class InsightsBody extends Component {
             if (w.image) {
               return <div key={`wp${i}`} className={insightsStyle.WebPreview}>
                 <a key={w.url} rel="noopener noreferrer" target="_blank" href={w.url}>
-                  <span><img src={w.image} width="200" onError={(e) => {
+                  <span><img src={w.image} width="250" onError={(e) => {
                     e.target.src = docImg
                   }} /></span>
                   {this.getHostName(w.url)}
