@@ -51,16 +51,17 @@ export default class TabBarComponent extends MediaQueryComponent {
         variant="fullWidth"
         value={activeIndex}
         indicatorColor="primary"
-        textColor="black"
+        textColor="primary"
         aria-label="nav tabs example"
       >{
         this.links.map((link, i) => {
+          const nonActiveClass = i !== activeIndex ? styles.NonActiveTab : ''
           return (
             <Tab key={`l-${i}`} component="a" onClick={e => {
                 e.preventDefault()
                 this.props.navigateTo(this.links[i].dest)
               }}
-              className={styles.Tab}
+              className={`${styles.Tab} ${nonActiveClass}`}
               icon={<ion-icon name={link.icon} style={{fontSize: '180%'}}></ion-icon>}
               label={<span className={`${styles.Label} ${this.state.mediaStyle}`}>{link.label}</span>}
               id={`nav-tab-${i}`}

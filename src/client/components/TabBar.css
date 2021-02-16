@@ -16,3 +16,7 @@
 .Label {
   padding-left: 10px;
 }
+
+.NonActiveTab {
+  color: #000 !important;
+}
