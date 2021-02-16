@@ -17,9 +17,14 @@ export default class Profile extends Component {
     const awaitingActivation = this.props.user.active ? ''
       : <div className={style.Inactive}>
         <Typography variant="body1" gutterBottom>
-          Your account is awaiting activation. The admin has been notified.
+          Your account is awaiting activation. In the meantime, you can explore
+          and save searches, but saved searches will not keep collecting tweets.
         </Typography>
       </div>
+
+      // Once we have emails in place, change text above to:
+      // Your account is awaiting activation. The admin has been notified. 
+      // You will receive an email when activated. etc.
 
     return (
       <div className={style.Profile}>

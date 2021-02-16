@@ -69,7 +69,7 @@ app.get('/twitter', passport.authenticate('twitter'))
 app.get('/twitter/callback',
   passport.authenticate('twitter', { failureRedirect: '/login' }),
   (req, res) => {
-    res.redirect('/')
+    res.redirect('/profile/')
   }
 )
 
