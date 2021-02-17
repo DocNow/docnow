@@ -142,7 +142,6 @@ app.put('/trends', async (req, res) => {
 
     // create sparse object of places with the place ids
     const newPlaceIds = req.body
-    console.log(newPlaceIds)
     user.places = newPlaceIds.map(placeId => ({id: placeId}))
 
     // update the users place ids

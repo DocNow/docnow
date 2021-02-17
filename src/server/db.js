@@ -435,7 +435,6 @@ export class Database {
     // search properties are explicitly used to guard against trying
     // to persist properties that were added by getSearchSummary
     const safeSearch = this.removeStatsProps(search)
-    console.log(safeSearch)
     return Search.query()
       .patch({...safeSearch, updated: new Date()})
       .where('id', safeSearch.id)
