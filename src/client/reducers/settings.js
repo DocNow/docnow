@@ -6,6 +6,9 @@ const initialState = {
   appKey: '',
   appSecret: '',
   defaultQuota: '',
+  instanceInfoLink: '',
+  instanceDescription: '',
+  instanceTweetText: '',
   updated: false,
 }
 
@@ -21,6 +24,9 @@ export default function settings(state = initialState, action) {
         appKey: action.appKey,
         appSecret: action.appSecret,
         defaultQuota: action.defaultQuota,
+        instanceDescription: action.instanceDescription,
+        instanceInfoLink: action.instanceInfoLink,
+        instanceTweetText: action.instanceTweetText
       }
     }
 

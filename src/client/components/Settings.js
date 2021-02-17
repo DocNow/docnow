@@ -80,7 +80,7 @@ export default class Settings extends MediaQueryComponent {
               variant="outlined"
               id="instanceDescription"
               name="instanceDescription"
-              label="Instance Desciption"
+              label="Instance Description"
               helperText="A public statement of the purpose of this instance of DocNow"
               placeholder="This instance is being run by Centreville Public Library in order to collect and archive social media content relevant to the Centerville community."
               value={this.props.instanceDescription}

@@ -104,7 +104,6 @@ app.put('/settings', async (req, res) => {
       instanceTweetText: req.body.instanceTweetText,
       defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000,
     }
-    console.log(req.body)
     try {
       await db.addSettings(settings)
       activateKeys()
