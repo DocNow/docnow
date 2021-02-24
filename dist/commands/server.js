@@ -5,8 +5,6 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 
 var _path = _interopRequireDefault(require("path"));
 
-var _v = _interopRequireDefault(require("uuid/v4"));
-
 var _morgan = _interopRequireDefault(require("morgan"));
 
 var _webpack = _interopRequireDefault(require("webpack"));

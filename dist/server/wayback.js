@@ -114,7 +114,7 @@ function _saveArchive() {
 
           case 4:
             resp = _context2.sent;
-            location = resp.headers['content-location'];
+            location = resp.headers.location;
             iaUrl = 'https://wayback.archive.org/' + location;
             time = (0, _moment["default"])(location.split('/')[2] + 'Z', 'YYYYMMDDhhmmssZ').toDate();
             metadata = {
@@ -128,7 +128,7 @@ function _saveArchive() {
             _context2.prev = 13;
             _context2.t0 = _context2["catch"](1);
 
-            _logger["default"].warn("got error when fetching ".concat(saveUrl), _context2.t0.response.statusCode);
+            _logger["default"].warn("got error when fetching ".concat(saveUrl), _context2.t0);
 
             return _context2.abrupt("return", null);
 

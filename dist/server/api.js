@@ -214,7 +214,10 @@ app.put('/settings', /*#__PURE__*/function () {
               instanceTitle: req.body.instanceTitle,
               appKey: req.body.appKey,
               appSecret: req.body.appSecret,
-              defaultQuota: parseInt(req.body.defaultQuota, 10)
+              instanceInfoLink: req.body.instanceInfoLink,
+              instanceDescription: req.body.instanceDescription,
+              instanceTweetText: req.body.instanceTweetText,
+              defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000
             };
             _context4.prev = 5;
             _context4.next = 8;
@@ -327,7 +330,7 @@ app.put('/trends', /*#__PURE__*/function () {
         switch (_context6.prev = _context6.next) {
           case 0:
             if (!req.user) {
-              _context6.next = 30;
+              _context6.next = 29;
               break;
             }
 
@@ -338,73 +341,72 @@ app.put('/trends', /*#__PURE__*/function () {
             user = _context6.sent;
             // create sparse object of places with the place ids
             newPlaceIds = req.body;
-            console.log(newPlaceIds);
             user.places = newPlaceIds.map(function (placeId) {
               return {
                 id: placeId
               };
             }); // update the users place ids
 
-            _context6.next = 9;
+            _context6.next = 8;
             return db.updateUser(user);
 
-          case 9:
+          case 8:
             user = _context6.sent;
             // load latest data for these places
             _iterator2 = _createForOfIteratorHelper(user.places);
-            _context6.prev = 11;
+            _context6.prev = 10;
 
             _iterator2.s();
 
-          case 13:
+          case 12:
             if ((_step2 = _iterator2.n()).done) {
-              _context6.next = 19;
+              _context6.next = 18;
               break;
             }
 
             place = _step2.value;
-            _context6.next = 17;
+            _context6.next = 16;
             return db.importLatestTrendsForPlace(place, user);
 
-          case 17:
-            _context6.next = 13;
+          case 16:
+            _context6.next = 12;
             break;
 
-          case 19:
-            _context6.next = 24;
+          case 18:
+            _context6.next = 23;
             break;
 
-          case 21:
-            _context6.prev = 21;
-            _context6.t0 = _context6["catch"](11);
+          case 20:
+            _context6.prev = 20;
+            _context6.t0 = _context6["catch"](10);
 
             _iterator2.e(_context6.t0);
 
-          case 24:
-            _context6.prev = 24;
+          case 23:
+            _context6.prev = 23;
 
             _iterator2.f();
 
-            return _context6.finish(24);
+            return _context6.finish(23);
 
-          case 27:
+          case 26:
             res.json({
               status: 'updated'
             });
-            _context6.next = 31;
+            _context6.next = 30;
             break;
 
-          case 30:
+          case 29:
             res.json({
               status: 'not logged in'
             });
 
-          case 31:
+          case 30:
           case "end":
             return _context6.stop();
         }
       }
-    }, _callee6, null, [[11, 21, 24, 27]]);
+    }, _callee6, null, [[10, 20, 23, 26]]);
   }));
 
   return function (_x11, _x12) {
@@ -438,7 +440,8 @@ app.post('/logo', function (req, res) {
   }
 });
 app.get('/searches', function (req, res) {
-  if (req.user) {
+  // if the user is logged in and they aren't asking for public searches
+  if (req.user && !req.query["public"]) {
     var userId = req.user.id;
 
     if (req.query.userId && req.user.isSuperUser) {
@@ -448,6 +451,11 @@ app.get('/searches', function (req, res) {
     db.getUserSearches({
       id: userId
     }).then(function (searches) {
+      res.json(searches);
+    });
+  } else {
+    // otherwise they just get the public searches
+    db.getPublicSearches().then(function (searches) {
       res.json(searches);
     });
   }

@@ -68,7 +68,7 @@ app.get('/twitter', _passport["default"].authenticate('twitter'));
 app.get('/twitter/callback', _passport["default"].authenticate('twitter', {
   failureRedirect: '/login'
 }), function (req, res) {
-  res.redirect('/');
+  res.redirect('/profile/');
 });
 app.get('/logout', function (req, res) {
   req.logout();
