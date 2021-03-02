@@ -26,7 +26,7 @@ few components:
 
 ## Production
 
-If you are running DocNow in production you want to check out
+If you are running DocNow in production you will want to check out
 [docnow-ansible](https://github.com/DocNow/docnow-ansible) which allows you to
 provision and configure DocNow in the cloud.
 
