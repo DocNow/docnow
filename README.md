@@ -6,10 +6,12 @@ The web is a big and rapidly changing place, so it can be challenging to
 discover what resources related to a particular event or topic are in need of
 archiving. [Appraisal] is an umbrella term for the many processes by which
 archivists identify records of enduring value for preservation in an archive.
-DocNow is an appraisal tool for the social web.
+DocNow is an appraisal tool for the social web that uses Twitter.
 
 DocNow allows archivists to tap into conversations in Twitter to help them
-discover what web resources are in need of archiving. Its goal is to help ensure
+discover what web resources are in need of archiving. It also connects
+archivists with content creators in order to make the process of archving web
+content more collaborative and consentful. The goal of DocNow is to help ensure
 ethical practices in web archiving by building conversations between archivists
 and the communities they are documenting.
 
