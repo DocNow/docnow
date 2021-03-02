@@ -1,7 +1,6 @@
 # docnow
 
-[![Build
-Status](https://travis-ci.org/DocNow/docnow.svg?branch=master)](https://travis-ci.org/DocNow/docnow)
+![Build Status](https://github.com/docnow/docnow/workflows/DocNow%20Test/badge.svg)
 
 The web is a big and rapidly changing place, so it can be challenging to
 discover what resources related to a particular event or topic are in need of
