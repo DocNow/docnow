@@ -28,14 +28,7 @@ export default class CollectionList extends Component {
   }
 
   tick() {
-    const userId = this.props.forUserId
-    // If a userId is provided, show only searches for that user
-    if (userId) {
-      this.props.getPublicSearches(userId)
-    } else {
-      // Get searches for all users (TODO)
-      this.props.getPublicSearches()
-    }
+    this.props.getPublicSearches()
   }
 
   render() {    
@@ -44,7 +37,7 @@ export default class CollectionList extends Component {
         <Grid container spacing={3} className={style.Header}>
           <Grid item xs={9}>
             <Typography variant="body1">
-              MITH is using DocNow to collect tweets for humanities research.
+              { this.props.settings.instanceDescription }
             </Typography>
           </Grid>
           <Grid item xs={3}>
