@@ -409,6 +409,7 @@ export class Database {
       s.creator = {
         id: s.creator.id,
         name: s.creator.name,
+        twitterScreenName: s.creator.twitterScreenName
       }
     })
 

@@ -79,9 +79,7 @@ app.put('/user/:userId', async (req, res) => {
 app.get('/settings', async (req, res) => {
   const settings = await db.getSettings()
   if (! settings || ! req.user) {
-    res.json({})
-  } else {
-    if (! req.user.isSuperUser) {
+    if (! req.user || ! req.user.isSuperUser) {
       delete settings.appKey
       delete settings.appSecret
     }
