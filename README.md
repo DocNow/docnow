@@ -26,13 +26,13 @@ few components:
 
 ## Production
 
-If you are running DocNow in production you probably will want to check out
+If you are running DocNow in production you want to check out
 [docnow-ansible](https://github.com/DocNow/docnow-ansible) which allows you to
 provision and configure DocNow in the cloud.
 
 ## Development
 
-To set up DocNow on your workstation you will need to install [Git] and
+To set up DocNow locally on your workstation you will need to install [Git] and
 [Docker]. Once you've got them installed open a terminal window and follow
 these instructions:
 
