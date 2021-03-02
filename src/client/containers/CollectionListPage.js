@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import CollectionList from '../components/Collections/CollectionList'
-import { getSearches } from '../actions/searches'
+import { getPublicSearches } from '../actions/searches'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -12,7 +12,7 @@ const mapStateToProps = (state, ownProps) => {
 }
 
 const actions = {
-  getSearches  
+  getPublicSearches  
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)

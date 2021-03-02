@@ -17,11 +17,7 @@ import SearchPublic from './SearchPublic'
 export default class SearchList extends Component {
 
   componentDidMount() {
-    // if we don't have any list of searches or they are looking for a specific 
-    // users searches then fire off a request to get them immediately.
-    if (this.props.searches.length === 0 || this.props.forUserId) {
-      this.tick()
-    }
+    this.tick()
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)

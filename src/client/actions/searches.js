@@ -20,3 +20,14 @@ export const getSearches = (userId) => {
       })
   }
 }
+
+export const getPublicSearches = () => {
+  return (dispatch) => {
+    const url = '/api/v1/searches?public=true'
+    fetch(url, {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch(setSearches(result))
+      })
+   }
+}

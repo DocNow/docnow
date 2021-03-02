@@ -17,11 +17,7 @@ import style from './CollectionList.css'
 export default class CollectionList extends Component {
 
   componentDidMount() {
-    // if we don't have any list of searches 
-    // then fire off a request to get them immediately.
-    if (this.props.searches.length === 0) {
-      this.tick()
-    }
+    this.tick()
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
@@ -35,10 +31,10 @@ export default class CollectionList extends Component {
     const userId = this.props.forUserId
     // If a userId is provided, show only searches for that user
     if (userId) {
-      this.props.getSearches(userId)
+      this.props.getPublicSearches(userId)
     } else {
       // Get searches for all users (TODO)
-      this.props.getSearches()
+      this.props.getPublicSearches()
     }
   }
 
@@ -120,5 +116,5 @@ CollectionList.propTypes = {
   searches: PropTypes.array.isRequired,
   settings: PropTypes.object,
   forUserId: PropTypes.number,
-  getSearches: PropTypes.func.isRequired
+  getPublicSearches: PropTypes.func.isRequired
 }
