@@ -1154,7 +1154,8 @@ var Database = /*#__PURE__*/function () {
                 results.map(function (s) {
                   s.creator = {
                     id: s.creator.id,
-                    name: s.creator.name
+                    name: s.creator.name,
+                    twitterScreenName: s.creator.twitterScreenName
                   };
                 }); // add stats to each search
 

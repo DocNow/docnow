@@ -169,9 +169,7 @@ app.get('/settings', /*#__PURE__*/function () {
             settings = _context3.sent;
 
             if (!settings || !req.user) {
-              res.json({});
-            } else {
-              if (!req.user.isSuperUser) {
+              if (!req.user || !req.user.isSuperUser) {
                 delete settings.appKey;
                 delete settings.appSecret;
               }
