@@ -2,6 +2,10 @@
 
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
 
+var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
+
 var _express = _interopRequireDefault(require("express"));
 
 var _passport = _interopRequireDefault(require("passport"));
@@ -21,8 +25,9 @@ var activateKeys = function activateKeys() {
         consumerSecret: settings.appSecret,
         callbackURL: '/auth/twitter/callback',
         proxy: true,
-        includeEmail: true
-      }, function (token, tokenSecret, profile, cb) {
+        includeEmail: true,
+        passReqToCallback: true
+      }, function (req, token, tokenSecret, profile, cb) {
         db.getUserByTwitterUserId(profile.id).then(function (user) {
           if (!user) {
             var newUser = {
@@ -64,12 +69,46 @@ _passport["default"].deserializeUser(function (userId, done) {
 
 app.use(_passport["default"].initialize());
 app.use(_passport["default"].session());
-app.get('/twitter', _passport["default"].authenticate('twitter'));
-app.get('/twitter/callback', _passport["default"].authenticate('twitter', {
-  failureRedirect: '/login'
-}), function (req, res) {
-  res.redirect('/profile/');
+app.get('/twitter', function (req, res, next) {
+  _passport["default"].authenticate('twitter', function (err) {
+    if (err) {
+      return res.redirect("/settings/?error=".concat(encodeURIComponent(err.message)));
+    }
+  })(req, res, next);
 });
+app.get('/twitter/callback', _passport["default"].authenticate('twitter', {
+  failureRedirect: '/'
+}), /*#__PURE__*/function () {
+  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(req, res) {
+    var user;
+    return _regenerator["default"].wrap(function _callee$(_context) {
+      while (1) {
+        switch (_context.prev = _context.next) {
+          case 0:
+            _context.next = 2;
+            return db.getUser(req.user);
+
+          case 2:
+            user = _context.sent;
+
+            if (user.active) {
+              res.redirect('/');
+            } else {
+              res.redirect('/profile/');
+            }
+
+          case 4:
+          case "end":
+            return _context.stop();
+        }
+      }
+    }, _callee);
+  }));
+
+  return function (_x, _x2) {
+    return _ref.apply(this, arguments);
+  };
+}());
 app.get('/logout', function (req, res) {
   req.logout();
   res.redirect('/');

@@ -168,16 +168,16 @@ app.get('/settings', /*#__PURE__*/function () {
           case 2:
             settings = _context3.sent;
 
-            if (!settings || !req.user) {
-              if (!req.user || !req.user.isSuperUser) {
-                delete settings.appKey;
-                delete settings.appSecret;
-              }
-
-              res.json(settings);
+            // if they aren't logged in or the they're not an admin
+            // be sure to delete the app key settings!
+            if (!req.user || req.user && !req.user.isSuperUser) {
+              delete settings.appKey;
+              delete settings.appSecret;
             }
 
-          case 4:
+            res.json(settings);
+
+          case 5:
           case "end":
             return _context3.stop();
         }
