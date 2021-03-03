@@ -8,7 +8,6 @@ import LogoUpload from './LogoUpload'
 import MediaQueryComponent from '../components/MediaQueryComponent'
 
 function Error({message, callbackUrl}) {
-  console.log(message, callbackUrl)
   if (message) {
     let description = message
     if (message.match(/Could not authenticate/)) {
@@ -76,7 +75,8 @@ export default class Settings extends MediaQueryComponent {
     let welcome = ''
     if (! this.props.userLoggedIn) {
       const q = new URLSearchParams(window.location.search)
-      const callbackUrl = 'https://demo.docnow.dev/auth/twitter/callback'
+
+      const callbackUrl = `${window.location.protocol}//${window.location.hostname}/auth/twitter/callback`
       const error = <Error message={q.get('error')} callbackUrl={callbackUrl} />
 
       welcome = (
@@ -84,10 +84,9 @@ export default class Settings extends MediaQueryComponent {
           <b>Welcome!</b>
           <p>
             To setup DocNow, you will need to visit the 
-            <a href="https://developer.twitter.com">Twitter Developer Portal</a> and 
+            <a href="https://developer.twitter.com/en/portal/">Twitter Developer Portal</a> and 
             create a <em>Twitter application</em>. This is required because you will 
-            need to enter your <em>Application key</em> and 
-            <em>Application key secret</em> below.
+            need to enter your <em>Application key</em> and <em>Application key secret</em> below.
           </p>
           <ol>
             <li>Set your <em>Description</em> to something that describes your DocNow instance for users who are logging in.</li>
