@@ -7,6 +7,54 @@ import Button from '@material-ui/core/Button'
 import LogoUpload from './LogoUpload'
 import MediaQueryComponent from '../components/MediaQueryComponent'
 
+function Error({message, callbackUrl}) {
+  console.log(message, callbackUrl)
+  if (message) {
+    let description = message
+    if (message.match(/Could not authenticate/)) {
+      description = (
+        <div>
+          <p>Eek, it looks like you have an error with your keys!</p>
+          <p>
+            Please make sure you are copying and pasting the 
+            <em>API key</em> and <em>API key secret</em> correctly 
+            from the Twitter Developer Dashboard. 
+          </p>
+        </div>
+      )
+    } else if (message.match(/Desktop applications/)) {
+      description = (
+        <div>
+          <p>Whoops, it looks like 3-Legged oAuth is not enabled.</p>
+          <p>
+            Please go to your app page 
+            at <a href="https://developer.twitter.com">developer.twitter.com</a> and 
+            edit your <em>Authentication Settings</em> to enable it.
+          </p>
+        </div>
+      )
+    } else if (message.match(/Callback URL/)) {
+      description = (
+        <div>
+          <p>Sorry, it looks like the <em>Callback URL</em> has not been set correctly.</p>
+          <p>Please go to your app page 
+            at <a href="https://developer.twitter.com">developer.twitter.com</a> and 
+            add <em>{callbackUrl}</em> to the <em>Callback URLs</em> in 
+            the <em>Authentication settings</em> section.
+          </p>
+        </div>
+      )
+    } 
+    return (
+      <div className={style.Error}>
+        {description}
+      </div>
+    )
+  } else {
+    return ''
+  }
+}
+
 export default class Settings extends MediaQueryComponent {
 
   componentWillMount() {
@@ -20,26 +68,33 @@ export default class Settings extends MediaQueryComponent {
 
   render() {
 
-    // if there isn't a user provide a welcome message to the first user
-    // who is presumed to be the admin.
+    // If there isn't a user provide a welcome message to the first user
+    // who is presumed to be the admin. When the key handshake with Twitter
+    // fails the user will be redirected to /settings/ with the error query
+    // parameter set to the message.
     
     let welcome = ''
     if (! this.props.userLoggedIn) {
+      const q = new URLSearchParams(window.location.search)
+      const callbackUrl = 'https://demo.docnow.dev/auth/twitter/callback'
+      const error = <Error message={q.get('error')} callbackUrl={callbackUrl} />
+
       welcome = (
         <div className={style.Welcome}>
-          <br />
           <b>Welcome!</b>
           <p>
-            To setup DocNow, you will need to create a
-            <em>Twitter application</em> and configure DocNow to use
-            your <em>Consumer Key</em> and <em>Consumer Secret</em> keys
-            from Twitter.
+            To setup DocNow, you will need to visit the 
+            <a href="https://developer.twitter.com">Twitter Developer Portal</a> and 
+            create a <em>Twitter application</em>. This is required because you will 
+            need to enter your <em>Application key</em> and 
+            <em>Application key secret</em> below.
           </p>
-          <p>
-            Please visit <a href="https://apps.twitter.com">apps.twitter.com</a> to
-            to create your application, and let us know if you
-            have any difficulties at info@docnow.io.
-          </p>
+          <ol>
+            <li>Set your <em>Description</em> to something that describes your DocNow instance for users who are logging in.</li>
+            <li>In <em>Authentication Settings</em> please make sure that <em>3-Legged oAuth</em> is enabled.</li>
+            <li>Set a callback URL of <em>{callbackUrl}</em></li>
+          </ol>
+          {error}
         </div>
       )
     }

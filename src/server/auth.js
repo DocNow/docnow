@@ -16,9 +16,10 @@ const activateKeys = () => {
           consumerSecret: settings.appSecret,
           callbackURL: '/auth/twitter/callback',
           proxy: true,
-          includeEmail: true
+          includeEmail: true,
+          passReqToCallback: true
         },
-        (token, tokenSecret, profile, cb) => {
+        (req, token, tokenSecret, profile, cb) => {
           db.getUserByTwitterUserId(profile.id).then((user) => {
             if (! user) {
               const newUser = {
@@ -64,12 +65,23 @@ passport.deserializeUser((userId, done) => {
 app.use(passport.initialize())
 app.use(passport.session())
 
-app.get('/twitter', passport.authenticate('twitter'))
+app.get('/twitter', (req, res, next) => {
+  passport.authenticate('twitter', err => {
+    if (err) { 
+      return res.redirect(`/settings/?error=${encodeURIComponent(err.message)}`)
+    }
+  })(req, res, next)
+})
 
 app.get('/twitter/callback',
-  passport.authenticate('twitter', { failureRedirect: '/login' }),
-  (req, res) => {
-    res.redirect('/profile/')
+  passport.authenticate('twitter', {failureRedirect: '/'}),
+  async (req, res) => {
+    const user = await db.getUser(req.user)
+    if (user.active) {
+      res.redirect('/')
+    } else {
+      res.redirect('/profile/')
+    }
   }
 )
 

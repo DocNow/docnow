@@ -16,7 +16,20 @@
 }
 
 .Settings .Welcome {
-  width: 500px;
+  margin-top: 20px;
+}
+
+.Settings .Welcome ol {
+  list-style-type: decimal; 
+}
+
+.Settings ol li {
+}
+
+.Settings .Error {
+  background-color: pink;
+  border: 2px solid grey;
+  padding: 2px 10px 2px 10px;
 }
 
 .SettingsUnder780px input {

@@ -1,24 +1,17 @@
 .Profile {
-  width: 250px;
-  margin-top: 20vh;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+}
+
+.Profile form {
   margin-left: auto;
   margin-right: auto;
 }
 
-.Profile .TwitterInfo {
-  margin-bottom: 30px;
-}
-
-.Profile div {
-  margin-bottom: 10px;
-}
-
-.Inactive {
-  color: #fff;
-  margin: 24px 0;
-  padding: 12px 18px;
-  overflow: auto;
-  direction: ltr;
-  border-radius: 4px;
-  background-color: #272c34;
+.Profile .Inactive {
+  color: red;
 }
