@@ -46,7 +46,7 @@ export default class CollectionList extends Component {
           </Button>
           </Grid>
           <Grid item xs={12} className={style.Title}>
-            <Typography variant="h2">Active Collections</Typography>
+            <Typography variant="h2">Public Collections</Typography>
           </Grid>
         </Grid>
         <Table>
@@ -66,7 +66,7 @@ export default class CollectionList extends Component {
             const created = moment(search.created).local().format('MMM D h:mm A')
             const updated = moment(search.updated).local().format('MMM D h:mm A')
             const email = search.creator.email
-              ? search.creator.email
+              ? <a href={`mailto:${search.creator.email}`}>{search.creator.email}</a>
               : 'No email provided.'
             return (
               <TableRow key={search.id}>
