@@ -177,6 +177,7 @@ export class Database {
     const users = await User.query()
       .withGraphJoined('places')
       .withGraphJoined('searches')
+      .where('searches.saved', true)
 
     // this is a stop gap until redis goes away
     // we need to add aggregate stats to each search
