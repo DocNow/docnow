@@ -9,14 +9,22 @@ import TableCell from '@material-ui/core/TableCell'
 import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Grid from '@material-ui/core/Grid'
-import Button from '@material-ui/core/Button'
 import Typography from '@material-ui/core/Typography'
+import FindMe from './FindMe'
 
 import style from './CollectionList.css'
 
 export default class CollectionList extends Component {
 
+  constructor(props) {
+    super(props)
+    this.state = {
+      foundCollections: {}
+    }
+  }
+
   componentDidMount() {
+    this.props.getFoundInSearches()
     this.tick()
     this.timerId = setInterval(() => {
       this.tick()
@@ -31,7 +39,7 @@ export default class CollectionList extends Component {
     this.props.getPublicSearches()
   }
 
-  render() {    
+  render() {
     return (
       <>
         <Grid container spacing={3} className={style.Header}>
@@ -41,9 +49,7 @@ export default class CollectionList extends Component {
             </Typography>
           </Grid>
           <Grid item xs={3}>
-          <Button variant="contained" color="primary" className={style.FindMeBtn}>
-            Find me
-          </Button>
+            <FindMe user={this.props.user} />
           </Grid>
           <Grid item xs={12} className={style.Title}>
             <Typography variant="h2">Public Collections</Typography>
@@ -53,7 +59,7 @@ export default class CollectionList extends Component {
           <TableHead>
             <TableRow>            
               <TableCell>Title</TableCell>
-              <TableCell>Tweet Count</TableCell>
+              <TableCell>Tweets</TableCell>
               <TableCell>Users</TableCell>
               <TableCell>Created</TableCell>
               <TableCell>Last Update</TableCell>
@@ -68,8 +74,15 @@ export default class CollectionList extends Component {
             const email = search.creator.email
               ? <a href={`mailto:${search.creator.email}`}>{search.creator.email}</a>
               : 'No email provided.'
+
+            let rowStyle = style.NotFoundInSearch
+            let foundCount = ''
+            if (search.id in this.props.user.foundInSearches) {
+              rowStyle = style.FoundInSearch
+              foundCount = ` (${this.props.user.foundInSearches[search.id]} are yours)`
+            }
             return (
-              <TableRow key={search.id}>
+              <TableRow key={search.id} className={rowStyle}>
                 <TableCell>
                   <Link to={`/collection/${search.id}/`}>
                     {search.title}
@@ -79,6 +92,7 @@ export default class CollectionList extends Component {
                   <ion-icon name="logo-twitter"></ion-icon>
                   &nbsp;
                   { search.tweetCount.toLocaleString() }
+                  { foundCount }
                 </TableCell>
                 <TableCell>
                   {search.userCount}
@@ -106,8 +120,10 @@ export default class CollectionList extends Component {
 }
 
 CollectionList.propTypes = {
+  user: PropTypes.object,
   searches: PropTypes.array.isRequired,
   settings: PropTypes.object,
   forUserId: PropTypes.number,
-  getPublicSearches: PropTypes.func.isRequired
+  getPublicSearches: PropTypes.func.isRequired,
+  getFoundInSearches: PropTypes.func.isRequired,
 }

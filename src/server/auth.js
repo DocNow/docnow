@@ -66,7 +66,10 @@ app.use(passport.initialize())
 app.use(passport.session())
 
 app.get('/twitter', (req, res, next) => {
-  passport.authenticate('twitter', err => {
+  const opts = req.query.dest
+    ? {callbackURL: `/auth/twitter/callback?dest=${req.query.dest}`}
+    : {}
+  passport.authenticate('twitter',  opts, err => {
     if (err) { 
       return res.redirect(`/settings/?error=${encodeURIComponent(err.message)}`)
     }
@@ -77,8 +80,8 @@ app.get('/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/'}),
   async (req, res) => {
     const user = await db.getUser(req.user)
-    if (user.active) {
-      res.redirect('/')
+    if (user.active || req.query.dest) {
+      res.redirect(req.query.dest || '/')
     } else {
       res.redirect('/profile/')
     }

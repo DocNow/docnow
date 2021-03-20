@@ -1,0 +1,8 @@
+.FindMe button {
+}
+
+.FindMe button.LoggedIn {
+  background-color: lightgreen;
+  text-transform: none;
+  font-weight: bold;
+}

@@ -1,14 +1,15 @@
 import {
   SET_USER, UPDATE_USER_SETTINGS, SAVE_USER_SETTINGS,
   SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS,
-  ACTIVATE_USER, DEACTIVATE_USER
+  ACTIVATE_USER, DEACTIVATE_USER, SET_FOUND_IN_SEARCHES
 } from '../actions/user'
 
 const initialState = {
   name: '',
   twitterScreenName: '',
   twitterAvatarUrl: '',
-  email: ''
+  email: '',
+  foundInSearches: {}
 }
 
 export default function user(state = initialState, action) {
@@ -70,6 +71,13 @@ export default function user(state = initialState, action) {
         }
       } else { 
         return state
+      }
+    }
+
+    case SET_FOUND_IN_SEARCHES: {
+      return {
+        ...state,
+        foundInSearches: action.searches
       }
     }
 

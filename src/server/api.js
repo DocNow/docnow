@@ -196,7 +196,7 @@ app.get('/searches', (req, res) => {
       res.json(searches)
     })
   } else {
-    // otherwise they just get the public searches
+    // otherwise they just get the public
     db.getPublicSearches().then(searches => {
       res.json(searches)
     })
@@ -422,6 +422,15 @@ app.get('/stats', async (req, res) => {
 app.get('/users', async (req, res) => {
   if (req.user.isSuperUser) {
     res.json(await db.getUsers())
+  } else {
+    res.status(401).json({error: 'Not Authorized'})
+  }
+})
+
+app.get('/findme', async (req, res) => {
+  if (req.user) {
+    const results = await db.getSearchesWithUser(req.user.twitterScreenName)
+    res.json(results)
   } else {
     res.status(401).json({error: 'Not Authorized'})
   }

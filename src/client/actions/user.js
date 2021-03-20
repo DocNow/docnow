@@ -8,6 +8,7 @@ export const DEACTIVATE_USER = 'DEACTIVATE_USER'
 export const ACTIVATE_ADMIN = 'ACTIVATE_ADMIN'
 export const DEACTIVATE_ADMIN = 'DEACTIVATE_ADMIN'
 export const UPDATE_QUOTA = 'UPDATE_QUOTA'
+export const SET_FOUND_IN_SEARCHES = 'SET_FOUND_SEARCHES'
 
 export const setUser = (user) => {
   return {
@@ -127,5 +128,19 @@ export const updateQuota = (user, quota) => {
       quota
     })
     dispatch(updateUser({...user, tweetQuota: quota}))
+  }
+}
+
+export const getFoundInSearches = () => {
+  return (dispatch) => {
+    const url = '/api/v1/findme'
+    fetch(url, {credentials: 'same-origin'})
+      .then(resp => resp.json())
+      .then(searches => {
+        dispatch({
+          type: SET_FOUND_IN_SEARCHES,
+          searches
+        })
+      })
   }
 }

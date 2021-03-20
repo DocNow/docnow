@@ -825,6 +825,20 @@ export class Database {
     return urlFetcher.deselectWebpage(search, url)
   }
 
+  async getSearchesWithUser(twitterScreenName) {
+    const results = await Tweet.query()
+      .where({screenName: twitterScreenName})
+      .select('searchId')
+      .count('tweetId')
+      .groupBy('searchId')
+    
+    const counts = new Map()
+    for (const row of results) {
+      counts.set(row.searchId, Number.parseInt(row.count, 10))
+    }
+    return Object.fromEntries(counts)
+  }
+
   async getSystemStats() {
     const tweets = await Tweet.query().count().first()
     const users = await User.query().count().first()
