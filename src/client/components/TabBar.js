@@ -46,6 +46,8 @@ export default class TabBarComponent extends MediaQueryComponent {
       default:
         if (this.props.location.match('/search/')) {
           activeIndex = 2
+        } else if (this.props.location.match('/collection/')) {
+          activeIndex = 3
         }
     }
 

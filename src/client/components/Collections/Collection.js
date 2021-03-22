@@ -1,0 +1,111 @@
+// import moment from 'moment'
+import React, { Component } from 'react'
+import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import TweetEmbed from 'react-tweet-embed'
+import FindMe from './FindMe'
+
+import Grid from '@material-ui/core/Grid'
+import Typography from '@material-ui/core/Typography'
+import Card from '@material-ui/core/Card'
+import CardContent from '@material-ui/core/CardContent'
+
+import listStyle from './CollectionList.css'
+import style from './Collection.css'
+import card from '../Card.css'
+
+export default class CollectionList extends Component {
+  componentDidMount() {
+    this.tick()
+    this.props.getTweets(this.props.searchId)
+    this.timerId = setInterval(() => {
+      this.tick()
+    }, 3000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId)
+  }
+
+  tick() {
+    this.props.getSearch(this.props.searchId)
+  }
+
+  render() {
+    // don't render until we at least know the title of the collection
+    if (!this.props.search.title) {
+      return <div />
+    }
+
+    const contact = this.props.search.creator.email
+      ? <a href={`mailto:${this.props.search.creator.email}`}>{this.props.search.creator.email}</a>
+      : 'No contact provided.'
+    let tweets = 'Loading tweets...'
+    if (this.props.search.tweets.length > 0) {
+      tweets = this.props.search.tweets.slice(0, 2).map((t, i) => {
+        return <TweetEmbed key={`t${i}`} id={t.id} />
+      })
+    }
+
+    return (
+      <>
+        <Grid container spacing={3} className={listStyle.Header}>
+          <Grid item xs={12} className={listStyle.Title}>
+            <Typography variant="h2">
+              <Link to="/collections">ALL COLLECTIONS</Link> ➔ {this.props.search.title}
+            </Typography>
+          </Grid>
+          <Grid item xs={12}>
+            <Typography variant="body1">
+              { this.props.search.description || 'No description provided for this collection.' }
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography variant="body1">
+              Collected by: <strong><a href={`https://twitter.com/${this.props.search.creator.twitterScreenName}`}>
+                @{this.props.search.creator.twitterScreenName}</a></strong>
+            </Typography>
+          </Grid>
+          <Grid item xs={2}>
+            <Typography variant="body1">
+              Contact: <strong>{contact}</strong>
+            </Typography>
+          </Grid>
+        </Grid>
+
+        <div className={card.CardHolder}>
+          <Card raised className={card.Card} >
+            <CardContent>
+              <div className={style.CardTitle}>
+                <FindMe user={this.props.user} />
+              </div>
+            </CardContent>
+          </Card>
+          <Card raised className={card.Card} >
+            <CardContent>
+              <div className={style.CardTitle}>
+                (Users)
+              </div>
+            </CardContent>
+          </Card>
+          <Card raised className={card.Card} >
+            <CardContent className={card.Scroll}>
+              <Typography variant="h2" className={style.CardTitle}>
+                {this.props.search.tweetCount.toLocaleString()} tweets (all users)
+              </Typography>
+              {tweets}
+            </CardContent>
+          </Card>
+        </div>
+      </>
+    )
+  }
+}
+
+CollectionList.propTypes = {
+  user: PropTypes.object,
+  searchId: PropTypes.string,
+  search: PropTypes.object,
+  getSearch: PropTypes.func,
+  getTweets: PropTypes.func,
+}
