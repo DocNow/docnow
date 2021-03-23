@@ -372,6 +372,24 @@ export class Database {
     }
   }
 
+  async getPublicSearch(searchId) {
+    const search = await Search.query()
+      .findById(searchId)
+      .whereNotNull("public")
+      .withGraphJoined('creator')
+      .withGraphJoined('queries')
+
+    if (! search) {
+      return null
+    }
+
+    const stats = await this.getSearchStats(search)
+    return {
+      ...search,
+      ...stats
+    }
+  }
+
   deleteSearch(search) {
     log.info('deleting search', {id: search.id})
     return Search.query().del().where('id', search.id)

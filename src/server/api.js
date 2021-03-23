@@ -233,6 +233,16 @@ app.get('/search/:searchId', async (req, res) => {
     const lastQuery = summ.queries[summ.queries.length - 1]
     summ.query = lastQuery.value.or
     res.json(summ)
+  } else {
+    const search = await db.getPublicSearch(req.params.searchId)
+    if (search) {
+      const summ = await db.getSearchSummary(search)
+      const lastQuery = summ.queries[summ.queries.length - 1]
+      summ.query = lastQuery.value.or
+      res.json(summ)
+    } else {
+      res.status(401).json({error: 'Not Authorized'})
+    }
   }
 })
 
@@ -268,57 +278,69 @@ app.delete('/search/:searchId', async (req, res) => {
 })
 
 app.get('/search/:searchId/tweets', (req, res) => {
+  let searchReq = null
   if (req.user) {
-    db.getSearch(req.params.searchId)
-      .then((search) => {
-        if (req.query.url) {
-          db.getTweetsForUrl(search, req.query.url)
-            .then((tweets) => {
-              res.json(tweets)
-            })
-        } else if (req.query.user) {
-          db.getTweetsForUser(search, req.query.user)
-            .then((tweets) => {
-              res.json(tweets)
-            })          
-        } else if (req.query.image) {
-          db.getTweetsForImage(search, req.query.image)
-            .then((tweets) => {
-              res.json(tweets)
-            })          
-        } else if (req.query.video) {
-          db.getTweetsForVideo(search, req.query.video)
-            .then((tweets) => {
-              res.json(tweets)
-            })          
-        } else if (req.query.ids) {
-          db.getTweetsByIds(search, req.query.ids.split(','))
-            .then((tweets) => {
-              res.json(tweets)
-            })          
-        } else {
-          const includeRetweets = req.query.includeRetweets ? true : false
-          const offset = req.query.offset ? req.query.offset : 0
-          const limit = req.query.limit ? req.query.limit : 100
-          db.getTweets(search, includeRetweets, offset, limit)
-            .then((tweets) => {
-              res.json(tweets)
-            })
-        }
-      })
+    searchReq = db.getSearch(req.params.searchId)
+  } else {
+    searchReq = db.getPublicSearch(req.params.searchId)
+    if (!searchReq) {
+      return res.status(401).json({error: 'Not Authorized'})
+    }
   }
+  searchReq.then((search) => {
+    if (req.query.url) {
+      db.getTweetsForUrl(search, req.query.url)
+        .then((tweets) => {
+          res.json(tweets)
+        })
+    } else if (req.query.user) {
+      db.getTweetsForUser(search, req.query.user)
+        .then((tweets) => {
+          res.json(tweets)
+        })          
+    } else if (req.query.image) {
+      db.getTweetsForImage(search, req.query.image)
+        .then((tweets) => {
+          res.json(tweets)
+        })          
+    } else if (req.query.video) {
+      db.getTweetsForVideo(search, req.query.video)
+        .then((tweets) => {
+          res.json(tweets)
+        })          
+    } else if (req.query.ids) {
+      db.getTweetsByIds(search, req.query.ids.split(','))
+        .then((tweets) => {
+          res.json(tweets)
+        })          
+    } else {
+      const includeRetweets = req.query.includeRetweets ? true : false
+      const offset = req.query.offset ? req.query.offset : 0
+      const limit = req.query.limit ? req.query.limit : 100
+      db.getTweets(search, includeRetweets, offset, limit)
+        .then((tweets) => {
+          res.json(tweets)
+        })
+    }
+  })
 })
 
 app.get('/search/:searchId/users', (req, res) => {
+  let searchReq = null
   if (req.user) {
-    db.getSearch(req.params.searchId)
-      .then((search) => {
-        db.getTwitterUsers(search)
-          .then((users) => {
-            res.json(users)
-          })
-      })
+    searchReq = db.getSearch(req.params.searchId)
+  } else {
+    searchReq = db.getPublicSearch(req.params.searchId)
+    if (!searchReq) {
+      return res.status(401).json({error: 'Not Authorized'})
+    }
   }
+  searchReq.then((search) => {
+    db.getTwitterUsers(search)
+      .then((users) => {
+        res.json(users)
+      })
+  })
 })
 
 app.get('/search/:searchId/hashtags', (req, res) => {
