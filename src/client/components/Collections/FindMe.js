@@ -5,10 +5,14 @@ import Button from '@material-ui/core/Button'
 import style from './FindMe.css'
 
 export default class FindMe extends Component {
+  constructor(props) {
+    super(props)
+    this.dest = this.props.dest ? this.props.dest : '/collections/'
+  }
 
   render() {
     let button = (
-      <a href="/auth/twitter?dest=/collections/">
+      <a href={`/auth/twitter?dest=${this.dest}`}>
         <Button 
           title="See what collections you are in"
           variant="contained"
@@ -31,5 +35,6 @@ export default class FindMe extends Component {
 }
 
 FindMe.propTypes = {
-  user: PropTypes.object
+  user: PropTypes.object,
+  dest: PropTypes.string
 }
