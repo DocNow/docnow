@@ -36,6 +36,7 @@ export default class CollectionList extends Component {
   }
 
   tick() {
+    this.props.getFoundInSearches()
     this.props.getPublicSearches()
   }
 
@@ -79,7 +80,7 @@ export default class CollectionList extends Component {
             let foundCount = ''
             if (search.id in this.props.user.foundInSearches) {
               rowStyle = style.FoundInSearch
-              foundCount = ` (${this.props.user.foundInSearches[search.id]} are yours)`
+              foundCount = ` (${this.props.user.foundInSearches[search.id].length} are yours)`
             }
             return (
               <TableRow key={search.id} className={rowStyle}>

@@ -34,6 +34,7 @@ export default class CollectionList extends Component {
 
   tick() {
     this.props.getSearch(this.props.searchId)
+    this.props.getFoundInSearches()
   }
 
   render() {
@@ -62,15 +63,15 @@ export default class CollectionList extends Component {
     </div>)
 
     if (this.props.user) {
-      const foundTweetsCount = this.props.user.foundInSearches[this.props.searchId]
-      if (foundTweetsCount > 0) {
+      const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
+      if (foundTweets.length > 0) {
         userTweets = (<>
           <FormControl component="fieldset" className={style.CardInnerContent}>
             <FormGroup row>
               <FormControlLabel
                 value="all"
                 control={<Checkbox color="primary" />}
-                label={`Select all ${foundTweetsCount} tweets`}
+                label={`Select all ${foundTweets.length} tweets`}
               />
             </FormGroup>
           </FormControl>
@@ -80,6 +81,14 @@ export default class CollectionList extends Component {
             <Grid item xs={4}><Button className={style.Options}>talk with us</Button></Grid>
           </Grid>
           <hr/>
+          {foundTweets.map((tweetId, i) => {
+            return (
+              <Grid container spacing={0} key={`ut${i}`}>
+                <Grid item xs={2}><Checkbox color="primary" /></Grid>
+                <Grid item xs={10}><TweetEmbed id={tweetId} /></Grid>
+              </Grid>
+            )            
+          })}
         </>)
       } else {
         userTweets = <Typography variant="body1">There are no tweets by you in this collection.</Typography>
@@ -148,4 +157,5 @@ CollectionList.propTypes = {
   search: PropTypes.object,
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,
+  getFoundInSearches: PropTypes.func,
 }
