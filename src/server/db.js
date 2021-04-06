@@ -844,14 +844,15 @@ export class Database {
 
   async getSearchesWithUser(twitterScreenName) {
     const results = await Tweet.query()
-      .where({screenName: twitterScreenName})
-      .select('searchId')
-      .count('tweetId')
-      .groupBy('searchId')
-    
+      .where({screenName: twitterScreenName})      
+      .select('searchId', 'tweetId')
+      .groupBy('searchId', 'tweetId')
+
     const counts = new Map()
     for (const row of results) {
-      counts.set(row.searchId, Number.parseInt(row.count, 10))
+      const tweets = counts.get(row.searchId) || []
+      tweets.push(row.tweetId)
+      counts.set(row.searchId, tweets)
     }
     return Object.fromEntries(counts)
   }
