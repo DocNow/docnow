@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { getSearch, getTweets } from '../actions/search'
+import { getSearch, getTweets, getUsers } from '../actions/search'
 import { getFoundInSearches } from '../actions/user'
 
 import Collection from '../components/Collections/Collection'
@@ -16,6 +16,7 @@ const mapStateToProps = (state, ownProps) => {
 const actions = {
   getSearch,
   getTweets,
+  getUsers,
   getFoundInSearches
 }
 

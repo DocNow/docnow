@@ -14,15 +14,27 @@ import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import FormControl from '@material-ui/core/FormControl'
 import Button from '@material-ui/core/Button'
+import TextField from '@material-ui/core/TextField'
+import Paper from '@material-ui/core/Paper'
+import InputAdornment from '@material-ui/core/InputAdornment'
 
 import listStyle from './CollectionList.css'
 import style from './Collection.css'
 import card from '../Card.css'
 
 export default class CollectionList extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      filteredUsers: [],
+      filtered: false
+    }
+  }
+
   componentDidMount() {
     this.tick()
     this.props.getTweets(this.props.searchId)
+    this.props.getUsers(this.props.searchId)
     this.timerId = setInterval(() => {
       this.tick()
     }, 3000)
@@ -35,6 +47,27 @@ export default class CollectionList extends Component {
   tick() {
     this.props.getSearch(this.props.searchId)
     this.props.getFoundInSearches()
+    if (!this.state.filtered && this.props.search.userCount) {
+      this.setState({
+        filteredUsers: [...Array(this.props.search.userCount).keys()]
+      })
+    }
+  }
+
+  filterUser(term) {
+    if (term === '') {
+      this.setState({
+        filteredUsers: [...Array(this.props.search.userCount).keys()],
+        filtered: true
+      })  
+    }
+    this.setState({
+      filteredUsers: this.props.search.users.reduce((acc, u, i) => {
+        if (u.screenName.includes(term)) { acc.push(i) }
+        return acc
+      }, []),
+      filtered: true
+    })
   }
 
   render() {
@@ -131,9 +164,29 @@ export default class CollectionList extends Component {
             </CardContent>
           </Card>
           <Card raised className={card.Card} >
-            <CardContent>
+            <CardContent className={card.Scroll}>
               <div className={style.CardTitle}>
-                (Users)
+                <Paper id="box" elevation={4}>
+                  <TextField name="usersearch"
+                    onChange={t => this.filterUser(t.target.value)}
+                    InputProps={{
+                      startAdornment: (
+                        <InputAdornment position="start">
+                          <ion-icon name="search"></ion-icon>
+                        </InputAdornment>
+                      ),
+                    }}/>
+                </Paper>
+              </div>
+              <div>
+                {this.state.filteredUsers.map((i) => {
+                  if (this.props.search.users[i]) {
+                    return <img 
+                      src={this.props.search.users[i].avatarUrl}
+                      alt={this.props.search.users[i].screenName}
+                      title={this.props.search.users[i].screenName} key={`u${i}`} />
+                  }                  
+                })}
               </div>
             </CardContent>
           </Card>
@@ -157,5 +210,6 @@ CollectionList.propTypes = {
   search: PropTypes.object,
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,
+  getUsers: PropTypes.func,
   getFoundInSearches: PropTypes.func,
 }
