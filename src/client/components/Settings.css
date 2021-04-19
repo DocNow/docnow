@@ -33,9 +33,13 @@
 }
 
 .Settings .Separator {
+  margin-top: 2em;
+  color: #222;
+} 
+
+.Settings .Separator h2 {
   font-weight: bold;
   font-size: 18pt;
-  color: #222;
 }
 
 .SettingsUnder780px input {

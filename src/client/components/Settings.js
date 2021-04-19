@@ -106,7 +106,18 @@ export default class Settings extends MediaQueryComponent {
           {welcome}
 
           <div className={style.Separator}>
-            General Settings
+            <h2>General Settings</h2>
+            <p>
+              These settings help you set up your DocNow application 
+              so that other people understand who your organization is 
+              and why you are collecting social media data.
+            </p>
+            <p>
+              Building social media archives requires consent and trust,
+              and achieving those on the web is no easy matter. Craft 
+              this information so that users know who you are and why you
+              are interested in archiving their content. 
+            </p>
           </div>
 
           <div>
@@ -148,16 +159,6 @@ export default class Settings extends MediaQueryComponent {
           </div>
 
           <div>
-            <LogoUpload
-              logoUrl={this.props.logoUrl}
-              updateSettings={this.props.updateSettings} />
-          </div>
-
-          <div className={style.Separator}>
-            Twitter Settings
-          </div>
-
-          <div>
             <TextField
               variant="outlined"
               id="instanceTweetText"
@@ -165,10 +166,26 @@ export default class Settings extends MediaQueryComponent {
               label="Notification Tweet"
               multiline={true}
               rows={5}
-              helperText="A status message to send when announcing new data collection."
+              helperText="This tweet is sent to announce when a new collection is being built."
               placeholder="Centerville Public Library is collecting {query}. To learn more click on the link below."
               value={this.props.instanceTweetText}
               onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <LogoUpload
+              logoUrl={this.props.logoUrl}
+              updateSettings={this.props.updateSettings} />
+          </div>
+
+          <div className={style.Separator}>
+            <h2>Twitter Settings</h2>
+            <p>
+              Your DocNow instance needs to be able to talk to the Twitter 
+              API in order to collect data and send tweets. To get your keys please visit  
+              the <a href="https://developer.twitter.com/en/portal/dashboard">Twitter Developer Portal</a> and 
+              set up an application.
+            </p>
           </div>
 
           <div>
@@ -206,7 +223,20 @@ export default class Settings extends MediaQueryComponent {
           </div>
 
           <div className={style.Separator}>
-            Email Settings
+            <h2>Email Settings</h2>
+            <p>
+              Your DocNow application sometimes needs to send email
+              to you and your users. To do this reliably it needs to know an 
+              <em>outgoing mail SMTP server</em> to use. 
+              Most organizations have an SMTP email server, but if you want to 
+              set up your own there are many <a href="https://duckduckgo.com/?q=best+services+smtp">SMTP services</a> to 
+              choose from. We have tested with SendGrid.
+            </p>
+            <p>
+              If you want you can leave this section blank, but it is 
+              important to provide this information for DocNow to be able to 
+              communicate with its users when important events happen.
+            </p>
           </div>
 
           <div>
@@ -215,7 +245,7 @@ export default class Settings extends MediaQueryComponent {
               id="emailHost"
               name="emailHost"
               label="SMTP Hostname"
-              helperText="The hostname of the mail server to use for sending mail"
+              helperText="The hostname or IP address of the mail server to use for sending mail"
               value={this.props.emailHost}
               onChange={this.props.updateSettings} />
           </div>
@@ -260,7 +290,7 @@ export default class Settings extends MediaQueryComponent {
               id="emailFromAddress"
               name="emailFromAddress"
               label="From Address"
-              helperText="The from email address to use for emails"
+              helperText="This is the email address that emails will appear to be sent by"
               value={this.props.emailFromAddress}
               onChange={this.props.updateSettings} />
           </div>

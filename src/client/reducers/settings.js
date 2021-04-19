@@ -9,6 +9,11 @@ const initialState = {
   instanceInfoLink: '',
   instanceDescription: '',
   instanceTweetText: '',
+  emailHost: '',
+  emailPort: '',
+  emailUser: '',
+  emailPassword: '',
+  emailFromAddress: '',
   updated: false,
 }
 
