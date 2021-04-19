@@ -32,6 +32,12 @@
   padding: 2px 10px 2px 10px;
 }
 
+.Settings .Separator {
+  font-weight: bold;
+  font-size: 18pt;
+  color: #222;
+}
+
 .SettingsUnder780px input {
   width: 90%;
 }

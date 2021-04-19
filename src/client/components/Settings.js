@@ -105,6 +105,10 @@ export default class Settings extends MediaQueryComponent {
 
           {welcome}
 
+          <div className={style.Separator}>
+            General Settings
+          </div>
+
           <div>
             <TextField
               variant="outlined"
@@ -141,6 +145,16 @@ export default class Settings extends MediaQueryComponent {
               multiline={true}
               rows={5}
               onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <LogoUpload
+              logoUrl={this.props.logoUrl}
+              updateSettings={this.props.updateSettings} />
+          </div>
+
+          <div className={style.Separator}>
+            Twitter Settings
           </div>
 
           <div>
@@ -191,10 +205,64 @@ export default class Settings extends MediaQueryComponent {
               onChange={this.props.updateSettings} />
           </div>
 
+          <div className={style.Separator}>
+            Email Settings
+          </div>
+
           <div>
-            <LogoUpload
-              logoUrl={this.props.logoUrl}
-              updateSettings={this.props.updateSettings} />
+            <TextField
+              variant="outlined"
+              id="emailHost"
+              name="emailHost"
+              label="SMTP Hostname"
+              helperText="The hostname of the mail server to use for sending mail"
+              value={this.props.emailHost}
+              onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <TextField
+              variant="outlined"
+              id="emailPort"
+              name="emailPort"
+              label="Port Number"
+              helperText="The port number for mail server (e.g. 25, 465)"
+              defaultValue={465}
+              value={this.props.emailPort}
+              onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <TextField
+              variant="outlined"
+              id="emailUser"
+              name="emailUser"
+              label="SMTP User"
+              helperText="The user to connect to the mail server as"
+              value={this.props.emailUser}
+              onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <TextField
+              variant="outlined"
+              id="emailPassword"
+              name="emailPassword"
+              label="SMTP Password"
+              helperText="The password to use when connecting to the mail server"
+              value={this.props.emailPassword}
+              onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <TextField
+              variant="outlined"
+              id="emailFromAddress"
+              name="emailFromAddress"
+              label="From Address"
+              helperText="The from email address to use for emails"
+              value={this.props.emailFromAddress}
+              onChange={this.props.updateSettings} />
           </div>
 
           <div>

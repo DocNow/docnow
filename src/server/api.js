@@ -100,6 +100,11 @@ app.put('/settings', async (req, res) => {
       instanceInfoLink: req.body.instanceInfoLink,
       instanceDescription: req.body.instanceDescription,
       instanceTweetText: req.body.instanceTweetText,
+      emailHost: req.body.emailHost,
+      emailPort: req.body.emailPort,
+      emailUser: req.body.emailUser,
+      emailPassword: req.body.emailPassword,
+      emailFromAddress: req.body.emailFromAddress,
       defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000,
     }
     try {

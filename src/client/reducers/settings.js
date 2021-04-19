@@ -26,7 +26,12 @@ export default function settings(state = initialState, action) {
         defaultQuota: action.defaultQuota,
         instanceDescription: action.instanceDescription,
         instanceInfoLink: action.instanceInfoLink,
-        instanceTweetText: action.instanceTweetText
+        instanceTweetText: action.instanceTweetText,
+        emailHost: action.emailHost,
+        emailPort: action.emailPort,
+        emailUser: action.emailUser,
+        emailPassword: action.emailPassword,
+        emailFromAddress: action.emailFromAddress
       }
     }
 
