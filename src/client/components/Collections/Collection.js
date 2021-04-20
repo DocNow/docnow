@@ -27,7 +27,8 @@ export default class CollectionList extends Component {
     super(props)
     this.state = {
       filteredUsers: [],
-      filtered: false
+      filtered: false,
+      checkedTweets: []
     }
   }
 
@@ -52,6 +53,13 @@ export default class CollectionList extends Component {
         filteredUsers: [...Array(this.props.search.userCount).keys()]
       })
     }
+
+    const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
+    if (this.state.checkedTweets.length === 0 && foundTweets.length > 0) {
+      this.setState({
+        checkedTweets: foundTweets.map(() => false)
+      })
+    }
   }
 
   filterUser(term) {
@@ -63,10 +71,22 @@ export default class CollectionList extends Component {
     }
     this.setState({
       filteredUsers: this.props.search.users.reduce((acc, u, i) => {
-        if (u.screenName.includes(term)) { acc.push(i) }
+        if (u.screenName.toLowerCase().includes(term.toLowerCase())) { acc.push(i) }
         return acc
       }, []),
       filtered: true
+    })
+  }
+
+  setAllTweets(checked) {    
+    this.setState({
+      checkedTweets: this.state.checkedTweets.map(() => checked)
+    })
+  }
+
+  toggleOneTweet(i) {
+    this.setState({
+      checkedTweets: this.state.checkedTweets.map((v, tIdx) => {return (i === tIdx ? !v : v)})
     })
   }
 
@@ -103,21 +123,19 @@ export default class CollectionList extends Component {
             <FormGroup row>
               <FormControlLabel
                 value="all"
-                control={<Checkbox color="primary" />}
+                control={<Checkbox color="primary" 
+                  onChange={t => this.setAllTweets(t.target.checked)} 
+                  checked={this.state.checkedTweets.indexOf(false) === -1} />}
                 label={`Select all ${foundTweets.length} tweets`}
               />
             </FormGroup>
           </FormControl>
-          <Grid container spacing={0}>
-            <Grid item xs={4}><Button className={style.Options}>specify consent</Button></Grid>
-            <Grid item xs={4}><Button className={style.Options}>request removal</Button></Grid>
-            <Grid item xs={4}><Button className={style.Options}>talk with us</Button></Grid>
-          </Grid>
+          <Button size="small"><span className={style.ButtonText}>Specify/Adjust Consent</span></Button>
           <hr/>
           {foundTweets.map((tweetId, i) => {
             return (
               <Grid container spacing={0} key={`ut${i}`}>
-                <Grid item xs={2}><Checkbox color="primary" /></Grid>
+                <Grid item xs={2}><Checkbox color="primary" checked={this.state.checkedTweets[i] || false} onChange={() => this.toggleOneTweet(i)} /></Grid>
                 <Grid item xs={10}><TweetEmbed id={tweetId} /></Grid>
               </Grid>
             )            
@@ -154,8 +172,8 @@ export default class CollectionList extends Component {
           </Grid>
         </Grid>
 
-        <div className={card.CardHolder}>
-          <Card raised className={card.Card} >
+        <div className={`${card.CardHolder} ${style.CardHolder}`}>
+          <Card raised className={`${card.Card} ${style.Card}`} >
             <CardContent>
               <div className={style.CardTitle}>
                 <FindMe user={this.props.user} dest={`/collection/${this.props.searchId}`}/>                
@@ -163,11 +181,11 @@ export default class CollectionList extends Component {
               {userTweets}
             </CardContent>
           </Card>
-          <Card raised className={card.Card} >
-            <CardContent className={card.Scroll}>
+          <Card raised className={`${card.Card} ${style.Card}`} >
+            <CardContent>
               <div className={style.CardTitle}>
                 <Paper id="box" elevation={4}>
-                  <TextField name="usersearch"
+                  <TextField name="usersearch" className={style.Search}
                     onChange={t => this.filterUser(t.target.value)}
                     InputProps={{
                       startAdornment: (
@@ -181,7 +199,7 @@ export default class CollectionList extends Component {
               <div>
                 {this.state.filteredUsers.map((i) => {
                   if (this.props.search.users[i]) {
-                    return <img 
+                    return <img className={style.UserImg}
                       src={this.props.search.users[i].avatarUrl}
                       alt={this.props.search.users[i].screenName}
                       title={this.props.search.users[i].screenName} key={`u${i}`} />
@@ -190,8 +208,8 @@ export default class CollectionList extends Component {
               </div>
             </CardContent>
           </Card>
-          <Card raised className={card.Card} >
-            <CardContent className={card.Scroll}>
+          <Card raised className={`${card.Card} ${style.Card}`} >
+            <CardContent>
               <Typography variant="h2" className={style.CardTitle}>
                 {tweetCount} tweets (all users)
               </Typography>
