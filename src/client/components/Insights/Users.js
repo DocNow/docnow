@@ -49,10 +49,12 @@ export default class Users extends Component {
 
         <UsersBody
           searchId={this.props.searchId}
-          search={this.props.search}
           getTweetsForUser={this.props.getTweetsForUser}
           resetTweets={this.props.resetTweets}
           tweets={this.props.tweets}
+          userCount={this.props.search.userCount}
+          users={this.props.search.users}
+          getUsers={this.props.getUsers}
         />
 
       </div>

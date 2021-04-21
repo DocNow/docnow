@@ -241,9 +241,9 @@ export const getTweets = (id, includeRetweets = false, offset = 0) => {
   }
 }
 
-export const getUsers = (id) => {
+export const getUsers = (id, offset = 0) => {
   return (dispatch) => {
-    fetch('/api/v1/search/' + id + '/users', {credentials: 'same-origin'})
+    fetch(`/api/v1/search/${id}/users?offset=${offset}`, {credentials: 'same-origin'})
       .then((resp) => resp.json())
       .then((result) => {
         dispatch(setTwitterSearchUsers(result))
