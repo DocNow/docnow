@@ -36,5 +36,15 @@
 }
 
 .Search {
-  width: 95%;
+  display: flex;
+  align-items: center;
+  padding: 2px 10px;
+}
+
+.SearchInput {
+  width: 100%;
+}
+
+.FoundUser {
+  text-align: center
 }
