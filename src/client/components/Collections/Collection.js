@@ -28,7 +28,8 @@ export default class CollectionList extends Component {
     this.state = {
       checkedTweets: [],
       findUser: '',
-      findingUser: false
+      findingUser: false,
+      lastUserLookup: ''
     }
     this.randomTweet = Math.floor(Math.random() * (98))
   }
@@ -69,7 +70,8 @@ export default class CollectionList extends Component {
   findUser() {
     if (this.state.findUser !== '') {
       this.setState({
-        findingUser: true
+        findingUser: true,
+        lastUserLookup: this.state.findUser
       })
       this.props.getTweetsForUser(this.props.searchId, this.state.findUser)
     }
@@ -155,21 +157,13 @@ export default class CollectionList extends Component {
 
     if (this.state.findingUser) {
       if (this.props.foundUserTweets > 0) {
-        usersInfo = (<div className={style.FoundUser}>
-          <div>{this.props.search.users.filter(u => u.screenName === this.state.findUser).map((u, i) => {
-            return <img className={style.UserImg}
-              src={u.avatarUrl}
-              alt={u.screenName}
-              title={u.screenName} key={`u${i}`} />
-          })}
-          <br/> <a href={`https://twitter.com/${this.state.findUser}`}>@{this.state.findUser}</a>
-          </div>
+        usersInfo = (
           <Typography variant="body2">
-            Found {this.props.foundUserTweets} tweet{this.props.foundUserTweets > 1 ? 's' : ''} by this user.
-          </Typography>
-        </div>)
+            Found {this.props.foundUserTweets} tweet{this.props.foundUserTweets > 1 ? 's' : ''} by &nbsp;
+            <a href={`https://twitter.com/${this.state.lastUserLookup}`}>@{this.state.lastUserLookup}</a>.
+          </Typography>)
       } else {
-        usersInfo = <Typography variant="body2">Could not find user &quot;{this.state.findUser}&quot;.</Typography>
+        usersInfo = <Typography variant="body2">Could not find user &quot;{this.state.lastUserLookup}&quot;.</Typography>
       }
     }    
 
