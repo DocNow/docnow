@@ -12,6 +12,7 @@ import WebpagesBody from '../../client/components/Insights/WebpagesBody'
 import styles from '../../client/containers/App.css'
 
 const search = window.searchData
+console.log(search)
 
 class App extends MediaQueryComponent {
   constructor(props) {
@@ -122,7 +123,7 @@ class App extends MediaQueryComponent {
         title={search.title}
         desc={search.description}
         creator={search.creator}
-        searchQuery={search.query.map(q => q.value).join(' ')}
+        searchQuery={search.query.map(q => q.value.or.map(t => t.value).join(' ')).join(' ')}
         startDate={search.startDate}
         endDate={search.endDate}
         isHome={this.state.isHome} />
