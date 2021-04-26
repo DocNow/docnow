@@ -341,7 +341,9 @@ app.get('/search/:searchId/users', (req, res) => {
     }
   }
   searchReq.then((search) => {
-    db.getTwitterUsers(search)
+    const offset = req.query.offset ? req.query.offset : 0
+    const limit = req.query.limit ? req.query.limit : 100
+    db.getTwitterUsers(search, offset, limit)
       .then((users) => {
         res.json(users)
       })

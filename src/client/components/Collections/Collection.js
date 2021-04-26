@@ -16,7 +16,7 @@ import FormControl from '@material-ui/core/FormControl'
 import Button from '@material-ui/core/Button'
 import TextField from '@material-ui/core/TextField'
 import Paper from '@material-ui/core/Paper'
-import InputAdornment from '@material-ui/core/InputAdornment'
+import IconButton from '@material-ui/core/IconButton'
 
 import listStyle from './CollectionList.css'
 import style from './Collection.css'
@@ -26,9 +26,12 @@ export default class CollectionList extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      filteredUsers: [],
-      filtered: false
+      checkedTweets: [],
+      findUser: '',
+      findingUser: false,
+      lastUserLookup: ''
     }
+    this.randomTweet = Math.floor(Math.random() * (98))
   }
 
   componentDidMount() {
@@ -47,26 +50,42 @@ export default class CollectionList extends Component {
   tick() {
     this.props.getSearch(this.props.searchId)
     this.props.getFoundInSearches()
-    if (!this.state.filtered && this.props.search.userCount) {
+
+    const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
+    if (this.state.checkedTweets.length === 0 && foundTweets.length > 0) {
       this.setState({
-        filteredUsers: [...Array(this.props.search.userCount).keys()]
+        checkedTweets: foundTweets.map(() => false)
       })
     }
   }
 
-  filterUser(term) {
-    if (term === '') {
-      this.setState({
-        filteredUsers: [...Array(this.props.search.userCount).keys()],
-        filtered: true
-      })  
-    }
+  handleFindUserInput(user) {
+    const findingUser = user === '' ? false : this.state.findingUser
     this.setState({
-      filteredUsers: this.props.search.users.reduce((acc, u, i) => {
-        if (u.screenName.includes(term)) { acc.push(i) }
-        return acc
-      }, []),
-      filtered: true
+      findUser: user,
+      findingUser
+    })
+  }
+
+  findUser() {
+    if (this.state.findUser !== '') {
+      this.setState({
+        findingUser: true,
+        lastUserLookup: this.state.findUser
+      })
+      this.props.getTweetsForUser(this.props.searchId, this.state.findUser)
+    }
+  }
+
+  setAllTweets(checked) {    
+    this.setState({
+      checkedTweets: this.state.checkedTweets.map(() => checked)
+    })
+  }
+
+  toggleOneTweet(i) {
+    this.setState({
+      checkedTweets: this.state.checkedTweets.map((v, tIdx) => {return (i === tIdx ? !v : v)})
     })
   }
 
@@ -82,8 +101,8 @@ export default class CollectionList extends Component {
       ? <a href={`mailto:${this.props.search.creator.email}`}>{this.props.search.creator.email}</a>
       : 'No contact provided.'
     let tweets = 'Loading tweets...'
-    if (this.props.search.tweets.length > 0) {
-      tweets = this.props.search.tweets.slice(0, 2).map((t, i) => {
+    if (this.props.search.tweets.length > 0) {      
+      tweets = this.props.search.tweets.slice(this.randomTweet, this.randomTweet + 2).map((t, i) => {
         return <TweetEmbed key={`t${i}`} id={t.id} />
       })
     }
@@ -103,21 +122,19 @@ export default class CollectionList extends Component {
             <FormGroup row>
               <FormControlLabel
                 value="all"
-                control={<Checkbox color="primary" />}
+                control={<Checkbox color="primary" 
+                  onChange={t => this.setAllTweets(t.target.checked)} 
+                  checked={this.state.checkedTweets.indexOf(false) === -1} />}
                 label={`Select all ${foundTweets.length} tweets`}
               />
             </FormGroup>
           </FormControl>
-          <Grid container spacing={0}>
-            <Grid item xs={4}><Button className={style.Options}>specify consent</Button></Grid>
-            <Grid item xs={4}><Button className={style.Options}>request removal</Button></Grid>
-            <Grid item xs={4}><Button className={style.Options}>talk with us</Button></Grid>
-          </Grid>
+          <Button size="small"><span className={style.ButtonText}>Specify/Adjust Consent</span></Button>
           <hr/>
           {foundTweets.map((tweetId, i) => {
             return (
               <Grid container spacing={0} key={`ut${i}`}>
-                <Grid item xs={2}><Checkbox color="primary" /></Grid>
+                <Grid item xs={2}><Checkbox color="primary" checked={this.state.checkedTweets[i] || false} onChange={() => this.toggleOneTweet(i)} /></Grid>
                 <Grid item xs={10}><TweetEmbed id={tweetId} /></Grid>
               </Grid>
             )            
@@ -127,6 +144,28 @@ export default class CollectionList extends Component {
         userTweets = <Typography variant="body1">There are no tweets by you in this collection.</Typography>
       }
     }
+
+    let usersInfo = (<div>
+      <Typography variant="body2">Showing {this.props.search.users.length} of {this.props.search.userCount} users.</Typography>
+      {this.props.search.users.map((u, i) => {
+        return <img className={style.UserImg}
+          src={u.avatarUrl}
+          alt={u.screenName}
+          title={u.screenName} key={`u${i}`} />
+      })}      
+    </div>)
+
+    if (this.state.findingUser) {
+      if (this.props.foundUserTweets > 0) {
+        usersInfo = (
+          <Typography variant="body2">
+            Found {this.props.foundUserTweets} tweet{this.props.foundUserTweets > 1 ? 's' : ''} by &nbsp;
+            <a href={`https://twitter.com/${this.state.lastUserLookup}`}>@{this.state.lastUserLookup}</a>.
+          </Typography>)
+      } else {
+        usersInfo = <Typography variant="body2">Could not find user &quot;{this.state.lastUserLookup}&quot;.</Typography>
+      }
+    }    
 
     return (
       <>
@@ -154,8 +193,8 @@ export default class CollectionList extends Component {
           </Grid>
         </Grid>
 
-        <div className={card.CardHolder}>
-          <Card raised className={card.Card} >
+        <div className={`${card.CardHolder} ${style.CardHolder}`}>
+          <Card raised className={`${card.Card} ${style.Card}`} >
             <CardContent>
               <div className={style.CardTitle}>
                 <FindMe user={this.props.user} dest={`/collection/${this.props.searchId}`}/>                
@@ -163,38 +202,26 @@ export default class CollectionList extends Component {
               {userTweets}
             </CardContent>
           </Card>
-          <Card raised className={card.Card} >
-            <CardContent className={card.Scroll}>
+          <Card raised className={`${card.Card} ${style.Card}`} >
+            <CardContent>
               <div className={style.CardTitle}>
-                <Paper id="box" elevation={4}>
-                  <TextField name="usersearch"
-                    onChange={t => this.filterUser(t.target.value)}
-                    InputProps={{
-                      startAdornment: (
-                        <InputAdornment position="start">
-                          <ion-icon name="search"></ion-icon>
-                        </InputAdornment>
-                      ),
-                    }}/>
+                <Paper id="box" elevation={4} className={style.Search}>
+                  <TextField name="usersearch" className={style.SearchInput} 
+                    onChange={(e) => this.handleFindUserInput(e.target.value)} />
+                  <IconButton color="primary" onClick={() => this.findUser()}>
+                    <ion-icon name="search"></ion-icon>
+                  </IconButton>
                 </Paper>
               </div>
-              <div>
-                {this.state.filteredUsers.map((i) => {
-                  if (this.props.search.users[i]) {
-                    return <img 
-                      src={this.props.search.users[i].avatarUrl}
-                      alt={this.props.search.users[i].screenName}
-                      title={this.props.search.users[i].screenName} key={`u${i}`} />
-                  }                  
-                })}
-              </div>
+              {usersInfo}
             </CardContent>
           </Card>
-          <Card raised className={card.Card} >
-            <CardContent className={card.Scroll}>
+          <Card raised className={`${card.Card} ${style.Card}`} >
+            <CardContent>
               <Typography variant="h2" className={style.CardTitle}>
                 {tweetCount} tweets (all users)
               </Typography>
+              <Typography variant="body2">Showing 2 random tweets from the collection.</Typography>
               {tweets}
             </CardContent>
           </Card>
@@ -212,4 +239,6 @@ CollectionList.propTypes = {
   getTweets: PropTypes.func,
   getUsers: PropTypes.func,
   getFoundInSearches: PropTypes.func,
+  getTweetsForUser: PropTypes.func,
+  foundUserTweets: PropTypes.bool
 }

@@ -1,3 +1,13 @@
+.CardHolder {
+  max-width: 1500px;
+}
+
+.Card {
+  width: 400px !important;
+  height: 550px !important;
+  overflow-y: scroll !important;
+}
+
 .CardTitle {
   text-align: center;
   padding-bottom: 1em;
@@ -10,4 +20,31 @@
 .Options {
   text-align: center;
   font-size: 5.5pt !important;
+}
+
+.UserImg {
+  max-width: 48px;
+  max-height: 48px;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  padding: 1px;
+  font-size: 14px;
+}
+
+.ButtonText {
+  text-decoration: underline;
+}
+
+.Search {
+  display: flex;
+  align-items: center;
+  padding: 2px 10px;
+}
+
+.SearchInput {
+  width: 100%;
+}
+
+.FoundUser {
+  text-align: center
 }

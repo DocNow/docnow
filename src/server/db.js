@@ -703,7 +703,7 @@ export class Database {
     )
   }
 
-  async getTwitterUsers(search) {
+  async getTwitterUsers(search, offset = 0, limit = 100) {
 
     // maybe users should be modeled outside of the tweets they create?
 
@@ -715,7 +715,8 @@ export class Database {
       .where('searchId', search.id)
       .groupBy('screenName')
       .orderBy('total', 'DESC')
-      .limit(100)
+      .offset(offset)
+      .limit(limit)
 
     this.convertCounts(userCounts, 'total')
 
