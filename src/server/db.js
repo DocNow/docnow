@@ -201,6 +201,12 @@ export class Database {
     return User.query().where('isSuperUser', '=', true).first()
   }
 
+  getAdminUsers() {
+    return User.query()
+      .where('admin', '=', true)
+      .orWhere('isSuperUser', '=', true)
+  }
+
   getUserByTwitterUserId(userId) {
     return User.query().where('twitter_user_id', '=', userId).first()
   }

@@ -1,6 +1,7 @@
 import express from 'express'
 import passport from 'passport'
 import twitter from 'passport-twitter'
+import { sendNewUserEmail } from './email'
 import { Database } from './db'
 
 const db = new Database()
@@ -34,6 +35,7 @@ const activateKeys = () => {
                 twitterAccessTokenSecret: tokenSecret
               }
               db.addUser(newUser).then((u) => {
+                sendNewUserEmail(u)
                 return cb(null, u.id)
               })
             } else {
