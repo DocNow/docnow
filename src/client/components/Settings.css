@@ -37,11 +37,6 @@
   color: #222;
 } 
 
-.Settings .Separator h2 {
-  font-weight: bold;
-  font-size: 18pt;
-}
-
 .SettingsUnder780px input {
   width: 90%;
 }

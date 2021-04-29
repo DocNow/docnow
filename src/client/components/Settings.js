@@ -81,7 +81,7 @@ export default class Settings extends MediaQueryComponent {
 
       welcome = (
         <div className={style.Welcome}>
-          <b>Welcome!</b>
+          <h1>Welcome! 🎉 </h1>
           <p>
             To setup DocNow, you will need to visit the 
             <a href="https://developer.twitter.com/en/portal/">Twitter Developer Portal</a> and 
@@ -106,7 +106,7 @@ export default class Settings extends MediaQueryComponent {
           {welcome}
 
           <div className={style.Separator}>
-            <h2>General Settings</h2>
+            <h2>General Settings 🏡</h2>
             <p>
               These settings help you set up your DocNow application 
               so that other people understand who your organization is 
@@ -179,7 +179,7 @@ export default class Settings extends MediaQueryComponent {
           </div>
 
           <div className={style.Separator}>
-            <h2>Twitter Settings</h2>
+            <h2>Twitter Settings 🔑</h2>
             <p>
               Your DocNow instance needs to be able to talk to the Twitter 
               API in order to collect data and send tweets. To get your keys please visit  
@@ -223,7 +223,7 @@ export default class Settings extends MediaQueryComponent {
           </div>
 
           <div className={style.Separator}>
-            <h2>Email Settings</h2>
+            <h2>Email Settings 📨</h2>
             <p>
               Your DocNow application sometimes needs to send email
               to you and your users. To do this reliably it needs to know an 
