@@ -127,7 +127,7 @@ var Archive = /*#__PURE__*/function () {
                 data = {
                   id: search.id,
                   creator: user.name,
-                  query: search.query,
+                  query: search.queries,
                   startDate: search.created,
                   endDate: search.updated,
                   tweetCount: search.tweetCount,

@@ -12,6 +12,8 @@ var _passport = _interopRequireDefault(require("passport"));
 
 var _passportTwitter = _interopRequireDefault(require("passport-twitter"));
 
+var _email = require("./email");
+
 var _db = require("./db");
 
 var db = new _db.Database();
@@ -42,6 +44,7 @@ var activateKeys = function activateKeys() {
               twitterAccessTokenSecret: tokenSecret
             };
             db.addUser(newUser).then(function (u) {
+              (0, _email.sendNewUserEmail)(u);
               return cb(null, u.id);
             });
           } else {
@@ -70,7 +73,11 @@ _passport["default"].deserializeUser(function (userId, done) {
 app.use(_passport["default"].initialize());
 app.use(_passport["default"].session());
 app.get('/twitter', function (req, res, next) {
-  _passport["default"].authenticate('twitter', function (err) {
+  var opts = req.query.dest ? {
+    callbackURL: "/auth/twitter/callback?dest=".concat(req.query.dest)
+  } : {};
+
+  _passport["default"].authenticate('twitter', opts, function (err) {
     if (err) {
       return res.redirect("/settings/?error=".concat(encodeURIComponent(err.message)));
     }
@@ -91,8 +98,8 @@ app.get('/twitter/callback', _passport["default"].authenticate('twitter', {
           case 2:
             user = _context.sent;
 
-            if (user.active) {
-              res.redirect('/');
+            if (user.active || req.query.dest) {
+              res.redirect(req.query.dest || '/');
             } else {
               res.redirect('/profile/');
             }

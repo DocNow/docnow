@@ -215,6 +215,11 @@ app.put('/settings', /*#__PURE__*/function () {
               instanceInfoLink: req.body.instanceInfoLink,
               instanceDescription: req.body.instanceDescription,
               instanceTweetText: req.body.instanceTweetText,
+              emailHost: req.body.emailHost,
+              emailPort: req.body.emailPort,
+              emailUser: req.body.emailUser,
+              emailPassword: req.body.emailPassword,
+              emailFromAddress: req.body.emailFromAddress,
               defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000
             };
             _context4.prev = 5;
@@ -452,7 +457,7 @@ app.get('/searches', function (req, res) {
       res.json(searches);
     });
   } else {
-    // otherwise they just get the public searches
+    // otherwise they just get the public
     db.getPublicSearches().then(function (searches) {
       res.json(searches);
     });
@@ -485,13 +490,14 @@ app.post('/searches', function (req, res) {
 });
 app.get('/search/:searchId', /*#__PURE__*/function () {
   var _ref7 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(req, res) {
-    var search, summ, lastQuery;
+    var search, summ, lastQuery, _search, _summ, _lastQuery;
+
     return _regenerator["default"].wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
             if (!req.user) {
-              _context7.next = 10;
+              _context7.next = 12;
               break;
             }
 
@@ -508,8 +514,38 @@ app.get('/search/:searchId', /*#__PURE__*/function () {
             lastQuery = summ.queries[summ.queries.length - 1];
             summ.query = lastQuery.value.or;
             res.json(summ);
+            _context7.next = 25;
+            break;
 
-          case 10:
+          case 12:
+            _context7.next = 14;
+            return db.getPublicSearch(req.params.searchId);
+
+          case 14:
+            _search = _context7.sent;
+
+            if (!_search) {
+              _context7.next = 24;
+              break;
+            }
+
+            _context7.next = 18;
+            return db.getSearchSummary(_search);
+
+          case 18:
+            _summ = _context7.sent;
+            _lastQuery = _summ.queries[_summ.queries.length - 1];
+            _summ.query = _lastQuery.value.or;
+            res.json(_summ);
+            _context7.next = 25;
+            break;
+
+          case 24:
+            res.status(401).json({
+              error: 'Not Authorized'
+            });
+
+          case 25:
           case "end":
             return _context7.stop();
         }
@@ -579,47 +615,73 @@ app["delete"]('/search/:searchId', /*#__PURE__*/function () {
   };
 }());
 app.get('/search/:searchId/tweets', function (req, res) {
+  var searchReq = null;
+
   if (req.user) {
-    db.getSearch(req.params.searchId).then(function (search) {
-      if (req.query.url) {
-        db.getTweetsForUrl(search, req.query.url).then(function (tweets) {
-          res.json(tweets);
-        });
-      } else if (req.query.user) {
-        db.getTweetsForUser(search, req.query.user).then(function (tweets) {
-          res.json(tweets);
-        });
-      } else if (req.query.image) {
-        db.getTweetsForImage(search, req.query.image).then(function (tweets) {
-          res.json(tweets);
-        });
-      } else if (req.query.video) {
-        db.getTweetsForVideo(search, req.query.video).then(function (tweets) {
-          res.json(tweets);
-        });
-      } else if (req.query.ids) {
-        db.getTweetsByIds(search, req.query.ids.split(',')).then(function (tweets) {
-          res.json(tweets);
-        });
-      } else {
-        var includeRetweets = req.query.includeRetweets ? true : false;
-        var offset = req.query.offset ? req.query.offset : 0;
-        var limit = req.query.limit ? req.query.limit : 100;
-        db.getTweets(search, includeRetweets, offset, limit).then(function (tweets) {
-          res.json(tweets);
-        });
-      }
-    });
+    searchReq = db.getSearch(req.params.searchId);
+  } else {
+    searchReq = db.getPublicSearch(req.params.searchId);
+
+    if (!searchReq) {
+      return res.status(401).json({
+        error: 'Not Authorized'
+      });
+    }
   }
+
+  searchReq.then(function (search) {
+    if (req.query.url) {
+      db.getTweetsForUrl(search, req.query.url).then(function (tweets) {
+        res.json(tweets);
+      });
+    } else if (req.query.user) {
+      db.getTweetsForUser(search, req.query.user).then(function (tweets) {
+        res.json(tweets);
+      });
+    } else if (req.query.image) {
+      db.getTweetsForImage(search, req.query.image).then(function (tweets) {
+        res.json(tweets);
+      });
+    } else if (req.query.video) {
+      db.getTweetsForVideo(search, req.query.video).then(function (tweets) {
+        res.json(tweets);
+      });
+    } else if (req.query.ids) {
+      db.getTweetsByIds(search, req.query.ids.split(',')).then(function (tweets) {
+        res.json(tweets);
+      });
+    } else {
+      var includeRetweets = req.query.includeRetweets ? true : false;
+      var offset = req.query.offset ? req.query.offset : 0;
+      var limit = req.query.limit ? req.query.limit : 100;
+      db.getTweets(search, includeRetweets, offset, limit).then(function (tweets) {
+        res.json(tweets);
+      });
+    }
+  });
 });
 app.get('/search/:searchId/users', function (req, res) {
+  var searchReq = null;
+
   if (req.user) {
-    db.getSearch(req.params.searchId).then(function (search) {
-      db.getTwitterUsers(search).then(function (users) {
-        res.json(users);
+    searchReq = db.getSearch(req.params.searchId);
+  } else {
+    searchReq = db.getPublicSearch(req.params.searchId);
+
+    if (!searchReq) {
+      return res.status(401).json({
+        error: 'Not Authorized'
       });
-    });
+    }
   }
+
+  searchReq.then(function (search) {
+    var offset = req.query.offset ? req.query.offset : 0;
+    var limit = req.query.limit ? req.query.limit : 100;
+    db.getTwitterUsers(search, offset, limit).then(function (users) {
+      res.json(users);
+    });
+  });
 });
 app.get('/search/:searchId/hashtags', function (req, res) {
   if (req.user) {
@@ -918,6 +980,44 @@ app.get('/users', /*#__PURE__*/function () {
 
   return function (_x29, _x30) {
     return _ref15.apply(this, arguments);
+  };
+}());
+app.get('/findme', /*#__PURE__*/function () {
+  var _ref16 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee16(req, res) {
+    var results;
+    return _regenerator["default"].wrap(function _callee16$(_context16) {
+      while (1) {
+        switch (_context16.prev = _context16.next) {
+          case 0:
+            if (!req.user) {
+              _context16.next = 7;
+              break;
+            }
+
+            _context16.next = 3;
+            return db.getSearchesWithUser(req.user.twitterScreenName);
+
+          case 3:
+            results = _context16.sent;
+            res.json(results);
+            _context16.next = 8;
+            break;
+
+          case 7:
+            res.status(401).json({
+              error: 'Not Authorized'
+            });
+
+          case 8:
+          case "end":
+            return _context16.stop();
+        }
+      }
+    }, _callee16);
+  }));
+
+  return function (_x31, _x32) {
+    return _ref16.apply(this, arguments);
   };
 }());
 module.exports = app;

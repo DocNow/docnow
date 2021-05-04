@@ -555,6 +555,11 @@ var Database = /*#__PURE__*/function () {
       return _User["default"].query().where('isSuperUser', '=', true).first();
     }
   }, {
+    key: "getAdminUsers",
+    value: function getAdminUsers() {
+      return _User["default"].query().where('admin', '=', true).orWhere('isSuperUser', '=', true);
+    }
+  }, {
     key: "getUserByTwitterUserId",
     value: function getUserByTwitterUserId(userId) {
       return _User["default"].query().where('twitter_user_id', '=', userId).first();
@@ -1050,6 +1055,50 @@ var Database = /*#__PURE__*/function () {
       return getSearch;
     }()
   }, {
+    key: "getPublicSearch",
+    value: function () {
+      var _getPublicSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee16(searchId) {
+        var search, stats;
+        return _regenerator["default"].wrap(function _callee16$(_context16) {
+          while (1) {
+            switch (_context16.prev = _context16.next) {
+              case 0:
+                _context16.next = 2;
+                return _Search["default"].query().findById(searchId).whereNotNull("public").withGraphJoined('creator').withGraphJoined('queries');
+
+              case 2:
+                search = _context16.sent;
+
+                if (search) {
+                  _context16.next = 5;
+                  break;
+                }
+
+                return _context16.abrupt("return", null);
+
+              case 5:
+                _context16.next = 7;
+                return this.getSearchStats(search);
+
+              case 7:
+                stats = _context16.sent;
+                return _context16.abrupt("return", _objectSpread(_objectSpread({}, search), stats));
+
+              case 9:
+              case "end":
+                return _context16.stop();
+            }
+          }
+        }, _callee16, this);
+      }));
+
+      function getPublicSearch(_x12) {
+        return _getPublicSearch.apply(this, arguments);
+      }
+
+      return getPublicSearch;
+    }()
+  }, {
     key: "deleteSearch",
     value: function deleteSearch(search) {
       _logger["default"].info('deleting search', {
@@ -1061,75 +1110,75 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getUserSearches",
     value: function () {
-      var _getUserSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee16(user) {
+      var _getUserSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee17(user) {
         var results, searches, _iterator8, _step8, search, stats;
 
-        return _regenerator["default"].wrap(function _callee16$(_context16) {
+        return _regenerator["default"].wrap(function _callee17$(_context17) {
           while (1) {
-            switch (_context16.prev = _context16.next) {
+            switch (_context17.prev = _context17.next) {
               case 0:
-                _context16.next = 2;
+                _context17.next = 2;
                 return _Search["default"].query().where({
                   userId: user.id,
                   saved: true
                 }).withGraphJoined('creator').withGraphJoined('queries').orderBy('created', 'DESC');
 
               case 2:
-                results = _context16.sent;
+                results = _context17.sent;
                 // add stats to each search
                 searches = [];
                 _iterator8 = _createForOfIteratorHelper(results);
-                _context16.prev = 5;
+                _context17.prev = 5;
 
                 _iterator8.s();
 
               case 7:
                 if ((_step8 = _iterator8.n()).done) {
-                  _context16.next = 15;
+                  _context17.next = 15;
                   break;
                 }
 
                 search = _step8.value;
-                _context16.next = 11;
+                _context17.next = 11;
                 return this.getSearchStats(search);
 
               case 11:
-                stats = _context16.sent;
+                stats = _context17.sent;
                 searches.push(_objectSpread(_objectSpread({}, search), stats));
 
               case 13:
-                _context16.next = 7;
+                _context17.next = 7;
                 break;
 
               case 15:
-                _context16.next = 20;
+                _context17.next = 20;
                 break;
 
               case 17:
-                _context16.prev = 17;
-                _context16.t0 = _context16["catch"](5);
+                _context17.prev = 17;
+                _context17.t0 = _context17["catch"](5);
 
-                _iterator8.e(_context16.t0);
+                _iterator8.e(_context17.t0);
 
               case 20:
-                _context16.prev = 20;
+                _context17.prev = 20;
 
                 _iterator8.f();
 
-                return _context16.finish(20);
+                return _context17.finish(20);
 
               case 23:
-                return _context16.abrupt("return", searches);
+                return _context17.abrupt("return", searches);
 
               case 24:
               case "end":
-                return _context16.stop();
+                return _context17.stop();
             }
           }
-        }, _callee16, this, [[5, 17, 20, 23]]);
+        }, _callee17, this, [[5, 17, 20, 23]]);
       }));
 
-      function getUserSearches(_x12) {
+      function getUserSearches(_x13) {
         return _getUserSearches.apply(this, arguments);
       }
 
@@ -1138,77 +1187,78 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getPublicSearches",
     value: function () {
-      var _getPublicSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee17() {
+      var _getPublicSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee18() {
         var results, searches, _iterator9, _step9, search, stats;
 
-        return _regenerator["default"].wrap(function _callee17$(_context17) {
+        return _regenerator["default"].wrap(function _callee18$(_context18) {
           while (1) {
-            switch (_context17.prev = _context17.next) {
+            switch (_context18.prev = _context18.next) {
               case 0:
-                _context17.next = 2;
+                _context18.next = 2;
                 return _Search["default"].query().whereNotNull("public").withGraphJoined('creator').withGraphJoined('queries').orderBy('created', 'DESC');
 
               case 2:
-                results = _context17.sent;
+                results = _context18.sent;
                 // remove all info except for the creator's name and id
                 results.map(function (s) {
                   s.creator = {
                     id: s.creator.id,
                     name: s.creator.name,
+                    email: s.creator.email,
                     twitterScreenName: s.creator.twitterScreenName
                   };
                 }); // add stats to each search
 
                 searches = [];
                 _iterator9 = _createForOfIteratorHelper(results);
-                _context17.prev = 6;
+                _context18.prev = 6;
 
                 _iterator9.s();
 
               case 8:
                 if ((_step9 = _iterator9.n()).done) {
-                  _context17.next = 16;
+                  _context18.next = 16;
                   break;
                 }
 
                 search = _step9.value;
-                _context17.next = 12;
+                _context18.next = 12;
                 return this.getSearchStats(search);
 
               case 12:
-                stats = _context17.sent;
+                stats = _context18.sent;
                 searches.push(_objectSpread(_objectSpread({}, search), stats));
 
               case 14:
-                _context17.next = 8;
+                _context18.next = 8;
                 break;
 
               case 16:
-                _context17.next = 21;
+                _context18.next = 21;
                 break;
 
               case 18:
-                _context17.prev = 18;
-                _context17.t0 = _context17["catch"](6);
+                _context18.prev = 18;
+                _context18.t0 = _context18["catch"](6);
 
-                _iterator9.e(_context17.t0);
+                _iterator9.e(_context18.t0);
 
               case 21:
-                _context17.prev = 21;
+                _context18.prev = 21;
 
                 _iterator9.f();
 
-                return _context17.finish(21);
+                return _context18.finish(21);
 
               case 24:
-                return _context17.abrupt("return", searches);
+                return _context18.abrupt("return", searches);
 
               case 25:
               case "end":
-                return _context17.stop();
+                return _context18.stop();
             }
           }
-        }, _callee17, this, [[6, 18, 21, 24]]);
+        }, _callee18, this, [[6, 18, 21, 24]]);
       }));
 
       function getPublicSearches() {
@@ -1220,27 +1270,27 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "userOverQuota",
     value: function () {
-      var _userOverQuota = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee18(user) {
+      var _userOverQuota = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee19(user) {
         var total;
-        return _regenerator["default"].wrap(function _callee18$(_context18) {
+        return _regenerator["default"].wrap(function _callee19$(_context19) {
           while (1) {
-            switch (_context18.prev = _context18.next) {
+            switch (_context19.prev = _context19.next) {
               case 0:
                 // const searches = await this.getUserSearches(user)
                 total = _Tweet["default"].query().count().where({
                   userId: user.id
                 }).first();
-                return _context18.abrupt("return", total > user.tweetQuota);
+                return _context19.abrupt("return", total > user.tweetQuota);
 
               case 2:
               case "end":
-                return _context18.stop();
+                return _context19.stop();
             }
           }
-        }, _callee18);
+        }, _callee19);
       }));
 
-      function userOverQuota(_x13) {
+      function userOverQuota(_x14) {
         return _userOverQuota.apply(this, arguments);
       }
 
@@ -1259,24 +1309,24 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getSearchSummary",
     value: function () {
-      var _getSearchSummary = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee19(search) {
+      var _getSearchSummary = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee20(search) {
         var results, stats;
-        return _regenerator["default"].wrap(function _callee19$(_context19) {
+        return _regenerator["default"].wrap(function _callee20$(_context20) {
           while (1) {
-            switch (_context19.prev = _context19.next) {
+            switch (_context20.prev = _context20.next) {
               case 0:
-                _context19.next = 2;
+                _context20.next = 2;
                 return _Tweet["default"].query().min('created').max('created').count('id').where('searchId', search.id);
 
               case 2:
-                results = _context19.sent;
+                results = _context20.sent;
                 this.convertCounts(results);
-                _context19.next = 6;
+                _context20.next = 6;
                 return this.getSearchStats(search);
 
               case 6:
-                stats = _context19.sent;
-                return _context19.abrupt("return", _objectSpread(_objectSpread(_objectSpread({}, search), stats), {}, {
+                stats = _context20.sent;
+                return _context20.abrupt("return", _objectSpread(_objectSpread(_objectSpread({}, search), stats), {}, {
                   count: results[0].count,
                   minDate: results[0].min,
                   maxDate: results[0].max
@@ -1284,13 +1334,13 @@ var Database = /*#__PURE__*/function () {
 
               case 8:
               case "end":
-                return _context19.stop();
+                return _context20.stop();
             }
           }
-        }, _callee19, this);
+        }, _callee20, this);
       }));
 
-      function getSearchSummary(_x14) {
+      function getSearchSummary(_x15) {
         return _getSearchSummary.apply(this, arguments);
       }
 
@@ -1309,13 +1359,13 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getSearchStats",
     value: function () {
-      var _getSearchStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee20(search) {
+      var _getSearchStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee21(search) {
         var results, rows, urlCounts;
-        return _regenerator["default"].wrap(function _callee20$(_context20) {
+        return _regenerator["default"].wrap(function _callee21$(_context21) {
           while (1) {
-            switch (_context20.prev = _context20.next) {
+            switch (_context21.prev = _context21.next) {
               case 0:
-                _context20.next = 2;
+                _context21.next = 2;
                 return _Tweet["default"].query().countDistinct('screenName', {
                   as: 'users'
                 }).count('tweetId', {
@@ -1325,18 +1375,18 @@ var Database = /*#__PURE__*/function () {
                 }).first();
 
               case 2:
-                results = _context20.sent;
-                _context20.next = 5;
+                results = _context21.sent;
+                _context21.next = 5;
                 return _Tweet["default"].query().join('tweetUrl', 'id', 'tweetUrl.tweetId').select('type').countDistinct('url').where({
                   searchId: search.id
                 }).groupBy('type');
 
               case 5:
-                rows = _context20.sent;
+                rows = _context21.sent;
                 urlCounts = new Map(rows.map(function (r) {
                   return [r.type, r.count];
                 }));
-                return _context20.abrupt("return", {
+                return _context21.abrupt("return", {
                   tweetCount: parseInt(results.tweets, 10),
                   userCount: parseInt(results.users, 10),
                   imageCount: parseInt(urlCounts.get('image'), 10),
@@ -1346,13 +1396,13 @@ var Database = /*#__PURE__*/function () {
 
               case 8:
               case "end":
-                return _context20.stop();
+                return _context21.stop();
             }
           }
-        }, _callee20);
+        }, _callee21);
       }));
 
-      function getSearchStats(_x15) {
+      function getSearchStats(_x16) {
         return _getSearchStats.apply(this, arguments);
       }
 
@@ -1361,7 +1411,7 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "importFromSearch",
     value: function () {
-      var _importFromSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee22(search) {
+      var _importFromSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee23(search) {
         var _this5 = this;
 
         var maxTweets,
@@ -1371,23 +1421,23 @@ var Database = /*#__PURE__*/function () {
             q,
             maxTweetId,
             count,
-            _args22 = arguments;
-        return _regenerator["default"].wrap(function _callee22$(_context22) {
+            _args23 = arguments;
+        return _regenerator["default"].wrap(function _callee23$(_context23) {
           while (1) {
-            switch (_context22.prev = _context22.next) {
+            switch (_context23.prev = _context23.next) {
               case 0:
-                maxTweets = _args22.length > 1 && _args22[1] !== undefined ? _args22[1] : 1000;
-                _context22.next = 3;
+                maxTweets = _args23.length > 1 && _args23[1] !== undefined ? _args23[1] : 1000;
+                _context23.next = 3;
                 return this.getUser(search.creator.id);
 
               case 3:
-                user = _context22.sent;
-                _context22.next = 6;
+                user = _context23.sent;
+                _context23.next = 6;
                 return this.getTwitterClientForUser(user);
 
               case 6:
-                twtr = _context22.sent;
-                _context22.next = 9;
+                twtr = _context23.sent;
+                _context23.next = 9;
                 return this.updateSearch({
                   id: search.id,
                   active: true
@@ -1400,33 +1450,33 @@ var Database = /*#__PURE__*/function () {
 
                 maxTweetId = null;
                 count = 0;
-                return _context22.abrupt("return", new Promise(function (resolve, reject) {
+                return _context23.abrupt("return", new Promise(function (resolve, reject) {
                   twtr.search({
                     q: q,
                     sinceId: search.maxTweetId,
                     count: maxTweets
                   }, /*#__PURE__*/function () {
-                    var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee21(err, results) {
-                      return _regenerator["default"].wrap(function _callee21$(_context21) {
+                    var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee22(err, results) {
+                      return _regenerator["default"].wrap(function _callee22$(_context22) {
                         while (1) {
-                          switch (_context21.prev = _context21.next) {
+                          switch (_context22.prev = _context22.next) {
                             case 0:
                               if (!err) {
-                                _context21.next = 4;
+                                _context22.next = 4;
                                 break;
                               }
 
                               reject(err);
-                              _context21.next = 15;
+                              _context22.next = 15;
                               break;
 
                             case 4:
                               if (!(results.length === 0)) {
-                                _context21.next = 10;
+                                _context22.next = 10;
                                 break;
                               }
 
-                              _context21.next = 7;
+                              _context22.next = 7;
                               return _this5.updateSearch({
                                 id: search.id,
                                 maxTweetId: maxTweetId,
@@ -1435,7 +1485,7 @@ var Database = /*#__PURE__*/function () {
 
                             case 7:
                               resolve(count);
-                              _context21.next = 15;
+                              _context22.next = 15;
                               break;
 
                             case 10:
@@ -1443,7 +1493,7 @@ var Database = /*#__PURE__*/function () {
                                 maxTweetId = results[0].id;
                               }
 
-                              _context21.next = 13;
+                              _context22.next = 13;
                               return _this5.loadTweets(search, results);
 
                             case 13:
@@ -1453,13 +1503,13 @@ var Database = /*#__PURE__*/function () {
 
                             case 15:
                             case "end":
-                              return _context21.stop();
+                              return _context22.stop();
                           }
                         }
-                      }, _callee21);
+                      }, _callee22);
                     }));
 
-                    return function (_x17, _x18) {
+                    return function (_x18, _x19) {
                       return _ref2.apply(this, arguments);
                     };
                   }());
@@ -1467,13 +1517,13 @@ var Database = /*#__PURE__*/function () {
 
               case 14:
               case "end":
-                return _context22.stop();
+                return _context23.stop();
             }
           }
-        }, _callee22, this);
+        }, _callee23, this);
       }));
 
-      function importFromSearch(_x16) {
+      function importFromSearch(_x17) {
         return _importFromSearch.apply(this, arguments);
       }
 
@@ -1482,12 +1532,12 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "loadTweets",
     value: function () {
-      var _loadTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee24(search, tweets) {
+      var _loadTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee25(search, tweets) {
         var tweetRows, _iterator10, _step10, tweet, _iterator16, _step16, url;
 
-        return _regenerator["default"].wrap(function _callee24$(_context24) {
+        return _regenerator["default"].wrap(function _callee25$(_context25) {
           while (1) {
-            switch (_context24.prev = _context24.next) {
+            switch (_context25.prev = _context25.next) {
               case 0:
                 tweetRows = [];
                 _iterator10 = _createForOfIteratorHelper(tweets);
@@ -1534,21 +1584,21 @@ var Database = /*#__PURE__*/function () {
                   _iterator10.f();
                 }
 
-                _context24.prev = 3;
-                _context24.next = 6;
+                _context25.prev = 3;
+                _context25.next = 6;
                 return _Tweet["default"].transaction( /*#__PURE__*/function () {
-                  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee23(trx) {
+                  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee24(trx) {
                     var results, hashtagRows, urlRows, _iterator11, _step11, row, hashtags, _iterator12, _step12, name, urls, _iterator13, _step13, url, _iterator14, _step14, _url, _iterator15, _step15, _url2;
 
-                    return _regenerator["default"].wrap(function _callee23$(_context23) {
+                    return _regenerator["default"].wrap(function _callee24$(_context24) {
                       while (1) {
-                        switch (_context23.prev = _context23.next) {
+                        switch (_context24.prev = _context24.next) {
                           case 0:
-                            _context23.next = 2;
+                            _context24.next = 2;
                             return _Tweet["default"].query(trx).insert(tweetRows).returning(['id', 'tweetId']);
 
                           case 2:
-                            results = _context23.sent;
+                            results = _context24.sent;
                             // now we have the tweet id we can attach relevant 
                             // hashtags and urls
                             hashtagRows = [];
@@ -1636,47 +1686,47 @@ var Database = /*#__PURE__*/function () {
                               _iterator11.f();
                             }
 
-                            _context23.next = 9;
+                            _context24.next = 9;
                             return _TweetHashtag["default"].query(trx).insert(hashtagRows);
 
                           case 9:
-                            _context23.next = 11;
+                            _context24.next = 11;
                             return _TweetUrl["default"].query(trx).insert(urlRows);
 
                           case 11:
-                            return _context23.abrupt("return", results.length);
+                            return _context24.abrupt("return", results.length);
 
                           case 12:
                           case "end":
-                            return _context23.stop();
+                            return _context24.stop();
                         }
                       }
-                    }, _callee23);
+                    }, _callee24);
                   }));
 
-                  return function (_x21) {
+                  return function (_x22) {
                     return _ref3.apply(this, arguments);
                   };
                 }());
 
               case 6:
-                _context24.next = 11;
+                _context25.next = 11;
                 break;
 
               case 8:
-                _context24.prev = 8;
-                _context24.t0 = _context24["catch"](3);
-                console.log("loadTweets transaction failed: ".concat(_context24.t0));
+                _context25.prev = 8;
+                _context25.t0 = _context25["catch"](3);
+                console.log("loadTweets transaction failed: ".concat(_context25.t0));
 
               case 11:
               case "end":
-                return _context24.stop();
+                return _context25.stop();
             }
           }
-        }, _callee24, null, [[3, 8]]);
+        }, _callee25, null, [[3, 8]]);
       }));
 
-      function loadTweets(_x19, _x20) {
+      function loadTweets(_x20, _x21) {
         return _loadTweets.apply(this, arguments);
       }
 
@@ -1701,22 +1751,22 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getAllTweets",
     value: function () {
-      var _getAllTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee25(search) {
-        return _regenerator["default"].wrap(function _callee25$(_context25) {
+      var _getAllTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee26(search) {
+        return _regenerator["default"].wrap(function _callee26$(_context26) {
           while (1) {
-            switch (_context25.prev = _context25.next) {
+            switch (_context26.prev = _context26.next) {
               case 0:
-                return _context25.abrupt("return", this.pickJson(_Tweet["default"].query().where('searchId', search.id)));
+                return _context26.abrupt("return", this.pickJson(_Tweet["default"].query().where('searchId', search.id)));
 
               case 1:
               case "end":
-                return _context25.stop();
+                return _context26.stop();
             }
           }
-        }, _callee25, this);
+        }, _callee26, this);
       }));
 
-      function getAllTweets(_x22) {
+      function getAllTweets(_x23) {
         return _getAllTweets.apply(this, arguments);
       }
 
@@ -1725,15 +1775,15 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTweetsForUrl",
     value: function () {
-      var _getTweetsForUrl = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee26(search, url) {
+      var _getTweetsForUrl = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee27(search, url) {
         var type,
-            _args26 = arguments;
-        return _regenerator["default"].wrap(function _callee26$(_context26) {
+            _args27 = arguments;
+        return _regenerator["default"].wrap(function _callee27$(_context27) {
           while (1) {
-            switch (_context26.prev = _context26.next) {
+            switch (_context27.prev = _context27.next) {
               case 0:
-                type = _args26.length > 2 && _args26[2] !== undefined ? _args26[2] : 'page';
-                return _context26.abrupt("return", this.pickJson(_Tweet["default"].query().where({
+                type = _args27.length > 2 && _args27[2] !== undefined ? _args27[2] : 'page';
+                return _context27.abrupt("return", this.pickJson(_Tweet["default"].query().where({
                   searchId: search.id,
                   url: url,
                   type: type
@@ -1741,13 +1791,13 @@ var Database = /*#__PURE__*/function () {
 
               case 2:
               case "end":
-                return _context26.stop();
+                return _context27.stop();
             }
           }
-        }, _callee26, this);
+        }, _callee27, this);
       }));
 
-      function getTweetsForUrl(_x23, _x24) {
+      function getTweetsForUrl(_x24, _x25) {
         return _getTweetsForUrl.apply(this, arguments);
       }
 
@@ -1766,39 +1816,15 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTweetsForUser",
     value: function () {
-      var _getTweetsForUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee27(search, handle) {
-        return _regenerator["default"].wrap(function _callee27$(_context27) {
-          while (1) {
-            switch (_context27.prev = _context27.next) {
-              case 0:
-                return _context27.abrupt("return", this.pickJson(_Tweet["default"].query().where({
-                  searchId: search.id,
-                  screenName: handle
-                }).orderBy('id', 'DESC').limit(100)));
-
-              case 1:
-              case "end":
-                return _context27.stop();
-            }
-          }
-        }, _callee27, this);
-      }));
-
-      function getTweetsForUser(_x25, _x26) {
-        return _getTweetsForUser.apply(this, arguments);
-      }
-
-      return getTweetsForUser;
-    }()
-  }, {
-    key: "getTweetsByIds",
-    value: function () {
-      var _getTweetsByIds = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee28(search, ids) {
+      var _getTweetsForUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee28(search, handle) {
         return _regenerator["default"].wrap(function _callee28$(_context28) {
           while (1) {
             switch (_context28.prev = _context28.next) {
               case 0:
-                return _context28.abrupt("return", this.pickJson(_Tweet["default"].query().where('search', search.id).whereIn('tweetId', ids).orderBy('id', 'DESC').limit(100)));
+                return _context28.abrupt("return", this.pickJson(_Tweet["default"].query().where({
+                  searchId: search.id,
+                  screenName: handle
+                }).orderBy('id', 'DESC').limit(100)));
 
               case 1:
               case "end":
@@ -1808,7 +1834,31 @@ var Database = /*#__PURE__*/function () {
         }, _callee28, this);
       }));
 
-      function getTweetsByIds(_x27, _x28) {
+      function getTweetsForUser(_x26, _x27) {
+        return _getTweetsForUser.apply(this, arguments);
+      }
+
+      return getTweetsForUser;
+    }()
+  }, {
+    key: "getTweetsByIds",
+    value: function () {
+      var _getTweetsByIds = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee29(search, ids) {
+        return _regenerator["default"].wrap(function _callee29$(_context29) {
+          while (1) {
+            switch (_context29.prev = _context29.next) {
+              case 0:
+                return _context29.abrupt("return", this.pickJson(_Tweet["default"].query().where('search', search.id).whereIn('tweetId', ids).orderBy('id', 'DESC').limit(100)));
+
+              case 1:
+              case "end":
+                return _context29.stop();
+            }
+          }
+        }, _callee29, this);
+      }));
+
+      function getTweetsByIds(_x28, _x29) {
         return _getTweetsByIds.apply(this, arguments);
       }
 
@@ -1817,18 +1867,29 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTwitterUsers",
     value: function () {
-      var _getTwitterUsers = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee29(search) {
-        var userCounts, users, seen, results, _iterator17, _step17, u;
+      var _getTwitterUsers = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee30(search) {
+        var offset,
+            limit,
+            userCounts,
+            users,
+            seen,
+            results,
+            _iterator17,
+            _step17,
+            u,
+            _args30 = arguments;
 
-        return _regenerator["default"].wrap(function _callee29$(_context29) {
+        return _regenerator["default"].wrap(function _callee30$(_context30) {
           while (1) {
-            switch (_context29.prev = _context29.next) {
+            switch (_context30.prev = _context30.next) {
               case 0:
-                _context29.next = 2;
-                return _Tweet["default"].query().select('screenName').count('* as total').where('searchId', search.id).groupBy('screenName').orderBy('total', 'DESC').limit(100);
+                offset = _args30.length > 1 && _args30[1] !== undefined ? _args30[1] : 0;
+                limit = _args30.length > 2 && _args30[2] !== undefined ? _args30[2] : 100;
+                _context30.next = 4;
+                return _Tweet["default"].query().select('screenName').count('* as total').where('searchId', search.id).groupBy('screenName').orderBy('total', 'DESC').offset(offset).limit(limit);
 
-              case 2:
-                userCounts = _context29.sent;
+              case 4:
+                userCounts = _context30.sent;
                 this.convertCounts(userCounts, 'total'); // turn database results into a map of screename -> total
 
                 userCounts = new Map(userCounts.map(function (r) {
@@ -1837,11 +1898,11 @@ var Database = /*#__PURE__*/function () {
                 // but perhaps its better to pull them out adhoc until
                 // we actually have a conversaton with them?
 
-                _context29.next = 7;
+                _context30.next = 9;
                 return _Tweet["default"].query().select('json', 'screenName').where('searchId', search.id).whereIn('screenName', Array.from(userCounts.keys()));
 
-              case 7:
-                users = _context29.sent;
+              case 9:
+                users = _context30.sent;
                 // seen is needed because we could get multiple tweets from the same user
                 // and would end up with more than one results for a user 
                 seen = new Set();
@@ -1869,17 +1930,17 @@ var Database = /*#__PURE__*/function () {
                 results.sort(function (a, b) {
                   return b.tweetsInSearch - a.tweetsInSearch;
                 });
-                return _context29.abrupt("return", results);
+                return _context30.abrupt("return", results);
 
-              case 14:
+              case 16:
               case "end":
-                return _context29.stop();
+                return _context30.stop();
             }
           }
-        }, _callee29, this);
+        }, _callee30, this);
       }));
 
-      function getTwitterUsers(_x29) {
+      function getTwitterUsers(_x30) {
         return _getTwitterUsers.apply(this, arguments);
       }
 
@@ -1888,47 +1949,14 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getHashtags",
     value: function () {
-      var _getHashtags = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee30(search) {
-        var results;
-        return _regenerator["default"].wrap(function _callee30$(_context30) {
-          while (1) {
-            switch (_context30.prev = _context30.next) {
-              case 0:
-                _context30.next = 2;
-                return _Tweet["default"].query().where('searchId', search.id).join('tweetHashtag', 'tweet.id', 'tweetHashtag.tweetId').select('name as hashtag').count('name').groupBy('hashtag').orderBy('count', 'DESC');
-
-              case 2:
-                results = _context30.sent;
-                return _context30.abrupt("return", this.convertCounts(results));
-
-              case 4:
-              case "end":
-                return _context30.stop();
-            }
-          }
-        }, _callee30, this);
-      }));
-
-      function getHashtags(_x30) {
-        return _getHashtags.apply(this, arguments);
-      }
-
-      return getHashtags;
-    }()
-  }, {
-    key: "getUrls",
-    value: function () {
-      var _getUrls = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee31(search) {
+      var _getHashtags = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee31(search) {
         var results;
         return _regenerator["default"].wrap(function _callee31$(_context31) {
           while (1) {
             switch (_context31.prev = _context31.next) {
               case 0:
                 _context31.next = 2;
-                return _Tweet["default"].query().where({
-                  searchId: search.id,
-                  type: 'page'
-                }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url').count('url').groupBy('url').orderBy('count', 'DESC');
+                return _Tweet["default"].query().where('searchId', search.id).join('tweetHashtag', 'tweet.id', 'tweetHashtag.tweetId').select('name as hashtag').count('name').groupBy('hashtag').orderBy('count', 'DESC');
 
               case 2:
                 results = _context31.sent;
@@ -1942,16 +1970,16 @@ var Database = /*#__PURE__*/function () {
         }, _callee31, this);
       }));
 
-      function getUrls(_x31) {
-        return _getUrls.apply(this, arguments);
+      function getHashtags(_x31) {
+        return _getHashtags.apply(this, arguments);
       }
 
-      return getUrls;
+      return getHashtags;
     }()
   }, {
-    key: "getImages",
+    key: "getUrls",
     value: function () {
-      var _getImages = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee32(search) {
+      var _getUrls = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee32(search) {
         var results;
         return _regenerator["default"].wrap(function _callee32$(_context32) {
           while (1) {
@@ -1960,7 +1988,7 @@ var Database = /*#__PURE__*/function () {
                 _context32.next = 2;
                 return _Tweet["default"].query().where({
                   searchId: search.id,
-                  type: 'image'
+                  type: 'page'
                 }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url').count('url').groupBy('url').orderBy('count', 'DESC');
 
               case 2:
@@ -1975,16 +2003,16 @@ var Database = /*#__PURE__*/function () {
         }, _callee32, this);
       }));
 
-      function getImages(_x32) {
-        return _getImages.apply(this, arguments);
+      function getUrls(_x32) {
+        return _getUrls.apply(this, arguments);
       }
 
-      return getImages;
+      return getUrls;
     }()
   }, {
-    key: "getVideos",
+    key: "getImages",
     value: function () {
-      var _getVideos = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee33(search) {
+      var _getImages = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee33(search) {
         var results;
         return _regenerator["default"].wrap(function _callee33$(_context33) {
           while (1) {
@@ -1993,7 +2021,7 @@ var Database = /*#__PURE__*/function () {
                 _context33.next = 2;
                 return _Tweet["default"].query().where({
                   searchId: search.id,
-                  type: 'video'
+                  type: 'image'
                 }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url').count('url').groupBy('url').orderBy('count', 'DESC');
 
               case 2:
@@ -2008,7 +2036,40 @@ var Database = /*#__PURE__*/function () {
         }, _callee33, this);
       }));
 
-      function getVideos(_x33) {
+      function getImages(_x33) {
+        return _getImages.apply(this, arguments);
+      }
+
+      return getImages;
+    }()
+  }, {
+    key: "getVideos",
+    value: function () {
+      var _getVideos = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee34(search) {
+        var results;
+        return _regenerator["default"].wrap(function _callee34$(_context34) {
+          while (1) {
+            switch (_context34.prev = _context34.next) {
+              case 0:
+                _context34.next = 2;
+                return _Tweet["default"].query().where({
+                  searchId: search.id,
+                  type: 'video'
+                }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url').count('url').groupBy('url').orderBy('count', 'DESC');
+
+              case 2:
+                results = _context34.sent;
+                return _context34.abrupt("return", this.convertCounts(results));
+
+              case 4:
+              case "end":
+                return _context34.stop();
+            }
+          }
+        }, _callee34, this);
+      }));
+
+      function getVideos(_x34) {
         return _getVideos.apply(this, arguments);
       }
 
@@ -2063,35 +2124,84 @@ var Database = /*#__PURE__*/function () {
       return urlFetcher.deselectWebpage(search, url);
     }
   }, {
+    key: "getSearchesWithUser",
+    value: function () {
+      var _getSearchesWithUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee35(twitterScreenName) {
+        var results, counts, _iterator18, _step18, row, tweets;
+
+        return _regenerator["default"].wrap(function _callee35$(_context35) {
+          while (1) {
+            switch (_context35.prev = _context35.next) {
+              case 0:
+                _context35.next = 2;
+                return _Tweet["default"].query().where({
+                  screenName: twitterScreenName
+                }).select('searchId', 'tweetId').groupBy('searchId', 'tweetId');
+
+              case 2:
+                results = _context35.sent;
+                counts = new Map();
+                _iterator18 = _createForOfIteratorHelper(results);
+
+                try {
+                  for (_iterator18.s(); !(_step18 = _iterator18.n()).done;) {
+                    row = _step18.value;
+                    tweets = counts.get(row.searchId) || [];
+                    tweets.push(row.tweetId);
+                    counts.set(row.searchId, tweets);
+                  }
+                } catch (err) {
+                  _iterator18.e(err);
+                } finally {
+                  _iterator18.f();
+                }
+
+                return _context35.abrupt("return", Object.fromEntries(counts));
+
+              case 7:
+              case "end":
+                return _context35.stop();
+            }
+          }
+        }, _callee35);
+      }));
+
+      function getSearchesWithUser(_x35) {
+        return _getSearchesWithUser.apply(this, arguments);
+      }
+
+      return getSearchesWithUser;
+    }()
+  }, {
     key: "getSystemStats",
     value: function () {
-      var _getSystemStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee34() {
+      var _getSystemStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee36() {
         var tweets, users;
-        return _regenerator["default"].wrap(function _callee34$(_context34) {
+        return _regenerator["default"].wrap(function _callee36$(_context36) {
           while (1) {
-            switch (_context34.prev = _context34.next) {
+            switch (_context36.prev = _context36.next) {
               case 0:
-                _context34.next = 2;
+                _context36.next = 2;
                 return _Tweet["default"].query().count().first();
 
               case 2:
-                tweets = _context34.sent;
-                _context34.next = 5;
+                tweets = _context36.sent;
+                _context36.next = 5;
                 return _User["default"].query().count().first();
 
               case 5:
-                users = _context34.sent;
-                return _context34.abrupt("return", {
+                users = _context36.sent;
+                return _context36.abrupt("return", {
                   tweetCount: Number.parseInt(tweets.count, 10),
                   userCount: Number.parseInt(users.count, 10)
                 });
 
               case 7:
               case "end":
-                return _context34.stop();
+                return _context36.stop();
             }
           }
-        }, _callee34);
+        }, _callee36);
       }));
 
       function getSystemStats() {
@@ -2103,30 +2213,30 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "pickJson",
     value: function () {
-      var _pickJson = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee35(query) {
+      var _pickJson = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee37(query) {
         var results;
-        return _regenerator["default"].wrap(function _callee35$(_context35) {
+        return _regenerator["default"].wrap(function _callee37$(_context37) {
           while (1) {
-            switch (_context35.prev = _context35.next) {
+            switch (_context37.prev = _context37.next) {
               case 0:
-                _context35.next = 2;
+                _context37.next = 2;
                 return query;
 
               case 2:
-                results = _context35.sent;
-                return _context35.abrupt("return", results.map(function (o) {
+                results = _context37.sent;
+                return _context37.abrupt("return", results.map(function (o) {
                   return o.json;
                 }));
 
               case 4:
               case "end":
-                return _context35.stop();
+                return _context37.stop();
             }
           }
-        }, _callee35);
+        }, _callee37);
       }));
 
-      function pickJson(_x34) {
+      function pickJson(_x36) {
         return _pickJson.apply(this, arguments);
       }
 
@@ -2135,42 +2245,42 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "convertCounts",
     value: function () {
-      var _convertCounts = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee36(l) {
+      var _convertCounts = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee38(l) {
         var prop,
-            _iterator18,
-            _step18,
+            _iterator19,
+            _step19,
             o,
-            _args36 = arguments;
+            _args38 = arguments;
 
-        return _regenerator["default"].wrap(function _callee36$(_context36) {
+        return _regenerator["default"].wrap(function _callee38$(_context38) {
           while (1) {
-            switch (_context36.prev = _context36.next) {
+            switch (_context38.prev = _context38.next) {
               case 0:
-                prop = _args36.length > 1 && _args36[1] !== undefined ? _args36[1] : 'count';
-                _iterator18 = _createForOfIteratorHelper(l);
+                prop = _args38.length > 1 && _args38[1] !== undefined ? _args38[1] : 'count';
+                _iterator19 = _createForOfIteratorHelper(l);
 
                 try {
-                  for (_iterator18.s(); !(_step18 = _iterator18.n()).done;) {
-                    o = _step18.value;
+                  for (_iterator19.s(); !(_step19 = _iterator19.n()).done;) {
+                    o = _step19.value;
                     o[prop] = Number.parseInt(o[prop], 10);
                   }
                 } catch (err) {
-                  _iterator18.e(err);
+                  _iterator19.e(err);
                 } finally {
-                  _iterator18.f();
+                  _iterator19.f();
                 }
 
-                return _context36.abrupt("return", l);
+                return _context38.abrupt("return", l);
 
               case 4:
               case "end":
-                return _context36.stop();
+                return _context38.stop();
             }
           }
-        }, _callee36);
+        }, _callee38);
       }));
 
-      function convertCounts(_x35) {
+      function convertCounts(_x37) {
         return _convertCounts.apply(this, arguments);
       }
 
