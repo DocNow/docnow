@@ -46,7 +46,7 @@ class Query extends Model {
       } else if (term.type === 'user') {
         queryParts.push('@' + term.value)
       } else if (term.type === 'phrase') {
-        queryParts.push(`"${term.value}"`)
+        queryParts.push(term.value.replace(/,/g, ' '))
       } else if (term.type === 'hashtag') {
         queryParts.push(term.value)
       } else {
