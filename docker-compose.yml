@@ -11,6 +11,7 @@ services:
       POSTGRES_USER: "${DB_USERNAME}"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       POSTGRES_DB: "${DB_DATABASE}"
+    command: postgres -c logging_collector=on -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
 
   app:
     environment:
@@ -37,3 +38,15 @@ services:
       - db
       - redis
     entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- ./entrypoint.sh
+
+  pghero:
+    image: ankane/pghero
+    container_name: pghero
+    ports:
+      - 3001:8080
+    environment:
+      DATABASE_URL: "postgres://${DB_USERNAME}:${DB_PASSWORD}@db:5432/${DB_DATABASE}"
+    volumes:
+      - ./config/pghero.yml:/app/config/pghero.yml
+    links:
+      - db

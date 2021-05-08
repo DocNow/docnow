@@ -119,7 +119,7 @@ export class StreamLoader {
           log.info(`user is not active: ${updatedUser.twitterScreenName}`)
           this.stopStream(searchId)
           return false
-        } else if (await this.db.userOverQuota(user)) {
+        } else if (await this.db.userOverQuota(updatedUser)) {
           log.info(`user is over quota ${updatedUser.twitterScreenName}`)
           this.stopStream(searchId)
           return false

@@ -1,0 +1,3 @@
+databases:
+  docnow:
+    url: postgres://docnow:docnow@db/docnow_dev

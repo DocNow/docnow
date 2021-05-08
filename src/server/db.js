@@ -452,16 +452,19 @@ export class Database {
   }
 
   async userOverQuota(user) {
-    // const searches = await this.getUserSearches(user)
-    const total = Tweet.query().count().where({userId: user.id}).first()
-    return total > user.tweetQuota
+    const result = await Tweet.query()
+      .count()
+      .where({'search.userId': user.id})
+      .innerJoin('search', 'tweet.searchId', 'search.id')
+      .first()
+    return result.count > user.tweetQuota
   }
 
-  updateSearch(search) {
+  async updateSearch(search) {
     // search properties are explicitly used to guard against trying
     // to persist properties that were added by getSearchSummary
     const safeSearch = this.removeStatsProps(search)
-    return Search.query()
+    await Search.query()
       .patch({...safeSearch, updated: new Date()})
       .where('id', safeSearch.id)
   }
@@ -640,7 +643,7 @@ export class Database {
       })
 
     } catch (error) {
-      console.log(`loadTweets transaction failed: ${error}`)
+      console.error(`loadTweets transaction failed: ${error}`)
     }
 
   }
