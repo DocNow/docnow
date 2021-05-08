@@ -508,24 +508,28 @@ export class Database {
 
     // Perhaps there could be views of this data or it could be cached?
 
-    const results = await Tweet.query()
-      .countDistinct('screenName', {as: 'users'})
-      .count('tweetId', {as: 'tweets'})
+    const users = await Tweet.query()
+      .countDistinct('screenName')
       .where({searchId: search.id})
       .first()
 
-    const rows = await Tweet.query()
+    const tweets = await Tweet.query()
+      .count('tweetId')
+      .where({searchId: search.id})
+      .first()
+
+    const urls = await Tweet.query()
       .join('tweetUrl', 'id', 'tweetUrl.tweetId')
       .select('type')
       .countDistinct('url')
       .where({searchId: search.id})
       .groupBy('type')
 
-    const urlCounts = new Map(rows.map(r => [r.type, r.count]))
+    const urlCounts = new Map(urls.map(r => [r.type, r.count]))
 
     return {
-      tweetCount: parseInt(results.tweets, 10),
-      userCount: parseInt(results.users, 10),
+      tweetCount: parseInt(tweets.count, 10),
+      userCount: parseInt(users.count, 10),
       imageCount: parseInt(urlCounts.get('image'), 10),
       videoCount: parseInt(urlCounts.get('video'), 10),
       urlCount: parseInt(urlCounts.get('page'), 10)
