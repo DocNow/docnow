@@ -86,7 +86,7 @@ var Query = /*#__PURE__*/function (_Model) {
           } else if (term.type === 'user') {
             queryParts.push('@' + term.value);
           } else if (term.type === 'phrase') {
-            queryParts.push("\"".concat(term.value, "\""));
+            queryParts.push(term.value.replace(/,/g, ' '));
           } else if (term.type === 'hashtag') {
             queryParts.push(term.value);
           } else {

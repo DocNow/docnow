@@ -237,7 +237,7 @@ var StreamLoader = /*#__PURE__*/function () {
 
                           case 15:
                             _context2.next = 17;
-                            return _this2.db.userOverQuota(user);
+                            return _this2.db.userOverQuota(updatedUser);
 
                           case 17:
                             if (!_context2.sent) {
