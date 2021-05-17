@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import TweetEmbed from 'react-tweet-embed'
+import {TwitterTweetEmbed} from 'react-twitter-embed'
 import Modal from 'react-modal'
 
 import style from './TweetsModal.css'
@@ -49,8 +49,8 @@ export default class TweetsModal extends Component {
           return (
             <div key={tweet.id} className={className}>
               {userInfo}
-              <TweetEmbed
-                id={tweet.id}
+              <TwitterTweetEmbed
+                tweetId={tweet.id}
                 options={{cards: 'hidden'}} />
             </div>
           )

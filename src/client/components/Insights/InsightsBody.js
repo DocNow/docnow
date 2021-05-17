@@ -5,7 +5,7 @@ import UserList from '../Explore/UserList'
 import HashtagChart from '../Explore/HashtagChart'
 import ImageList from '../Explore/ImageList'
 import VideoList from '../Explore/VideoList'
-import TweetEmbed from 'react-tweet-embed'
+import Tweet from '../Explore/Tweet'
 
 import Card from '@material-ui/core/Card'
 import CardContent from '@material-ui/core/CardContent'
@@ -104,7 +104,7 @@ export default class InsightsBody extends Component {
         <Card raised className={card.Card} >
           <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
             {this.props.search.tweets.slice(0, 10).map((t, i) => {
-              return <TweetEmbed key={`t${i}`} id={t.id} />
+              return <Tweet key={`t${i}`} data={t} />
             })}
           </CardContent>
           <CardActions className={card.CardActions}>

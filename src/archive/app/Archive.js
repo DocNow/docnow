@@ -12,7 +12,6 @@ import WebpagesBody from '../../client/components/Insights/WebpagesBody'
 import styles from '../../client/containers/App.css'
 
 const search = window.searchData
-console.log(search)
 
 class App extends MediaQueryComponent {
   constructor(props) {
@@ -25,6 +24,7 @@ class App extends MediaQueryComponent {
       ii_tweets: [],
       vi_tweets: [],
       wi_tweets: [],
+      users: search.users.slice(0, 100),
       isHome: true
     }
   }
@@ -45,8 +45,14 @@ class App extends MediaQueryComponent {
 
   getTweets(searchId, includeRetweets, offset, page) {
     this.setState({
-      ti_tweets: search.tweets.slice(offset, offset + 101),
+      ti_tweets: search.users.slice(offset, offset + 101),
       ti_page: page
+    })
+  }
+
+  getUsers(searchId, total) {
+    this.setState({
+      users: search.users.slice(0, total),
     })
   }
 
@@ -148,7 +154,9 @@ class App extends MediaQueryComponent {
             <Route exact name="tweets" path="/search/:searchId/users/" component={() => (
               <div>{header} <UsersBody
                 searchId={search.id}
-                search={search}
+                users={this.state.users}
+                userCount={search.userCount}
+                getUsers={(s, o) => this.getUsers(s, o)}
                 getTweetsForUser={(s, u) => this.getTweetsForUser(s, u)}
                 resetTweets={() => {this.setState({ui_tweets: []})}}
                 tweets={this.state.ui_tweets}

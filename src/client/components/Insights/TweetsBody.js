@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import TweetEmbed from 'react-tweet-embed'
 import Slider from '@material-ui/core/Slider'
 import FormControl from '@material-ui/core/FormControl'
 import FormGroup from '@material-ui/core/FormGroup'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-import TablePagination from '@material-ui/core/TablePagination';
+import TablePagination from '@material-ui/core/TablePagination'
+import Tweet from '../Explore/Tweet'
 
 import style from './Tweets.css' 
 
@@ -17,19 +17,16 @@ class TweetsBody extends Component {
     this.timerId = null
     this.state = {
       postsToShow: this.props.chunkSize,
-      rangeValue: [1, 100],
-      displayRetweets: this.props.displayRetweets
+      rangeValue: [0, 99],
+      displayRetweets: this.props.displayRetweets,
     }
     this.tweets = this.props.tweets
+    this.rendered = 0
     // NB. Page is handled as a property by default,
     // but it can also be passed as a prop, in which case 
     // the parent component should handle state update
     // to trigger render.
     this.page = 0
-  }
-
-  componentDidMount() {
-    window.addEventListener(`scroll`, () => this.handleScroll())
   }
 
   componentDidUpdate() {
@@ -45,32 +42,12 @@ class TweetsBody extends Component {
     if (offset <= this.props.tweetCount) {
       this.props.getTweets(this.props.searchId, true, offset, p)
       this.page = p
-    }    
-  }
-
-  update() {
-    const distanceToBottom =
-      document.documentElement.offsetHeight -
-      (window.scrollY + window.innerHeight)
-    if (distanceToBottom < 150) {
-      this.setState({
-        postsToShow: this.state.postsToShow + this.props.chunkSize
-      })
-    }
-    this.ticking = false
-  }
-
-  handleScroll() {
-    if (!this.ticking) {
-      this.ticking = true
-      requestAnimationFrame(() => this.update())
     }
   }
 
   handleSlide(e, newValue) {
     this.setState({
-      rangeValue: newValue,
-      postsToShow: this.props.chunkSize
+      rangeValue: [newValue[0] - 1, newValue[1] - 1]
     })
   }
 
@@ -81,7 +58,10 @@ class TweetsBody extends Component {
   render() {
     let tweets = this.tweets
     // Reduce tweets based on selected range
-    tweets = tweets.filter((t, i) => i > this.state.rangeValue[0] && i <= this.state.rangeValue[1] + 1)
+    tweets = tweets.filter((t, i) => i >= this.state.rangeValue[0] && i <= this.state.rangeValue[1])
+
+    const page = this.props.page ? this.props.page : this.page
+
     return (
       <div>
         <div className={style.Controls}>     
@@ -97,7 +77,7 @@ class TweetsBody extends Component {
           <div>
             <div style={{paddingTop: "40px"}}>
               <Slider
-                value={this.state.rangeValue}
+                value={[this.state.rangeValue[0] + 1, this.state.rangeValue[1] + 1]}
                 valueLabelFormat={(v) => {
                   const c = v + (this.page * 100)
                   if (c > this.props.tweetCount) {
@@ -123,7 +103,7 @@ class TweetsBody extends Component {
               rowsPerPage={100}
               rowsPerPageOptions={[100]}
               labelRowsPerPage="Tweets per page:"
-              page={this.props.page ? this.props.page : this.page}
+              page={page}
               onChangePage={(e, p) => {this.handlePageChange(e, p)} }
             />
           </div>
@@ -133,10 +113,9 @@ class TweetsBody extends Component {
         <div className={style.Holder}>{
           tweets
             .filter(t => this.state.displayRetweets || !t.retweet)
-            .slice(0, this.state.postsToShow).map((t, i) => {
-              return <TweetEmbed key={`t${i}`} id={t.id} />
-            })
-        }</div>
+            .slice(0, this.state.postsToShow).map((t, i) => <Tweet key={`t${i}`} data={t} />)
+        }
+        </div>
 
       </div>
     )

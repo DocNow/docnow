@@ -4,6 +4,8 @@ import User from './User'
 import TweetsModal from './TweetsModal'
 
 import cardStyle from '../Card.css'
+import animations from '../animations.css'
+import exploreStyles from '../Explore/Explore.css'
 
 export default class UsersBody extends Component {
 
@@ -12,22 +14,33 @@ export default class UsersBody extends Component {
     this.modalOpen = true
     this.users = this.props.users
     this.offset = 0
+    this.loading = false
+
+    this.handleScroll = () => {
+      requestAnimationFrame(() => this.update())
+    }
   }
 
   closeModal() {
     this.props.resetTweets()
   }
 
-  componentDidMount() {
-    window.addEventListener(`scroll`, () => this.handleScroll())
-  }
-
   componentDidUpdate() {
     if (this.users && this.props.users.length > 0) {
       if (this.users[this.users.length - 1].id !== this.props.users[this.props.users.length - 1].id) {
         this.users = this.users.concat(this.props.users)
+        this.loading = true
+        window.addEventListener('scroll', this.handleScroll)
       }
     }
+  }
+
+  componentDidMount() {
+    window.addEventListener('scroll', this.handleScroll)
+  }
+ 
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.handleScroll)
   }
 
   update() {
@@ -35,23 +48,20 @@ export default class UsersBody extends Component {
       document.documentElement.offsetHeight -
       (window.scrollY + window.innerHeight)
     if (distanceToBottom < 150) {
+      window.removeEventListener(`scroll`, this.handleScroll)
       this.offset = this.offset + 100
-      if (this.offset <= this.props.userCount) {
+      if (this.offset <= this.props.userCount) {        
+        this.loading = true
         this.props.getUsers(this.props.searchId, this.offset)
       }
-    }
-    this.ticking = false
-  }
-
-  handleScroll() {
-    if (!this.ticking) {
-      this.ticking = true
-      requestAnimationFrame(() => this.update())
     }
   }
 
   render() {
     const modalOpen = this.props.tweets.length > 0
+    const loader = !this.loading ? '' : (<span className={`${animations.Spin} ${exploreStyles.Loader}`}>
+      <ion-icon name="logo-ionic"></ion-icon>
+    </span>)
 
     return (
       <div>
@@ -62,23 +72,24 @@ export default class UsersBody extends Component {
           tweets={this.props.tweets} />
 
         <div className={cardStyle.CardHolder}>
-          {this.users.map((i) => {
-            return (
+          {this.users.map((t, i) => {
+            return (<>{i}
               <User
-                key={i.id}
-                name={i.name}
-                screenName={i.screenName}
-                avatarUrl={i.avatarUrl}
-                url={i.url}
-                created={i.created}
-                desc={i.description}
-                count={i.tweetsInSearch}
-                friends={i.friendsCount}
-                followers={i.followersCount}
+                key={t.id}
+                name={t.name}
+                screenName={t.screenName}
+                avatarUrl={t.avatarUrl}
+                url={t.url}
+                created={t.created}
+                desc={t.description}
+                count={t.tweetsInSearch}
+                friends={t.friendsCount}
+                followers={t.followersCount}
                 searchId={this.props.searchId}
-                getTweetsForUser={this.props.getTweetsForUser} />
+                getTweetsForUser={this.props.getTweetsForUser} /></>
             )
           })}
+          {loader}
         </div>
 
       </div>

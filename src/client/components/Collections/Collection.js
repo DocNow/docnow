@@ -2,7 +2,7 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import TweetEmbed from 'react-tweet-embed'
+import {TwitterTweetEmbed} from 'react-twitter-embed'
 import FindMe from './FindMe'
 
 import Grid from '@material-ui/core/Grid'
@@ -103,7 +103,7 @@ export default class CollectionList extends Component {
     let tweets = 'Loading tweets...'
     if (this.props.search.tweets.length > 0) {      
       tweets = this.props.search.tweets.slice(this.randomTweet, this.randomTweet + 2).map((t, i) => {
-        return <TweetEmbed key={`t${i}`} id={t.id} />
+        return <TwitterTweetEmbed key={`t${i}`} tweetId={t.id} />
       })
     }
 
@@ -135,7 +135,7 @@ export default class CollectionList extends Component {
             return (
               <Grid container spacing={0} key={`ut${i}`}>
                 <Grid item xs={2}><Checkbox color="primary" checked={this.state.checkedTweets[i] || false} onChange={() => this.toggleOneTweet(i)} /></Grid>
-                <Grid item xs={10}><TweetEmbed id={tweetId} /></Grid>
+                <Grid item xs={10}><TwitterTweetEmbed tweetId={tweetId} /></Grid>
               </Grid>
             )            
           })}

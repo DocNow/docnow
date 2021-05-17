@@ -1,5 +1,7 @@
 
 .Tweet {
+  background-color: #fff;
+  break-inside: avoid;
   margin: 2px;
   padding: 6px;
   padding-left: 2px;
