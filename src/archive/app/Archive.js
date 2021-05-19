@@ -3,7 +3,7 @@ import MediaQueryComponent from '../../client/components/MediaQueryComponent'
 import { HashRouter as Router, Route } from "react-router-dom"
 import Header from './Header'
 import InsightsBody from '../../client/components/Insights/InsightsBody'
-import TweetsBody from '../../client/components/Insights/TweetsBody'
+import Tweets from './Tweets'
 import UsersBody from '../../client/components/Insights/UsersBody'
 import ImagesBody from '../../client/components/Insights/ImagesBody'
 import VideosBody from '../../client/components/Insights/VideosBody'
@@ -18,7 +18,6 @@ class App extends MediaQueryComponent {
     super(props)
     // The Tweets Insights expects only 100 tweets at a time.
     this.state = {
-      ti_tweets: search.tweets.slice(0, 101),
       ti_page: 0,
       ui_tweets: [],
       ii_tweets: [],
@@ -41,13 +40,6 @@ class App extends MediaQueryComponent {
         this.setState({isHome: true})
       }
     }
-  }
-
-  getTweets(searchId, includeRetweets, offset, page) {
-    this.setState({
-      ti_tweets: search.users.slice(offset, offset + 101),
-      ti_page: page
-    })
   }
 
   getUsers(searchId, total) {
@@ -137,21 +129,18 @@ class App extends MediaQueryComponent {
       <div id="App" className={this.state.mediaStyle}>
         <main>
           <Router>
-            <Route exact name="trends" path="/" component={() => (
+            <Route exact name="home" path="/" component={() => (
               <div>{header} <InsightsBody
                 searchId={search.id}
                 search={search}
                 webpages={search.webpages}
               /> </div>)} />
             <Route exact name="tweets" path="/search/:searchId/tweets/" component={() => (
-              <div>{header} <TweetsBody
-                tweets={this.state.ti_tweets}
-                page={this.state.ti_page}
+              <div>{header} <Tweets
+                tweets={search.tweets}
                 tweetCount={search.tweetCount}
-                searchId={search.id}
-                getTweets={(s, i, o, p) => this.getTweets(s, i, o, p)}
               /> </div>)} />
-            <Route exact name="tweets" path="/search/:searchId/users/" component={() => (
+            <Route exact name="users" path="/search/:searchId/users/" component={() => (
               <div>{header} <UsersBody
                 searchId={search.id}
                 users={this.state.users}
@@ -161,7 +150,7 @@ class App extends MediaQueryComponent {
                 resetTweets={() => {this.setState({ui_tweets: []})}}
                 tweets={this.state.ui_tweets}
               /> </div>)} />
-            <Route exact name="tweets" path="/search/:searchId/images/" component={() => (
+            <Route exact name="images" path="/search/:searchId/images/" component={() => (
               <div>{header} <ImagesBody
                 searchId={search.id}
                 search={search}
@@ -169,7 +158,7 @@ class App extends MediaQueryComponent {
                 resetTweets={() => {this.setState({ii_tweets: []})}}
                 tweets={this.state.ii_tweets}
               /> </div>)} />
-            <Route exact name="tweets" path="/search/:searchId/videos/" component={() => (
+            <Route exact name="videos" path="/search/:searchId/videos/" component={() => (
               <div>{header} <VideosBody
                 searchId={search.id}
                 search={search}
@@ -177,7 +166,7 @@ class App extends MediaQueryComponent {
                 resetTweets={() => {this.setState({vi_tweets: []})}}
                 tweets={this.state.vi_tweets}
               /> </div>)} />
-              <Route exact name="tweets" path="/search/:searchId/webpages/" component={() => (
+              <Route exact name="webpages" path="/search/:searchId/webpages/" component={() => (
                 <div>{header} <WebpagesBody
                   searchId={search.id}
                   search={search}

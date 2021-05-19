@@ -26,6 +26,10 @@ module.exports = {
       /Insights\/Wayback.js/,
       `${SRC_DIR}/override.js`
     ),
+    new webpack.NormalModuleReplacementPlugin(
+      /Explore\/Tweet.js/,
+      `${SRC_DIR}/Tweet.js`
+    ),
     new webpack.EnvironmentPlugin(),
     new HtmlWebpackPlugin({
       template: 'index.html',
