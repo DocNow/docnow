@@ -1,14 +1,74 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Slider from '@material-ui/core/Slider'
-import FormControl from '@material-ui/core/FormControl'
-import FormGroup from '@material-ui/core/FormGroup'
-import FormControlLabel from '@material-ui/core/FormControlLabel'
+import Grid from '@material-ui/core/Grid'
 import Checkbox from '@material-ui/core/Checkbox'
-import TablePagination from '@material-ui/core/TablePagination'
+import IconButton from '@material-ui/core/IconButton'
+import FirstPageIcon from '@material-ui/icons/FirstPage'
+import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft'
+import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight'
+import LastPageIcon from '@material-ui/icons/LastPage'
+import Select from '@material-ui/core/Select'
+import MenuItem from '@material-ui/core/MenuItem'
+
 import Tweet from '../Explore/Tweet'
 
 import style from './Tweets.css' 
+
+function PaginationActions(props) {
+  const { count, page, tweetsPerPage, onChangePage } = props
+
+  const handleFirstPageButtonClick = (event) => {
+    onChangePage(event, 0)
+  }
+
+  const handleBackButtonClick = (event) => {
+    onChangePage(event, page - 1)
+  }
+
+  const handleNextButtonClick = (event) => {
+    onChangePage(event, page + 1)
+  }
+
+  const handleLastPageButtonClick = (event) => {
+    onChangePage(event, Math.max(0, Math.ceil(count / tweetsPerPage) - 1))
+  }
+
+  return (
+    <>
+      <IconButton
+        onClick={handleFirstPageButtonClick}
+        disabled={page === 0}
+        aria-label="first page"
+      >
+        <FirstPageIcon />
+      </IconButton>
+      <IconButton onClick={handleBackButtonClick} disabled={page === 0} aria-label="previous page">
+        <KeyboardArrowLeft />
+      </IconButton>
+      <IconButton
+        onClick={handleNextButtonClick}
+        disabled={page >= Math.ceil(count / tweetsPerPage) - 1}
+        aria-label="next page"
+      >
+        <KeyboardArrowRight />
+      </IconButton>
+      <IconButton
+        onClick={handleLastPageButtonClick}
+        disabled={page >= Math.ceil(count / tweetsPerPage) - 1}
+        aria-label="last page"
+      >
+        <LastPageIcon />
+      </IconButton>
+    </>
+  )
+}
+
+PaginationActions.propTypes = {
+  count: PropTypes.number.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  page: PropTypes.number.isRequired,
+  tweetsPerPage: PropTypes.number.isRequired,
+}
 
 class TweetsBody extends Component {
 
@@ -16,25 +76,16 @@ class TweetsBody extends Component {
     super(props)
     this.timerId = null
     this.state = {
-      postsToShow: this.props.chunkSize,
       rangeValue: [0, 99],
       displayRetweets: this.props.displayRetweets,
     }
-    this.tweets = this.props.tweets
+    this.tweetsPerPage = 100
     this.rendered = 0
     // NB. Page is handled as a property by default,
     // but it can also be passed as a prop, in which case 
     // the parent component should handle state update
     // to trigger render.
     this.page = 0
-  }
-
-  componentDidUpdate() {
-    if (this.tweets.length > 0 && this.props.tweets.length > 0) {
-      if (this.tweets[0].id !== this.props.tweets[0].id) {
-        this.tweets = this.props.tweets
-      }
-    }
   }
 
   handlePageChange(e, p) {
@@ -45,75 +96,53 @@ class TweetsBody extends Component {
     }
   }
 
-  handleSlide(e, newValue) {
-    this.setState({
-      rangeValue: [newValue[0] - 1, newValue[1] - 1]
-    })
-  }
-
   displayRetweets(display) {
     this.setState({displayRetweets: display})
   }
 
   render() {
-    let tweets = this.tweets
-    // Reduce tweets based on selected range
-    tweets = tweets.filter((t, i) => i >= this.state.rangeValue[0] && i <= this.state.rangeValue[1])
-
     const page = this.props.page ? this.props.page : this.page
+    const totPages = Math.max(0, Math.ceil(this.props.tweetCount / this.tweetsPerPage))
+    const from = (page * this.tweetsPerPage) + 1
+    const to = this.props.tweetCount !== -1 ? Math.min(this.props.tweetCount, (page + 1) * this.tweetsPerPage) : (page + 1) * this.tweetsPerPage
 
     return (
       <div>
-        <div className={style.Controls}>     
-          <FormControl component="fieldset">
-            <FormGroup>
-              <FormControlLabel
-                control={<Checkbox checked={this.state.displayRetweets}
-                  onChange={(e) => {this.displayRetweets(e.target.checked)}} value="disretw" />}
-                label="Display Retweets"
-              />
-            </FormGroup>
-          </FormControl>
-          <div>
-            <div style={{paddingTop: "40px"}}>
-              <Slider
-                value={[this.state.rangeValue[0] + 1, this.state.rangeValue[1] + 1]}
-                valueLabelFormat={(v) => {
-                  const c = v + (this.page * 100)
-                  if (c > this.props.tweetCount) {
-                    return this.props.tweetCount
-                  }
-                  return c
-                }}
-                onChange={(e, v) => {this.handleSlide(e, v)}}
-                valueLabelDisplay="on"
-                step={10}
-                marks
-                min={1}
-                max={100}
-              />
-            </div>
-            <TablePagination
-              component="div"
-              count={
-                this.props.tweetCount
-                ? this.props.tweetCount
-                : 0
-              }
-              rowsPerPage={100}
-              rowsPerPageOptions={[100]}
-              labelRowsPerPage="Tweets per page:"
-              page={page}
-              onChangePage={(e, p) => {this.handlePageChange(e, p)} }
-            />
-          </div>
+        <div className={style.Controls}> 
+          <Grid container spacing={0} >
+            <Grid item xs={3}>
+              <Checkbox checked={this.state.displayRetweets}
+                onChange={(e) => {this.displayRetweets(e.target.checked)}} value="disretw" />
+              Display Retweets
+            </Grid>
+            <Grid item xs={9} style={{textAlign: 'right'}}>
+              {from}-{to} of {this.props.tweetCount}
+              <PaginationActions 
+                count={this.props.tweetCount}
+                page={page}
+                tweetsPerPage={this.tweetsPerPage}
+                onChangePage={(e, p) => {this.handlePageChange(e, p)} } />
+              Jump to:&nbsp;
+              <Select
+                value={page}
+                onChange={(e) => {this.handlePageChange(e, e.target.value)}}
+              >
+                {Array.from(Array(totPages).keys()).map(p => {
+                  const f = (p * this.tweetsPerPage) + 1
+                  const t = this.props.tweetCount !== -1 ? Math.min(this.props.tweetCount, (p + 1) * this.tweetsPerPage) : (p + 1) * this.tweetsPerPage
+                  const val = `${f}-${t}`
+                  return <MenuItem key={p} value={p}>{val}</MenuItem>
+                })}
+              </Select>
+            </Grid>
+          </Grid> 
         </div>
 
 
         <div className={style.Holder}>{
-          tweets
+          this.props.tweets
             .filter(t => this.state.displayRetweets || !t.retweet)
-            .slice(0, this.state.postsToShow).map((t, i) => <Tweet key={`t${i}`} data={t} />)
+            .map((t, i) => <Tweet key={`t${i}`} data={t} />)
         }
         </div>
 
@@ -124,13 +153,11 @@ class TweetsBody extends Component {
 
 TweetsBody.defaultProps = {
   displayRetweets: true,
-  chunkSize: 20
 }
 
 TweetsBody.propTypes = {
   searchId: PropTypes.string,
   displayRetweets: PropTypes.bool,
-  chunkSize: PropTypes.number,
   tweets: PropTypes.array,
   tweetCount: PropTypes.number,
   getTweets: PropTypes.func,
