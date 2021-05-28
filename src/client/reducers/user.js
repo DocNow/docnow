@@ -1,7 +1,7 @@
 import {
   SET_USER, UPDATE_USER_SETTINGS, SAVE_USER_SETTINGS,
   SET_TWITTER_SEARCH, SET_TWITTER_SEARCH_TWEETS,
-  ACTIVATE_USER, DEACTIVATE_USER, SET_FOUND_IN_SEARCHES
+  ACTIVATE_USER, DEACTIVATE_USER, SET_FOUND_IN_SEARCHES, SET_TWEETS_FOR_USER
 } from '../actions/user'
 
 const initialState = {
@@ -78,6 +78,13 @@ export default function user(state = initialState, action) {
       return {
         ...state,
         foundInSearches: action.searches
+      }
+    }
+
+    case SET_TWEETS_FOR_USER: {
+      return {
+        ...state,
+        tweets: action.tweets
       }
     }
 

@@ -9,6 +9,7 @@ export const ACTIVATE_ADMIN = 'ACTIVATE_ADMIN'
 export const DEACTIVATE_ADMIN = 'DEACTIVATE_ADMIN'
 export const UPDATE_QUOTA = 'UPDATE_QUOTA'
 export const SET_FOUND_IN_SEARCHES = 'SET_FOUND_SEARCHES'
+export const SET_TWEETS_FOR_USER = 'SET_TWEETS_FOR_USER'
 
 export const setUser = (user) => {
   return {
@@ -140,6 +141,19 @@ export const getFoundInSearches = () => {
         dispatch({
           type: SET_FOUND_IN_SEARCHES,
           searches
+        })
+      })
+  }
+}
+
+export const getUserTweetsInSearch = (searchId, ids) => {
+  return (dispatch) => {
+    fetch(`/api/v1/search/${searchId}/tweets?ids=${ids.join(',')}`, {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((tweets) => {
+        dispatch({
+          type: SET_TWEETS_FOR_USER,
+          tweets
         })
       })
   }
