@@ -1,9 +1,10 @@
+/* eslint-disable no-inline-comments */
 // import moment from 'moment'
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import {TwitterTweetEmbed} from 'react-twitter-embed'
 import FindMe from './FindMe'
+import Tweet from '../Explore/Tweet'
 
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -26,7 +27,7 @@ export default class CollectionList extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      checkedTweets: [],
+      selectedTweets: [],
       findUser: '',
       findingUser: false,
       lastUserLookup: ''
@@ -52,9 +53,12 @@ export default class CollectionList extends Component {
     this.props.getFoundInSearches()
 
     const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
-    if (this.state.checkedTweets.length === 0 && foundTweets.length > 0) {
+    if (foundTweets.length > 0) {
+      this.props.getUserTweetsInSearch(this.props.searchId, foundTweets)
+    }
+    if (this.state.selectedTweets.length === 0 && foundTweets.length > 0) {
       this.setState({
-        checkedTweets: foundTweets.map(() => false)
+        selectedTweets: foundTweets.map(() => false)
       })
     }
   }
@@ -79,13 +83,13 @@ export default class CollectionList extends Component {
 
   setAllTweets(checked) {    
     this.setState({
-      checkedTweets: this.state.checkedTweets.map(() => checked)
+      selectedTweets: this.state.selectedTweets.map(() => checked)
     })
   }
 
   toggleOneTweet(i) {
     this.setState({
-      checkedTweets: this.state.checkedTweets.map((v, tIdx) => {return (i === tIdx ? !v : v)})
+      selectedTweets: this.state.selectedTweets.map((v, tIdx) => {return (i === tIdx ? !v : v)})
     })
   }
 
@@ -103,7 +107,7 @@ export default class CollectionList extends Component {
     let tweets = 'Loading tweets...'
     if (this.props.search.tweets.length > 0) {      
       tweets = this.props.search.tweets.slice(this.randomTweet, this.randomTweet + 2).map((t, i) => {
-        return <TwitterTweetEmbed key={`t${i}`} tweetId={t.id} />
+        return <Tweet key={`t${i}`} data={t} />
       })
     }
 
@@ -117,6 +121,7 @@ export default class CollectionList extends Component {
     if (this.props.user) {
       const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
       if (foundTweets.length > 0) {
+        const userTweetsContent = this.props.user.tweets || []
         userTweets = (<>
           <FormControl component="fieldset" className={style.CardInnerContent}>
             <FormGroup row>
@@ -124,18 +129,18 @@ export default class CollectionList extends Component {
                 value="all"
                 control={<Checkbox color="primary" 
                   onChange={t => this.setAllTweets(t.target.checked)} 
-                  checked={this.state.checkedTweets.indexOf(false) === -1} />}
+                  checked={this.state.selectedTweets.indexOf(false) === -1} />}
                 label={`Select all ${foundTweets.length} tweets`}
               />
             </FormGroup>
           </FormControl>
-          <Button size="small"><span className={style.ButtonText}>Specify/Adjust Consent</span></Button>
+          <Button size="small"><span className={style.ButtonText}>Specify Consent</span></Button>
           <hr/>
-          {foundTweets.map((tweetId, i) => {
+          {userTweetsContent.map((tweet, i) => {
             return (
               <Grid container spacing={0} key={`ut${i}`}>
-                <Grid item xs={2}><Checkbox color="primary" checked={this.state.checkedTweets[i] || false} onChange={() => this.toggleOneTweet(i)} /></Grid>
-                <Grid item xs={10}><TwitterTweetEmbed tweetId={tweetId} /></Grid>
+                <Grid item xs={2}><Checkbox color="primary" checked={this.state.selectedTweets[i] || false} onChange={() => this.toggleOneTweet(i)} /></Grid>
+                <Grid item xs={10}><Tweet data={tweet} /></Grid>
               </Grid>
             )            
           })}
@@ -156,10 +161,10 @@ export default class CollectionList extends Component {
     </div>)
 
     if (this.state.findingUser) {
-      if (this.props.foundUserTweets > 0) {
+      if (this.props.foundUserTweets.length > 0) {
         usersInfo = (
           <Typography variant="body2">
-            Found {this.props.foundUserTweets} tweet{this.props.foundUserTweets > 1 ? 's' : ''} by &nbsp;
+            Found {this.props.foundUserTweets.length} tweet{this.props.foundUserTweets.length > 1 ? 's' : ''} by &nbsp;
             <a href={`https://twitter.com/${this.state.lastUserLookup}`}>@{this.state.lastUserLookup}</a>.
           </Typography>)
       } else {
@@ -240,5 +245,6 @@ CollectionList.propTypes = {
   getUsers: PropTypes.func,
   getFoundInSearches: PropTypes.func,
   getTweetsForUser: PropTypes.func,
-  foundUserTweets: PropTypes.bool
+  getUserTweetsInSearch: PropTypes.func,
+  foundUserTweets: PropTypes.array,
 }
