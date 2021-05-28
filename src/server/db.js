@@ -703,7 +703,7 @@ export class Database {
   async getTweetsByIds(search, ids) {
     return this.pickJson(
       Tweet.query()
-        .where('search', search.id)
+        .where({searchId: search.id})
         .whereIn('tweetId', ids)
         .orderBy('id', 'DESC')
         .limit(100)
