@@ -1875,7 +1875,9 @@ var Database = /*#__PURE__*/function () {
           while (1) {
             switch (_context30.prev = _context30.next) {
               case 0:
-                return _context30.abrupt("return", this.pickJson(_Tweet["default"].query().where('search', search.id).whereIn('tweetId', ids).orderBy('id', 'DESC').limit(100)));
+                return _context30.abrupt("return", this.pickJson(_Tweet["default"].query().where({
+                  searchId: search.id
+                }).whereIn('tweetId', ids).orderBy('id', 'DESC').limit(100)));
 
               case 1:
               case "end":
