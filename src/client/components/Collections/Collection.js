@@ -1,10 +1,10 @@
-/* eslint-disable no-inline-comments */
-// import moment from 'moment'
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+
 import FindMe from './FindMe'
 import Tweet from '../Explore/Tweet'
+import ConsentModal from './ConsentModal'
 
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -27,6 +27,7 @@ export default class CollectionList extends Component {
   constructor(props) {
     super(props)
     this.state = {
+      modalOpen: false,
       selectedTweets: [],
       findUser: '',
       findingUser: false,
@@ -93,6 +94,18 @@ export default class CollectionList extends Component {
     })
   }
 
+  openModal() {
+    this.setState({
+      modalOpen: true
+    })
+  }
+
+  closeModal() {
+    this.setState({
+      modalOpen: false
+    })
+  }
+
   render() {
     // don't render until we at least know the title of the collection
     if (!this.props.search.title) {
@@ -121,6 +134,7 @@ export default class CollectionList extends Component {
     if (this.props.user) {
       const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
       if (foundTweets.length > 0) {
+        console.log(this.props.user.tweets)
         const userTweetsContent = this.props.user.tweets || []
         userTweets = (<>
           <FormControl component="fieldset" className={style.CardInnerContent}>
@@ -134,13 +148,22 @@ export default class CollectionList extends Component {
               />
             </FormGroup>
           </FormControl>
-          <Button size="small"><span className={style.ButtonText}>Specify Consent</span></Button>
+          <Button size="small" onClick={() => this.openModal()}>
+            <span className={style.ButtonText}>Specify Consent</span>
+          </Button>
           <hr/>
           {userTweetsContent.map((tweet, i) => {
             return (
               <Grid container spacing={0} key={`ut${i}`}>
-                <Grid item xs={2}><Checkbox color="primary" checked={this.state.selectedTweets[i] || false} onChange={() => this.toggleOneTweet(i)} /></Grid>
-                <Grid item xs={10}><Tweet data={tweet} /></Grid>
+                <Grid item xs={2}>
+                  <Checkbox 
+                    color="primary" 
+                    checked={this.state.selectedTweets[i] || false} 
+                    onChange={() => this.toggleOneTweet(i)} />
+                </Grid>
+                <Grid item xs={10}>
+                  <Tweet data={tweet} />
+                </Grid>
               </Grid>
             )            
           })}
@@ -174,6 +197,12 @@ export default class CollectionList extends Component {
 
     return (
       <>
+
+        <ConsentModal
+          isOpen={this.state.modalOpen}
+          close={() => this.closeModal()}
+          tweets={this.state.selectedTweets} />
+
         <Grid container spacing={3} className={listStyle.Header}>
           <Grid item xs={12} className={listStyle.Title}>
             <Typography variant="h2">
