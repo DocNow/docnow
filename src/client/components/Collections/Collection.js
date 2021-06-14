@@ -27,8 +27,8 @@ export default class CollectionList extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      modalOpen: false,
       selectedTweets: [],
+      allSelected: false,
       findUser: '',
       findingUser: false,
       lastUserLookup: ''
@@ -59,7 +59,7 @@ export default class CollectionList extends Component {
     }
     if (this.state.selectedTweets.length === 0 && foundTweets.length > 0) {
       this.setState({
-        selectedTweets: foundTweets.map(() => false)
+        selectedTweets: []
       })
     }
   }
@@ -83,15 +83,28 @@ export default class CollectionList extends Component {
   }
 
   setAllTweets(checked) {    
-    this.setState({
-      selectedTweets: this.state.selectedTweets.map(() => checked)
-    })
+    if (checked) {
+      this.setState({
+        allSelected: true,
+        selectedTweets: this.props.user.tweets.map(t => t.id)
+      })
+    } else {
+      this.setState({
+        allSelected: false,
+        selectedTweets: []
+      })
+    }
   }
 
-  toggleOneTweet(i) {
-    this.setState({
-      selectedTweets: this.state.selectedTweets.map((v, tIdx) => {return (i === tIdx ? !v : v)})
-    })
+  toggleOneTweet(tweet) {
+    const selected = this.state.selectedTweets
+    const pos = selected.indexOf(tweet.id)
+    if (pos === -1) {
+      selected.push(tweet.id)
+    } else {
+      selected.splice(pos, 1)
+    }
+    this.setState({selectedTweets: selected})
   }
 
   openModal() {
@@ -134,8 +147,8 @@ export default class CollectionList extends Component {
     if (this.props.user) {
       const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
       if (foundTweets.length > 0) {
-        console.log(this.props.user.tweets)
         const userTweetsContent = this.props.user.tweets || []
+        const consentDisabled = this.state.selectedTweets.length == 0
         userTweets = (<>
           <FormControl component="fieldset" className={style.CardInnerContent}>
             <FormGroup row>
@@ -143,23 +156,24 @@ export default class CollectionList extends Component {
                 value="all"
                 control={<Checkbox color="primary" 
                   onChange={t => this.setAllTweets(t.target.checked)} 
-                  checked={this.state.selectedTweets.indexOf(false) === -1} />}
+                  checked={this.state.allSelected} />}
                 label={`Select all ${foundTweets.length} tweets`}
               />
             </FormGroup>
           </FormControl>
-          <Button size="small" onClick={() => this.openModal()}>
+          <Button disabled={consentDisabled} size="small" onClick={() => this.openModal()}>
             <span className={style.ButtonText}>Specify Consent</span>
           </Button>
           <hr/>
           {userTweetsContent.map((tweet, i) => {
+            const selected = this.state.selectedTweets.indexOf(tweet.id) !== -1
             return (
               <Grid container spacing={0} key={`ut${i}`}>
                 <Grid item xs={2}>
                   <Checkbox 
                     color="primary" 
-                    checked={this.state.selectedTweets[i] || false} 
-                    onChange={() => this.toggleOneTweet(i)} />
+                    checked={selected} 
+                    onChange={() => this.toggleOneTweet(tweet)} />
                 </Grid>
                 <Grid item xs={10}>
                   <Tweet data={tweet} />
