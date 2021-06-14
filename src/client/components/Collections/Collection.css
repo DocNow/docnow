@@ -31,10 +31,6 @@
   font-size: 14px;
 }
 
-.ButtonText {
-  text-decoration: underline;
-}
-
 .Search {
   display: flex;
   align-items: center;

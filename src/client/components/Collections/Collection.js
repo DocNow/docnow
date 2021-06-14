@@ -161,8 +161,11 @@ export default class CollectionList extends Component {
               />
             </FormGroup>
           </FormControl>
-          <Button disabled={consentDisabled} size="small" onClick={() => this.openModal()}>
-            <span className={style.ButtonText}>Specify Consent</span>
+          <Button 
+            disabled={consentDisabled}
+            variant="contained"
+            onClick={() => this.openModal()}>
+            Specify Consent
           </Button>
           <hr/>
           {userTweetsContent.map((tweet, i) => {
