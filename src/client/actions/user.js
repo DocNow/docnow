@@ -146,15 +146,26 @@ export const getFoundInSearches = () => {
   }
 }
 
-export const getUserTweetsInSearch = (searchId, ids) => {
-  return (dispatch) => {
-    fetch(`/api/v1/search/${searchId}/tweets?ids=${ids.join(',')}`, {credentials: 'same-origin'})
-      .then((resp) => resp.json())
-      .then((tweets) => {
-        dispatch({
-          type: SET_TWEETS_FOR_USER,
-          tweets
-        })
-      })
+export const getUserTweetsInSearch = searchId => {
+  return async dispatch => {
+    let resp = await fetch(`/api/v1/search/${searchId}/tweets?mine=true`, {credentials: 'same-origin'})
+    const tweets = await resp.json()
+
+    resp = await fetch(`/api/v1/search/${searchId}/actions`, {credentials: 'same-origin'})
+    const actions = await resp.json()
+
+    for (const action of actions) {
+      for (const tweet of tweets) {
+        if (action.tweetId === tweet.id) {
+          console.log(action)
+          tweet.consentAction = action
+        }
+      }
+    }
+
+    dispatch({
+      type: SET_TWEETS_FOR_USER,
+      tweets,
+    })
   }
 }

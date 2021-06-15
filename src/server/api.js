@@ -298,11 +298,15 @@ app.get('/search/:searchId/tweets', (req, res) => {
         .then((tweets) => {
           res.json(tweets)
         })
-    } else if (req.query.user) {
-      db.getTweetsForUser(search, req.query.user)
-        .then((tweets) => {
-          res.json(tweets)
-        })          
+    } else if (req.query.mine) {
+      if (req.user) {
+        db.getTweetsForUser(search, req.user.twitterUserId)
+          .then((tweets) => {
+            res.json(tweets)
+          })
+       } else {
+         res.json([])
+       }
     } else if (req.query.image) {
       db.getTweetsForImage(search, req.query.image)
         .then((tweets) => {
@@ -425,6 +429,19 @@ app.get('/search/:searchId/queue', async (req, res) => {
     const search = await db.getSearch(req.params.searchId)
     const result = await db.queueStats(search)
     res.json(result)
+  }
+})
+
+app.get('/search/:searchId/actions', async (req, res) => {
+  if (req.user) {
+    res.json([
+      {
+        "searchId": req.params.searchId,
+        "tweetId": "1400470742106529801",
+        "name": "sh-c-am",
+        "created": "2021-06-15T14:22:01Z"
+      }
+    ])
   }
 })
 

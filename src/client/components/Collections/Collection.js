@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import FindMe from './FindMe'
 import Tweet from '../Explore/Tweet'
 import ConsentModal from './ConsentModal'
+import { Label } from '../Label.js'
 
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -37,31 +38,10 @@ export default class CollectionList extends Component {
   }
 
   componentDidMount() {
-    this.tick()
     this.props.getTweets(this.props.searchId)
     this.props.getUsers(this.props.searchId)
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 3000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-  }
-
-  tick() {
     this.props.getSearch(this.props.searchId)
-    this.props.getFoundInSearches()
-
-    const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
-    if (foundTweets.length > 0) {
-      this.props.getUserTweetsInSearch(this.props.searchId, foundTweets)
-    }
-    if (this.state.selectedTweets.length === 0 && foundTweets.length > 0) {
-      this.setState({
-        selectedTweets: []
-      })
-    }
+    this.props.getUserTweetsInSearch(this.props.searchId)
   }
 
   handleFindUserInput(user) {
@@ -145,20 +125,20 @@ export default class CollectionList extends Component {
     </div>)
 
     if (this.props.user) {
-      const foundTweets = this.props.user.foundInSearches[this.props.searchId] || []
-      if (foundTweets.length > 0) {
+      if (this.props.user.tweets) {
         const userTweetsContent = this.props.user.tweets || []
         const consentDisabled = this.state.selectedTweets.length == 0
+
         userTweets = (<>
           <FormControl component="fieldset" className={style.CardInnerContent}>
             <FormGroup row>
               <FormControlLabel
                 value="all"
-                control={<Checkbox color="primary" 
-                  onChange={t => this.setAllTweets(t.target.checked)} 
-                  checked={this.state.allSelected} />}
-                label={`Select all ${foundTweets.length} tweets`}
-              />
+                control={
+                  <Checkbox color="primary" 
+                    onChange={t => this.setAllTweets(t.target.checked)} 
+                    checked={this.state.allSelected} />}
+                    label={`Select all ${this.props.user.tweets.length} tweets`} />
             </FormGroup>
           </FormControl>
           <Button 
@@ -170,13 +150,16 @@ export default class CollectionList extends Component {
           <hr/>
           {userTweetsContent.map((tweet, i) => {
             const selected = this.state.selectedTweets.indexOf(tweet.id) !== -1
+            const consentAction = tweet.consentAction  ? <Label name={tweet.consentAction.name} /> : ''
             return (
               <Grid container spacing={0} key={`ut${i}`}>
-                <Grid item xs={2}>
+                <Grid item xs={2} className={style.ConsentTweet}>
                   <Checkbox 
                     color="primary" 
                     checked={selected} 
                     onChange={() => this.toggleOneTweet(tweet)} />
+                  <br />
+                  {consentAction}
                 </Grid>
                 <Grid item xs={10}>
                   <Tweet data={tweet} />

@@ -35,9 +35,18 @@ Get or updated the current results of a search.
 
 ### /search/{search-id}/tweets *(GET, PUT)*
 
-Get the recent tweets in a given search. If the *url* parameter is used then
-only tweets that reference that URL in the given search will be returned. When
-issuing a PUT more tweets matching the query will be fetched.
+Get the recent tweets in a given search. By default all Parameters include:
+
+* **url**: return tweets that reference a URL
+* **mine**: return user's tweets in a search
+* **image**: return tweets that reference a particular image URL
+* **video**: return tweets that reference a particular video URL
+* **ids**: a comma separated list of ids in the search to return
+* **includeRetweets**: if set include retweets in addition to tweets
+* **limit**: the number of tweets to return (default is 100)
+* **offset**: indicate how many results to skip, useful when paging
+
+When issuing a PUT more tweets matching the query will be fetched.
 
 ### /search/{search-id}/users *(GET)*
 

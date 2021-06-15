@@ -588,6 +588,7 @@ export class Database {
         tweetId: tweet.id,
         created: tweet.created,
         screenName: tweet.user.screenName,
+        userId: tweet.user.id,
         text: tweet.text,
         retweetId: tweet.retweetId,
         quoteId: tweet.quoteId,
@@ -691,10 +692,10 @@ export class Database {
     return this.getTweetsForUrl(search, url, 'video')
   }
 
-  async getTweetsForUser(search, handle) {
+  async getTweetsForUser(search, userId) {
     return this.pickJson(
       Tweet.query()
-        .where({searchId: search.id, screenName: handle})
+        .where({searchId: search.id, userId: userId})
         .orderBy('id', 'DESC')
         .limit(100)
     )
