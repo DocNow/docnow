@@ -150,7 +150,6 @@ export default class CollectionList extends Component {
           <hr/>
           {userTweetsContent.map((tweet, i) => {
             const selected = this.state.selectedTweets.indexOf(tweet.id) !== -1
-            const consentAction = tweet.consentAction  ? <Label name={tweet.consentAction.name} /> : ''
             return (
               <Grid container spacing={0} key={`ut${i}`}>
                 <Grid item xs={2} className={style.ConsentTweet}>
@@ -159,7 +158,9 @@ export default class CollectionList extends Component {
                     checked={selected} 
                     onChange={() => this.toggleOneTweet(tweet)} />
                   <br />
-                  {consentAction}
+                  {tweet.consentActions.map(action => (
+                     <Label key={`action-${tweet.id}-${action.id}`} name={action.name} />
+                  ))}
                 </Grid>
                 <Grid item xs={10}>
                   <Tweet data={tweet} />

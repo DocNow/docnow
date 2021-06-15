@@ -156,9 +156,9 @@ export const getUserTweetsInSearch = searchId => {
 
     for (const action of actions) {
       for (const tweet of tweets) {
+        tweet.consentActions = []
         if (action.tweetId === tweet.id) {
-          console.log(action)
-          tweet.consentAction = action
+          tweet.consentActions.push(action)
         }
       }
     }
