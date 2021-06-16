@@ -56,7 +56,7 @@ export default class ConsentModal extends Component {
     const tweetIds = this.props.selectedTweetIds
     if (selected.has(label)) {
       selected.delete(label)
-      this.props.setConsentActions(searchId, tweetIds, label)
+      this.props.setConsentActions(searchId, tweetIds, label, true)
     } else {
       selected.add(label)
       this.props.setConsentActions(searchId, tweetIds, label)

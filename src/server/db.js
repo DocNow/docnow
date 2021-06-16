@@ -917,7 +917,7 @@ export class Database {
     }
   }
 
-  async setActions(search, user, tweetIds, name) {
+  async setActions(search, user, tweetIds, name, remove = false) {
 
     // get the local tweet ids for these tweets
     const results = await Tweet.query()
@@ -931,14 +931,16 @@ export class Database {
       .where({searchId: search.id, userId: user.id, name: name})
       .andWhere('tweetId', 'in', localTweetIds)
 
-    // now add new labels for these tweets
-    for (const tweetId of localTweetIds) {
-      await Action.query().insert({
-        searchId: search.id,
-        userId: user.id,
-        tweetId: tweetId,
-        name: name 
-      })
+    // now add new labels for these tweets as long as as remove is not true
+    if (! remove) {
+      for (const tweetId of localTweetIds) {
+        await Action.query().insert({
+          searchId: search.id,
+          userId: user.id,
+          tweetId: tweetId,
+          name: name 
+        })
+      }
     }
 
   }

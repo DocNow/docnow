@@ -148,6 +148,9 @@ export const getFoundInSearches = () => {
 
 export const getUserTweetsInSearch = searchId => {
   return async dispatch => {
+
+    // it might make sense to move this join into a single API call
+
     let resp = await fetch(`/api/v1/search/${searchId}/tweets?mine=true`, {credentials: 'same-origin'})
     const tweets = await resp.json()
 
@@ -170,12 +173,13 @@ export const getUserTweetsInSearch = searchId => {
   }
 }
 
-export const setConsentActions = (searchId, tweets, label) => {
+export const setConsentActions = (searchId, tweets, label, remove = false) => {
   return async dispatch => {
 
     const body = {
       action: {
-        label: label
+        label: label,
+        remove: remove ? true : false
       },
       tweets: tweets
     }
@@ -187,12 +191,7 @@ export const setConsentActions = (searchId, tweets, label) => {
       credentials: 'same-origin'
     }
 
-    const resp = await fetch(`/api/v1/search/${searchId}/actions`, opts)
-
-    dispatch({
-        type: 'NOTHING_HERE',
-        content: await resp.json()
-    })
-
+    await fetch(`/api/v1/search/${searchId}/actions`, opts)
+    dispatch(getUserTweetsInSearch(searchId))
   }
 }

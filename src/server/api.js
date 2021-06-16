@@ -442,10 +442,10 @@ app.get('/search/:searchId/actions', async (req, res) => {
 
 app.put('/search/:searchId/actions', async (req, res) => {
   if (req.user) {
-    console.log(req.body)
     const search = await db.getSearch(req.params.searchId)
-    const result = await db.setActions(search, req.user, req.body.tweets, req.body.action.label)
-    res.json(result)
+    await db.setActions(search, req.user, req.body.tweets, req.body.action.label, req.body.action.remove)
+    const actions = await db.getActions(search, req.user)
+    res.json(actions)
   }
 })
 
