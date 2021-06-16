@@ -84,7 +84,10 @@ export default class CollectionList extends Component {
     } else {
       selected.splice(pos, 1)
     }
-    this.setState({selectedTweets: selected})
+    this.setState({
+      selectedTweets: selected,
+      allSelected: false
+    })
   }
 
   openModal() {
@@ -125,7 +128,7 @@ export default class CollectionList extends Component {
     </div>)
 
     if (this.props.user) {
-      if (this.props.user.tweets) {
+      if (this.props.user.tweets && this.props.user.tweets.length > 0) {
         const userTweetsContent = this.props.user.tweets || []
         const consentDisabled = this.state.selectedTweetIds.length == 0
 
@@ -194,14 +197,13 @@ export default class CollectionList extends Component {
       } else {
         usersInfo = <Typography variant="body2">Could not find user &quot;{this.state.lastUserLookup}&quot;.</Typography>
       }
-    }    
+    }
 
     return (
       <>
-
         <ConsentModal
           isOpen={this.state.modalOpen}
-          close={() => this.closeModal()}j
+          close={() => this.closeModal()}
           searchId={this.props.searchId}
           selectedTweetIds={this.state.selectedTweetIds} 
           setConsentActions={this.props.setConsentActions} />

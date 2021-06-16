@@ -66,11 +66,36 @@ export default class ConsentModal extends Component {
     })
   }
 
+  /*
+  updateSharedLabels() {
+    let sharedLabels = null
+    if (this.props.user.tweets) {
+      this.props.user.tweets.forEach(tweet => {
+        console.log(tweet.id, this.state.selectedTweetIds)
+        if (tweet.id in this.state.selectedTweetIds) {
+          const labels = tweet.consentActions.map(a => a.name)
+          if (sharedLabels === null) {
+            sharedLabels = new Set(labels)
+          } else {
+            sharedLabels = new Set(labels.filter(x => sharedLabels.has(x)))
+          }
+        }
+      })
+    } else {
+      sharedLabels = new Set()
+    }
+    this.setState({
+      sharedLabels: sharedLabels
+    })
+  }
+  */
+
 }
 
 ConsentModal.propTypes = {
-  searchId: PropTypes.number,
+  searchId: PropTypes.string,
   selectedTweetIds: PropTypes.array,
+  labels: PropTypes.array,
   isOpen: PropTypes.bool,
   close: PropTypes.func,
   setConsentActions: PropTypes.func,
