@@ -154,10 +154,10 @@ export const getUserTweetsInSearch = searchId => {
     resp = await fetch(`/api/v1/search/${searchId}/actions`, {credentials: 'same-origin'})
     const actions = await resp.json()
 
-    for (const action of actions) {
-      for (const tweet of tweets) {
-        tweet.consentActions = []
-        if (action.tweetId === tweet.id) {
+    for (const tweet of tweets) {
+      tweet.consentActions = []
+      for (const action of actions) {
+        if (action.tweet.tweetId === tweet.id) {
           tweet.consentActions.push(action)
         }
       }
@@ -167,5 +167,32 @@ export const getUserTweetsInSearch = searchId => {
       type: SET_TWEETS_FOR_USER,
       tweets,
     })
+  }
+}
+
+export const setConsentActions = (searchId, tweets, label) => {
+  return async dispatch => {
+
+    const body = {
+      action: {
+        label: label
+      },
+      tweets: tweets
+    }
+
+    const opts = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body),
+      credentials: 'same-origin'
+    }
+
+    const resp = await fetch(`/api/v1/search/${searchId}/actions`, opts)
+
+    dispatch({
+        type: 'NOTHING_HERE',
+        content: await resp.json()
+    })
+
   }
 }

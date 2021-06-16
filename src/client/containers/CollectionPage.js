@@ -1,7 +1,7 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getSearch, getTweets, getUsers } from '../actions/search'
-import { getFoundInSearches, getUserTweetsInSearch } from '../actions/user'
+import { getFoundInSearches, getUserTweetsInSearch, setConsentActions } from '../actions/user'
 import { getTweetsForUser } from '../actions/tweets'
 
 import Collection from '../components/Collections/Collection'
@@ -22,7 +22,8 @@ const actions = {
   getUsers,
   getFoundInSearches,
   getTweetsForUser,
-  getUserTweetsInSearch
+  getUserTweetsInSearch,
+  setConsentActions
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)

@@ -434,14 +434,18 @@ app.get('/search/:searchId/queue', async (req, res) => {
 
 app.get('/search/:searchId/actions', async (req, res) => {
   if (req.user) {
-    res.json([
-      {
-        "searchId": req.params.searchId,
-        "tweetId": "1400470742106529801",
-        "name": "sh-c-am",
-        "created": "2021-06-15T14:22:01Z"
-      }
-    ])
+    const search = await db.getSearch(req.params.searchId)
+    const actions = await db.getActions(search, req.user)
+    res.json(actions)
+  }
+})
+
+app.put('/search/:searchId/actions', async (req, res) => {
+  if (req.user) {
+    console.log(req.body)
+    const search = await db.getSearch(req.params.searchId)
+    const result = await db.setActions(search, req.user, req.body.tweets, req.body.action.label)
+    res.json(result)
   }
 })
 

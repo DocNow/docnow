@@ -51,11 +51,15 @@ export default class ConsentModal extends Component {
   }
 
   toggleLabel(label) {
+    const searchId = this.props.searchId
     const selected = this.state.selectedLabels
+    const tweetIds = this.props.selectedTweetIds
     if (selected.has(label)) {
       selected.delete(label)
+      this.props.setConsentActions(searchId, tweetIds, label)
     } else {
       selected.add(label)
+      this.props.setConsentActions(searchId, tweetIds, label)
     }
     this.setState({
       selectedLabels: new Set(selected)
@@ -65,7 +69,9 @@ export default class ConsentModal extends Component {
 }
 
 ConsentModal.propTypes = {
-  tweets: PropTypes.array,
+  searchId: PropTypes.number,
+  selectedTweetIds: PropTypes.array,
   isOpen: PropTypes.bool,
   close: PropTypes.func,
+  setConsentActions: PropTypes.func,
 }

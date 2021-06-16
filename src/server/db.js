@@ -10,6 +10,7 @@ import Search from './models/Search'
 import Tweet from './models/Tweet'
 import TweetHashtag from './models/TweetHashtag'
 import TweetUrl from './models/TweetUrl'
+import Action from './models/Action'
 
 import log from './logger'
 import { Twitter } from './twitter'
@@ -891,6 +892,55 @@ export class Database {
       o[prop] = Number.parseInt(o[prop], 10)
     }
     return l
+  }
+
+  async getActions(search, user = null, includeArchived = false) {
+    const q = {
+      'action.searchId': search.id
+    }
+
+    if (user) {
+      q['action.userId'] = user.id
+    }
+
+    if (includeArchived) {
+      return Action.query()
+        .withGraphFetched('tweet')
+        .where(q)
+        .orderBy('created', 'desc')
+    } else {
+      return Action.query()
+        .withGraphFetched('tweet')
+        .where(q)
+        .whereNull('archived')
+        .orderBy('created', 'desc')
+    }
+  }
+
+  async setActions(search, user, tweetIds, name) {
+
+    // get the local tweet ids for these tweets
+    const results = await Tweet.query()
+      .where('searchId', search.id)
+      .andWhere('tweetId', 'in', tweetIds)
+    const localTweetIds = results.map(t => t.id)
+
+    // archive existing label actions for these tweet ids
+    await Action.query()
+      .patch({archived: new Date()})
+      .where({searchId: search.id, userId: user.id, name: name})
+      .andWhere('tweetId', 'in', localTweetIds)
+
+    // now add new labels for these tweets
+    for (const tweetId of localTweetIds) {
+      await Action.query().insert({
+        searchId: search.id,
+        userId: user.id,
+        tweetId: tweetId,
+        name: name 
+      })
+    }
+
   }
 
 }

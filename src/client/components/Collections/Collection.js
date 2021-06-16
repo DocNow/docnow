@@ -28,7 +28,7 @@ export default class CollectionList extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedTweets: [],
+      selectedTweetIds: [],
       allSelected: false,
       findUser: '',
       findingUser: false,
@@ -66,18 +66,18 @@ export default class CollectionList extends Component {
     if (checked) {
       this.setState({
         allSelected: true,
-        selectedTweets: this.props.user.tweets.map(t => t.id)
+        selectedTweetIds: this.props.user.tweets.map(t => t.id)
       })
     } else {
       this.setState({
         allSelected: false,
-        selectedTweets: []
+        selectedTweetIds: []
       })
     }
   }
 
   toggleOneTweet(tweet) {
-    const selected = this.state.selectedTweets
+    const selected = this.state.selectedTweetIds
     const pos = selected.indexOf(tweet.id)
     if (pos === -1) {
       selected.push(tweet.id)
@@ -127,7 +127,7 @@ export default class CollectionList extends Component {
     if (this.props.user) {
       if (this.props.user.tweets) {
         const userTweetsContent = this.props.user.tweets || []
-        const consentDisabled = this.state.selectedTweets.length == 0
+        const consentDisabled = this.state.selectedTweetIds.length == 0
 
         userTweets = (<>
           <FormControl component="fieldset" className={style.CardInnerContent}>
@@ -149,7 +149,7 @@ export default class CollectionList extends Component {
           </Button>
           <hr/>
           {userTweetsContent.map((tweet, i) => {
-            const selected = this.state.selectedTweets.indexOf(tweet.id) !== -1
+            const selected = this.state.selectedTweetIds.indexOf(tweet.id) !== -1
             return (
               <Grid container spacing={0} key={`ut${i}`}>
                 <Grid item xs={2} className={style.ConsentTweet}>
@@ -201,8 +201,10 @@ export default class CollectionList extends Component {
 
         <ConsentModal
           isOpen={this.state.modalOpen}
-          close={() => this.closeModal()}
-          tweets={this.state.selectedTweets} />
+          close={() => this.closeModal()}j
+          searchId={this.props.searchId}
+          selectedTweetIds={this.state.selectedTweetIds} 
+          setConsentActions={this.props.setConsentActions} />
 
         <Grid container spacing={3} className={listStyle.Header}>
           <Grid item xs={12} className={listStyle.Title}>
@@ -276,5 +278,6 @@ CollectionList.propTypes = {
   getFoundInSearches: PropTypes.func,
   getTweetsForUser: PropTypes.func,
   getUserTweetsInSearch: PropTypes.func,
+  setConsentActions: PropTypes.func,
   foundUserTweets: PropTypes.array,
 }
