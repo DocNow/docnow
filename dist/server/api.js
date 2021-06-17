@@ -634,10 +634,14 @@ app.get('/search/:searchId/tweets', function (req, res) {
       db.getTweetsForUrl(search, req.query.url).then(function (tweets) {
         res.json(tweets);
       });
-    } else if (req.query.user) {
-      db.getTweetsForUser(search, req.query.user).then(function (tweets) {
-        res.json(tweets);
-      });
+    } else if (req.query.mine) {
+      if (req.user) {
+        db.getTweetsForUser(search, req.user.twitterUserId).then(function (tweets) {
+          res.json(tweets);
+        });
+      } else {
+        res.json([]);
+      }
     } else if (req.query.image) {
       db.getTweetsForImage(search, req.query.image).then(function (tweets) {
         res.json(tweets);
@@ -848,26 +852,31 @@ app.get('/search/:searchId/queue', /*#__PURE__*/function () {
     return _ref11.apply(this, arguments);
   };
 }());
-app.get('/wayback/:url', /*#__PURE__*/function () {
+app.get('/search/:searchId/actions', /*#__PURE__*/function () {
   var _ref12 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee12(req, res) {
-    var result;
+    var search, actions;
     return _regenerator["default"].wrap(function _callee12$(_context12) {
       while (1) {
         switch (_context12.prev = _context12.next) {
           case 0:
             if (!req.user) {
-              _context12.next = 5;
+              _context12.next = 8;
               break;
             }
 
             _context12.next = 3;
-            return _wayback["default"].closest(req.params.url);
+            return db.getSearch(req.params.searchId);
 
           case 3:
-            result = _context12.sent;
-            res.json(result);
+            search = _context12.sent;
+            _context12.next = 6;
+            return db.getActions(search, req.user);
 
-          case 5:
+          case 6:
+            actions = _context12.sent;
+            res.json(actions);
+
+          case 8:
           case "end":
             return _context12.stop();
         }
@@ -879,26 +888,35 @@ app.get('/wayback/:url', /*#__PURE__*/function () {
     return _ref12.apply(this, arguments);
   };
 }());
-app.put('/wayback/:url', /*#__PURE__*/function () {
+app.put('/search/:searchId/actions', /*#__PURE__*/function () {
   var _ref13 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee13(req, res) {
-    var result;
+    var search, actions;
     return _regenerator["default"].wrap(function _callee13$(_context13) {
       while (1) {
         switch (_context13.prev = _context13.next) {
           case 0:
             if (!req.user) {
-              _context13.next = 5;
+              _context13.next = 10;
               break;
             }
 
             _context13.next = 3;
-            return _wayback["default"].saveArchive(req.params.url);
+            return db.getSearch(req.params.searchId);
 
           case 3:
-            result = _context13.sent;
-            res.json(result);
+            search = _context13.sent;
+            _context13.next = 6;
+            return db.setActions(search, req.user, req.body.tweets, req.body.action.label, req.body.action.remove);
 
-          case 5:
+          case 6:
+            _context13.next = 8;
+            return db.getActions(search, req.user);
+
+          case 8:
+            actions = _context13.sent;
+            res.json(actions);
+
+          case 10:
           case "end":
             return _context13.stop();
         }
@@ -910,27 +928,26 @@ app.put('/wayback/:url', /*#__PURE__*/function () {
     return _ref13.apply(this, arguments);
   };
 }());
-app.get('/stats', /*#__PURE__*/function () {
+app.get('/wayback/:url', /*#__PURE__*/function () {
   var _ref14 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee14(req, res) {
+    var result;
     return _regenerator["default"].wrap(function _callee14$(_context14) {
       while (1) {
         switch (_context14.prev = _context14.next) {
           case 0:
             if (!req.user) {
-              _context14.next = 6;
+              _context14.next = 5;
               break;
             }
 
-            _context14.t0 = res;
-            _context14.next = 4;
-            return db.getSystemStats();
+            _context14.next = 3;
+            return _wayback["default"].closest(req.params.url);
 
-          case 4:
-            _context14.t1 = _context14.sent;
+          case 3:
+            result = _context14.sent;
+            res.json(result);
 
-            _context14.t0.json.call(_context14.t0, _context14.t1);
-
-          case 6:
+          case 5:
           case "end":
             return _context14.stop();
         }
@@ -942,35 +959,26 @@ app.get('/stats', /*#__PURE__*/function () {
     return _ref14.apply(this, arguments);
   };
 }());
-app.get('/users', /*#__PURE__*/function () {
+app.put('/wayback/:url', /*#__PURE__*/function () {
   var _ref15 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee15(req, res) {
+    var result;
     return _regenerator["default"].wrap(function _callee15$(_context15) {
       while (1) {
         switch (_context15.prev = _context15.next) {
           case 0:
-            if (!req.user.isSuperUser) {
-              _context15.next = 8;
+            if (!req.user) {
+              _context15.next = 5;
               break;
             }
 
-            _context15.t0 = res;
-            _context15.next = 4;
-            return db.getUsers();
+            _context15.next = 3;
+            return _wayback["default"].saveArchive(req.params.url);
 
-          case 4:
-            _context15.t1 = _context15.sent;
+          case 3:
+            result = _context15.sent;
+            res.json(result);
 
-            _context15.t0.json.call(_context15.t0, _context15.t1);
-
-            _context15.next = 9;
-            break;
-
-          case 8:
-            res.status(401).json({
-              error: 'Not Authorized'
-            });
-
-          case 9:
+          case 5:
           case "end":
             return _context15.stop();
         }
@@ -982,33 +990,27 @@ app.get('/users', /*#__PURE__*/function () {
     return _ref15.apply(this, arguments);
   };
 }());
-app.get('/findme', /*#__PURE__*/function () {
+app.get('/stats', /*#__PURE__*/function () {
   var _ref16 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee16(req, res) {
-    var results;
     return _regenerator["default"].wrap(function _callee16$(_context16) {
       while (1) {
         switch (_context16.prev = _context16.next) {
           case 0:
             if (!req.user) {
-              _context16.next = 7;
+              _context16.next = 6;
               break;
             }
 
-            _context16.next = 3;
-            return db.getSearchesWithUser(req.user.twitterScreenName);
+            _context16.t0 = res;
+            _context16.next = 4;
+            return db.getSystemStats();
 
-          case 3:
-            results = _context16.sent;
-            res.json(results);
-            _context16.next = 8;
-            break;
+          case 4:
+            _context16.t1 = _context16.sent;
 
-          case 7:
-            res.status(401).json({
-              error: 'Not Authorized'
-            });
+            _context16.t0.json.call(_context16.t0, _context16.t1);
 
-          case 8:
+          case 6:
           case "end":
             return _context16.stop();
         }
@@ -1018,6 +1020,84 @@ app.get('/findme', /*#__PURE__*/function () {
 
   return function (_x31, _x32) {
     return _ref16.apply(this, arguments);
+  };
+}());
+app.get('/users', /*#__PURE__*/function () {
+  var _ref17 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee17(req, res) {
+    return _regenerator["default"].wrap(function _callee17$(_context17) {
+      while (1) {
+        switch (_context17.prev = _context17.next) {
+          case 0:
+            if (!req.user.isSuperUser) {
+              _context17.next = 8;
+              break;
+            }
+
+            _context17.t0 = res;
+            _context17.next = 4;
+            return db.getUsers();
+
+          case 4:
+            _context17.t1 = _context17.sent;
+
+            _context17.t0.json.call(_context17.t0, _context17.t1);
+
+            _context17.next = 9;
+            break;
+
+          case 8:
+            res.status(401).json({
+              error: 'Not Authorized'
+            });
+
+          case 9:
+          case "end":
+            return _context17.stop();
+        }
+      }
+    }, _callee17);
+  }));
+
+  return function (_x33, _x34) {
+    return _ref17.apply(this, arguments);
+  };
+}());
+app.get('/findme', /*#__PURE__*/function () {
+  var _ref18 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee18(req, res) {
+    var results;
+    return _regenerator["default"].wrap(function _callee18$(_context18) {
+      while (1) {
+        switch (_context18.prev = _context18.next) {
+          case 0:
+            if (!req.user) {
+              _context18.next = 7;
+              break;
+            }
+
+            _context18.next = 3;
+            return db.getSearchesWithUser(req.user.twitterScreenName);
+
+          case 3:
+            results = _context18.sent;
+            res.json(results);
+            _context18.next = 8;
+            break;
+
+          case 7:
+            res.status(401).json({
+              error: 'Not Authorized'
+            });
+
+          case 8:
+          case "end":
+            return _context18.stop();
+        }
+      }
+    }, _callee18);
+  }));
+
+  return function (_x35, _x36) {
+    return _ref18.apply(this, arguments);
   };
 }());
 module.exports = app;

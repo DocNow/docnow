@@ -39,6 +39,8 @@ var _TweetHashtag = _interopRequireDefault(require("./models/TweetHashtag"));
 
 var _TweetUrl = _interopRequireDefault(require("./models/TweetUrl"));
 
+var _Action = _interopRequireDefault(require("./models/Action"));
+
 var _logger = _interopRequireDefault(require("./logger"));
 
 var _twitter = require("./twitter");
@@ -1590,6 +1592,7 @@ var Database = /*#__PURE__*/function () {
                       tweetId: tweet.id,
                       created: tweet.created,
                       screenName: tweet.user.screenName,
+                      userId: tweet.user.id,
                       text: tweet.text,
                       retweetId: tweet.retweetId,
                       quoteId: tweet.quoteId,
@@ -1843,14 +1846,14 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTweetsForUser",
     value: function () {
-      var _getTweetsForUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee29(search, handle) {
+      var _getTweetsForUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee29(search, userId) {
         return _regenerator["default"].wrap(function _callee29$(_context29) {
           while (1) {
             switch (_context29.prev = _context29.next) {
               case 0:
                 return _context29.abrupt("return", this.pickJson(_Tweet["default"].query().where({
                   searchId: search.id,
-                  screenName: handle
+                  userId: userId
                 }).orderBy('id', 'DESC').limit(100)));
 
               case 1:
@@ -2314,6 +2317,148 @@ var Database = /*#__PURE__*/function () {
       }
 
       return convertCounts;
+    }()
+  }, {
+    key: "getActions",
+    value: function () {
+      var _getActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee40(search) {
+        var user,
+            includeArchived,
+            q,
+            _args40 = arguments;
+        return _regenerator["default"].wrap(function _callee40$(_context40) {
+          while (1) {
+            switch (_context40.prev = _context40.next) {
+              case 0:
+                user = _args40.length > 1 && _args40[1] !== undefined ? _args40[1] : null;
+                includeArchived = _args40.length > 2 && _args40[2] !== undefined ? _args40[2] : false;
+                q = {
+                  'action.searchId': search.id
+                };
+
+                if (user) {
+                  q['action.userId'] = user.id;
+                }
+
+                if (!includeArchived) {
+                  _context40.next = 8;
+                  break;
+                }
+
+                return _context40.abrupt("return", _Action["default"].query().withGraphFetched('tweet').where(q).orderBy('created', 'desc'));
+
+              case 8:
+                return _context40.abrupt("return", _Action["default"].query().withGraphFetched('tweet').where(q).whereNull('archived').orderBy('created', 'desc'));
+
+              case 9:
+              case "end":
+                return _context40.stop();
+            }
+          }
+        }, _callee40);
+      }));
+
+      function getActions(_x39) {
+        return _getActions.apply(this, arguments);
+      }
+
+      return getActions;
+    }()
+  }, {
+    key: "setActions",
+    value: function () {
+      var _setActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee41(search, user, tweetIds, name) {
+        var remove,
+            results,
+            localTweetIds,
+            _iterator20,
+            _step20,
+            tweetId,
+            _args41 = arguments;
+
+        return _regenerator["default"].wrap(function _callee41$(_context41) {
+          while (1) {
+            switch (_context41.prev = _context41.next) {
+              case 0:
+                remove = _args41.length > 4 && _args41[4] !== undefined ? _args41[4] : false;
+                _context41.next = 3;
+                return _Tweet["default"].query().where('searchId', search.id).andWhere('tweetId', 'in', tweetIds);
+
+              case 3:
+                results = _context41.sent;
+                localTweetIds = results.map(function (t) {
+                  return t.id;
+                }); // archive existing label actions for these tweet ids
+
+                _context41.next = 7;
+                return _Action["default"].query().patch({
+                  archived: new Date()
+                }).where({
+                  searchId: search.id,
+                  userId: user.id,
+                  name: name
+                }).andWhere('tweetId', 'in', localTweetIds);
+
+              case 7:
+                if (remove) {
+                  _context41.next = 25;
+                  break;
+                }
+
+                _iterator20 = _createForOfIteratorHelper(localTweetIds);
+                _context41.prev = 9;
+
+                _iterator20.s();
+
+              case 11:
+                if ((_step20 = _iterator20.n()).done) {
+                  _context41.next = 17;
+                  break;
+                }
+
+                tweetId = _step20.value;
+                _context41.next = 15;
+                return _Action["default"].query().insert({
+                  searchId: search.id,
+                  userId: user.id,
+                  tweetId: tweetId,
+                  name: name
+                });
+
+              case 15:
+                _context41.next = 11;
+                break;
+
+              case 17:
+                _context41.next = 22;
+                break;
+
+              case 19:
+                _context41.prev = 19;
+                _context41.t0 = _context41["catch"](9);
+
+                _iterator20.e(_context41.t0);
+
+              case 22:
+                _context41.prev = 22;
+
+                _iterator20.f();
+
+                return _context41.finish(22);
+
+              case 25:
+              case "end":
+                return _context41.stop();
+            }
+          }
+        }, _callee41, null, [[9, 19, 22, 25]]);
+      }));
+
+      function setActions(_x40, _x41, _x42, _x43) {
+        return _setActions.apply(this, arguments);
+      }
+
+      return setActions;
     }()
   }]);
   return Database;
