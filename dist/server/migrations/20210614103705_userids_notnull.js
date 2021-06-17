@@ -13,7 +13,8 @@ exports.up = /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             return _context.abrupt("return", knex.schema.alterTable('tweet', function (table) {
-              table.string('userId', 30).nullable();
+              table.index('userId');
+              table.string('userId', 30).notNullable().alter();
             }));
 
           case 1:
@@ -36,7 +37,8 @@ exports.down = /*#__PURE__*/function () {
         switch (_context2.prev = _context2.next) {
           case 0:
             return _context2.abrupt("return", knex.schema.alterTable('tweet', function (table) {
-              table.dropColumn('userId');
+              table.dropIndex('userId');
+              table.string('userId', 30).nullable().alter();
             }));
 
           case 1:

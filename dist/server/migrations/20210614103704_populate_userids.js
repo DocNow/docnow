@@ -12,9 +12,7 @@ exports.up = /*#__PURE__*/function () {
       while (1) {
         switch (_context.prev = _context.next) {
           case 0:
-            return _context.abrupt("return", knex.schema.alterTable('tweet', function (table) {
-              table.string('userId', 30).nullable();
-            }));
+            return _context.abrupt("return", knex.raw("\n    UPDATE tweet t1\n    SET user_id = t2.json -> 'user' ->> 'id'\n    FROM tweet t2\n    WHERE t1.tweet_id = t2.tweet_id\n  "));
 
           case 1:
           case "end":
@@ -35,9 +33,7 @@ exports.down = /*#__PURE__*/function () {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
-            return _context2.abrupt("return", knex.schema.alterTable('tweet', function (table) {
-              table.dropColumn('userId');
-            }));
+            return _context2.abrupt("return", knex.raw('UPDATE tweet SET user_id = NULL'));
 
           case 1:
           case "end":
