@@ -1,6 +1,17 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+/*
+import sh_c_cg from '../images/social-humans/sh-c-cg'
+import sh_c_da from '../images/social-humans/sh-c-da'
+import sh_c_ea from '../images/social-humans/sh-c-ea'
+import sh_c_rl from '../images/social-humans/sh-c-rl'
+import sh_c_rn from '../images/social-humans/sh-c-rn'
+import sh_c_rm from '../images/social-humans/sh-c-rm'
+import sh_c_am from '../images/social-humans/sh-c-am'
+import sh_c_cm from '../images/social-humans/sh-c-cm'
+*/
+
 const labels = [
   "sh-c-cg",
   "sh-c-da",
@@ -40,7 +51,7 @@ const Label = props => {
       className="Label" 
       alt={labelNames[props.name]}
       title={labelDescriptions[props.name]}
-      src={`/userData/images/social-humans/${props.name}.jpg`} />
+      src={require(`../images/social-humans/${props.name}.jpg`)} />
   )
 }
 
