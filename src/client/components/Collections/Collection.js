@@ -23,6 +23,7 @@ import IconButton from '@material-ui/core/IconButton'
 import listStyle from './CollectionList.css'
 import style from './Collection.css'
 import card from '../Card.css'
+import noAvatar from '../../images/no-avatar.png'
 
 export default class CollectionList extends Component {
   constructor(props) {
@@ -100,6 +101,10 @@ export default class CollectionList extends Component {
     this.setState({
       modalOpen: false
     })
+  }
+
+  fixMissingAvatar(event) {
+    event.target.src = noAvatar;
   }
 
   render() {
@@ -180,10 +185,20 @@ export default class CollectionList extends Component {
     let usersInfo = (<div>
       <Typography variant="body2">Showing {this.props.search.users.length} of {this.props.search.userCount} users.</Typography>
       {this.props.search.users.map((u, i) => {
-        return <img className={style.UserImg}
-          src={u.avatarUrl}
-          alt={u.screenName}
-          title={u.screenName} key={`u${i}`} />
+        return (
+          <a 
+            href={`https://twitter.com/${u.screenName}`}
+            key={`user-${i}`} 
+            rel="noreferrer"
+            target="_blank">
+            <img 
+              className={style.UserImg}
+              src={u.avatarUrl}
+              alt={u.screenName}
+              onError={this.fixMissingAvatar}
+              title={u.screenName} />
+          </a>
+        )
       })}      
     </div>)
 
