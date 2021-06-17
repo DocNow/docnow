@@ -72,8 +72,8 @@ export default class UsersBody extends Component {
           tweets={this.props.tweets} />
 
         <div className={cardStyle.CardHolder}>
-          {this.users.map((t, i) => {
-            return (<>{i}
+          {this.users.map(t => {
+            return (
               <User
                 key={t.id}
                 name={t.name}
@@ -86,7 +86,7 @@ export default class UsersBody extends Component {
                 friends={t.friendsCount}
                 followers={t.followersCount}
                 searchId={this.props.searchId}
-                getTweetsForUser={this.props.getTweetsForUser} /></>
+                getTweetsForUser={this.props.getTweetsForUser} />
             )
           })}
           {loader}

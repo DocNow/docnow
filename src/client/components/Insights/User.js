@@ -70,7 +70,6 @@ export default class User extends Component {
           <IconButton aria-label="show tweets" onClick={() => {this.showTweets()}}>
             <ion-icon name="logo-twitter"></ion-icon>
           </IconButton>
-          {this.props.count}
         </CardActions>
       </Card>
     )
