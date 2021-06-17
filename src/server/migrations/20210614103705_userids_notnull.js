@@ -1,12 +1,14 @@
 exports.up = async knex => {
   return knex.schema.alterTable('tweet', table => {
-    table.string('userId', 30).nullable()
+    table.index('userId')
+    table.string('userId', 30).notNullable().alter()
   })
 }
 
 exports.down = async knex => {
   return knex.schema
     .alterTable('tweet', table => {
-      table.dropColumn('userId')
+      table.dropIndex('userId')
+      table.string('userId', 30).nullable().alter()
     })
 }
