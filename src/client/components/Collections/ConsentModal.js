@@ -11,11 +11,13 @@ export default class ConsentModal extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedLabels: new Set()
+      selectedLabels: new Set(),
+      hasModified: false
     }
   }
 
   render() {
+
     const modalStyle = {
       content: {
         padding: '0px',
@@ -24,27 +26,42 @@ export default class ConsentModal extends Component {
         maxWidth: '600px'
       }
     }
+
+    const selected = this.state.hasModified 
+      ? this.state.selectedLabels 
+      : this.getSharedLabels()
+
     const app = document.getElementById('App')
     return (
       <Modal isOpen={this.props.isOpen} style={modalStyle} appElement={app}>
-        <div className={style.CloseModal}>
-          <ion-icon name="close-circle" onClick={() => {this.props.close()}}></ion-icon>
-        </div>
-        <div className={style.Labels}>
-          {labels.map(label => {
-            const checked = this.state.selectedLabels.has(label)
-            return (
-              <div 
-                key={`label-${label}`} 
-                className={style.Label}
-                onClick={() => this.toggleLabel(label)}>
-                <Label name={label} />
-                <br />
-                <Checkbox color="primary" checked={checked} />
-                {labelNames[label]}
-              </div>
-            )
-          })}
+        <div className={style.ConsentModal}>
+          <div className={style.CloseModal}>
+            <ion-icon name="close-circle" onClick={() => {this.props.close()}}></ion-icon>
+          </div>
+          <p>
+            Twitter&lsquo;s Terms of Service allow for third party reuse of
+            tweets. However the DocNow application goes further to enact 
+            archival ethics by seeking your specified consent beyond
+            what Twitter&lsquo;s terms specify. In order to recognize that consent 
+            is an ongoing and complex practice you may specify your conditions 
+            of consent using <a href="https://www.docnow.io/social-humans/">Social Humans</a> labels.
+          </p>
+          <div className={style.Labels}>
+            {labels.map(label => {
+              const checked = selected.has(label)
+              return (
+                <div 
+                  key={`label-${label}`} 
+                  className={style.Label}
+                  onClick={() => this.toggleLabel(label)}>
+                  <Label name={label} />
+                  <br />
+                  <Checkbox color="primary" checked={checked} />
+                  {labelNames[label]}
+                </div>
+              )
+            })}
+          </div>
         </div>
       </Modal>
     )
@@ -52,8 +69,12 @@ export default class ConsentModal extends Component {
 
   toggleLabel(label) {
     const searchId = this.props.searchId
-    const selected = this.state.selectedLabels
-    const tweetIds = this.props.selectedTweetIds
+    const tweetIds = this.props.selectedTweets.map(t => t.id)
+
+    const selected = this.state.hasModified
+      ? this.state.selectedLabels
+      : this.getSharedLabels()
+      
     if (selected.has(label)) {
       selected.delete(label)
       this.props.setConsentActions(searchId, tweetIds, label, true)
@@ -62,40 +83,33 @@ export default class ConsentModal extends Component {
       this.props.setConsentActions(searchId, tweetIds, label)
     }
     this.setState({
-      selectedLabels: new Set(selected)
+      selectedLabels: new Set(selected),
+      hasModified: true
     })
   }
 
-  /*
-  updateSharedLabels() {
-    let sharedLabels = null
-    if (this.props.user.tweets) {
-      this.props.user.tweets.forEach(tweet => {
-        console.log(tweet.id, this.state.selectedTweetIds)
-        if (tweet.id in this.state.selectedTweetIds) {
-          const labels = tweet.consentActions.map(a => a.name)
-          if (sharedLabels === null) {
-            sharedLabels = new Set(labels)
-          } else {
-            sharedLabels = new Set(labels.filter(x => sharedLabels.has(x)))
-          }
+  getSharedLabels() {
+    let shared = null
+    if (this.props.selectedTweets.length > 0) {
+      this.props.selectedTweets.forEach(tweet => {
+        const tweetLabels = tweet.consentActions.map(a => a.name)
+        if (shared === null) {
+          shared = new Set(tweetLabels)
+        } else {
+          shared = new Set(tweetLabels.filter(l => shared.has(l)))
         }
       })
     } else {
-      sharedLabels = new Set()
+      shared = new Set()
     }
-    this.setState({
-      sharedLabels: sharedLabels
-    })
+    return shared
   }
-  */
 
 }
 
 ConsentModal.propTypes = {
   searchId: PropTypes.string,
-  selectedTweetIds: PropTypes.array,
-  labels: PropTypes.array,
+  selectedTweets: PropTypes.array,
   isOpen: PropTypes.bool,
   close: PropTypes.func,
   setConsentActions: PropTypes.func,

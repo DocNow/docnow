@@ -28,7 +28,7 @@ export default class CollectionList extends Component {
   constructor(props) {
     super(props)
     this.state = {
-      selectedTweetIds: [],
+      selectedTweets: [],
       allSelected: false,
       findUser: '',
       findingUser: false,
@@ -66,7 +66,7 @@ export default class CollectionList extends Component {
     if (checked) {
       this.setState({
         allSelected: true,
-        selectedTweetIds: this.props.user.tweets.map(t => t.id)
+        selectedTweets: Array.from(this.props.user.tweets)
       })
     } else {
       this.setState({
@@ -77,10 +77,10 @@ export default class CollectionList extends Component {
   }
 
   toggleOneTweet(tweet) {
-    const selected = this.state.selectedTweetIds
-    const pos = selected.indexOf(tweet.id)
+    const selected = this.state.selectedTweets
+    const pos = selected.findIndex(t => t.id == tweet.id)
     if (pos === -1) {
-      selected.push(tweet.id)
+      selected.push(tweet)
     } else {
       selected.splice(pos, 1)
     }
@@ -130,7 +130,7 @@ export default class CollectionList extends Component {
     if (this.props.user) {
       if (this.props.user.tweets && this.props.user.tweets.length > 0) {
         const userTweetsContent = this.props.user.tweets || []
-        const consentDisabled = this.state.selectedTweetIds.length == 0
+        const consentDisabled = this.state.selectedTweets.length == 0
 
         userTweets = (<>
           <FormControl component="fieldset" className={style.CardInnerContent}>
@@ -152,7 +152,7 @@ export default class CollectionList extends Component {
           </Button>
           <hr/>
           {userTweetsContent.map((tweet, i) => {
-            const selected = this.state.selectedTweetIds.indexOf(tweet.id) !== -1
+            const selected = this.state.selectedTweets.findIndex(t => t.id == tweet.id) !== -1
             return (
               <Grid container spacing={0} key={`ut${i}`}>
                 <Grid item xs={2} className={style.ConsentTweet}>
@@ -205,7 +205,7 @@ export default class CollectionList extends Component {
           isOpen={this.state.modalOpen}
           close={() => this.closeModal()}
           searchId={this.props.searchId}
-          selectedTweetIds={this.state.selectedTweetIds} 
+          selectedTweets={this.state.selectedTweets} 
           setConsentActions={this.props.setConsentActions} />
 
         <Grid container spacing={3} className={listStyle.Header}>

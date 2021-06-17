@@ -1,3 +1,7 @@
+.ConsentModal p {
+  margin: 20px;
+}
+
 .Labels {
   display: flex;
   flex-direction: row;
