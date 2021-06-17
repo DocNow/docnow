@@ -1,5 +1,3 @@
-const passport = require("passport")
-
 exports.up = async knex => {
   return knex.raw(`
     UPDATE tweet t1
