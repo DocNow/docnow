@@ -708,6 +708,7 @@ export class Database {
     return this.pickJson(
       Tweet.query()
         .where({searchId: search.id, userId: userId})
+        .whereNull('retweetId')
         .orderBy('id', 'DESC')
         .limit(100)
     )
