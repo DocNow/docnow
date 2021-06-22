@@ -1862,7 +1862,7 @@ var Database = /*#__PURE__*/function () {
                 return _context29.abrupt("return", this.pickJson(_Tweet["default"].query().where({
                   searchId: search.id,
                   userId: userId
-                }).orderBy('id', 'DESC').limit(100)));
+                }).whereNull('retweetId').orderBy('id', 'DESC').limit(100)));
 
               case 1:
               case "end":
