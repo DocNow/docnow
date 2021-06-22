@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import SearchInfo from './SearchInfo'
-
 import InsightsBody from './InsightsBody'
 
 import style from './Insights.css'

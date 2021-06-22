@@ -671,6 +671,17 @@ export class Database {
     )
   }
 
+  deleteTweets(searchId, tweetIds, twitterUserId) {
+    return Tweet
+      .query()
+      .delete()
+      .where('tweetId', 'in', tweetIds)
+      .andWhere({
+        searchId: searchId,
+        userId: twitterUserId
+      })
+  }
+
   async getAllTweets(search) {
     return this.pickJson(Tweet.query().where('searchId', search.id))
   }

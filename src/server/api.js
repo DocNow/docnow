@@ -334,6 +334,19 @@ app.get('/search/:searchId/tweets', (req, res) => {
   })
 })
 
+app.put('/search/:searchId/tweets', async (req, res) => {
+  if (req.user) {
+    const userId = req.user.id
+    const twitterUserId = req.user.twitterUserId
+    const searchId = req.body.searchId
+    const tweetIds = req.body.tweetIds
+    const result = await db.deleteTweets(searchId, tweetIds, twitterUserId)
+    res.json({
+      message: `Deleted ${result} tweets (${tweetIds}) from ${searchId} for ${userId}:${twitterUserId}`
+    })
+  }
+})
+
 app.get('/search/:searchId/users', (req, res) => {
   let searchReq = null
   if (req.user) {

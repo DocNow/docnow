@@ -22,3 +22,7 @@
 .Label:hover {
   box-shadow: 1px 1px 8px 8px lightgreen;
 }
+
+.Revoke {
+  text-align: center;
+}

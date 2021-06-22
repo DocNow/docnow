@@ -160,7 +160,7 @@ export const getUserTweetsInSearch = searchId => {
     for (const tweet of tweets) {
       tweet.consentActions = []
       for (const action of actions) {
-        if (action.tweet.tweetId === tweet.id) {
+        if (action.tweet && action.tweet.tweetId === tweet.id) {
           tweet.consentActions.push(action)
         }
       }
@@ -192,6 +192,26 @@ export const setConsentActions = (searchId, tweets, label, remove = false) => {
     }
 
     await fetch(`/api/v1/search/${searchId}/actions`, opts)
+    dispatch(getUserTweetsInSearch(searchId))
+  }
+}
+
+export const revokeConsent = (searchId, tweetIds) => {
+  return async dispatch => {
+
+    const body = {
+      searchId: searchId,
+      tweetIds: tweetIds
+    }
+
+    const opts = {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(body),
+      credentials: 'same-origin'
+    }
+
+    await fetch(`/api/v1/search/${searchId}/tweets`, opts)
     dispatch(getUserTweetsInSearch(searchId))
   }
 }

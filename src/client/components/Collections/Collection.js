@@ -221,7 +221,8 @@ export default class CollectionList extends Component {
           close={() => this.closeModal()}
           searchId={this.props.searchId}
           selectedTweets={this.state.selectedTweets} 
-          setConsentActions={this.props.setConsentActions} />
+          setConsentActions={this.props.setConsentActions} 
+          revokeConsent={this.props.revokeConsent} />
 
         <Grid container spacing={3} className={listStyle.Header}>
           <Grid item xs={12} className={listStyle.Title}>
@@ -297,4 +298,5 @@ CollectionList.propTypes = {
   getUserTweetsInSearch: PropTypes.func,
   setConsentActions: PropTypes.func,
   foundUserTweets: PropTypes.array,
+  revokeConsent: PropTypes.func
 }
