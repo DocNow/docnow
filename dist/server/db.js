@@ -1779,6 +1779,14 @@ var Database = /*#__PURE__*/function () {
       return this.pickJson(_Tweet["default"].query().select().where(where).offset(offset).limit(limit));
     }
   }, {
+    key: "deleteTweets",
+    value: function deleteTweets(searchId, tweetIds, twitterUserId) {
+      return _Tweet["default"].query()["delete"]().where('tweetId', 'in', tweetIds).andWhere({
+        searchId: searchId,
+        userId: twitterUserId
+      });
+    }
+  }, {
     key: "getAllTweets",
     value: function () {
       var _getAllTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee27(search) {
