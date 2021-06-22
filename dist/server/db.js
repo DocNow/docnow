@@ -2176,7 +2176,7 @@ var Database = /*#__PURE__*/function () {
                 _context36.next = 2;
                 return _Tweet["default"].query().where({
                   screenName: twitterScreenName
-                }).select('searchId', 'tweetId').groupBy('searchId', 'tweetId');
+                }).whereNull('retweetId').select('searchId', 'tweetId').groupBy('searchId', 'tweetId');
 
               case 2:
                 results = _context36.sent;

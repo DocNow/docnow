@@ -873,6 +873,7 @@ export class Database {
   async getSearchesWithUser(twitterScreenName) {
     const results = await Tweet.query()
       .where({screenName: twitterScreenName})      
+      .whereNull('retweetId')
       .select('searchId', 'tweetId')
       .groupBy('searchId', 'tweetId')
 
