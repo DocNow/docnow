@@ -18,12 +18,13 @@ import ImagesPage from './ImagesPage'
 import VideosPage from './VideosPage'
 import SearchListPage from './SearchListPage'
 import UserListPage from './UserListPage'
+import ActionsPage from './ActionsPage'
+import CollectionListPage from './CollectionListPage'
+import CollectionPage from './CollectionPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
 import { getSearches } from '../actions/searches'
-import CollectionListPage from './CollectionListPage'
-import CollectionPage from './CollectionPage'
 
 import styles from './App.css'
 
@@ -69,6 +70,7 @@ class App extends MediaQueryComponent {
               <Route exact name="webpages" path="/search/:searchId/webpages/" component={WebpagesPage} />
               <Route exact name="images" path="/search/:searchId/images/" component={ImagesPage} />
               <Route exact name="videos" path="/search/:searchId/videos/" component={VideosPage} />
+              <Route exact name="actions" path="/search/:searchId/actions/" component={ActionsPage} />
               <Route exact name="collections" path="/collections/" component={CollectionListPage} />
               <Route exact name="collection" path="/collection/:searchId/" component={CollectionPage} />
             </Switch>

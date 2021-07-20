@@ -5,6 +5,7 @@ export const SET_TWITTER_SEARCH_HASHTAGS = 'SET_TWITTER_SEARCH_HASHTAGS'
 export const SET_TWITTER_SEARCH_URLS = 'SET_TWITTER_SEARCH_URLS'
 export const SET_TWITTER_SEARCH_IMAGES = 'SET_TWITTER_SEARCH_IMAGES'
 export const SET_TWITTER_SEARCH_VIDEOS = 'SET_TWITTER_SEARCH_VIDEOS'
+export const SET_TWITTER_SEARCH_ACTIONS = 'SET_TWITTER_SEARCH_ACTIONS'
 export const RESET_TWITTER_SEARCH = 'RESET_TWITTER_SEARCH'
 export const ACTIVATE_SEARCH = 'ACTIVATE_SEARCH'
 export const UPDATE_SEARCH_TERM = 'UPDATE_SEARCH_TERM'
@@ -306,5 +307,21 @@ export const createArchive = (search) => {
   return (dispatch) => {
     const newSearch = {id: search.id, archiveStarted: true}
     dispatch(updateSearch(newSearch))
+  }
+}
+
+export const getActions = (searchId, all) => {
+  return async dispatch => {
+    let url = `/api/v1/search/${searchId}/actions`
+    if (all) {
+      url += '?all=true'
+    }
+    const resp = await fetch(url, {credentials: 'same-origin'})
+    const actions = await resp.json()
+    dispatch({
+      type: SET_TWITTER_SEARCH_ACTIONS,
+      searchId: searchId,
+      actions: actions
+    })
   }
 }

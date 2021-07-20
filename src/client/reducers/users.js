@@ -4,7 +4,7 @@ import { ACTIVATE_USER, DEACTIVATE_USER, ACTIVATE_ADMIN,
 
 const initialState = []
 
-export default function settings(state = initialState, action) {
+export default function users(state = initialState, action) {
   switch (action.type) {
 
     case SET_USERS: {

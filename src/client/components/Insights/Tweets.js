@@ -5,6 +5,7 @@ import BackButton from './BackButton'
 import TweetsBody from './TweetsBody'
 
 class Tweets extends Component {
+
   componentDidMount() {
     this.tick()
     this.timerId = setInterval(() => {

@@ -28,6 +28,9 @@ export default class Tweet extends Component {
             <ion-icon name="heart-empty"></ion-icon>&nbsp;
             {this.props.data.likeCount}
           </div>
+          <div className={style.Inline}>
+            {this.props.action ? this.props.action.name : ''}
+          </div>
         </div>
       </div>
     )
@@ -35,5 +38,6 @@ export default class Tweet extends Component {
 }
 
 Tweet.propTypes = {
-  data: PropTypes.object
+  data: PropTypes.object,
+  action: PropTypes.object
 }

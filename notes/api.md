@@ -71,3 +71,8 @@ Metadata for webpages referenced in a given search.
 ### /search/{search-id}/queue *(GET)*
 
 Statistics for the url fetching queue for a search.
+
+### /search/{search-id}/actions (GET, PUT)
+
+Get or update the actions associated with a search.
+

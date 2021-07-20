@@ -919,11 +919,13 @@ export class Database {
     if (includeArchived) {
       return Action.query()
         .withGraphFetched('tweet')
+        .withGraphFetched('user')
         .where(q)
         .orderBy('created', 'desc')
     } else {
       return Action.query()
         .withGraphFetched('tweet')
+        .withGraphFetched('user')
         .where(q)
         .whereNull('archived')
         .orderBy('created', 'desc')

@@ -30,7 +30,7 @@ export default class SearchPublic extends Component {
 SearchPublic.propTypes = {
   id: PropTypes.number,
   updateSearch: PropTypes.func,
-  public: PropTypes.instanceOf(Date),
+  public: PropTypes.string,
   user: PropTypes.object,
   searches: PropTypes.array,
 }

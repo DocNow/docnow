@@ -7,7 +7,8 @@ import Tweets from './Tweets'
 import UsersBody from '../../client/components/Insights/UsersBody'
 import ImagesBody from '../../client/components/Insights/ImagesBody'
 import VideosBody from '../../client/components/Insights/VideosBody'
-import WebpagesBody from '../../client/components/Insights/WebpagesBody'
+import WebpagesBody from '../../client/components/Insights/ActionsBody'
+import ActionsBody from '../../client/components/Insights/ActionsBody'
 
 import styles from '../../client/containers/App.css'
 
@@ -166,19 +167,24 @@ class App extends MediaQueryComponent {
                 resetTweets={() => {this.setState({vi_tweets: []})}}
                 tweets={this.state.vi_tweets}
               /> </div>)} />
-              <Route exact name="webpages" path="/search/:searchId/webpages/" component={() => (
-                <div>{header} <WebpagesBody
-                  searchId={search.id}
-                  search={search}
-                  webpages={search.webpages}
-                  getTweetsForUrl={(s, u) => this.getTweetsForUrl(s, u)}
-                  resetTweets={() => {this.setState({wi_tweets: []})}}
-                  tweets={this.state.wi_tweets}
-                  selectWebpage={() => null}
-                  deselectWebpage={() => null}
-                  checkArchive={() => null}
-                  saveArchive={() => null}
-                /> </div>)} />
+            <Route exact name="webpages" path="/search/:searchId/webpages/" component={() => (
+              <div>{header} <WebpagesBody
+                searchId={search.id}
+                search={search}
+                webpages={search.webpages}
+                getTweetsForUrl={(s, u) => this.getTweetsForUrl(s, u)}
+                resetTweets={() => {this.setState({wi_tweets: []})}}
+                tweets={this.state.wi_tweets}
+                selectWebpage={() => null}
+                deselectWebpage={() => null}
+                checkArchive={() => null}
+                saveArchive={() => null}
+              /> </div>)} />
+            <Route exact name="actions" path="/search/:searchId/actions/" component={() => (
+              <div>{header} <ActionsBody
+                searchId={search.id}
+                search={search}
+              /> </div>)} />
           </Router>
         </main>
       </div>

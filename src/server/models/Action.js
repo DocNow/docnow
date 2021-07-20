@@ -1,5 +1,6 @@
 const { Model } = require('objection')
 const Tweet = require('./Tweet')
+const User = require('./User')
 
 class Action extends Model {
 
@@ -15,6 +16,14 @@ class Action extends Model {
         join: {
           from: 'action.tweetId',
           to: 'tweet.id'
+        }
+      },
+      user: {
+        relation: Model.HasOneRelation,
+        modelClass: User,
+        join: {
+          from: 'action.userId',
+          to: 'user.id'
         }
       }
     }

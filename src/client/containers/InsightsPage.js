@@ -2,7 +2,8 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import { getWebpages } from '../actions/webpages'
 import { getSearch, resetTwitterSearch, updateSearch, getTweets,
-         getUsers, getImages, getVideos, createArchive, getHashtags, deleteSearch } from '../actions/search'
+         getUsers, getImages, getVideos, getActions, createArchive, getHashtags, 
+         deleteSearch } from '../actions/search'
 
 import Insights from '../components/Insights/Insights'
 
@@ -13,7 +14,8 @@ const mapStateToProps = (state, ownProps) => {
     searches: state.searches,
     user: state.user,
     webpages: state.webpages,
-    archived: state.search.archived
+    archived: state.search.archived,
+    actions: state.search.actions,
   }
 }
 
@@ -24,6 +26,7 @@ const actions = {
   getImages,
   getVideos,
   getWebpages,
+  getActions,
   resetTwitterSearch,
   updateSearch,
   deleteSearch,

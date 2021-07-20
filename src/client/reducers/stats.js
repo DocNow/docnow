@@ -5,7 +5,7 @@ const initialState = {
   userCount: 0
 }
 
-export default function user(state = initialState, action) {
+export default function stats(state = initialState, action) {
   switch (action.type) {
 
     case SET_SYSTEM_STATS: {

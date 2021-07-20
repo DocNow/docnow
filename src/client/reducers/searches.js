@@ -3,7 +3,7 @@ import { SET_TWITTER_SEARCH, DELETE_SEARCH, ADD_SEARCH } from '../actions/search
 
 const initialState = []
 
-export default function settings(state = initialState, action) {
+export default function searches(state = initialState, action) {
   switch (action.type) {
 
     case SET_SEARCHES: {

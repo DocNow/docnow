@@ -5,6 +5,7 @@ import UserList from '../Explore/UserList'
 import HashtagChart from '../Explore/HashtagChart'
 import ImageList from '../Explore/ImageList'
 import VideoList from '../Explore/VideoList'
+import ActionsList from './ActionsList'
 import Tweet from '../Explore/Tweet'
 
 import Card from '@material-ui/core/Card'
@@ -28,7 +29,7 @@ export default class InsightsBody extends Component {
       </CardContent>
       <CardActions className={card.CardActions}>
           <h2 className={insightsStyle.CardLink}>
-            This search has no {type}.
+            This search has no {type}
           </h2>
         </CardActions>
     </Card>)
@@ -99,6 +100,20 @@ export default class InsightsBody extends Component {
       </CardActions>
     </Card>)
 
+    const actionsCard = this.props.search.actions <= 0
+    ? this.makeEmptyCardFor("Actions")
+    : (<Card raised className={card.Card} >
+      <CardContent className={`${card.Scroll} ${card.NoPadding}`}>
+        <ActionsList actions={this.props.search.actions.slice(0, 50)} />
+      </CardContent>
+      <CardActions className={card.CardActions}>
+        <h2 className={insightsStyle.CardLink}>
+          <Link to={`/search/${this.props.searchId}/actions/`}>
+            View {parseInt(this.props.search.actions.length, 10).toLocaleString()} Consent Actions &rarr;</Link>
+        </h2>
+      </CardActions>
+      </Card>)
+
     return (
       <div className={card.CardHolder} style={style}>
         <Card raised className={card.Card} >
@@ -147,6 +162,7 @@ export default class InsightsBody extends Component {
         {webpageCard}
         {imageCard}
         {videoCard}
+        {actionsCard}
       </div>
     )
   }

@@ -15,6 +15,7 @@ export default class Insights extends Component {
     this.props.getVideos(this.props.searchId)
     this.props.getWebpages(this.props.searchId)
     this.props.getHashtags(this.props.searchId)
+    this.props.getActions(this.props.searchId, true)
 
     this.timerId = setInterval(() => {
       this.tick()
@@ -53,6 +54,7 @@ export default class Insights extends Component {
           searchId={this.props.searchId}
           search={this.props.search}
           webpages={this.props.webpages} />
+
     </div>
     )
   }
@@ -62,6 +64,7 @@ Insights.propTypes = {
   searchId: PropTypes.string,
   search: PropTypes.object,
   searches: PropTypes.array,
+  actions: PropTypes.array,
   user: PropTypes.object,
   webpages: PropTypes.array,
   getSearch: PropTypes.func,
@@ -75,4 +78,5 @@ Insights.propTypes = {
   deleteSearch: PropTypes.func,
   createArchive: PropTypes.func,
   getHashtags: PropTypes.func,
+  getActions: PropTypes.func,
 }

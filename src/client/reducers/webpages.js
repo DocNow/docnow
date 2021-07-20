@@ -3,7 +3,7 @@ import { SET_WEBPAGES, RESET_WEBPAGES, SELECT_WEBPAGE,
 
 const initialState = []
 
-export default function savedSearch(state = initialState, action) {
+export default function webpages(state = initialState, action) {
 
   switch (action.type) {
 
