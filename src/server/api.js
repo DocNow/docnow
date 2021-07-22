@@ -76,6 +76,13 @@ app.put('/user/:userId', async (req, res) => {
   }
 })
 
+app.get('/user/actions', async (req, res) => {
+  if (req.user) {
+    const actions = await db.getUserActions(req.user)
+    res.json(actions)
+  }
+})
+
 app.get('/settings', async (req, res) => {
   const settings = await db.getSettings()
   // if they aren't logged in or the they're not an admin

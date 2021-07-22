@@ -960,5 +960,23 @@ export class Database {
 
   }
 
+  async getUserActions(user, includeArchived = false) {
+    const q = {'action.userId': user.id}
+    if (includeArchived) {
+      return Action.query()
+        .withGraphFetched('tweet')
+        .withGraphFetched('user')
+        .where(q)
+        .orderBy('created', 'desc')
+    } else {
+      return Action.query()
+        .withGraphFetched('tweet')
+        .withGraphFetched('user')
+        .where(q)
+        .whereNull('archived')
+        .orderBy('created', 'desc')
+    }
+  }
+
 }
 

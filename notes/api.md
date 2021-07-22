@@ -15,6 +15,14 @@ Get or set application wide settings.
 
 Returns the user information for the user who is logged in (GET)
 
+### /user/{user-id} *(PUT)*
+
+Set user information, admin only.
+
+### /user/actions *(GET)*
+
+Get the consent actions for the logged in user.
+
 ### /world *(GET)*
 
 Returns a dictionary of locations that can be monitored for trends.
@@ -76,3 +84,6 @@ Statistics for the url fetching queue for a search.
 
 Get or update the actions associated with a search.
 
+### /findme/ (GET)
+
+Returns collections that a given user's tweets are a part of.
