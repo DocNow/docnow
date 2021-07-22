@@ -7,25 +7,16 @@ export default class ActionsBody extends Component {
 
   render() {
     if (this.props.search.actions) {
-      // get current consent actions and ignore deletes (no tweets)
+
+      // get current consent actions but ignore deletes (no tweets)
       const actions = this.props.search.actions.filter(a => (
         a.archived === null && a.tweet
       ))
 
-      // reshape as a data table
-      const rows = actions.map(a => ({
-        id: a.id,
-        created: a.created,
-        user: a.tweet.screenName,
-        tweetId: a.tweet.tweetId,
-        tweetText: a.tweet.text,
-        action: a.name
-      }))
-
       const columns = [
         {
           field: 'created',
-          width: 100,
+          width: 200,
           headerName: 'Created',
           valueGetter: params => moment(params.value).local().format('MMM D h:mm:ss A'),
         },
@@ -34,30 +25,28 @@ export default class ActionsBody extends Component {
           width: 200,
           headerName: 'User',
           renderCell: params => {
+            const tweet = params.getValue(params.id, 'tweet')
             return (
-              <a href={`https://twitter.com/${params.value}`}>
-                @{params.value}
+              <a href={`https://twitter.com/${tweet.screenName}`}>
+                @{tweet.screenName}
               </a>
             )
           }
         },
         {
-          field: 'tweetId',
+          field: 'tweet',
           headerName: 'Tweet',
           flex: 1,
           renderCell: params => {
-            const user = params.getValue(params.id, 'user')
-            const tweetId = params.getValue(params.id, 'tweetId')
-            const tweetText = params.getValue(params.id, 'tweetText')
             return (
-              <a href={`https://twitter.com/${user}/status/${tweetId}`}>
-                {tweetText}
+              <a href={`https://twitter.com/${params.value.screenName}/status/${params.value.tweetId}`}>
+                {params.value.text}
               </a>
             )
           }
         },
         {
-          field: 'action',
+          field: 'name',
           width: 200,
           headerName: 'Action',
         }
@@ -69,9 +58,9 @@ export default class ActionsBody extends Component {
           <div style={{ display: 'flex', height: '100%' }}>
             <div style={{ flexGrow: 1 }}>
               <DataGrid 
-                rows={rows}
+                rows={actions}
                 columns={columns}
-                pageSize={25} />
+                pageSize={25} />  
             </div>
           </div>
         </div>
