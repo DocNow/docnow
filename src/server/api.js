@@ -17,6 +17,10 @@ const streamLoader = new StreamLoaderController()
 
 db.startTrendsWatcher({interval: 60 * 1000})
 
+function notAuthorized(res) {
+  res.status(401).json({error: 'Not Authorized'})
+}
+
 app.get('/setup', (req, res) => {
   db.getSettings()
     .then((result) => {
@@ -44,8 +48,7 @@ app.get('/user', (req, res) => {
         res.json({message: 'no such user'})
       })
   } else {
-    res.status(401)
-    res.json({message: 'not logged in'})
+    notAuthorized(res)
   }
 })
 
@@ -59,6 +62,8 @@ app.put('/user', async (req, res) => {
     }
     await db.updateUser(newUser)
     res.json(newUser)
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -72,16 +77,10 @@ app.put('/user/:userId', async (req, res) => {
     await db.updateUser(newUser)
     res.json(newUser)
   } else {
-    res.status(401).json({error: 'Not Authorized'})
+    notAuthorized(res)
   }
 })
 
-app.get('/user/actions', async (req, res) => {
-  if (req.user) {
-    const actions = await db.getUserActions(req.user)
-    res.json(actions)
-  }
-})
 
 app.get('/settings', async (req, res) => {
   const settings = await db.getSettings()
@@ -122,7 +121,10 @@ app.put('/settings', async (req, res) => {
       console.error(err)
       res.json({status: 'error'})
     }
+  } else {
+    notAuthorized(res)
   }
+
 })
 
 app.get('/world', (req, res) => {
@@ -164,7 +166,7 @@ app.put('/trends', async (req, res) => {
 
     res.json({status: 'updated'})
   } else {
-    res.json({status: 'not logged in'})
+    notAuthorized(res)
   }
 })
 
@@ -194,6 +196,8 @@ app.post('/logo', (req, res) => {
         })
       })
     }
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -234,6 +238,8 @@ app.post('/searches', (req, res) => {
         log.error(msg)
         res.error(msg)
       })
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -278,14 +284,23 @@ app.put('/search/:searchId', (req, res) => {
 
       res.json(newSearch)
     })
+  } else {
+    notAuthorized(res)
   }
 })
 
 app.delete('/search/:searchId', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.body.id)
-    const result = await db.deleteSearch(search)
-    res.json(result)
+    const userOwnsSearch = search && search.userId == req.user.id
+    if (userOwnsSearch || req.user.admin) {
+      const result = await db.deleteSearch(search)
+      res.json(result)
+    } else {
+      notAuthorized(res)
+    }
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -296,7 +311,7 @@ app.get('/search/:searchId/tweets', (req, res) => {
   } else {
     searchReq = db.getPublicSearch(req.params.searchId)
     if (!searchReq) {
-      return res.status(401).json({error: 'Not Authorized'})
+      return notAuthorized(res)
     }
   }
   searchReq.then((search) => {
@@ -351,6 +366,8 @@ app.put('/search/:searchId/tweets', async (req, res) => {
     res.json({
       message: `Deleted ${result} tweets (${tweetIds}) from ${searchId} for ${userId}:${twitterUserId}`
     })
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -383,6 +400,8 @@ app.get('/search/:searchId/hashtags', (req, res) => {
             res.json(hashtags)
           })
       })
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -395,6 +414,8 @@ app.get('/search/:searchId/urls', (req, res) => {
             res.json(urls)
           })
       })
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -407,6 +428,8 @@ app.get('/search/:searchId/images', (req, res) => {
             res.json(images)
           })
       })
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -419,6 +442,8 @@ app.get('/search/:searchId/videos', (req, res) => {
             res.json(videos)
           })
       })
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -427,6 +452,8 @@ app.get('/search/:searchId/webpages', async (req, res) => {
     const search = await db.getSearch(req.params.searchId)
     const webpages = await db.getWebpages(search)
     res.json(webpages)
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -441,6 +468,8 @@ app.put('/search/:searchId/webpages', async (req, res) => {
       await db.deselectWebpage(search, url)
     }
     res.json({status: 'updated'})
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -449,6 +478,8 @@ app.get('/search/:searchId/queue', async (req, res) => {
     const search = await db.getSearch(req.params.searchId)
     const result = await db.queueStats(search)
     res.json(result)
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -467,6 +498,8 @@ app.get('/search/:searchId/actions', async (req, res) => {
     }
 
     res.json(actions)
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -476,6 +509,17 @@ app.put('/search/:searchId/actions', async (req, res) => {
     await db.setActions(search, req.user, req.body.tweets, req.body.action.label, req.body.action.remove)
     const actions = await db.getActions(search, req.user)
     res.json(actions)
+  } else {
+    notAuthorized(res)
+  }
+})
+
+app.get('/actions', async (req, res) => {
+  if (req.user) {
+    const actions = await db.getUserActions(req.user)
+    res.json(actions)
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -483,6 +527,8 @@ app.get('/wayback/:url', async (req, res) => {
   if (req.user) {
     const result = await wayback.closest(req.params.url)
     res.json(result)
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -490,12 +536,16 @@ app.put('/wayback/:url', async (req, res) => {
   if (req.user) {
     const result = await wayback.saveArchive(req.params.url)
     res.json(result)
+  } else {
+    notAuthorized(res)
   }
 })
 
 app.get('/stats', async (req, res) => {
   if (req.user) {
     res.json(await db.getSystemStats())
+  } else {
+    notAuthorized(res)
   }
 })
 
@@ -503,7 +553,7 @@ app.get('/users', async (req, res) => {
   if (req.user.isSuperUser) {
     res.json(await db.getUsers())
   } else {
-    res.status(401).json({error: 'Not Authorized'})
+    notAuthorized(res)
   }
 })
 
@@ -512,7 +562,7 @@ app.get('/findme', async (req, res) => {
     const results = await db.getSearchesWithUser(req.user.twitterScreenName)
     res.json(results)
   } else {
-    res.status(401).json({error: 'Not Authorized'})
+    notAuthorized(res)
   }
 })
 
