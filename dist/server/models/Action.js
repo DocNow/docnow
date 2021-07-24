@@ -21,6 +21,8 @@ var _require = require('objection'),
 
 var Tweet = require('./Tweet');
 
+var User = require('./User');
+
 var Action = /*#__PURE__*/function (_Model) {
   (0, _inherits2["default"])(Action, _Model);
 
@@ -46,6 +48,14 @@ var Action = /*#__PURE__*/function (_Model) {
           join: {
             from: 'action.tweetId',
             to: 'tweet.id'
+          }
+        },
+        user: {
+          relation: Model.HasOneRelation,
+          modelClass: User,
+          join: {
+            from: 'action.userId',
+            to: 'user.id'
           }
         }
       };

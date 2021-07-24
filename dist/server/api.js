@@ -44,6 +44,13 @@ var streamLoader = new _streamLoader.StreamLoaderController();
 db.startTrendsWatcher({
   interval: 60 * 1000
 });
+
+function notAuthorized(res) {
+  res.status(401).json({
+    error: 'Not Authorized'
+  });
+}
+
 app.get('/setup', function (req, res) {
   db.getSettings().then(function (result) {
     if (result && result.appKey && result.appSecret) {
@@ -68,10 +75,7 @@ app.get('/user', function (req, res) {
       });
     });
   } else {
-    res.status(401);
-    res.json({
-      message: 'not logged in'
-    });
+    notAuthorized(res);
   }
 });
 app.put('/user', /*#__PURE__*/function () {
@@ -82,7 +86,7 @@ app.put('/user', /*#__PURE__*/function () {
         switch (_context.prev = _context.next) {
           case 0:
             if (!req.user) {
-              _context.next = 8;
+              _context.next = 10;
               break;
             }
 
@@ -99,8 +103,13 @@ app.put('/user', /*#__PURE__*/function () {
 
           case 7:
             res.json(newUser);
+            _context.next = 11;
+            break;
 
-          case 8:
+          case 10:
+            notAuthorized(res);
+
+          case 11:
           case "end":
             return _context.stop();
         }
@@ -139,9 +148,7 @@ app.put('/user/:userId', /*#__PURE__*/function () {
             break;
 
           case 10:
-            res.status(401).json({
-              error: 'Not Authorized'
-            });
+            notAuthorized(res);
 
           case 11:
           case "end":
@@ -203,7 +210,7 @@ app.put('/settings', /*#__PURE__*/function () {
             superUser = _context4.sent;
 
             if (!(!superUser || req.user && req.user.isSuperUser)) {
-              _context4.next = 16;
+              _context4.next = 18;
               break;
             }
 
@@ -243,6 +250,13 @@ app.put('/settings', /*#__PURE__*/function () {
             });
 
           case 16:
+            _context4.next = 19;
+            break;
+
+          case 18:
+            notAuthorized(res);
+
+          case 19:
           case "end":
             return _context4.stop();
         }
@@ -400,9 +414,7 @@ app.put('/trends', /*#__PURE__*/function () {
             break;
 
           case 29:
-            res.json({
-              status: 'not logged in'
-            });
+            notAuthorized(res);
 
           case 30:
           case "end":
@@ -440,6 +452,8 @@ app.post('/logo', function (req, res) {
         });
       });
     }
+  } else {
+    notAuthorized(res);
   }
 });
 app.get('/searches', function (req, res) {
@@ -486,6 +500,8 @@ app.post('/searches', function (req, res) {
 
       res.error(msg);
     });
+  } else {
+    notAuthorized(res);
   }
 });
 app.get('/search/:searchId', /*#__PURE__*/function () {
@@ -576,17 +592,19 @@ app.put('/search/:searchId', function (req, res) {
       });
       res.json(newSearch);
     });
+  } else {
+    notAuthorized(res);
   }
 });
 app["delete"]('/search/:searchId', /*#__PURE__*/function () {
   var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(req, res) {
-    var search, result;
+    var search, userOwnsSearch, result;
     return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
             if (!req.user) {
-              _context8.next = 8;
+              _context8.next = 15;
               break;
             }
 
@@ -595,14 +613,33 @@ app["delete"]('/search/:searchId', /*#__PURE__*/function () {
 
           case 3:
             search = _context8.sent;
-            _context8.next = 6;
+            userOwnsSearch = search && search.userId == req.user.id;
+
+            if (!(userOwnsSearch || req.user.admin)) {
+              _context8.next = 12;
+              break;
+            }
+
+            _context8.next = 8;
             return db.deleteSearch(search);
 
-          case 6:
+          case 8:
             result = _context8.sent;
             res.json(result);
+            _context8.next = 13;
+            break;
 
-          case 8:
+          case 12:
+            notAuthorized(res);
+
+          case 13:
+            _context8.next = 16;
+            break;
+
+          case 15:
+            notAuthorized(res);
+
+          case 16:
           case "end":
             return _context8.stop();
         }
@@ -623,9 +660,7 @@ app.get('/search/:searchId/tweets', function (req, res) {
     searchReq = db.getPublicSearch(req.params.searchId);
 
     if (!searchReq) {
-      return res.status(401).json({
-        error: 'Not Authorized'
-      });
+      return notAuthorized(res);
     }
   }
 
@@ -672,7 +707,7 @@ app.put('/search/:searchId/tweets', /*#__PURE__*/function () {
         switch (_context9.prev = _context9.next) {
           case 0:
             if (!req.user) {
-              _context9.next = 9;
+              _context9.next = 11;
               break;
             }
 
@@ -688,8 +723,13 @@ app.put('/search/:searchId/tweets', /*#__PURE__*/function () {
             res.json({
               message: "Deleted ".concat(result, " tweets (").concat(tweetIds, ") from ").concat(searchId, " for ").concat(userId, ":").concat(twitterUserId)
             });
+            _context9.next = 12;
+            break;
 
-          case 9:
+          case 11:
+            notAuthorized(res);
+
+          case 12:
           case "end":
             return _context9.stop();
         }
@@ -731,6 +771,8 @@ app.get('/search/:searchId/hashtags', function (req, res) {
         res.json(hashtags);
       });
     });
+  } else {
+    notAuthorized(res);
   }
 });
 app.get('/search/:searchId/urls', function (req, res) {
@@ -740,6 +782,8 @@ app.get('/search/:searchId/urls', function (req, res) {
         res.json(urls);
       });
     });
+  } else {
+    notAuthorized(res);
   }
 });
 app.get('/search/:searchId/images', function (req, res) {
@@ -749,6 +793,8 @@ app.get('/search/:searchId/images', function (req, res) {
         res.json(images);
       });
     });
+  } else {
+    notAuthorized(res);
   }
 });
 app.get('/search/:searchId/videos', function (req, res) {
@@ -758,6 +804,8 @@ app.get('/search/:searchId/videos', function (req, res) {
         res.json(videos);
       });
     });
+  } else {
+    notAuthorized(res);
   }
 });
 app.get('/search/:searchId/webpages', /*#__PURE__*/function () {
@@ -768,7 +816,7 @@ app.get('/search/:searchId/webpages', /*#__PURE__*/function () {
         switch (_context10.prev = _context10.next) {
           case 0:
             if (!req.user) {
-              _context10.next = 8;
+              _context10.next = 10;
               break;
             }
 
@@ -783,8 +831,13 @@ app.get('/search/:searchId/webpages', /*#__PURE__*/function () {
           case 6:
             webpages = _context10.sent;
             res.json(webpages);
+            _context10.next = 11;
+            break;
 
-          case 8:
+          case 10:
+            notAuthorized(res);
+
+          case 11:
           case "end":
             return _context10.stop();
         }
@@ -804,7 +857,7 @@ app.put('/search/:searchId/webpages', /*#__PURE__*/function () {
         switch (_context11.prev = _context11.next) {
           case 0:
             if (!req.user) {
-              _context11.next = 14;
+              _context11.next = 16;
               break;
             }
 
@@ -840,8 +893,13 @@ app.put('/search/:searchId/webpages', /*#__PURE__*/function () {
             res.json({
               status: 'updated'
             });
+            _context11.next = 17;
+            break;
 
-          case 14:
+          case 16:
+            notAuthorized(res);
+
+          case 17:
           case "end":
             return _context11.stop();
         }
@@ -861,7 +919,7 @@ app.get('/search/:searchId/queue', /*#__PURE__*/function () {
         switch (_context12.prev = _context12.next) {
           case 0:
             if (!req.user) {
-              _context12.next = 8;
+              _context12.next = 10;
               break;
             }
 
@@ -876,8 +934,13 @@ app.get('/search/:searchId/queue', /*#__PURE__*/function () {
           case 6:
             result = _context12.sent;
             res.json(result);
+            _context12.next = 11;
+            break;
 
-          case 8:
+          case 10:
+            notAuthorized(res);
+
+          case 11:
           case "end":
             return _context12.stop();
         }
@@ -891,13 +954,13 @@ app.get('/search/:searchId/queue', /*#__PURE__*/function () {
 }());
 app.get('/search/:searchId/actions', /*#__PURE__*/function () {
   var _ref13 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee13(req, res) {
-    var search, actions;
+    var search, userOwnsSearch, actions;
     return _regenerator["default"].wrap(function _callee13$(_context13) {
       while (1) {
         switch (_context13.prev = _context13.next) {
           case 0:
             if (!req.user) {
-              _context13.next = 8;
+              _context13.next = 18;
               break;
             }
 
@@ -906,14 +969,38 @@ app.get('/search/:searchId/actions', /*#__PURE__*/function () {
 
           case 3:
             search = _context13.sent;
-            _context13.next = 6;
+            userOwnsSearch = search.userId == req.userId;
+            actions = null;
+
+            if (!(req.params.all && (userOwnsSearch || req.user.admin || req.user.isSuperUser))) {
+              _context13.next = 12;
+              break;
+            }
+
+            _context13.next = 9;
+            return db.getActions(search);
+
+          case 9:
+            actions = _context13.sent;
+            _context13.next = 15;
+            break;
+
+          case 12:
+            _context13.next = 14;
             return db.getActions(search, req.user);
 
-          case 6:
+          case 14:
             actions = _context13.sent;
-            res.json(actions);
 
-          case 8:
+          case 15:
+            res.json(actions);
+            _context13.next = 19;
+            break;
+
+          case 18:
+            notAuthorized(res);
+
+          case 19:
           case "end":
             return _context13.stop();
         }
@@ -933,7 +1020,7 @@ app.put('/search/:searchId/actions', /*#__PURE__*/function () {
         switch (_context14.prev = _context14.next) {
           case 0:
             if (!req.user) {
-              _context14.next = 10;
+              _context14.next = 12;
               break;
             }
 
@@ -952,8 +1039,13 @@ app.put('/search/:searchId/actions', /*#__PURE__*/function () {
           case 8:
             actions = _context14.sent;
             res.json(actions);
+            _context14.next = 13;
+            break;
 
-          case 10:
+          case 12:
+            notAuthorized(res);
+
+          case 13:
           case "end":
             return _context14.stop();
         }
@@ -965,26 +1057,31 @@ app.put('/search/:searchId/actions', /*#__PURE__*/function () {
     return _ref14.apply(this, arguments);
   };
 }());
-app.get('/wayback/:url', /*#__PURE__*/function () {
+app.get('/actions', /*#__PURE__*/function () {
   var _ref15 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee15(req, res) {
-    var result;
+    var actions;
     return _regenerator["default"].wrap(function _callee15$(_context15) {
       while (1) {
         switch (_context15.prev = _context15.next) {
           case 0:
             if (!req.user) {
-              _context15.next = 5;
+              _context15.next = 7;
               break;
             }
 
             _context15.next = 3;
-            return _wayback["default"].closest(req.params.url);
+            return db.getUserActions(req.user);
 
           case 3:
-            result = _context15.sent;
-            res.json(result);
+            actions = _context15.sent;
+            res.json(actions);
+            _context15.next = 8;
+            break;
 
-          case 5:
+          case 7:
+            notAuthorized(res);
+
+          case 8:
           case "end":
             return _context15.stop();
         }
@@ -996,7 +1093,7 @@ app.get('/wayback/:url', /*#__PURE__*/function () {
     return _ref15.apply(this, arguments);
   };
 }());
-app.put('/wayback/:url', /*#__PURE__*/function () {
+app.get('/wayback/:url', /*#__PURE__*/function () {
   var _ref16 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee16(req, res) {
     var result;
     return _regenerator["default"].wrap(function _callee16$(_context16) {
@@ -1004,18 +1101,23 @@ app.put('/wayback/:url', /*#__PURE__*/function () {
         switch (_context16.prev = _context16.next) {
           case 0:
             if (!req.user) {
-              _context16.next = 5;
+              _context16.next = 7;
               break;
             }
 
             _context16.next = 3;
-            return _wayback["default"].saveArchive(req.params.url);
+            return _wayback["default"].closest(req.params.url);
 
           case 3:
             result = _context16.sent;
             res.json(result);
+            _context16.next = 8;
+            break;
 
-          case 5:
+          case 7:
+            notAuthorized(res);
+
+          case 8:
           case "end":
             return _context16.stop();
         }
@@ -1027,27 +1129,31 @@ app.put('/wayback/:url', /*#__PURE__*/function () {
     return _ref16.apply(this, arguments);
   };
 }());
-app.get('/stats', /*#__PURE__*/function () {
+app.put('/wayback/:url', /*#__PURE__*/function () {
   var _ref17 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee17(req, res) {
+    var result;
     return _regenerator["default"].wrap(function _callee17$(_context17) {
       while (1) {
         switch (_context17.prev = _context17.next) {
           case 0:
             if (!req.user) {
-              _context17.next = 6;
+              _context17.next = 7;
               break;
             }
 
-            _context17.t0 = res;
-            _context17.next = 4;
-            return db.getSystemStats();
+            _context17.next = 3;
+            return _wayback["default"].saveArchive(req.params.url);
 
-          case 4:
-            _context17.t1 = _context17.sent;
+          case 3:
+            result = _context17.sent;
+            res.json(result);
+            _context17.next = 8;
+            break;
 
-            _context17.t0.json.call(_context17.t0, _context17.t1);
+          case 7:
+            notAuthorized(res);
 
-          case 6:
+          case 8:
           case "end":
             return _context17.stop();
         }
@@ -1059,20 +1165,20 @@ app.get('/stats', /*#__PURE__*/function () {
     return _ref17.apply(this, arguments);
   };
 }());
-app.get('/users', /*#__PURE__*/function () {
+app.get('/stats', /*#__PURE__*/function () {
   var _ref18 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee18(req, res) {
     return _regenerator["default"].wrap(function _callee18$(_context18) {
       while (1) {
         switch (_context18.prev = _context18.next) {
           case 0:
-            if (!req.user.isSuperUser) {
+            if (!req.user) {
               _context18.next = 8;
               break;
             }
 
             _context18.t0 = res;
             _context18.next = 4;
-            return db.getUsers();
+            return db.getSystemStats();
 
           case 4:
             _context18.t1 = _context18.sent;
@@ -1083,9 +1189,7 @@ app.get('/users', /*#__PURE__*/function () {
             break;
 
           case 8:
-            res.status(401).json({
-              error: 'Not Authorized'
-            });
+            notAuthorized(res);
 
           case 9:
           case "end":
@@ -1099,33 +1203,33 @@ app.get('/users', /*#__PURE__*/function () {
     return _ref18.apply(this, arguments);
   };
 }());
-app.get('/findme', /*#__PURE__*/function () {
+app.get('/users', /*#__PURE__*/function () {
   var _ref19 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee19(req, res) {
-    var results;
     return _regenerator["default"].wrap(function _callee19$(_context19) {
       while (1) {
         switch (_context19.prev = _context19.next) {
           case 0:
-            if (!req.user) {
-              _context19.next = 7;
+            if (!req.user.isSuperUser) {
+              _context19.next = 8;
               break;
             }
 
-            _context19.next = 3;
-            return db.getSearchesWithUser(req.user.twitterScreenName);
+            _context19.t0 = res;
+            _context19.next = 4;
+            return db.getUsers();
 
-          case 3:
-            results = _context19.sent;
-            res.json(results);
-            _context19.next = 8;
+          case 4:
+            _context19.t1 = _context19.sent;
+
+            _context19.t0.json.call(_context19.t0, _context19.t1);
+
+            _context19.next = 9;
             break;
 
-          case 7:
-            res.status(401).json({
-              error: 'Not Authorized'
-            });
-
           case 8:
+            notAuthorized(res);
+
+          case 9:
           case "end":
             return _context19.stop();
         }
@@ -1135,6 +1239,42 @@ app.get('/findme', /*#__PURE__*/function () {
 
   return function (_x37, _x38) {
     return _ref19.apply(this, arguments);
+  };
+}());
+app.get('/findme', /*#__PURE__*/function () {
+  var _ref20 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee20(req, res) {
+    var results;
+    return _regenerator["default"].wrap(function _callee20$(_context20) {
+      while (1) {
+        switch (_context20.prev = _context20.next) {
+          case 0:
+            if (!req.user) {
+              _context20.next = 7;
+              break;
+            }
+
+            _context20.next = 3;
+            return db.getSearchesWithUser(req.user.twitterScreenName);
+
+          case 3:
+            results = _context20.sent;
+            res.json(results);
+            _context20.next = 8;
+            break;
+
+          case 7:
+            notAuthorized(res);
+
+          case 8:
+          case "end":
+            return _context20.stop();
+        }
+      }
+    }, _callee20);
+  }));
+
+  return function (_x39, _x40) {
+    return _ref20.apply(this, arguments);
   };
 }());
 module.exports = app;

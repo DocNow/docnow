@@ -2353,10 +2353,10 @@ var Database = /*#__PURE__*/function () {
                   break;
                 }
 
-                return _context40.abrupt("return", _Action["default"].query().withGraphFetched('tweet').where(q).orderBy('created', 'desc'));
+                return _context40.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).orderBy('created', 'desc'));
 
               case 8:
-                return _context40.abrupt("return", _Action["default"].query().withGraphFetched('tweet').where(q).whereNull('archived').orderBy('created', 'desc'));
+                return _context40.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).whereNull('archived').orderBy('created', 'desc'));
 
               case 9:
               case "end":
@@ -2467,6 +2467,46 @@ var Database = /*#__PURE__*/function () {
       }
 
       return setActions;
+    }()
+  }, {
+    key: "getUserActions",
+    value: function () {
+      var _getUserActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee42(user) {
+        var includeArchived,
+            q,
+            _args42 = arguments;
+        return _regenerator["default"].wrap(function _callee42$(_context42) {
+          while (1) {
+            switch (_context42.prev = _context42.next) {
+              case 0:
+                includeArchived = _args42.length > 1 && _args42[1] !== undefined ? _args42[1] : false;
+                q = {
+                  'action.userId': user.id
+                };
+
+                if (!includeArchived) {
+                  _context42.next = 6;
+                  break;
+                }
+
+                return _context42.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).orderBy('created', 'desc'));
+
+              case 6:
+                return _context42.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).whereNull('archived').orderBy('created', 'desc'));
+
+              case 7:
+              case "end":
+                return _context42.stop();
+            }
+          }
+        }, _callee42);
+      }));
+
+      function getUserActions(_x44) {
+        return _getUserActions.apply(this, arguments);
+      }
+
+      return getUserActions;
     }()
   }]);
   return Database;

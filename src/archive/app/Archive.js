@@ -7,7 +7,7 @@ import Tweets from './Tweets'
 import UsersBody from '../../client/components/Insights/UsersBody'
 import ImagesBody from '../../client/components/Insights/ImagesBody'
 import VideosBody from '../../client/components/Insights/VideosBody'
-import WebpagesBody from '../../client/components/Insights/ActionsBody'
+import WebpagesBody from '../../client/components/Insights/WebpagesBody'
 import ActionsBody from '../../client/components/Insights/ActionsBody'
 
 import styles from '../../client/containers/App.css'
