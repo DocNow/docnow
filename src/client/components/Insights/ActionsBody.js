@@ -49,7 +49,7 @@ export default class ActionsBody extends Component {
         {
           field: 'name',
           headerName: 'Action',
-          width: 200,
+          width: 150,
           renderCell: params => (
             <ButtonLabel name={params.value} />
           )
