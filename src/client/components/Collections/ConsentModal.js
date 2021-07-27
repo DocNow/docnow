@@ -6,7 +6,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Checkbox from '@material-ui/core/Checkbox'
 import Button from '@material-ui/core/Button'
 
-import {labels, labelNames, Label} from '../Label'
+import {labels, labelNames, ImageLabel} from '../Label'
 import style from './ConsentModal.css'
 
 export default class ConsentModal extends Component {
@@ -74,7 +74,7 @@ export default class ConsentModal extends Component {
                       key={`label-${label}`} 
                       className={style.Label}
                       onClick={() => this.toggleLabel(label)}>
-                      <Label name={label} />
+                      <ImageLabel name={label} />
                       <br />
                       <Checkbox color="primary" checked={checked} />
                       {labelNames[label]}

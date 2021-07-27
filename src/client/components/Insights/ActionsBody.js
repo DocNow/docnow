@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import { DataGrid } from '@material-ui/data-grid';
+import { DataGrid } from '@material-ui/data-grid'
+import { ButtonLabel } from '../../components/Label'
 import moment from 'moment'
 
 export default class ActionsBody extends Component {
@@ -47,8 +48,11 @@ export default class ActionsBody extends Component {
         },
         {
           field: 'name',
-          width: 200,
           headerName: 'Action',
+          width: 200,
+          renderCell: params => (
+            <ButtonLabel name={params.value} />
+          )
         }
       ]
 

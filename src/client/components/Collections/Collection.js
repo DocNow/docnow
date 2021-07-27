@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 import FindMe from './FindMe'
 import Tweet from '../Explore/Tweet'
 import ConsentModal from './ConsentModal'
-import { Label } from '../Label.js'
+import { ImageLabel } from '../Label.js'
 
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -167,7 +167,7 @@ export default class CollectionList extends Component {
                     onChange={() => this.toggleOneTweet(tweet)} />
                   <br />
                   {tweet.consentActions.map(action => (
-                     <Label key={`action-${tweet.id}-${action.id}`} name={action.name} />
+                     <ImageLabel key={`action-${tweet.id}-${action.id}`} name={action.name} />
                   ))}
                 </Grid>
                 <Grid item xs={10}>

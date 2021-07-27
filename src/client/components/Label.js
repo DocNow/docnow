@@ -1,6 +1,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 
+import style from './Label.css'
+
 const labels = [
   "sh-c-cg",
   "sh-c-da",
@@ -23,6 +25,17 @@ const labelNames = {
   "sh-c-rn": "Remove Network"
 }
 
+const labelStyles = {
+  "sh-c-am": {backgroundColor: "pink", color: "white"},
+  "sh-c-cg": {backgroundColor: "green", color: "white"},
+  "sh-c-cm": {backgroundColor: "light-green", color: "black"},
+  "sh-c-da": {backgroundColor: "purple", color: "white"},
+  "sh-c-ea": {backgroundColor: "gray", color: "black"},
+  "sh-c-rl": {backgroundColor: "orange", color: "white"},
+  "sh-c-rm": {backgroundColor: "yellow", color: "black"},
+  "sh-c-rn": {backgroundColor: "magenta", color: "white"}
+}
+
 const labelDescriptions = {
   "sh-c-am": "I would like to be anonymized in the archive.",
   "sh-c-cg": "I consent to having my content archived",
@@ -34,22 +47,40 @@ const labelDescriptions = {
   "sh-c-rn": "I would like my social media network connectsion to be removed"
 }
 
-const Label = props => {
+const ImageLabel = props => {
   return (
     <img
-      className="Label" 
+      className={style.Label} 
       alt={labelNames[props.name]}
       title={labelDescriptions[props.name]}
       src={require(`../images/social-humans/${props.name}.jpg`)} />
   )
 }
 
-Label.propTypes = {
+const ButtonLabel = props => {
+  return (
+    <a className={style.Label} href={`https://www.docnow.io/social-humans/${props.name}.html`}>
+      <button
+        style={labelStyles[props.name]}
+        alt={labelNames[props.name]}
+        title={labelDescriptions[props.name]}>
+        {props.name}
+      </button>
+    </a>
+  )
+}
+
+ImageLabel.propTypes = {
+  name: PropTypes.string
+}
+
+ButtonLabel.propTypes = {
   name: PropTypes.string
 }
 
 export {
-  Label,
+  ImageLabel,
+  ButtonLabel,
   labels,
   labelNames
 }
