@@ -486,10 +486,10 @@ app.get('/search/:searchId/queue', async (req, res) => {
 app.get('/search/:searchId/actions', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.params.searchId)
-    const userOwnsSearch = search.userId == req.userId
+    const userOwnsSearch = search.userId == req.user.id
 
     let actions = null
-    if (req.params.all && (userOwnsSearch || req.user.admin || req.user.isSuperUser)) {
+    if (req.query.all && (userOwnsSearch || req.user.admin || req.user.isSuperUser)) {
       // get all actions
       actions = await db.getActions(search)
     } else {

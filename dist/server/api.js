@@ -969,10 +969,10 @@ app.get('/search/:searchId/actions', /*#__PURE__*/function () {
 
           case 3:
             search = _context13.sent;
-            userOwnsSearch = search.userId == req.userId;
+            userOwnsSearch = search.userId == req.user.id;
             actions = null;
 
-            if (!(req.params.all && (userOwnsSearch || req.user.admin || req.user.isSuperUser))) {
+            if (!(req.query.all && (userOwnsSearch || req.user.admin || req.user.isSuperUser))) {
               _context13.next = 12;
               break;
             }
