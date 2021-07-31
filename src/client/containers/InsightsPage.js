@@ -16,6 +16,7 @@ const mapStateToProps = (state, ownProps) => {
     webpages: state.webpages,
     archived: state.search.archived,
     actions: state.search.actions,
+    instanceTweetText: state.settings.instanceTweetText
   }
 }
 

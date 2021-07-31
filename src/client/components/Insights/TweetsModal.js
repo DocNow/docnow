@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import {TwitterTweetEmbed} from 'react-twitter-embed'
 import Modal from 'react-modal'
 
+import CloseModal from './CloseModal'
 import style from './TweetsModal.css'
 
 export default class TweetsModal extends Component {
@@ -19,9 +20,7 @@ export default class TweetsModal extends Component {
     const app = document.getElementById('App')
     return (
       <Modal isOpen={this.props.isOpen} style={modalStyle} appElement={app}>
-        <div className={style.CloseModal}>
-          <ion-icon name="close-circle" onClick={() => {this.props.close()}}></ion-icon>
-        </div>
+        <CloseModal close={this.props.close} title="Tweets" />
         <div className={style.Conversation}>
         { this.props.tweets.map((tweet) => {
 

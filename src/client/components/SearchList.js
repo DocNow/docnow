@@ -74,6 +74,10 @@ export default class SearchList extends Component {
                 <SearchToggle
                   id={search.id}
                   active={search.active}
+                  title={search.title}
+                  description={search.description}
+                  query={search.queries[0]}
+                  instanceTweetText={this.props.instanceTweetText}
                   user={this.props.user}
                   searches={this.props.searches}
                   updateSearch={this.props.updateSearch} />
@@ -114,4 +118,5 @@ SearchList.propTypes = {
   getSearches: PropTypes.func,
   user: PropTypes.object,
   forUserId: PropTypes.number,
+  instanceTweetText: PropTypes.string,
 }

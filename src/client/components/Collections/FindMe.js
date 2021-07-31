@@ -23,7 +23,7 @@ export default class FindMe extends Component {
     )
     if (this.props.user && this.props.user.twitterScreenName) {
       button = (
-        <Button title="Collections with your tweets will be highlighted in green" variant="contained" className={style.LoggedIn}>
+        <Button title="Any collections that contain your tweets will be highlighted in green" variant="contained" className={style.LoggedIn}>
           <ion-icon name="logo-twitter"></ion-icon> &nbsp; 
           @{this.props.user.twitterScreenName}
         </Button>

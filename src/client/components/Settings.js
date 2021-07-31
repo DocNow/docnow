@@ -122,6 +122,7 @@ export default class Settings extends MediaQueryComponent {
 
           <div>
             <TextField
+              required={true}
               variant="outlined"
               id="instanceTitle"
               name="instanceTitle"
@@ -146,6 +147,7 @@ export default class Settings extends MediaQueryComponent {
 
           <div>
             <TextField
+              required={true}
               variant="outlined"
               id="instanceDescription"
               name="instanceDescription"
@@ -166,9 +168,8 @@ export default class Settings extends MediaQueryComponent {
               label="Notification Tweet"
               multiline={true}
               rows={5}
-              helperText="This tweet is sent to announce when a new collection is being built."
-              placeholder="Centerville Public Library is collecting {query}. To learn more click on the link below."
-              value={this.props.instanceTweetText}
+              helperText="This is a template for the tweet announcement to send when new collections are being built."
+              value={this.props.instanceTweetText || "I'm creating a collection of tweets that match {query}. You can learn more and specify the terms of your consent here {collection-url}"}
               onChange={this.props.updateSettings} />
           </div>
 

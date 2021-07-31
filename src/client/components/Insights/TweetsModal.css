@@ -44,18 +44,3 @@
 .ScreenName {
   color: rgb(105, 120, 130)
 }
-
-
-.CloseModal {
-  background-color: #efefef;
-  margin-bottom: 10px;
-  text-align: right;
-  padding: 5px;
-  position: fixed;
-  width: 390px;
-  z-index: 1;
-}
-
-.CloseModal i {
-  font-size: 1.5em;
-}
