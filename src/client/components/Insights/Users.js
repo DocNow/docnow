@@ -6,31 +6,9 @@ import BackButton from './BackButton'
 
 export default class Users extends Component {
 
-  constructor(props) {
-    super(props)
-    this.timerId = null
-  }
-
   componentDidMount() {
-    this.tick()
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 3000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-  }
-
-  scrolledUp() {
-    return document.documentElement.scrollTop === 0
-  }
-
-  tick() {
     this.props.getSearch(this.props.searchId)
-    if (this.props.search.users.length === 0 || this.scrolledUp()) {
-      this.props.getUsers(this.props.searchId)
-    }
+    this.props.getUsers(this.props.searchId)
   }
 
   render() {
@@ -63,7 +41,7 @@ export default class Users extends Component {
 }
 
 Users.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   search: PropTypes.object,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,

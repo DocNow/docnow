@@ -87,6 +87,6 @@ User.propTypes = {
   followers: PropTypes.number,
   desc: PropTypes.string,
   count: PropTypes.number,
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   getTweetsForUser: PropTypes.func
 }
