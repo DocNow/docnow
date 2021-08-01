@@ -2,10 +2,8 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { Redirect } from 'react-router-dom'
 import Button from '@material-ui/core/Button'
-import Typography from '@material-ui/core/Typography'
 
 import style from './Header.css'
-import iStyle from '../../client/components/Insights/Insights.css'
 import dn from '../../client/images/dn.png'
 
 export default class Header extends Component {
@@ -31,29 +29,35 @@ export default class Header extends Component {
       backButton = <Button variant="contained" color="primary"
         onClick={() => {this.setState({goingHome: true})}}>Back</Button>
     }    
-    return (<div className={iStyle.InsightsCard}>
-      <Typography variant="h1" component="h2">
-        <img src={dn} style={{verticalAlign: 'middle'}}/> Archived DocNow Collection
-      </Typography>
-      <Typography variant="h1" component="h2">
-        {this.props.title}
-      </Typography>
-      <div className={style.Description}>{this.props.desc}</div>
-      <div className={style.Metadata}>
-        <div><span className={style.Label}>
-          Created by:</span> {this.props.creator}
+    return (
+      <div className={style.Header}>
+        <div className={style.Logo}>
+          <img src={dn} /> Archived DocNow Collection
         </div>
-        <div>
-          <span className={style.Label}>Twitter search query:</span>
-          <span className={style.Query}>{this.props.searchQuery}</span>
+        <div className={style.Metadata}>
+          <div>
+            <span className={style.Label}>Title:</span>
+            {this.props.title}
+          </div>
+          <div>
+            <span className={style.Label}>Description:</span>
+            {this.props.desc}
+          </div>
+          <div><span className={style.Label}>
+            Creator:</span> {this.props.creator}
+          </div>
+          <div>
+            <span className={style.Label}>Query:</span>
+            <span className={style.Query}>{this.props.searchQuery}</span>
+          </div>
+          <div>
+            <span className={style.Label}>Dates:</span> 
+            {this.startDate.toLocaleDateString()} - {this.endDate.toLocaleDateString()}
+          </div>
         </div>
-        <div>
-          <span className={style.Label}>Tweets archived between:</span> 
-          {this.startDate.toLocaleDateString()} - {this.endDate.toLocaleDateString()}
-        </div>
+        {backButton}
       </div>
-      {backButton}
-    </div>)
+    )
   }
 }
 

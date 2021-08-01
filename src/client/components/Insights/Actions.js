@@ -17,9 +17,9 @@ export default class Actions extends Component {
       <div>
 
         <SearchInfo
-          title={this.props.search.title}
-          description={this.props.search.description}
           search={this.props.search}
+          user={this.props.user}
+          instanceTweetText={this.props.instanceTweetText}
           updateSearch={this.props.updateSearch} />
 
           <BackButton 
@@ -36,8 +36,10 @@ export default class Actions extends Component {
 }
 
 Actions.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   search: PropTypes.object,
+  user: PropTypes.object,
+  instanceTweetText: PropTypes.string,
   getSearch: PropTypes.func,
   getActions: PropTypes.func,
   updateSearch: PropTypes.func,

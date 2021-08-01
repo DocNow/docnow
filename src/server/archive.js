@@ -61,6 +61,7 @@ export class Archive {
     data.videos = await this.db.getVideos(search)
     data.hashtags = await this.db.getHashtags(search)
     data.webpages = await this.db.getWebpages(search)
+    data.actions = await this.db.getActions(search)
     log.info(`saving data to ${searchDir}`)
 
     // save the gathered data to the archive snapshot
