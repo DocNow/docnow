@@ -76,6 +76,6 @@ export default class ActionsBody extends Component {
 }
 
 ActionsBody.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   search: PropTypes.object
 }

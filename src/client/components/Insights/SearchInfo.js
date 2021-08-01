@@ -1,19 +1,19 @@
 import React, { Component } from 'react'
-import PropTypes from 'prop-types'
-import DownloadOptions from '../../containers/DownloadOptions'
-import SearchToggle from '../SearchToggle'
-import SearchPublic from '../SearchPublic'
-import Trash from '../Trash'
-import moment from 'moment'
-import Editable from '../Editable'
 import { Redirect } from 'react-router-dom'
+import PropTypes from 'prop-types'
+import moment from 'moment'
 
 import Table from '@material-ui/core/Table'
 import TableHead from '@material-ui/core/TableHead'
 import TableCell from '@material-ui/core/TableCell'
 import TableRow from '@material-ui/core/TableRow'
 
-// import style from './SearchInfo.css'
+import DownloadOptions from '../../containers/DownloadOptions'
+import SearchToggle from '../SearchToggle'
+import SearchPublic from '../SearchPublic'
+import Trash from '../Trash'
+import Editable from '../Editable'
+
 
 export default class SearchInfo extends Component {
 
@@ -22,14 +22,6 @@ export default class SearchInfo extends Component {
     this.editing = false
     this.state = {
       goHome: false
-    }
-  }
-
-  shouldComponentUpdate(nextProps) {
-    if (nextProps.title === this.title) {
-      return false
-    } else {
-      return true
     }
   }
 
@@ -77,7 +69,7 @@ export default class SearchInfo extends Component {
         <TableRow>
           <TableCell>
             <Editable
-              text={this.props.title}
+              text={this.props.search.title}
               update={(t) => {this.updateTitle(t)}} />
           </TableCell>
           <TableCell>

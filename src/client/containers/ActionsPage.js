@@ -1,6 +1,6 @@
 import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
-import { getSearch, getActions, updateSearch } from '../actions/search'
+import { getSearch, getActions, updateSearch, deleteSearch, createArchive } from '../actions/search'
 import Actions from '../components/Insights/Actions'
 import { push } from 'connected-react-router'
 
@@ -16,6 +16,8 @@ const mapStateToProps = (state, ownProps) => {
 const actions = {
   getSearch,
   updateSearch,
+  deleteSearch,
+  createArchive,
   getActions
 }
 

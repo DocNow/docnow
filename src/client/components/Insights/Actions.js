@@ -20,7 +20,9 @@ export default class Actions extends Component {
           search={this.props.search}
           user={this.props.user}
           instanceTweetText={this.props.instanceTweetText}
-          updateSearch={this.props.updateSearch} />
+          updateSearch={this.props.updateSearch}
+          deleteSearch={this.props.deleteSearch}
+          createArchive={this.props.createArchive} />
 
           <BackButton 
             searchId={this.props.searchId}
@@ -43,5 +45,7 @@ Actions.propTypes = {
   getSearch: PropTypes.func,
   getActions: PropTypes.func,
   updateSearch: PropTypes.func,
+  deleteSearch: PropTypes.func,
+  createArchive: PropTypes.func,
   navigateTo: PropTypes.func
 }

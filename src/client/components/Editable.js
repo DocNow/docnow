@@ -39,7 +39,6 @@ export default class Editable extends Component {
       return (
         <TextField id="input-with-icon-grid" value={this.props.text}
           size={size}
-          autoFocus="autofocus"
           onChange={(e) => this.onChange(e)}
           onBlur={(e) => this.onBlur(e)}
           onKeyDown={(e) => {this.keyDown(e)}}/>
