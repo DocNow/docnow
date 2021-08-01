@@ -7,7 +7,7 @@ import {
 } from '../actions/search'
 
 const initialState = {
-  id: '',
+  id: null,
   creator: '',
   title: '',
   description: '',

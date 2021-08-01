@@ -14,37 +14,21 @@ export default class SearchToggle extends Component {
   constructor(props) {
     super(props)
     this.resetError = this.resetError.bind(this)
+
+    const host = window.location.host
+    const lastQuery = this.props.search.queries[this.props.search.queries.length - 1]
+    const queryText = lastQuery.value.or.map(v => v.value).join(' ')
+    const tweetText = this.props.instanceTweetText
+      .replace('{query}', `"${queryText}"`)
+      .replace('{collection-url}', `https://${host}/${this.props.search.id}`)
+
     this.state = {
       error: null,
-      modalOpen: false
-    }
-  }
-
-  setModalOpen(val) {
-    this.setState({
-      modalOpen: val
-    })
-  }
-
-  toggle(e) {
-    const totalTweets = this.props.searches.reduce((n, search) => n + search.tweetCount, 0) 
-    if (! this.props.user.active) {
-      this.setState({error: 'Your account is not active, please email the admin.'})
-    } else if (totalTweets > this.props.user.tweetQuota) {
-      this.setState({error: 
-        `You are over your quota of ${this.props.user.tweetQuota} tweets.
-        Delete one or more collections to start collecting again.`
-      })
-    } else if (!this.props.active && this.props.searches.filter(s => s.active).length === 2) {
-      this.setState({error: 
-        `You cannot have more than 2 active searches.`
-      })
-    } else {
-      this.props.updateSearch({
-        id: this.props.id,
-        active: e.target.checked,
-        archived: false
-      })
+      modalOpen: false,
+      active: this.props.search.active,
+      title: this.props.search.title,
+      description: this.props.search.description,
+      tweetText: tweetText,
     }
   }
 
@@ -53,12 +37,32 @@ export default class SearchToggle extends Component {
   }
 
   start() {
-    this.setState({error: 'started!'})
+    this.props.updateSearch({
+      id: this.props.search.id,
+      active: true,
+      archived: false
+    })
+    this.setState({
+      modalOpen: false,
+      active: true
+    })
+  }
+
+  stop() {
+    this.props.updateSearch({
+      id: this.props.search.id,
+      active: false,
+      archived: false
+    })
+    this.setState({
+      active: false
+    })
   }
 
   render() {
-    const title = this.props.active ? 'Stop Data Collection' : 'Start Data Collection'
-    const color = this.props.active ? 'primary' : 'secondary'
+    const app = document.getElementById('App')
+    const title = this.state.active ? 'Stop Data Collection' : 'Start Data Collection'
+    const color = this.state.active ? 'primary' : 'secondary'
     const msg = this.state.error ? <Message type="error" text={this.state.error} onClose={this.resetError} /> : ''
 
     const modalStyle = {
@@ -70,25 +74,25 @@ export default class SearchToggle extends Component {
       }
     }
 
-    // get a text representation of the search
-    const host = window.location.host
-    const query = this.props.query.value.or.map(v => v.value).join(' ')
-    const tweetText = this.props.instanceTweetText
-      .replace('{query}', `"${query}"`)
-      .replace('{collection-url}', `https://${host}/${this.props.id}`)
-
     return (
       <>
+
         <Switch className={ServerStyleSheets.Admin}
-          checked={this.props.active}
+          checked={this.state.active}
           color={color}
           title={title}
-          onChange={() => {this.setModalOpen(! this.state.modalOpen)}} />
+          onChange={() => {
+            if (this.state.active) {
+              this.stop()
+            } else {
+              this.setState({modalOpen: true})
+            }
+          }} />
 
         {msg}
 
-        <ReactModal isOpen={this.state.modalOpen} style={modalStyle}>
-          <CloseModal title="Activate Your Search" close={() => this.setModalOpen(false)} style={{width: 590}} />
+        <ReactModal isOpen={this.state.modalOpen} style={modalStyle} appElement={app}>
+          <CloseModal title="Activate Your Search" close={() => this.setState({modalOpen: false})} style={{width: 590}} />
           <div className={style.SearchToggle}>
 
             <section>
@@ -106,8 +110,8 @@ export default class SearchToggle extends Component {
                 name="title"
                 lable="Collection Title"
                 helperText="A short title for your collection."
-                value={this.props.title} 
-                onChange={this.props.updateSearch} 
+                value={this.state.title} 
+                onChange={e => this.setState({title: e.target.value})}
                 fullWidth={true} />
             </section>
 
@@ -120,11 +124,10 @@ export default class SearchToggle extends Component {
                 label="Collection Description"
                 multiline={true}
                 rows={5}
-                autofocus={true}
                 helperText="A description of your search to help others understand why you are creating the collection."
                 placeholder="For example: This collection is being created to document this significant event in our community. Data will be stored in our community center."
-                value={this.props.description}
-                onChange={this.props.updateSearch} />
+                value={this.state.description || ''} 
+                onChange={e => this.setState({description: e.target.value})} />
             </section>
 
             <section>
@@ -136,10 +139,9 @@ export default class SearchToggle extends Component {
                 label="Tweet Text"
                 multiline={true}
                 rows={5}
-                autofocus={true}
                 helperText="Starting tweet collection will cause a tweet to be sent on your behalf letting users know about your collection."
-                value={tweetText}
-                onChange={this.props.updateSearch} />
+                value={this.state.tweetText} 
+                onChange={e => this.setState({tweetText: e.target.value})} />
             </section>
 
             <section>
@@ -158,13 +160,8 @@ export default class SearchToggle extends Component {
 }
 
 SearchToggle.propTypes = {
-  id: PropTypes.number,
-  updateSearch: PropTypes.func,
-  active: PropTypes.bool,
+  search: PropTypes.object,
   user: PropTypes.object,
-  title: PropTypes.string,
-  description: PropTypes.string,
-  query: PropTypes.object,
+  updateSearch: PropTypes.func,
   instanceTweetText: PropTypes.string,
-  searches: PropTypes.array,
 }

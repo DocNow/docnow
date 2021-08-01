@@ -10,12 +10,14 @@ import { push } from 'connected-react-router'
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    searchId: ownProps.match.params.searchId,
+    searchId: parseInt(ownProps.match.params.searchId, 10),
     search: state.search,
+    user: state.user,
     webpages: state.webpages,
     total: state.queue.total,
     remaining: state.queue.remaining,
     tweets: state.tweets,
+    instanceTweetText: state.settings.instanceTweetText
   }
 }
 

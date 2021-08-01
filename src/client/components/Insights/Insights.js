@@ -8,7 +8,7 @@ import style from './Insights.css'
 export default class Insights extends Component {
   componentDidMount() {
     this.props.resetTwitterSearch()
-    this.tick()
+    this.props.getSearch(this.props.searchId)
     this.props.getUsers(this.props.searchId)
     this.props.getTweets(this.props.searchId)
     this.props.getImages(this.props.searchId)
@@ -16,25 +16,12 @@ export default class Insights extends Component {
     this.props.getWebpages(this.props.searchId)
     this.props.getHashtags(this.props.searchId)
     this.props.getActions(this.props.searchId, true)
-
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 3000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-    this.props.resetTwitterSearch()
-  }
-
-  tick() {
-    this.props.getSearch(this.props.searchId)
   }
 
   render() {
 
     // don't render until we at least know the title of the search
-    if (! this.props.search.title) {
+    if (! this.props.search) {
       return <div />
     }
 
@@ -42,9 +29,7 @@ export default class Insights extends Component {
       <div className={style.Insights}>
 
         <SearchInfo
-          title={this.props.search.title}
           search={this.props.search}
-          searches={this.props.searches}
           user={this.props.user}
           instanceTweetText={this.props.instanceTweetText}
           updateSearch={this.props.updateSearch}
@@ -62,7 +47,7 @@ export default class Insights extends Component {
 }
 
 Insights.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   search: PropTypes.object,
   searches: PropTypes.array,
   actions: PropTypes.array,

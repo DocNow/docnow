@@ -43,9 +43,9 @@ export default class Images extends Component {
       <div>
 
         <SearchInfo
-          title={this.props.search.title}
-          description={this.props.search.description}
           search={this.props.search}
+          user={this.props.user}
+          instanceTweetText={this.props.instanceTweetText}
           updateSearch={this.props.updateSearch} />
 
         <BackButton 
@@ -67,6 +67,8 @@ export default class Images extends Component {
 Images.propTypes = {
   searchId: PropTypes.string,
   search: PropTypes.object,
+  user: PropTypes.user,
+  instanceTweetText: PropTypes.string,
   getImages: PropTypes.func,
   getSearch: PropTypes.func,
   getTweetsForImage: PropTypes.func,

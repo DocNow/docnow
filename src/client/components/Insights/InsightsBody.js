@@ -169,7 +169,7 @@ export default class InsightsBody extends Component {
 }
 
 InsightsBody.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   search: PropTypes.object,
   webpages: PropTypes.array,
 }

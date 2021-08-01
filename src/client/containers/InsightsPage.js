@@ -9,7 +9,7 @@ import Insights from '../components/Insights/Insights'
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    searchId: ownProps.match.params.searchId,
+    searchId: parseInt(ownProps.match.params.searchId, 10),
     search: state.search,
     searches: state.searches,
     user: state.user,

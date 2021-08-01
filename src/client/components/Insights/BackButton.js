@@ -22,6 +22,6 @@ export default class BackButton extends Component {
 }
 
 BackButton.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   navigateTo: PropTypes.func
 }

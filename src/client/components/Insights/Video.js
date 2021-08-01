@@ -33,6 +33,6 @@ export default class Video extends Component {
 Video.propTypes = {
   url: PropTypes.string,
   count: PropTypes.number,
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   getTweetsForVideo: PropTypes.func
 }

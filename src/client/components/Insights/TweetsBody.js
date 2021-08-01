@@ -156,7 +156,7 @@ TweetsBody.defaultProps = {
 }
 
 TweetsBody.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   displayRetweets: PropTypes.bool,
   tweets: PropTypes.array,
   tweetCount: PropTypes.number,

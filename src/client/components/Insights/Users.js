@@ -38,9 +38,9 @@ export default class Users extends Component {
       <div>
 
         <SearchInfo
-          title={this.props.search.title}
-          description={this.props.search.description}
           search={this.props.search}
+          user={this.props.user}
+          instanceTweetText={this.props.instanceTweetText}
           updateSearch={this.props.updateSearch} />
 
         <BackButton 
@@ -65,6 +65,8 @@ export default class Users extends Component {
 Users.propTypes = {
   searchId: PropTypes.string,
   search: PropTypes.object,
+  user: PropTypes.object,
+  instanceTweetText: PropTypes.string,
   getUsers: PropTypes.func,
   getSearch: PropTypes.func,
   getTweetsForUser: PropTypes.func,

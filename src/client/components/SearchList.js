@@ -33,7 +33,6 @@ export default class SearchList extends Component {
   }
 
   render() {
-
     return (
       <Table>
         <TableHead>
@@ -73,13 +72,9 @@ export default class SearchList extends Component {
               <TableCell>
                 <SearchToggle
                   id={search.id}
-                  active={search.active}
-                  title={search.title}
-                  description={search.description}
-                  query={search.queries[0]}
+                  search={search}
                   instanceTweetText={this.props.instanceTweetText}
                   user={this.props.user}
-                  searches={this.props.searches}
                   updateSearch={this.props.updateSearch} />
               </TableCell>
               <TableCell>

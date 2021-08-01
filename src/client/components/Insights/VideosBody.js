@@ -46,7 +46,7 @@ export default class VideosBody extends Component {
 }
 
 VideosBody.propTypes = {
-  searchId: PropTypes.string,
+  searchId: PropTypes.number,
   search: PropTypes.object,
   getTweetsForVideo: PropTypes.func,
   resetTweets: PropTypes.func,

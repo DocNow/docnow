@@ -7,10 +7,12 @@ import { push } from 'connected-react-router'
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    searchId: ownProps.match.params.searchId,
+    searchId: parseInt(ownProps.match.params.searchId, 10),
     search: state.search,
+    user: state.user,
     tweets: state.tweets,
     location: state.router.location.pathname,
+    instanceTweetText: state.settings.instanceTweetText,
   }
 }
 

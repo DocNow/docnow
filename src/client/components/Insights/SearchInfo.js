@@ -16,6 +16,7 @@ import TableRow from '@material-ui/core/TableRow'
 // import style from './SearchInfo.css'
 
 export default class SearchInfo extends Component {
+
   constructor(props) {
     super(props)
     this.editing = false
@@ -52,7 +53,9 @@ export default class SearchInfo extends Component {
   }
 
   render() {
-    if (this.state.goHome) {
+    if (! this.props.search || ! this.props.search.id ) {
+      return <div />
+    } else if (this.state.goHome) {
       return <Redirect to="/searches" push={true} />
     }
     const created = moment(this.props.search.created).local().format('MMM D h:mm A')
@@ -90,11 +93,7 @@ export default class SearchInfo extends Component {
           </TableCell>
           <TableCell>
             <SearchToggle
-              active={this.props.search.active}
-              id={this.props.search.id}
-              description={this.props.search.description}
-              query={this.props.search.queries[0]}
-              searches={this.props.searches}
+              search={this.props.search}
               instanceTweetText={this.props.instanceTweetText}
               user={this.props.user}
               updateSearch={this.props.updateSearch} />  
