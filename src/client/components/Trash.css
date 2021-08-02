@@ -4,14 +4,19 @@
   cursor: pointer;
 }
 
-.Modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.DeleteSearch {
+  margin: 60px 10px 10px 10px;
 }
 
-.Paper {
-  background-color: #fff;
-  border: 2px solid #000;
-  padding: 1em;
+.DeleteSearch .Title {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.DeleteButton {
+  text-align: center;
+}
+
+.DeleteButton button {
+  background-color: pink;
 }
