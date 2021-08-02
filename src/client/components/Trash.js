@@ -18,10 +18,11 @@ const modalStyle = {
 
 const Trash = ({id, title, deleteSearch}) => {
 
+  const app = document.getElementById('App')
   const [open, setOpen] = React.useState(false)
 
   const handleOpen = () => {
-    setOpen(true);
+    setOpen(true)
   }
 
   const handleClose = () => {
@@ -34,6 +35,7 @@ const Trash = ({id, title, deleteSearch}) => {
         <ion-icon title="Delete Search!" name="trash"></ion-icon>
       </span>
       <Modal
+        appElement={app}
         style={modalStyle}
         className={style.Modal}
         isOpen={open}
