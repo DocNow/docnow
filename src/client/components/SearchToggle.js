@@ -28,7 +28,9 @@ export default class SearchToggle extends Component {
       active: this.props.search.active,
       title: this.props.search.title,
       description: this.props.search.description,
+      descriptionError: false,
       tweetText: tweetText,
+      tweetTextError: false,
     }
   }
 
@@ -37,11 +39,30 @@ export default class SearchToggle extends Component {
   }
 
   start() {
+
+    let error = false
+    if (! this.state.description) {
+      error = true
+      this.setState({descriptionError: true})
+    }
+
+    if (! this.state.tweetText) {
+      error = true
+      this.setState({tweetTextError: true})
+    }
+
+    if (error) {
+      return
+    }
+
     this.props.updateSearch({
       id: this.props.search.id,
+      description: this.state.description,
+      tweetText: this.state.tweetText,
       active: true,
-      archived: false
+      archived: false,
     })
+
     this.setState({
       modalOpen: false,
       active: true
@@ -85,7 +106,11 @@ export default class SearchToggle extends Component {
             if (this.state.active) {
               this.stop()
             } else {
-              this.setState({modalOpen: true})
+              this.setState({
+                descriptionError: false,
+                tweetTextError: false,
+                modalOpen: true
+              })
             }
           }} />
 
@@ -122,6 +147,7 @@ export default class SearchToggle extends Component {
 
             <section>
               <TextField
+                error={this.state.descriptionError}
                 required={true}
                 variant="outlined"
                 id="description"
@@ -137,6 +163,7 @@ export default class SearchToggle extends Component {
 
             <section>
               <TextField
+                error={this.state.tweetTextError}
                 required={this.props.user.admin}
                 variant="outlined"
                 id="tweet"

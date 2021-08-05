@@ -243,9 +243,11 @@ export class Twitter {
     })
   }
 
-  sendTweet(text) {
-    console.log(text)
-    return 123
+  async sendTweet(text) {
+    const result = await this.twit.post('statuses/update', {
+      status: text
+    })
+    return result.data.id_str
   }
 
 }

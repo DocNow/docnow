@@ -266,6 +266,12 @@ app.get('/search/:searchId', async (req, res) => {
 app.put('/search/:searchId', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.body.id)
+
+    // get any tweet text that was sent and remove it from the body
+    // since it's not a property of the search
+    const tweetText = req.body.tweetText
+    delete req.body.tweetText
+
     const newSearch = {...search, ...req.body}
     await db.updateSearch(newSearch)
 
@@ -276,10 +282,7 @@ app.put('/search/:searchId', async (req, res) => {
       // stop search too?
     } else if (! search.active && newSearch.active) {
       const twtr = await db.getTwitterClientForUser(req.user)
-      const tweetId = await twtr.sendTweet({
-        userId: req.user.id,
-        text: search.tweetText
-      })
+      const tweetId = await twtr.sendTweet(tweetText)
       streamLoader.startStream(search.id, tweetId)
       // start search too?
     } else if (! search.archiveStarted && newSearch.archiveStarted) {
