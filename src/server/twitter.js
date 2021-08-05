@@ -243,4 +243,9 @@ export class Twitter {
     })
   }
 
+  sendTweet(text) {
+    console.log(text)
+    return 123
+  }
+
 }

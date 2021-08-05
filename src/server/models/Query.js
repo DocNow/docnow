@@ -1,5 +1,6 @@
 const { Model } = require('objection')
 const Search = require('./Search')
+const SearchJob = require('./SearchJob')
 
 class Query extends Model {
 
@@ -15,6 +16,14 @@ class Query extends Model {
         join: {
           from: 'query.search_id',
           to: 'search.id'
+        }
+      },
+      searchJobs: {
+        relation: Model.HasManyRelation,
+        modelClass: SearchJob, 
+        join: {
+          from: 'query.id',
+          to: 'searchJob.queryId'
         }
       }
     }

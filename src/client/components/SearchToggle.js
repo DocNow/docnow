@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Message from './Message'
-import ReactModal from 'react-modal'
+import Modal from 'react-modal'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Switch from '@material-ui/core/Switch'
@@ -91,7 +91,12 @@ export default class SearchToggle extends Component {
 
         {msg}
 
-        <ReactModal isOpen={this.state.modalOpen} style={modalStyle} appElement={app}>
+        <Modal 
+          onClose={() => this.setState({modalOpen: false})} 
+          isOpen={this.state.modalOpen} 
+          style={modalStyle} 
+          appElement={app}>
+
           <CloseModal title="Activate Your Search" close={() => this.setState({modalOpen: false})} style={{width: 590}} />
           <div className={style.SearchToggle}>
 
@@ -152,7 +157,8 @@ export default class SearchToggle extends Component {
             </section>
 
           </div>
-        </ReactModal>
+
+        </Modal>
       </>
     )
   }

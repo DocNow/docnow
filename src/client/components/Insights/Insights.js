@@ -6,6 +6,7 @@ import InsightsBody from './InsightsBody'
 import style from './Insights.css'
 
 export default class Insights extends Component {
+  
   componentDidMount() {
     this.props.resetTwitterSearch()
     this.props.getSearch(this.props.searchId)

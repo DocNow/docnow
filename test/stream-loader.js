@@ -39,6 +39,9 @@ describe('stream-loader', () => {
     const tweets = await db.getTweets(search)
     ok(tweets.length === 0, 'search has no tweets')
 
+    query = search.queries[0]
+    ok(query.id, 'query id is set')
+
   })
 
   it('should load tweets', (done) => {
@@ -74,6 +77,25 @@ describe('stream-loader', () => {
       db.close()
       done()
     }, 5000)
+  })
+
+  it('should have created a SearchJob', (done) => {
+    setTimeout(async () => {
+
+      const query = await db.getQuery(queryId)
+      ok(query, 'found query')
+      ok(query.searchJobs, 'search jobs is defined')
+      ok(query.searchJobs.length == 1, 'the query should have one search job')
+
+      const job = query.searchJobs[0]
+      ok(job.started, 'job started is set')
+      ok(job.ended, 'job ended is set')
+      ok(job.tweetId, 'job tweet id is set')
+      ok(job.tweets > 0, 'job number of tweets is set')
+
+      db.close()
+      done()
+    }, 6000)
   })
 
 })

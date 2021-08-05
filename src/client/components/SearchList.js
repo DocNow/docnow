@@ -17,17 +17,6 @@ import SearchPublic from './SearchPublic'
 export default class SearchList extends Component {
 
   componentDidMount() {
-    this.tick()
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 3000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-  }
-
-  tick() {
     const userId = this.props.forUserId || this.props.user.id
     this.props.getSearches(userId)
   }
@@ -95,6 +84,7 @@ export default class SearchList extends Component {
               <TableCell>
                 <Trash
                   id={search.id}
+                  title={search.title}
                   deleteSearch={this.props.deleteSearch} />
               </TableCell>
             </TableRow>

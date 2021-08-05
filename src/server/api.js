@@ -243,7 +243,6 @@ app.post('/searches', (req, res) => {
   }
 })
 
-
 app.get('/search/:searchId', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.params.searchId)
@@ -264,26 +263,30 @@ app.get('/search/:searchId', async (req, res) => {
   }
 })
 
-app.put('/search/:searchId', (req, res) => {
+app.put('/search/:searchId', async (req, res) => {
   if (req.user) {
-    db.getSearch(req.body.id).then((search) => {
-      const newSearch = {...search, ...req.body}
+    const search = await db.getSearch(req.body.id)
+    const newSearch = {...search, ...req.body}
+    await db.updateSearch(newSearch)
 
-      db.updateSearch(newSearch).then(() => {
-        if (req.query.refreshTweets) {
-          db.importFromSearch(search)
-        } else if (search.active && ! newSearch.active) {
-          streamLoader.stopStream(search.id)
-        } else if (! search.active && newSearch.active) {
-          streamLoader.startStream(search.id)
-        } else if (! search.archiveStarted && newSearch.archiveStarted) {
-          const archive = new Archive()
-          archive.createArchive(search)
-        }
+    if (req.query.refreshTweets) {
+      db.importFromSearch(search)
+    } else if (search.active && ! newSearch.active) {
+      streamLoader.stopStream(search.id)
+      // stop search too?
+    } else if (! search.active && newSearch.active) {
+      const twtr = await db.getTwitterClientForUser(req.user)
+      const tweetId = await twtr.sendTweet({
+        userId: req.user.id,
+        text: search.tweetText
       })
-
-      res.json(newSearch)
-    })
+      streamLoader.startStream(search.id, tweetId)
+      // start search too?
+    } else if (! search.archiveStarted && newSearch.archiveStarted) {
+      const archive = new Archive()
+      archive.createArchive(search)
+    }
+    res.json(newSearch)
   } else {
     notAuthorized(res)
   }

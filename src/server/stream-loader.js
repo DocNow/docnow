@@ -22,8 +22,8 @@ export class StreamLoaderController {
     this.redis.quit()
   }
 
-  startStream(searchId) {
-    this.redis.rpush(START_STREAM, searchId)
+  startStream(searchId, tweetId) {
+    this.redis.rpush(START_STREAM, JSON.stringify({searchId, tweetId}))
   }
 
   stopStream(searchId) {
@@ -66,9 +66,10 @@ export class StreamLoader {
 
     this.active = true
     while (this.active) {
-      const item = await this.redisBlocking.blpopAsync(START_STREAM, 10)
-      if (item) {
-        this.startStream(item[1])
+      const result = await this.redisBlocking.blpopAsync(START_STREAM, 10)
+      if (result) {
+        const info = JSON.parse(result[1])
+        this.startStream(info.searchId, info.tweetId)
       }
     }
   }
@@ -81,31 +82,33 @@ export class StreamLoader {
     this.db.close()
   }
 
-  async startStream(searchId) {
-    log.info('starting stream', {searchId})
+  async startStream(searchId, tweetId) {
+    log.info(`starting stream search ${searchId}`)
 
     const search = await this.db.getSearch(searchId)
-    if (! search) {
-      log.error('unable to find search for ' + searchId)
-      return
-    }
+    const query = search.queries[search.queries.length - 1]
+    const job = await this.db.createSearchJob({
+      queryId: query.id, 
+      tweetId: tweetId,
+      started: new Date()
+    })
 
     const user = search.creator
+    const track = query.trackQuery()
+
     const t = await this.db.getTwitterClientForUser(user)
 
-    const lastQuery = search.queries[search.queries.length - 1]
-    const track = lastQuery.trackQuery()
     let tweets = []
-
-    this.activeStreams.add(searchId)
-
     let lastUpdate = new Date()
+    let totalTweets = 0
+
+    this.activeStreams.add(String(searchId))
 
     t.filter({track: track}, async tweet => {
       tweets.push(tweet)
 
-      if (! (this.active === true && this.activeStreams.has(searchId))) {
-        log.info('stream for ' + searchId + ' has been closed')
+      if (! (this.active === true && this.activeStreams.has(String(searchId)))) {
+        log.info(`stream for search ${searchId} has been closed`)
         return false
       }
 
@@ -125,12 +128,14 @@ export class StreamLoader {
           return false
         }
 
-        const numTweets = tweets.length
-        this.db.loadTweets(search, tweets).then(() => {
-          log.info('loaded ' + numTweets + ' tweets for ' + search.id)
-        }).catch(e => {
-          log.error(`error during stream loading: ${e}`)
+        await this.db.loadTweets(search, tweets)
+
+        totalTweets += tweets.length
+        await this.db.updateSearchJob({
+          id: job.id,
+          tweets: totalTweets
         })
+
         tweets = []
         lastUpdate = new Date()
       }
@@ -141,10 +146,27 @@ export class StreamLoader {
   }
 
   async stopStream(searchId) {
-    log.info('stopping stream', {searchId})
+    log.info(`stopping stream for search ${searchId}`)
     const search = await this.db.getSearch(searchId)
     this.db.updateSearch({...search, active: false, archived: false})
-    this.activeStreams.delete(searchId)
+
+    const query = search.queries[search.queries.length - 1]
+
+    // need a better way to identify the search job that needs to 
+    // be ended but for now just mark any search job that has no 
+    // ended time. once we can do historical collection it will be 
+    // important to only end the filter stream job
+
+    for (const job of query.searchJobs) {
+      if (! job.ended) {
+        await this.db.updateSearchJob({
+          id: job.id,
+          ended: new Date()
+        })
+      }
+    }
+
+    this.activeStreams.delete(String(searchId))
   }
 
 }

@@ -17,6 +17,8 @@ import { Twitter } from './twitter'
 import { UrlFetcher } from './url-fetcher'
 import knexfile from '../../knexfile'
 import { getRedis } from './redis'
+import Query from './models/Query'
+import SearchJob from './models/SearchJob'
 
 const urlFetcher = new UrlFetcher()
 
@@ -26,10 +28,6 @@ export class Database {
     this.redis = getRedis()
     this.pg = knex(knexfile)
     Model.knex(this.pg)
-  }
-
-  getIndex(type) {
-    return this.esPrefix + '-' + type
   }
 
   close() {
@@ -44,58 +42,6 @@ export class Database {
       await this.pg.migrate.rollback(null, true)
     }
     await this.pg.migrate.latest()
-  }
-
-  add(type, id, doc) {
-    log.debug(`update ${type} ${id}`, doc)
-    return new Promise((resolve, reject) => {
-      this.es.index({
-        index: this.getIndex(type),
-        type: type,
-        id: id,
-        body: doc,
-        refresh: 'wait_for'
-      })
-      .then(() => {resolve(doc)})
-      .catch(reject)
-    })
-  }
-
-  get(type, id) {
-    log.debug(`get type=${type} id=${id}`)
-    return new Promise((resolve, reject) => {
-      this.es.get({
-        index: this.getIndex(type),
-        type: type,
-        id: id
-      }).then((result) => {
-        resolve(result._source)
-      }).catch((err) => {
-        reject(err)
-      })
-    })
-  }
-
-  search(type, q, first = false) {
-    log.debug('search', type, q, first)
-    const size = first ? 1 : 1000
-    return new Promise((resolve, reject) => {
-      this.es.search({index: this.getIndex(type), type: type, q: q, size: size})
-        .then((result) => {
-          if (result.hits.total > 0) {
-            if (first) {
-              resolve(result.hits.hits[0]._source)
-            } else {
-              resolve(result.hits.hits.map((h) => {return h._source}))
-            }
-          } else if (first) {
-            resolve(null)
-          } else {
-            resolve([])
-          }
-        })
-        .catch(reject)
-    })
   }
 
   async addSettings(settings) {
@@ -366,7 +312,7 @@ export class Database {
     const search = await Search.query()
       .findById(searchId)
       .withGraphJoined('creator')
-      .withGraphJoined('queries')
+      .withGraphJoined('queries.searchJobs')
 
     if (! search) {
       return null
@@ -544,7 +490,7 @@ export class Database {
 
     // flag the search as active or running
     await this.updateSearch({id: search.id, active: true})
-   
+
     // determine the query to run
     const lastQuery = search.queries[search.queries.length - 1]
     const q = lastQuery.searchQuery()
@@ -978,5 +924,32 @@ export class Database {
     }
   }
 
-}
+  async getQuery(queryId) {
+    const query = await Query.query()
+      .findById(queryId)
+      .withGraphJoined('search')
+      .withGraphJoined('searchJobs')
+      .withGraphJoined('search.user')
+      .orderBy('searchJobs.created', 'ASC')
+    return query
+  }
 
+  createSearchJob(job) {
+    return SearchJob.query().insertAndFetch(job)
+  }
+
+  async getSearchJob(searchJobId) {
+    const job = await SearchJob.query()
+      .findById(searchJobId)
+      .withGraphJoined('query')
+      .withGraphJoined('query.search')
+    return job
+  }
+
+  async updateSearchJob(job) {
+    await SearchJob.query()
+      .patch({...job, updated: new Date()})
+      .where('id', job.id)
+  }
+
+}
