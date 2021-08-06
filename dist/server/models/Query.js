@@ -27,6 +27,8 @@ var _require = require('objection'),
 
 var Search = require('./Search');
 
+var SearchJob = require('./SearchJob');
+
 var Query = /*#__PURE__*/function (_Model) {
   (0, _inherits2["default"])(Query, _Model);
 
@@ -116,6 +118,14 @@ var Query = /*#__PURE__*/function (_Model) {
           join: {
             from: 'query.search_id',
             to: 'search.id'
+          }
+        },
+        searchJobs: {
+          relation: Model.HasManyRelation,
+          modelClass: SearchJob,
+          join: {
+            from: 'query.id',
+            to: 'searchJob.queryId'
           }
         }
       };

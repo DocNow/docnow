@@ -167,37 +167,42 @@ var Archive = /*#__PURE__*/function () {
 
               case 50:
                 data.webpages = _context.sent;
+                _context.next = 53;
+                return this.db.getActions(search);
+
+              case 53:
+                data.actions = _context.sent;
 
                 _logger["default"].info("saving data to ".concat(searchDir)); // save the gathered data to the archive snapshot
 
 
-                _context.next = 54;
+                _context.next = 57;
                 return this.saveData(data, searchDir);
 
-              case 54:
+              case 57:
                 _logger["default"].info("saving ids to ".concat(searchDir)); // write out an addition ids.txt file for the hydrator
 
 
-                _context.next = 57;
+                _context.next = 60;
                 return this.saveIds(data, searchDir);
 
-              case 57:
+              case 60:
                 // zip up the directory
                 zipPath = _path["default"].join(archivesDir, "".concat(search.id, ".zip"));
-                _context.next = 60;
+                _context.next = 63;
                 return this.writeZip(searchDir, zipPath);
 
-              case 60:
-                _context.next = 62;
+              case 63:
+                _context.next = 65;
                 return this.db.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
                   archived: true,
                   archiveStarted: false
                 }));
 
-              case 62:
+              case 65:
                 return _context.abrupt("return", zipPath);
 
-              case 63:
+              case 66:
               case "end":
                 return _context.stop();
             }

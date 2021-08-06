@@ -428,6 +428,38 @@ var Twitter = /*#__PURE__*/function () {
         quote: quote
       };
     }
+  }, {
+    key: "sendTweet",
+    value: function () {
+      var _sendTweet = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(text) {
+        var result;
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
+          while (1) {
+            switch (_context3.prev = _context3.next) {
+              case 0:
+                _context3.next = 2;
+                return this.twit.post('statuses/update', {
+                  status: text
+                });
+
+              case 2:
+                result = _context3.sent;
+                return _context3.abrupt("return", result.data.id_str);
+
+              case 4:
+              case "end":
+                return _context3.stop();
+            }
+          }
+        }, _callee3, this);
+      }));
+
+      function sendTweet(_x3) {
+        return _sendTweet.apply(this, arguments);
+      }
+
+      return sendTweet;
+    }()
   }]);
   return Twitter;
 }();

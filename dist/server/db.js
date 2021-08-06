@@ -51,6 +51,10 @@ var _knexfile = _interopRequireDefault(require("../../knexfile"));
 
 var _redis = require("./redis");
 
+var _Query = _interopRequireDefault(require("./models/Query"));
+
+var _SearchJob = _interopRequireDefault(require("./models/SearchJob"));
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -73,11 +77,6 @@ var Database = /*#__PURE__*/function () {
   }
 
   (0, _createClass2["default"])(Database, [{
-    key: "getIndex",
-    value: function getIndex(type) {
-      return this.esPrefix + '-' + type;
-    }
-  }, {
     key: "close",
     value: function close() {
       this.pg.destroy();
@@ -128,77 +127,6 @@ var Database = /*#__PURE__*/function () {
 
       return clear;
     }()
-  }, {
-    key: "add",
-    value: function add(type, id, doc) {
-      var _this = this;
-
-      _logger["default"].debug("update ".concat(type, " ").concat(id), doc);
-
-      return new Promise(function (resolve, reject) {
-        _this.es.index({
-          index: _this.getIndex(type),
-          type: type,
-          id: id,
-          body: doc,
-          refresh: 'wait_for'
-        }).then(function () {
-          resolve(doc);
-        })["catch"](reject);
-      });
-    }
-  }, {
-    key: "get",
-    value: function get(type, id) {
-      var _this2 = this;
-
-      _logger["default"].debug("get type=".concat(type, " id=").concat(id));
-
-      return new Promise(function (resolve, reject) {
-        _this2.es.get({
-          index: _this2.getIndex(type),
-          type: type,
-          id: id
-        }).then(function (result) {
-          resolve(result._source);
-        })["catch"](function (err) {
-          reject(err);
-        });
-      });
-    }
-  }, {
-    key: "search",
-    value: function search(type, q) {
-      var _this3 = this;
-
-      var first = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-
-      _logger["default"].debug('search', type, q, first);
-
-      var size = first ? 1 : 1000;
-      return new Promise(function (resolve, reject) {
-        _this3.es.search({
-          index: _this3.getIndex(type),
-          type: type,
-          q: q,
-          size: size
-        }).then(function (result) {
-          if (result.hits.total > 0) {
-            if (first) {
-              resolve(result.hits.hits[0]._source);
-            } else {
-              resolve(result.hits.hits.map(function (h) {
-                return h._source;
-              }));
-            }
-          } else if (first) {
-            resolve(null);
-          } else {
-            resolve([]);
-          }
-        })["catch"](reject);
-      });
-    }
   }, {
     key: "addSettings",
     value: function () {
@@ -959,10 +887,10 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTwitterClientForUser",
     value: function getTwitterClientForUser(user) {
-      var _this4 = this;
+      var _this = this;
 
       return new Promise(function (resolve) {
-        _this4.getSettings().then(function (settings) {
+        _this.getSettings().then(function (settings) {
           resolve(new _twitter.Twitter({
             consumerKey: settings.appKey,
             consumerSecret: settings.appSecret,
@@ -1022,7 +950,7 @@ var Database = /*#__PURE__*/function () {
             switch (_context15.prev = _context15.next) {
               case 0:
                 _context15.next = 2;
-                return _Search["default"].query().findById(searchId).withGraphJoined('creator').withGraphJoined('queries');
+                return _Search["default"].query().findById(searchId).withGraphJoined('creator').withGraphJoined('queries.searchJobs');
 
               case 2:
                 search = _context15.sent;
@@ -1441,7 +1369,7 @@ var Database = /*#__PURE__*/function () {
     key: "importFromSearch",
     value: function () {
       var _importFromSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee24(search) {
-        var _this5 = this;
+        var _this2 = this;
 
         var maxTweets,
             user,
@@ -1506,7 +1434,7 @@ var Database = /*#__PURE__*/function () {
                               }
 
                               _context23.next = 7;
-                              return _this5.updateSearch({
+                              return _this2.updateSearch({
                                 id: search.id,
                                 maxTweetId: maxTweetId,
                                 active: false
@@ -1523,7 +1451,7 @@ var Database = /*#__PURE__*/function () {
                               }
 
                               _context23.next = 13;
-                              return _this5.loadTweets(search, results);
+                              return _this2.loadTweets(search, results);
 
                             case 13:
                               count += results.length;
@@ -2127,10 +2055,10 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "processUrl",
     value: function processUrl() {
-      var _this6 = this;
+      var _this3 = this;
 
       return new Promise(function (resolve, reject) {
-        _this6.redis.blpopAsync('urlqueue', 0).then(function (result) {
+        _this3.redis.blpopAsync('urlqueue', 0).then(function (result) {
           var job = JSON.parse(result[1]);
           resolve({
             url: job.url,
@@ -2507,6 +2435,98 @@ var Database = /*#__PURE__*/function () {
       }
 
       return getUserActions;
+    }()
+  }, {
+    key: "getQuery",
+    value: function () {
+      var _getQuery = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee43(queryId) {
+        var query;
+        return _regenerator["default"].wrap(function _callee43$(_context43) {
+          while (1) {
+            switch (_context43.prev = _context43.next) {
+              case 0:
+                _context43.next = 2;
+                return _Query["default"].query().findById(queryId).withGraphJoined('search').withGraphJoined('searchJobs').withGraphJoined('search.user').orderBy('searchJobs.created', 'ASC');
+
+              case 2:
+                query = _context43.sent;
+                return _context43.abrupt("return", query);
+
+              case 4:
+              case "end":
+                return _context43.stop();
+            }
+          }
+        }, _callee43);
+      }));
+
+      function getQuery(_x45) {
+        return _getQuery.apply(this, arguments);
+      }
+
+      return getQuery;
+    }()
+  }, {
+    key: "createSearchJob",
+    value: function createSearchJob(job) {
+      return _SearchJob["default"].query().insertAndFetch(job);
+    }
+  }, {
+    key: "getSearchJob",
+    value: function () {
+      var _getSearchJob = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee44(searchJobId) {
+        var job;
+        return _regenerator["default"].wrap(function _callee44$(_context44) {
+          while (1) {
+            switch (_context44.prev = _context44.next) {
+              case 0:
+                _context44.next = 2;
+                return _SearchJob["default"].query().findById(searchJobId).withGraphJoined('query').withGraphJoined('query.search');
+
+              case 2:
+                job = _context44.sent;
+                return _context44.abrupt("return", job);
+
+              case 4:
+              case "end":
+                return _context44.stop();
+            }
+          }
+        }, _callee44);
+      }));
+
+      function getSearchJob(_x46) {
+        return _getSearchJob.apply(this, arguments);
+      }
+
+      return getSearchJob;
+    }()
+  }, {
+    key: "updateSearchJob",
+    value: function () {
+      var _updateSearchJob = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee45(job) {
+        return _regenerator["default"].wrap(function _callee45$(_context45) {
+          while (1) {
+            switch (_context45.prev = _context45.next) {
+              case 0:
+                _context45.next = 2;
+                return _SearchJob["default"].query().patch(_objectSpread(_objectSpread({}, job), {}, {
+                  updated: new Date()
+                })).where('id', job.id);
+
+              case 2:
+              case "end":
+                return _context45.stop();
+            }
+          }
+        }, _callee45);
+      }));
+
+      function updateSearchJob(_x47) {
+        return _updateSearchJob.apply(this, arguments);
+      }
+
+      return updateSearchJob;
     }()
   }]);
   return Database;
