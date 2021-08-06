@@ -52,6 +52,23 @@ export default class SearchInfo extends Component {
     }
     const created = moment(this.props.search.created).local().format('MMM D h:mm A')
     const modified = moment(this.props.search.modified).local().format('MMM D h:mm A')
+
+    // only admins can change whether a search is public (a collection) or not
+    const setPublicColumn = this.props.user.admin ? <TableCell>Public</TableCell> : ''
+    let setPublicCell = ''
+    if (this.props.user.admin) {
+      setPublicCell = (
+        <TableCell>
+          <SearchPublic
+            public={this.props.search.public}
+            id={this.props.search.id}
+            searches={this.props.searches}
+            user={this.props.user}
+            updateSearch={this.props.updateSearch} />
+        </TableCell>
+      )
+    }
+
     return (
       <Table>
         <TableHead>
@@ -61,7 +78,7 @@ export default class SearchInfo extends Component {
             <TableCell>Created</TableCell>
             <TableCell>Last Update</TableCell>
             <TableCell>Active</TableCell>
-            <TableCell>Public</TableCell>
+            {setPublicColumn}
             <TableCell>Archive</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
@@ -90,14 +107,7 @@ export default class SearchInfo extends Component {
               user={this.props.user}
               updateSearch={this.props.updateSearch} />  
           </TableCell>
-          <TableCell>
-            <SearchPublic
-              public={this.props.search.public}
-              id={this.props.search.id}
-              searches={this.props.searches}
-              user={this.props.user}
-              updateSearch={this.props.updateSearch} />
-          </TableCell>
+          {setPublicCell}
           <TableCell>
             <DownloadOptions
               id={this.props.search.id}
