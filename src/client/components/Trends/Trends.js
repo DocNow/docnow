@@ -13,7 +13,7 @@ export default class Trends extends MediaQueryComponent {
 
   componentDidMount() {
     this.props.getTrends()
-    const intervalId = setInterval(this.props.getTrends, 3000)
+    const intervalId = setInterval(this.props.getTrends, 60000)
     this.setState((prevState) => {
       return Object.assign(prevState, {intervalId: intervalId})
     })
