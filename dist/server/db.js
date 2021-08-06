@@ -251,42 +251,44 @@ var Database = /*#__PURE__*/function () {
 
               case 2:
                 settings = _context5.sent;
-                user.tweetQuota = user.tweetQuota || settings.defaultQuota;
+                user.tweetQuota = user.tweetQuota || settings.defaultQuota; // first user is the super user (and an admin)
+
                 _context5.next = 6;
                 return this.getSuperUser();
 
               case 6:
                 su = _context5.sent;
                 user.isSuperUser = su ? false : true;
-                _context5.prev = 8;
-                _context5.next = 11;
+                user.admin = user.isSuperUser;
+                _context5.prev = 9;
+                _context5.next = 12;
                 return _User["default"].query().insert(user);
 
-              case 11:
+              case 12:
                 newUser = _context5.sent;
 
                 if (!newUser.isSuperUser) {
-                  _context5.next = 15;
+                  _context5.next = 16;
                   break;
                 }
 
-                _context5.next = 15;
+                _context5.next = 16;
                 return this.loadPlaces();
 
-              case 15:
+              case 16:
                 return _context5.abrupt("return", newUser);
 
-              case 18:
-                _context5.prev = 18;
-                _context5.t0 = _context5["catch"](8);
+              case 19:
+                _context5.prev = 19;
+                _context5.t0 = _context5["catch"](9);
                 console.error(_context5.t0);
 
-              case 21:
+              case 22:
               case "end":
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[8, 18]]);
+        }, _callee5, this, [[9, 19]]);
       }));
 
       function addUser(_x3) {
