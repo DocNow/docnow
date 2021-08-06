@@ -22,6 +22,8 @@ export default class SearchList extends Component {
   }
 
   render() {
+
+    const setPublicColumn = this.props.user.admin ?  <TableCell>Public</TableCell> : ''
     return (
       <Table>
         <TableHead>
@@ -31,7 +33,7 @@ export default class SearchList extends Component {
             <TableCell>Created</TableCell>
             <TableCell>Last Update</TableCell>
             <TableCell>Active</TableCell>
-            <TableCell>Public</TableCell>
+            {setPublicColumn}
             <TableCell>Archive</TableCell>
             <TableCell>Delete</TableCell>
           </TableRow>
@@ -40,6 +42,22 @@ export default class SearchList extends Component {
         {this.props.searches.map(search => {
           const created = moment(search.created).local().format('MMM D h:mm A')
           const updated = moment(search.updated).local().format('MMM D h:mm A')
+
+          // only admins can set whether a search is a public collection or not
+          let setPublicCell = ''
+          if (this.props.user.admin) {
+            setPublicCell = (
+              <TableCell>
+                <SearchPublic
+                  id={search.id}
+                  public={search.public}
+                  user={this.props.user}
+                  searches={this.props.searches}
+                  updateSearch={this.props.updateSearch} />
+              </TableCell>
+            )
+          }
+
           return (
             <TableRow key={search.id}>
               <TableCell>
@@ -66,14 +84,7 @@ export default class SearchList extends Component {
                   user={this.props.user}
                   updateSearch={this.props.updateSearch} />
               </TableCell>
-              <TableCell>
-                <SearchPublic
-                  id={search.id}
-                  public={search.public}
-                  user={this.props.user}
-                  searches={this.props.searches}
-                  updateSearch={this.props.updateSearch} />
-               </TableCell>
+              {setPublicCell}
                <TableCell>
                 <DownloadOptions
                   id={search.id}

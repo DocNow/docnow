@@ -20,7 +20,7 @@ export default class SearchToggle extends Component {
     const queryText = lastQuery.value.or.map(v => v.value).join(' ')
     const tweetText = this.props.instanceTweetText
       .replace('{query}', `"${queryText}"`)
-      .replace('{collection-url}', `https://${host}/${this.props.search.id}`)
+      .replace('{collection-url}', `https://${host}/collection/${this.props.search.id}/`)
 
     this.state = {
       error: null,
@@ -41,12 +41,12 @@ export default class SearchToggle extends Component {
   start() {
 
     let error = false
-    if (! this.state.description) {
+    if (! this.state.description && ! this.props.user.admin) {
       error = true
       this.setState({descriptionError: true})
     }
 
-    if (! this.state.tweetText) {
+    if (! this.state.tweetText && ! this.props.user.admin) {
       error = true
       this.setState({tweetTextError: true})
     }
@@ -94,6 +94,8 @@ export default class SearchToggle extends Component {
         width: 600,
       }
     }
+
+    const adminNote = ' Since you are an adminstrator on this instance you can leave this blank.'
 
     return (
       <>
@@ -155,7 +157,7 @@ export default class SearchToggle extends Component {
                 label="Collection Description"
                 multiline={true}
                 rows={5}
-                helperText="A description of your search to help others understand why you are creating the collection."
+                helperText={`A description of your search to help others understand why you are creating the collection.${adminNote}`}
                 placeholder="For example: This collection is being created to document this significant event in our community. Data will be stored in our community center."
                 value={this.state.description || ''} 
                 onChange={e => this.setState({description: e.target.value})} />
@@ -171,7 +173,7 @@ export default class SearchToggle extends Component {
                 label="Tweet Text"
                 multiline={true}
                 rows={5}
-                helperText="Starting tweet collection will cause a tweet to be sent on your behalf letting users know about your collection."
+                helperText={`Starting tweet collection will cause a tweet to be sent on your behalf letting users know about your collection.${adminNote}`}
                 value={this.state.tweetText} 
                 onChange={e => this.setState({tweetText: e.target.value})} />
             </section>

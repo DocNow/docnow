@@ -281,8 +281,15 @@ app.put('/search/:searchId', async (req, res) => {
       streamLoader.stopStream(search.id)
       // stop search too?
     } else if (! search.active && newSearch.active) {
-      const twtr = await db.getTwitterClientForUser(req.user)
-      const tweetId = await twtr.sendTweet(tweetText)
+      // make the search public
+      await db.updateSearch({id: search.id, public: new Date()})
+      // tweet the announcement if we were given text to tweet
+      let tweetId = null
+      if (tweetText) {
+        const twtr = await db.getTwitterClientForUser(req.user)
+        tweetId = await twtr.sendTweet(tweetText)
+      }
+      // start the collection
       streamLoader.startStream(search.id, tweetId)
       // start search too?
     } else if (! search.archiveStarted && newSearch.archiveStarted) {

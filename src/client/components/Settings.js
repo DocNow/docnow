@@ -169,7 +169,7 @@ export default class Settings extends MediaQueryComponent {
               multiline={true}
               rows={5}
               helperText="This is a template for the tweet announcement to send when new collections are being built."
-              value={this.props.instanceTweetText || "I'm creating a collection of tweets that match {query}. You can learn more and specify the terms of your consent here {collection-url}"}
+              value={this.props.instanceTweetText || "I'm creating a collection of tweets that match {query}. You can learn more about why I'm creating it and specify your terms of your consent here {collection-url}"}
               onChange={this.props.updateSettings} />
           </div>
 
