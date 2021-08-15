@@ -2,9 +2,10 @@ import '../env'
 import url from 'url'
 import Twit from 'twit'
 import log from './logger'
-import bigInt from 'big-integer'
+import TwitterV2 from 'twitter-v2'
 import emojiRegex from 'emoji-regex'
 import { AllHtmlEntities } from 'html-entities'
+import { flatten, EVERYTHING } from 'flatten-tweet'
 
 const emojiMatch = emojiRegex()
 const entities = new AllHtmlEntities()
@@ -26,7 +27,13 @@ export class Twitter {
       access_token: this.accessToken,
       access_token_secret: this.accessTokenSecret
     })
-  }
+    this.twitterV2 = new TwitterV2({
+      consumer_key: this.consumerKey,
+      consumer_secret: this.consumerSecret,
+      access_token_key: this.accessToken,
+      access_token_secret: this.accessTokenSecret
+    })
+   }
 
   getPlaces() {
     return new Promise((resolve) => {
@@ -63,37 +70,48 @@ export class Twitter {
   }
 
   search(opts, cb) {
+    // count is the total number of tweets to return across all API requests
     const count = opts.count || 100
+
     const params =  {
-      q: opts.q,
-      tweet_mode: 'extended',
-      result_type: opts.resultType || 'recent',
-      count: 100,
-      since_id: opts.sinceId,
-      include_entities: true
+      ...EVERYTHING,
+      "query": opts.q,
+      "max_results": 100,
     }
 
-    const recurse = (maxId, total) => {
-      const newParams = Object.assign({max_id: maxId}, params)
-      log.info('searching twitter', {params: newParams})
-      this.twit.get('search/tweets', newParams).then((resp) => {
-        if (resp.data.errors) {
-          cb(resp.data.errors[0], null)
-        } else {
-          const tweets = resp.data.statuses
+    if (opts.sinceId) {
+      params.since_id = opts.sinceId
+    } 
+
+    if (opts.maxId) {
+      params.until_id = opts.maxId
+    }
+
+    const endpoint = opts.all ? 'tweets/search/all' : 'tweets/search/recent'
+
+    const recurse = (nextToken, total) => {
+      if (nextToken) {
+        params.next_token = nextToken
+      }
+      this.twitterV2.get(endpoint, params).then((resp) => {
+        if (resp.data) {
+          const tweets = flatten(resp).data
           const newTotal = total + tweets.length
-          cb(null, tweets.map((s) => {return this.extractTweet(s)}))
-          if (tweets.length > 0 && newTotal < count) {
-            const newMaxId = String(bigInt(tweets[tweets.length - 1].id_str).minus(1))
-            recurse(newMaxId, newTotal)
+          cb(null, tweets.map(t => this.extractTweet(t)))
+          if (newTotal < count && resp.meta.next_token) {
+            recurse(resp.meta.next_token, newTotal)
           } else {
             cb(null, [])
           }
         }
       })
+      .catch(err => {
+        console.log(err)
+        cb(err, null)
+      })
     }
 
-    recurse(opts.maxId, 0)
+    recurse(null, 0)
   }
 
   filter(opts, cb) {
@@ -113,43 +131,51 @@ export class Twitter {
     })
   }
 
-  extractTweet(t) {
-    const created = new Date(t.created_at)
-    const userCreated = new Date(t.user.created_at)
-    const hashtags = t.entities.hashtags.map((ht) => {return ht.text.toLowerCase()})
-    const mentions = t.entities.user_mentions.map((m) => {return m.screen_name})
-
-    let geo = null
-    if (t.coordinates) {
-      geo = t.coordinates
+  lookup(o, includes) {
+    return {
+      ...o,
+      ...includes.find(i => o.id === i.id)
     }
+  }
 
-    const emojis = emojiMatch.exec(t.full_text)
+  lookupList(list, includes) {
+    return list ? list.map(o => this.lookup(o, includes)) : []
+  }
+
+  extractTweet(t) {
 
     let retweet = null
-    if (t.retweeted_status) {
-      retweet = this.extractTweet(t.retweeted_status)
+    let quote = null
+    for (const ref of t.referenced_tweets || []) {
+      if (ref.type == 'retweeted') {
+        retweet = ref
+      } else if (ref.type === 'quoted') {
+        quote = ref
+      }
     }
 
-    let quote = null
-    if (t.quoted_status) {
-      quote = this.extractTweet(t.quoted_status)
-    }
+    const hashtags = t.entities && t.entities.hashtags
+      ? t.entities.hashtags.map(ht => ht.tag.toLowerCase())
+      : []
+
+    const mentions = t.entities && t.entities.mentions
+      ? t.entities.mentions.map(m => m.username)
+      : []
 
     let place = null
-    if (t.place) {
+    if (t.geo) {
       place = {
-        name: t.place.full_name,
-        type: t.place.place_type,
-        id: t.place.id,
-        country: t.place.country,
-        countryCode: t.place.country_code,
-        boundingBox: t.place.bounding_box
+        name: t.geo.full_name,
+        type: t.geo.place_type,
+        id: t.geo.place_id,
+        country: t.geo.country,
+        countryCode: t.geo.country_code,
+        boundingBox: t.geo.geo.bbox
       }
     }
 
     const urls = []
-    if (t.entities.urls) {
+    if (t.entities && t.entities.urls) {
       for (const e of t.entities.urls) {
         const u = url.parse(e.expanded_url)
         // not interested in pointers back to Twitter which
@@ -165,82 +191,60 @@ export class Twitter {
       }
     }
 
-    let userUrl = null
-    if (t.user.entities && t.user.entities.url) {
-      userUrl = t.user.entities.url.urls[0].expanded_url
-    }
-
     const images = []
     const videos = []
     const animatedGifs = []
-    if (t.extended_entities && t.extended_entities.media) {
-      for (const e of t.extended_entities.media) {
+    if (t.attachments && t.attachments.media) {
+      for (const e of t.attachments.media) {
         if (e.type === 'photo') {
-          images.push(e.media_url_https)
+          images.push(e.url)
         } else if (e.type === 'video') {
-          let maxBitRate = 0
-          let videoUrl = null
-          for (const v of e.video_info.variants) {
-            if (v.content_type === 'video/mp4' && v.bitrate > maxBitRate) {
-              videoUrl = v.url
-              maxBitRate = v.bitrate
-            }
-          }
-          if (videoUrl) {
-            videos.push(videoUrl)
-          }
+          videos.push(e.preview_image_url)
         } else if (e.type === 'animated_gif') {
-          animatedGifs.push(e.media_url_https)
+          animatedGifs.push(e.preview_image_url)
         }
       }
     }
 
-    let text = t.text
-    if (retweet) {
-      text = retweet.text
-    } else if (t.extended_tweet) {
-      text = t.extended_tweet.full_text
-    } else if (t.full_text) {
-      text = t.full_text
-    }
-
-    return ({
-      id: t.id_str,
-      text: decode(text),
+    return {
+      id: t.id,
+      created: new Date(t.created_at),
+      twitterUrl: `https://twitter.com/${t.author.username}/status/${t.id}`,
+      text: decode(t.text),
       language: t.lang,
-      twitterUrl: 'https://twitter.com/' + t.user.screen_name + '/status/' + t.id_str,
-      likeCount: t.favorite_count,
-      retweetCount: t.retweet_count,
+      client: t.source,
+      likeCount: t.public_metrics.like_count,
+      retweetCount: t.public_metrics.retweet_count,
+      quoteCount: t.public_metrics.quote_count,
+      replyCount: t.public_metrics.quote_count,
       retweetId: retweet ? retweet.id : null,
       quoteId: quote ? quote.id : null,
-      client: t.source ? t.source.match(/>(.+?)</)[1] : null,
+      quote: quote,
+      retweet: retweet,
+      emojis: emojiMatch.exec(t.text),
+      hashtags: hashtags,
+      mentions: mentions,
+      place: place,
+      urls: urls,
+      videos: videos,
+      images: images,
+      animatedGifs: animatedGifs,
       user: {
-        id: t.user.id_str,
-        screenName: t.user.screen_name,
-        name: decode(t.user.name),
-        description: decode(t.user.description),
-        location: decode(t.user.location),
-        created: userCreated,
-        avatarUrl: t.user.profile_image_url_https,
-        url: userUrl,
-        followersCount: t.user.followers_count,
-        friendsCount: t.user.friends_count,
-        tweetsCount: t.user.statuses_count,
-        listedCount: t.user.listed_count
+        id: t.author.id,
+        created: new Date(t.author.created_at),
+        screenName: t.author.username,
+        name: decode(t.author.name),
+        description: decode(t.author.description),
+        location: decode(t.author.location),
+        avatarUrl: t.author.profile_image_url,
+        url: t.author.url,
+        followersCount: t.author.public_metrics.followers_count,
+        friendsCount: t.author.public_metrics.following_count,
+        tweetsCount: t.author.public_metrics.tweet_count,
+        listedCount: t.author.public_metrics.listed_count,
       },
-      created,
-      hashtags,
-      mentions,
-      geo,
-      place,
-      urls,
-      images,
-      videos,
-      animatedGifs,
-      emojis,
-      retweet,
-      quote
-    })
+    }
+
   }
 
   async sendTweet(text) {

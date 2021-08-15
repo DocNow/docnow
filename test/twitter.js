@@ -21,7 +21,6 @@ describe('twitter', () => {
     ok(trends[0].count >= 0, 'place.trends[].count')
   })
 
-
   it('should fetch all places', (done) => {
     t.getPlaces().then((places) => {
       ok(places.length > 100)
@@ -41,6 +40,7 @@ describe('twitter', () => {
         ok(t.text, 'text')
         ok(t.id, 'id')
         ok(t.user.id, 'user.id')
+
         ok(t.user.screenName, 'user.screenName')
         ok(t.user.followersCount >= 0, 'user.followersCount')
         ok(t.user.friendsCount >= 0, 'user.friendsCount')
@@ -52,9 +52,12 @@ describe('twitter', () => {
         ok(t.likeCount >= 0, 'likeCount')
         ok(t.retweetCount >= 0, 'retweetCount')
         ok(t.client, 'client')
-        ok('videos' in t, 'videos')
-        ok('images' in t, 'images')
-        ok('animatedGifs' in t, 'animatedGifs')
+        ok(t.mentions.length >= 0, 'mentions')
+        ok(t.urls.length >= 0, 'urls')
+
+        ok(t.videos.length >= 0, 'videos')
+        ok(t.images.length >= 0, 'images')
+        ok(t.animatedGifs.length >= 0, 'animatedGifs')
 
         ok('retweet' in t, 'retweet')
         if (t.retweet) {
@@ -83,6 +86,7 @@ describe('twitter', () => {
     })
   })
 
+  /*
   it('should filter', (done) => {
     let count = 0
     t.filter({track: 'putin,trump'}, (tweet) => {
@@ -96,5 +100,6 @@ describe('twitter', () => {
       return true
     })
   })
+  */
 
 })
