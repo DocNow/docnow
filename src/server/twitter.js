@@ -33,6 +33,10 @@ export class Twitter {
       access_token_key: this.accessToken,
       access_token_secret: this.accessTokenSecret
     })
+    this.twitterV2app = new TwitterV2({
+      consumer_key: this.consumerKey,
+      consumer_secret: this.consumerSecret,
+    })
    }
 
   getPlaces() {
@@ -70,6 +74,7 @@ export class Twitter {
   }
 
   search(opts, cb) {
+    log.info('searching for', opts)
     // count is the total number of tweets to return across all API requests
     const count = opts.count || 100
 
@@ -106,7 +111,7 @@ export class Twitter {
         }
       })
       .catch(err => {
-        console.log(err)
+        log.error(`error during search: ${err}`)
         cb(err, null)
       })
     }
@@ -114,21 +119,66 @@ export class Twitter {
     recurse(null, 0)
   }
 
-  filter(opts, cb) {
-    const params = {
-      track: opts.track,
-      tweet_mode: 'extended',
-      include_entities: true
+  async addFilterRule(value, tag) {
+    log.info(`adding filter rule value=${value} tag=${tag}`)
+    const payload = {"add": [{value, tag}]}
+    const results = this.twitterV2app.post('tweets/search/stream/rules', payload)
+    return results
+  }
+
+  async getFilterRules() {
+    log.info('getting filter rules')
+    const results = await this.twitterV2app.get('tweets/search/stream/rules')
+    if (results.data) {
+      return results.data
+    } else {
+      return []
     }
-    log.info('starting stream for: ', {stream: params})
-    const stream = this.twit.stream('statuses/filter', params)
-    stream.on('tweet', async (tweet) => {
-      const result = await cb(this.extractTweet(tweet))
-      if (result === false) {
-        log.info('stopping stream for: ', {stream: params})
-        stream.stop()
+  }
+
+  async deleteFilterRule(id) {
+    log.info(`deleting filter rule ${id}`)
+    const payload = {"delete": {"ids": [id]}}
+    const results = this.twitterV2app.post('tweets/search/stream/rules', payload)
+    return results
+  }
+
+  async filter(cb) {
+    log.info('starting filter stream')
+    this.stream = this.twitterV2app.stream('tweets/search/stream', EVERYTHING)
+
+    try {
+      for await (const response of this.stream) {
+        if (response.data) {
+          // when streaming response.data is an object, instead of a list
+          // flatten ensures that response.data is always a list 
+          // so we want to get the first and only element in the list
+          const tweet = flatten(response).data[0]
+          const tags = response.matching_rules
+            ? response.matching_rules.map(r => r.tag)
+            : []
+          cb(this.extractTweet(tweet), tags)
+        } else {
+          log.error(`unexpected filter response: ${JSON.stringify(response)}`)
+        }
       }
-    })
+      // if stream is undefined that means closeFilter() has been called 
+      if (this.stream) {
+        log.error(`stream disconnected normally by Twitter, reconnecting`)
+        this.filter(cb)
+      }
+    } catch (error) {
+      log.warn(`stream disconnected with error, retrying`, error)
+      this.filter(cb)
+    }
+  }
+
+  closeFilter() {
+    if (this.stream) {
+      log.info('closing filter stream')
+      this.stream.close()
+      this.stream = null
+    }
   }
 
   lookup(o, includes) {
@@ -143,7 +193,6 @@ export class Twitter {
   }
 
   extractTweet(t) {
-
     let retweet = null
     let quote = null
     for (const ref of t.referenced_tweets || []) {
@@ -163,7 +212,7 @@ export class Twitter {
       : []
 
     let place = null
-    if (t.geo) {
+    if (t.geo && t.geo.place_id) {
       place = {
         name: t.geo.full_name,
         type: t.geo.place_type,

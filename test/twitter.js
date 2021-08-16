@@ -1,5 +1,8 @@
-import { ok, equal } from 'assert'
+import { ok, strictEqual as equal } from 'assert'
 import { Twitter } from '../src/server/twitter'
+
+const now = new Date()
+const tag = `test-${now / 1000}`
 
 describe('twitter', () => {
 
@@ -86,20 +89,54 @@ describe('twitter', () => {
     })
   })
 
-  /*
+  it('should add filter rule', async () => {
+    ok(await t.addFilterRule('music', tag))
+  })
+
+  it('should list filter rules', async () => {
+    const rules = await t.getFilterRules()
+    equal(rules.length, 1)
+    equal(rules[0].value, 'music')
+    equal(rules[0].tag, tag)
+    ok(rules[0].id)
+  })
+
   it('should filter', (done) => {
     let count = 0
-    t.filter({track: 'putin,trump'}, (tweet) => {
+    t.filter((tweet, tags) => {
       count += 1
       ok(tweet.id, 'check id in streamed tweet')
       ok(tweet.text, 'check text in streamed tweet')
+      ok(tags, 'tweet has stream tags')
+      ok(tags.indexOf(tag) != -1, `tweet has tag ${tag}`)
       if (count > 50) {
+        t.closeFilter()
         done()
-        return false
       }
-      return true
     })
   })
-  */
+
+  it('should remove filter rule', async () => {
+
+    // delete all the filter rules with the test tag
+    let didDelete = false
+    for (const rule of await t.getFilterRules()) {
+      if (rule.tag === tag) {
+        await t.deleteFilterRule(rule.id)
+        didDelete = true
+      }
+    }
+    ok(didDelete)
+
+    // make sure the filter rules are all gone
+    let isDeleted = true
+    for (const rule of await t.getFilterRules()) {
+      if (rule.tag === tag) {
+        isDeleted = false
+      }
+    }
+    ok(isDeleted)
+
+  })
 
 })
