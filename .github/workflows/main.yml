@@ -4,6 +4,7 @@ on: push
 
 jobs:
   test:
+    timeout-minutes: 10
     runs-on: ubuntu-latest
     steps:
 
