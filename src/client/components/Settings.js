@@ -38,7 +38,7 @@ function Error({message, callbackUrl}) {
           <p>Sorry, it looks like the <em>Callback URL</em> has not been set correctly.</p>
           <p>Please go to your app page 
             at <a href="https://developer.twitter.com">developer.twitter.com</a> and 
-            add <em>{callbackUrl}</em> to the <em>Callback URLs</em> in 
+            add <em><b>{callbackUrl}</b></em> to the <em>Callback URLs</em> in 
             the <em>Authentication settings</em> section.
           </p>
         </div>
@@ -76,7 +76,7 @@ export default class Settings extends MediaQueryComponent {
     if (! this.props.userLoggedIn) {
       const q = new URLSearchParams(window.location.search)
 
-      const callbackUrl = `${window.location.protocol}//${window.location.hostname}/auth/twitter/callback`
+      const callbackUrl = `${window.location.protocol}//${window.location.host}/auth/twitter/callback`
       const error = <Error message={q.get('error')} callbackUrl={callbackUrl} />
 
       welcome = (
@@ -169,7 +169,7 @@ export default class Settings extends MediaQueryComponent {
               multiline={true}
               rows={5}
               helperText="This is a template for the tweet announcement to send when new collections are being built."
-              value={this.props.instanceTweetText || "I'm creating a collection of tweets that match {query}. You can learn more about why I'm creating it and specify your terms of your consent here {collection-url}"}
+              value={this.props.instanceTweetText}
               onChange={this.props.updateSettings} />
           </div>
 
