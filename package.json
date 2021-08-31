@@ -73,7 +73,7 @@
     "emoji-regex": "^8.0.0",
     "express": "^4.17.1",
     "express-session": "^1.17.2",
-    "flatten-tweet": "0.0.3",
+    "flatten-tweet": "0.0.4",
     "html-entities": "^1.4.0",
     "knex": "^0.21.21",
     "metaweb": "0.0.8",
