@@ -1,5 +1,4 @@
 const { Model } = require('objection')
-const Search = require('./Search')
 const SearchJob = require('./SearchJob')
 
 class Query extends Model {
@@ -9,6 +8,7 @@ class Query extends Model {
   }
 
   static get relationMappings() {
+    const Search = require('./Search')
     return {
       search: {
         relation: Model.HasOneRelation,
@@ -29,7 +29,7 @@ class Query extends Model {
     }
   }
 
-  searchQuery() {
+  twitterQuery() {
     const queryParts = []
     for (const term of this.value.or) {
       if (term.type === 'keyword') {
@@ -45,24 +45,6 @@ class Query extends Model {
       }
     }
     return queryParts.join(' OR ')
-  }
-
-  trackQuery() {
-    const queryParts = []
-    for (const term of this.value.or) {
-      if (term.type === 'keyword') {
-        queryParts.push(term.value)
-      } else if (term.type === 'user') {
-        queryParts.push('@' + term.value)
-      } else if (term.type === 'phrase') {
-        queryParts.push(term.value.replace(/,/g, ' '))
-      } else if (term.type === 'hashtag') {
-        queryParts.push(term.value)
-      } else {
-        queryParts.push(term.value)
-      }
-    }
-    return queryParts.join(',')
   }
 
 }

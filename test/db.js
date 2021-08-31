@@ -1,5 +1,6 @@
 import { ok, equal, deepEqual } from 'assert'
 import { Database } from '../src/server/db'
+import { timer } from '../src/server/utils'
 
 const db = new Database({redis: {db: 9}})
 
@@ -146,7 +147,7 @@ describe('database', () => {
       title: 'Test',
       description: 'This is a test search!',
       active: true,
-      queries: [{value: {or: [{type: 'keyword', value: 'obama'}]}}]
+      queries: [{value: {or: [{type: 'keyword', value: 'music'}]}}]
     })
     ok(search.id, 'search.id')
     testSearch = search
@@ -161,7 +162,7 @@ describe('database', () => {
     ok(search.created, 'search.created')
     deepEqual(
       search.queries[0].value, 
-      {or: [{type: 'keyword', value: 'obama'}]},
+      {or: [{type: 'keyword', value: 'music'}]},
       'search.query'
     )
     testSearch = search
@@ -185,15 +186,14 @@ describe('database', () => {
     })
   })
 
-
   it('should import from search', async () => {
     const numTweets = await db.importFromSearch(testSearch, 200)
-    ok(numTweets > 0, 'search found tweets')
+    equal(numTweets, 200, 'search found 200 tweets')
   })
 
   it('should get tweets and retweets', async () => {
-    const tweets = await db.getTweets(testSearch)
-    ok(tweets.length >= 100, 'tweets.length')
+    const tweets = await db.getTweets(testSearch, true, 0, 200)
+    equal(tweets.length, 200, 'got 200 tweets')
     ok(tweets[0].id, 'tweets[0].id')
 
     const retweets = await db.getTweets(testSearch, false)
@@ -202,11 +202,15 @@ describe('database', () => {
   })
 
   it('should import more from search', function(done) {
-    // assumes someone tweeted about obama in 5 seconds, but not more than 100
+    // assumes someone tweeted with keyword "music" in 5 seconds, but not more than 100
     setTimeout(async () => {
       const search = await db.getSearch(testSearch.id)
-      const num = await db.importFromSearch(search)
-      ok(num > 0 && num < 100)
+      const origMaxTweetId = search.maxTweetId
+      ok(origMaxTweetId, 'maxTweetId is set')
+      const numTweets = await db.importFromSearch(search, 100)
+      ok(numTweets > 0, 'searching again brought in more results')
+      const updatedSearch = await db.getSearch(testSearch.id)
+      ok(updatedSearch.maxTweetId > origMaxTweetId, 'new maxTweetId is higer')
       done()
     }, 5000)
   })
@@ -262,6 +266,7 @@ describe('database', () => {
     ok(images[0].count > 0)
   })
 
+  /*
   it('should get videos', async () => {
 
     // create a twitter query for some music videos?
@@ -297,6 +302,8 @@ describe('database', () => {
     ok(videos[0].count, 'videos.count')
   })
 
+  */
+
   it('should get tweets for url', async () => {
     // get a url to test with
     const urls = await db.getUrls(testSearch)
@@ -315,6 +322,8 @@ describe('database', () => {
     ok(tweets.length > 0)
   })
 
+  /*
+
   it('should get tweets for video', async () => {
     // get a url to test with
     const videos = await db.getVideos(testVideoSearch)
@@ -323,6 +332,8 @@ describe('database', () => {
     const tweets = await db.getTweetsForVideo(testVideoSearch, video)
     ok(tweets.length > 0)
   })
+
+  */
 
   it('should get users', async () => {
     const users = await db.getUsers()
@@ -333,6 +344,14 @@ describe('database', () => {
     ok(users[0].searches[0].tweetCount > 0, 'search.tweetCount')
   })
 
+  it('should get stats', async() => {
+    const stats = await db.getSystemStats()
+    ok(typeof(stats.tweetCount), 'number')
+    ok(stats.tweetCount > 0, 'stats.tweetCount')
+    ok(typeof(stats.userCount), 'number')
+    ok(stats.userCount > 0, 'stats.userCount')
+  })
+
   it('should delete', async () => {
     const result = await db.deleteSearch(testSearch)
     ok(result, 'delete return value')
@@ -341,14 +360,6 @@ describe('database', () => {
   it('should be deleted', async () => {
     const result = await db.getSearch(testSearch.id)
     ok(result === null)
-  })
-
-  it('should get stats', async() => {
-    const stats = await db.getSystemStats()
-    ok(typeof(stats.tweetCount), 'number')
-    ok(stats.tweetCount > 0, 'stats.tweetCount')
-    ok(typeof(stats.userCount), 'number')
-    ok(stats.userCount > 0, 'stats.userCount')
   })
 
   it('should close', async() => {

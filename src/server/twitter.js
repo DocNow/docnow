@@ -2,6 +2,7 @@ import '../env'
 import url from 'url'
 import Twit from 'twit'
 import log from './logger'
+import { timer } from './utils'
 import TwitterV2 from 'twitter-v2'
 import emojiRegex from 'emoji-regex'
 import { AllHtmlEntities } from 'html-entities'
@@ -21,23 +22,29 @@ export class Twitter {
     this.consumerSecret = keys.consumerSecret || process.env.CONSUMER_SECRET
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN
     this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET
+
+    // a client for v1.1 endpoints
     this.twit = new Twit({
       consumer_key: this.consumerKey,
       consumer_secret: this.consumerSecret,
       access_token: this.accessToken,
       access_token_secret: this.accessTokenSecret
     })
+
+    // a client for v2 endpoints
     this.twitterV2 = new TwitterV2({
       consumer_key: this.consumerKey,
       consumer_secret: this.consumerSecret,
       access_token_key: this.accessToken,
       access_token_secret: this.accessTokenSecret
     })
+
+    // a app auth client for v2 endpoints
     this.twitterV2app = new TwitterV2({
       consumer_key: this.consumerKey,
       consumer_secret: this.consumerSecret,
     })
-   }
+  }
 
   getPlaces() {
     return new Promise((resolve) => {
@@ -68,7 +75,7 @@ export class Twitter {
         trends.push({name: trend.name, count: trend.tweet_volume})
       }
     } catch (e) {
-      console.log(`error when fetching trends: ${e}`)
+      log.error(`error when fetching trends: ${e}`)
     }
     return trends
   }
@@ -103,11 +110,16 @@ export class Twitter {
           const tweets = flatten(resp).data
           const newTotal = total + tweets.length
           cb(null, tweets.map(t => this.extractTweet(t)))
-          if (newTotal < count && resp.meta.next_token) {
-            recurse(resp.meta.next_token, newTotal)
-          } else {
-            cb(null, [])
-          }
+            .then(() => {
+              if (newTotal < count && resp.meta.next_token) {
+                recurse(resp.meta.next_token, newTotal)
+              } else {
+                cb(null, [])
+              }
+            })
+        } else {
+          log.warn(`received search response with no data stanza`)
+          cb(null, [])
         }
       })
       .catch(err => {
@@ -145,7 +157,19 @@ export class Twitter {
 
   async filter(cb) {
     log.info('starting filter stream')
-    this.stream = this.twitterV2app.stream('tweets/search/stream', EVERYTHING)
+
+    let err = 0
+    while (true) {
+      try {
+        this.stream = this.twitterV2app.stream('tweets/search/stream', EVERYTHING)
+        break
+      } catch (e) {
+        err += 1
+        const secs = err ** 2
+        log.error(`caught ${e} while connecting to stream, sleeping ${secs}`)
+        await timer(secs * 1000)
+      }
+    }
 
     try {
       for await (const response of this.stream) {
@@ -157,7 +181,13 @@ export class Twitter {
           const tags = response.matching_rules
             ? response.matching_rules.map(r => r.tag)
             : []
-          cb(this.extractTweet(tweet), tags)
+
+          // if the callback result is not true then we are being told to stop 
+          const result = await cb(this.extractTweet(tweet), tags)
+          if (! result) {
+            log.info('callback returned false so stopping filter stream')
+            break
+          }
         } else {
           log.error(`unexpected filter response: ${JSON.stringify(response)}`)
         }

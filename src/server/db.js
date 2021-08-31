@@ -71,6 +71,11 @@ export class Database {
     for (const row of rows) {
       settings[row.name] = row.value
     }
+
+    if (! settings.instanceTweetText) {
+      settings.instanceTweetText = "I'm creating a collection of tweets that match {query}. You can learn more about why I'm creating it and specify your terms of your consent here {collection-url}"
+    }
+
     return settings
   }
 
@@ -280,19 +285,26 @@ export class Database {
     return Place.query().select()
   }
 
-  getTwitterClientForUser(user) {
-    return new Promise((resolve) => {
-      this.getSettings().then((settings) => {
-        resolve(
-          new Twitter({
-            consumerKey: settings.appKey,
-            consumerSecret: settings.appSecret,
-            accessToken: user.twitterAccessToken,
-            accessTokenSecret: user.twitterAccessTokenSecret
-          })
-        )
-      })
+  async getTwitterClientForUser(user) {
+    const settings = await this.getSettings()
+    return new Twitter({
+      consumerKey: settings.appKey,
+      consumerSecret: settings.appSecret,
+      accessToken: user.twitterAccessToken,
+      accessTokenSecret: user.twitterAccessTokenSecret
     })
+  }
+
+  async getTwitterClientForApp() {
+    const settings = await this.getSettings()
+    if (settings.appKey && settings.appSecret) {
+      return new Twitter({
+        consumerKey: settings.appKey,
+        consumerSecret: settings.appSecret,
+      })
+    } else {
+      return null
+    }
   }
 
   async createSearch(search) {
@@ -495,7 +507,7 @@ export class Database {
 
     // determine the query to run
     const lastQuery = search.queries[search.queries.length - 1]
-    const q = lastQuery.searchQuery()
+    const q = lastQuery.twitterQuery()
 
     // run the search!
     let maxTweetId = null
@@ -503,6 +515,7 @@ export class Database {
     return new Promise((resolve, reject) => {
       twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, async (err, results) => {
         if (err) {
+          log.error(`caught error during search: ${err}`)
           reject(err)
         } else if (results.length === 0) {
           await this.updateSearch({
@@ -510,6 +523,7 @@ export class Database {
             maxTweetId: maxTweetId,
             active: false
           })
+          log.info(`no more search results, returning ${count}`)
           resolve(count)
         } else {
           if (maxTweetId === null) {
@@ -517,13 +531,59 @@ export class Database {
           }
           await this.loadTweets(search, results)
           count += results.length
-          log.info(`bulk loaded ${results.length} tweets`)
+          log.info(`bulk loaded ${results.length} tweets, with total=${count}`)
         }
       })
     })
   }
 
+  async startStream(search, tweetId) {
+    log.info(`starting stream for ${search.id}`)
+    const lastQuery = search.queries[search.queries.length - 1]
+    const q = lastQuery.twitterQuery()
+    const job = await this.createSearchJob({
+      queryId: lastQuery.id, 
+      tweetId: tweetId,
+      started: new Date()
+    })
+    log.info(`created job ${job.id}`)
+
+    const twtr = await this.getTwitterClientForApp()
+    return twtr.addFilterRule(q, `search-${search.id}`)
+  }
+
+  async stopStream(search) {
+    log.info(`stopping stream for search ${search.id}`)
+
+    // remove all filter rules for this search
+    const twtr = await this.getTwitterClientForApp()
+    for (const rule of await twtr.getFilterRules()) {
+      if (rule.tag == `search-${search.id}`) {
+        await twtr.deleteFilterRule(rule.id)
+        log.info(`removing filter rule ${rule.id} for ${search.id}`)
+      }
+    }
+
+    // need a better way to identify the search job that needs to 
+    // be ended but for now just mark any search job that has no 
+    // ended time. once we can do historical collection it will be 
+    // important to only end the filter stream job
+
+    const query = search.queries[search.queries.length - 1]
+    for (const job of query.searchJobs) {
+      if (! job.ended) {
+        await this.updateSearchJob({
+          id: job.id,
+          ended: new Date()
+        })
+      }
+    }
+
+    return this.updateSearch({...search, active: false, archived: false})
+  }
+
   async loadTweets(search, tweets) {
+    log.info(`loading ${tweets.length} tweets for searchId=${search.id}`)
 
     const tweetRows = []
     for (const tweet of tweets) {
@@ -931,7 +991,7 @@ export class Database {
       .findById(queryId)
       .withGraphJoined('search')
       .withGraphJoined('searchJobs')
-      .withGraphJoined('search.user')
+      .withGraphJoined('search.creator')
       .orderBy('searchJobs.created', 'ASC')
     return query
   }

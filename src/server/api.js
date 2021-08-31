@@ -7,13 +7,10 @@ import wayback from './wayback'
 import { Database } from './db'
 import { Archive } from './archive'
 import { activateKeys } from './auth'
-import { StreamLoaderController } from './stream-loader'
 
 const app = express()
 
 const db = new Database()
-
-const streamLoader = new StreamLoaderController()
 
 db.startTrendsWatcher({interval: 60 * 1000})
 
@@ -267,8 +264,8 @@ app.put('/search/:searchId', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.body.id)
 
-    // get any tweet text that was sent and remove it from the body
-    // since it's not a property of the search
+    // get any tweet text that was POSTed and remove it from the body
+    // since it's not really a property of the search object
     const tweetText = req.body.tweetText
     delete req.body.tweetText
 
@@ -278,7 +275,7 @@ app.put('/search/:searchId', async (req, res) => {
     if (req.query.refreshTweets) {
       db.importFromSearch(search)
     } else if (search.active && ! newSearch.active) {
-      streamLoader.stopStream(search.id)
+      await db.stopStream(search)
       // stop search too?
     } else if (! search.active && newSearch.active) {
       // make the search public
@@ -289,9 +286,9 @@ app.put('/search/:searchId', async (req, res) => {
         const twtr = await db.getTwitterClientForUser(req.user)
         tweetId = await twtr.sendTweet(tweetText)
       }
-      // start the collection
-      streamLoader.startStream(search.id, tweetId)
-      // start search too?
+      // start the streaming 
+      await db.startStream(search, tweetId)
+      // start a search too?
     } else if (! search.archiveStarted && newSearch.archiveStarted) {
       const archive = new Archive()
       archive.createArchive(search)

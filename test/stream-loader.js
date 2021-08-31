@@ -5,6 +5,7 @@ import { StreamLoader, StreamLoaderController } from '../src/server/stream-loade
 let db = new Database({redis: {db: 9}})
 let user = null
 let search = null
+let query = null
 
 describe('stream-loader', () => {
 
@@ -46,20 +47,20 @@ describe('stream-loader', () => {
 
   it('should load tweets', (done) => {
     const loader = new StreamLoader(db)
-    const controller = new StreamLoaderController()
-
     loader.start()
 
     setTimeout(() => {
-      controller.startStream(search.id)
+      db.startStream(search, '123')
     }, 1000)
 
-    setTimeout(() => {
-      controller.stopStream(search.id)
+    setTimeout(async () => {
+      // get the latest search object that has searchJobs in it
+      // the one we have is from before the stream started will not have it
+      search = await db.getSearch(search.id)
+      await db.stopStream(search)
     }, 10000)
 
     setTimeout(() => {
-      controller.stop()
       loader.stop()
       done()
     }, 15000)
@@ -69,33 +70,34 @@ describe('stream-loader', () => {
     setTimeout(async () => {
 
       // stopping the stream above closes the db so we need to reopen
-      db = new Database({redis: {db: 9}, es: {prefix: 'test'}})
+      db = new Database({redis: {db: 9}})
 
       const tweets = await db.getTweets(search)
       ok(tweets.length > 0, 'streamed tweets were saved')
 
-      db.close()
       done()
     }, 5000)
   })
 
   it('should have created a SearchJob', (done) => {
     setTimeout(async () => {
+      const q = await db.getQuery(query.id)
 
-      const query = await db.getQuery(queryId)
-      ok(query, 'found query')
-      ok(query.searchJobs, 'search jobs is defined')
-      ok(query.searchJobs.length == 1, 'the query should have one search job')
+      ok(q, 'found query')
+      ok(q.searchJobs, 'search jobs is defined')
+      ok(q.searchJobs.length == 1, 'the query should have one search job')
 
-      const job = query.searchJobs[0]
+      const job = q.searchJobs[0]
       ok(job.started, 'job started is set')
       ok(job.ended, 'job ended is set')
       ok(job.tweetId, 'job tweet id is set')
-      ok(job.tweets > 0, 'job number of tweets is set')
 
-      db.close()
       done()
     }, 6000)
+  })
+
+  it('db should close', async () => {
+    await db.close()
   })
 
 })

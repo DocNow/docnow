@@ -34,7 +34,7 @@ describe('twitter', () => {
   })
 
   it('should get search results', (done) => {
-    t.search({q: 'obama'}, (err, tweets) => {
+    t.search({q: 'obama'}, async (err, tweets) => {
       ok(err === null)
       if (tweets.length == 0) {
         done()
@@ -77,7 +77,7 @@ describe('twitter', () => {
 
   it('should get > 100 search results', (done) => {
     let callbackCount = 0
-    t.search({q: 'obama', count: 300}, (err, tweets) => {
+    t.search({q: 'obama', count: 300}, async (err, tweets) => {
       callbackCount += 1
       if (callbackCount === 3) {
         done()
@@ -109,7 +109,7 @@ describe('twitter', () => {
       ok(tweet.text, 'check text in streamed tweet')
       ok(tags, 'tweet has stream tags')
       ok(tags.indexOf(tag) != -1, `tweet has tag ${tag}`)
-      if (count > 50) {
+      if (count > 5) {
         t.closeFilter()
         done()
       }
