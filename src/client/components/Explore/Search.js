@@ -91,7 +91,7 @@ export default class Search extends Component {
           onClick={() => {this.update()}}>
             <span className={`${spin} ${styles.SpinAdj}`}><ion-icon name="sync"></ion-icon></span>
           </Fab>
-        <Fab size="medium" title="Save Search" disabled={disabled}
+        <Fab size="medium" title="Save Search" disabled={this.props.active} 
           tabIndex="0"
           onClick={() => {this.save()}}>
             <ion-icon name="filing"></ion-icon>
