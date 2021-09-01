@@ -5,11 +5,11 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.StreamLoader = exports.StreamLoaderController = void 0;
-
-var _defineProperty2 = _interopRequireDefault(require("@babel/runtime/helpers/defineProperty"));
+exports.StreamLoader = void 0;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
+
+var _slicedToArray2 = _interopRequireDefault(require("@babel/runtime/helpers/slicedToArray"));
 
 var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 
@@ -19,126 +19,203 @@ var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/creat
 
 var _logger = _interopRequireDefault(require("./logger"));
 
+var _utils = require("./utils");
+
 var _db = require("./db");
 
-var _redis = require("./redis");
-
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-var START_STREAM = 'start-stream';
-var STOP_STREAM = 'stop-stream';
 /*
- * StreamLoaderController handles starting and stopping streaming
- * jobs from Twitter.
+ * StreamLoader connects to the filter stream and writes any new tweets 
+ * it receives to the database using the associated search id.
  */
-
-var StreamLoaderController = /*#__PURE__*/function () {
-  function StreamLoaderController() {
-    (0, _classCallCheck2["default"])(this, StreamLoaderController);
-    this.redis = (0, _redis.getRedis)();
-  }
-
-  (0, _createClass2["default"])(StreamLoaderController, [{
-    key: "stop",
-    value: function stop() {
-      _logger["default"].info('stopping StreamLoaderController');
-
-      this.redis.quit();
-    }
-  }, {
-    key: "startStream",
-    value: function startStream(searchId, tweetId) {
-      this.redis.rpush(START_STREAM, JSON.stringify({
-        searchId: searchId,
-        tweetId: tweetId
-      }));
-    }
-  }, {
-    key: "stopStream",
-    value: function stopStream(searchId) {
-      this.redis.publish(STOP_STREAM, searchId);
-    }
-  }]);
-  return StreamLoaderController;
-}();
-/*
- * StreamLoader will listen to a queue of commands to start streaming
- * jobs and will subscribe for messages to stop those jobs. The queue is
- * used to make sure only one worker picks up the streaming job. the
- * pub/sub channel is used to notify all workers to stop the stream
- * since we don't really know which worker picked it up.
- */
-
-
-exports.StreamLoaderController = StreamLoaderController;
-
 var StreamLoader = /*#__PURE__*/function () {
   function StreamLoader() {
     var db = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
-    var concurrency = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 5;
     (0, _classCallCheck2["default"])(this, StreamLoader);
-    this.concurrency = concurrency;
     this.db = db || new _db.Database();
-    this.redis = (0, _redis.getRedis)();
-    this.redisBlocking = this.redis.duplicate();
-    this.active = false;
-    this.activeStreams = new Set();
+    this.twtr = null;
   }
 
   (0, _createClass2["default"])(StreamLoader, [{
     key: "start",
     value: function () {
-      var _start = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee() {
+      var _start = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
         var _this = this;
 
-        var result, info;
-        return _regenerator["default"].wrap(function _callee$(_context) {
+        var isLoading, tweets, totalTweets, lastUpdate;
+        return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
-            switch (_context.prev = _context.next) {
+            switch (_context2.prev = _context2.next) {
               case 0:
-                this.redis.subscribe(STOP_STREAM);
-                this.redis.on('message', function (channel, searchId) {
-                  _this.stopStream(searchId);
-                });
-                this.redis.on('disconnect', function () {
-                  _this.stop();
-                });
-                this.active = true;
-
-              case 4:
-                if (!this.active) {
-                  _context.next = 11;
+                if (!(this.twtr === null)) {
+                  _context2.next = 13;
                   break;
                 }
 
-                _context.next = 7;
-                return this.redisBlocking.blpopAsync(START_STREAM, 10);
+                _logger["default"].info('attempting to get twitter client');
 
-              case 7:
-                result = _context.sent;
+                _context2.next = 4;
+                return this.db.getTwitterClientForApp();
 
-                if (result) {
-                  info = JSON.parse(result[1]);
-                  this.startStream(info.searchId, info.tweetId);
+              case 4:
+                this.twtr = _context2.sent;
+
+                if (this.twtr) {
+                  _context2.next = 10;
+                  break;
                 }
 
-                _context.next = 4;
+                _context2.next = 8;
+                return (0, _utils.timer)(20000);
+
+              case 8:
+                _context2.next = 11;
                 break;
 
+              case 10:
+                _logger["default"].info('got twitter client!');
+
               case 11:
+                _context2.next = 0;
+                break;
+
+              case 13:
+                // flag to indicate data is loading
+                isLoading = false; // accumulate tweets to be loaded by search id
+
+                tweets = new Map(); // keep a track of how many tweets are waiting to load
+
+                totalTweets = 0; // keep track of when tweets were last loaded
+
+                lastUpdate = new Date(); // start the filter stream and give it a call back that will receive 
+                // a tweet and any tags that the tweet matches
+
+                this.twtr.filter( /*#__PURE__*/function () {
+                  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(tweet, tags) {
+                    var _iterator, _step, tag, _searchId, elapsed, _iterator2, _step2, _step2$value, searchId, searchTweets;
+
+                    return _regenerator["default"].wrap(function _callee$(_context) {
+                      while (1) {
+                        switch (_context.prev = _context.next) {
+                          case 0:
+                            totalTweets += 1;
+
+                            if (_this.twtr) {
+                              _context.next = 3;
+                              break;
+                            }
+
+                            return _context.abrupt("return", false);
+
+                          case 3:
+                            // unpack search ids from the tags and add the tweet to the appropriate searches
+                            // a tweet could be added to multiple searches
+                            _iterator = _createForOfIteratorHelper(tags);
+
+                            try {
+                              for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                                tag = _step.value;
+
+                                // guard against tags that aren't from the docnow app
+                                if (tag.match(/^search-\d+/)) {
+                                  _searchId = tag.split('-')[1];
+
+                                  if (!tweets.has(_searchId)) {
+                                    tweets.set(_searchId, []);
+                                  }
+
+                                  tweets.get(_searchId).push(tweet);
+                                }
+                              } // load the tweets as long as an update isn't underway and either there are 
+                              // more than 100 tweets to load, or there are some tweets to load and more 
+                              // than 5 seconds have passed since the last load
+
+                            } catch (err) {
+                              _iterator.e(err);
+                            } finally {
+                              _iterator.f();
+                            }
+
+                            elapsed = new Date() - lastUpdate;
+
+                            if (!(!isLoading && (totalTweets >= 100 || totalTweets > 0 && elapsed > 5000))) {
+                              _context.next = 29;
+                              break;
+                            }
+
+                            isLoading = true;
+                            _iterator2 = _createForOfIteratorHelper(tweets.entries());
+                            _context.prev = 9;
+
+                            _iterator2.s();
+
+                          case 11:
+                            if ((_step2 = _iterator2.n()).done) {
+                              _context.next = 17;
+                              break;
+                            }
+
+                            _step2$value = (0, _slicedToArray2["default"])(_step2.value, 2), searchId = _step2$value[0], searchTweets = _step2$value[1];
+                            _context.next = 15;
+                            return _this.db.loadTweets({
+                              id: searchId
+                            }, searchTweets);
+
+                          case 15:
+                            _context.next = 11;
+                            break;
+
+                          case 17:
+                            _context.next = 22;
+                            break;
+
+                          case 19:
+                            _context.prev = 19;
+                            _context.t0 = _context["catch"](9);
+
+                            _iterator2.e(_context.t0);
+
+                          case 22:
+                            _context.prev = 22;
+
+                            _iterator2.f();
+
+                            return _context.finish(22);
+
+                          case 25:
+                            // reset these so we can collect more tweets to insert
+                            tweets = new Map();
+                            totalTweets = 0;
+                            lastUpdate = new Date();
+                            isLoading = false;
+
+                          case 29:
+                            return _context.abrupt("return", true);
+
+                          case 30:
+                          case "end":
+                            return _context.stop();
+                        }
+                      }
+                    }, _callee, null, [[9, 19, 22, 25]]);
+                  }));
+
+                  return function (_x, _x2) {
+                    return _ref.apply(this, arguments);
+                  };
+                }());
+
+              case 18:
               case "end":
-                return _context.stop();
+                return _context2.stop();
             }
           }
-        }, _callee, this);
+        }, _callee2, this);
       }));
 
       function start() {
@@ -149,148 +226,22 @@ var StreamLoader = /*#__PURE__*/function () {
     }()
   }, {
     key: "stop",
-    value: function stop() {
-      this.active = false;
-
-      _logger["default"].info('stopping StreamLoader');
-
-      this.redis.quit();
-      this.redisBlocking.quit();
-      this.db.close();
-    }
-  }, {
-    key: "startStream",
     value: function () {
-      var _startStream = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(searchId, tweetId) {
-        var _this2 = this;
-
-        var search, query, job, user, track, t, tweets, lastUpdate, totalTweets;
+      var _stop = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3() {
         return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
             switch (_context3.prev = _context3.next) {
               case 0:
-                _logger["default"].info("starting stream search ".concat(searchId));
+                _logger["default"].info('stopping StreamLoader');
 
                 _context3.next = 3;
-                return this.db.getSearch(searchId);
+                return this.db.close();
 
               case 3:
-                search = _context3.sent;
-                query = search.queries[search.queries.length - 1];
-                _context3.next = 7;
-                return this.db.createSearchJob({
-                  queryId: query.id,
-                  tweetId: tweetId,
-                  started: new Date()
-                });
+                _context3.next = 5;
+                return this.twtr.closeFilter();
 
-              case 7:
-                job = _context3.sent;
-                user = search.creator;
-                track = query.trackQuery();
-                _context3.next = 12;
-                return this.db.getTwitterClientForUser(user);
-
-              case 12:
-                t = _context3.sent;
-                tweets = [];
-                lastUpdate = new Date();
-                totalTweets = 0;
-                this.activeStreams.add(String(searchId));
-                t.filter({
-                  track: track
-                }, /*#__PURE__*/function () {
-                  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(tweet) {
-                    var elapsed, updatedUser;
-                    return _regenerator["default"].wrap(function _callee2$(_context2) {
-                      while (1) {
-                        switch (_context2.prev = _context2.next) {
-                          case 0:
-                            tweets.push(tweet);
-
-                            if (_this2.active === true && _this2.activeStreams.has(String(searchId))) {
-                              _context2.next = 4;
-                              break;
-                            }
-
-                            _logger["default"].info("stream for search ".concat(searchId, " has been closed"));
-
-                            return _context2.abrupt("return", false);
-
-                          case 4:
-                            elapsed = new Date() - lastUpdate;
-
-                            if (!(tweets.length >= 100 || tweets.length > 0 && elapsed > 5000)) {
-                              _context2.next = 28;
-                              break;
-                            }
-
-                            _context2.next = 8;
-                            return _this2.db.getUser(user.id);
-
-                          case 8:
-                            updatedUser = _context2.sent;
-
-                            if (updatedUser.active) {
-                              _context2.next = 15;
-                              break;
-                            }
-
-                            _logger["default"].info("user is not active: ".concat(updatedUser.twitterScreenName));
-
-                            _this2.stopStream(searchId);
-
-                            return _context2.abrupt("return", false);
-
-                          case 15:
-                            _context2.next = 17;
-                            return _this2.db.userOverQuota(updatedUser);
-
-                          case 17:
-                            if (!_context2.sent) {
-                              _context2.next = 21;
-                              break;
-                            }
-
-                            _logger["default"].info("user is over quota ".concat(updatedUser.twitterScreenName));
-
-                            _this2.stopStream(searchId);
-
-                            return _context2.abrupt("return", false);
-
-                          case 21:
-                            _context2.next = 23;
-                            return _this2.db.loadTweets(search, tweets);
-
-                          case 23:
-                            totalTweets += tweets.length;
-                            _context2.next = 26;
-                            return _this2.db.updateSearchJob({
-                              id: job.id,
-                              tweets: totalTweets
-                            });
-
-                          case 26:
-                            tweets = [];
-                            lastUpdate = new Date();
-
-                          case 28:
-                            return _context2.abrupt("return", true);
-
-                          case 29:
-                          case "end":
-                            return _context2.stop();
-                        }
-                      }
-                    }, _callee2);
-                  }));
-
-                  return function (_x3) {
-                    return _ref.apply(this, arguments);
-                  };
-                }());
-
-              case 18:
+              case 5:
               case "end":
                 return _context3.stop();
             }
@@ -298,99 +249,11 @@ var StreamLoader = /*#__PURE__*/function () {
         }, _callee3, this);
       }));
 
-      function startStream(_x, _x2) {
-        return _startStream.apply(this, arguments);
+      function stop() {
+        return _stop.apply(this, arguments);
       }
 
-      return startStream;
-    }()
-  }, {
-    key: "stopStream",
-    value: function () {
-      var _stopStream = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(searchId) {
-        var search, query, _iterator, _step, job;
-
-        return _regenerator["default"].wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                _logger["default"].info("stopping stream for search ".concat(searchId));
-
-                _context4.next = 3;
-                return this.db.getSearch(searchId);
-
-              case 3:
-                search = _context4.sent;
-                this.db.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
-                  active: false,
-                  archived: false
-                }));
-                query = search.queries[search.queries.length - 1]; // need a better way to identify the search job that needs to 
-                // be ended but for now just mark any search job that has no 
-                // ended time. once we can do historical collection it will be 
-                // important to only end the filter stream job
-
-                _iterator = _createForOfIteratorHelper(query.searchJobs);
-                _context4.prev = 7;
-
-                _iterator.s();
-
-              case 9:
-                if ((_step = _iterator.n()).done) {
-                  _context4.next = 16;
-                  break;
-                }
-
-                job = _step.value;
-
-                if (job.ended) {
-                  _context4.next = 14;
-                  break;
-                }
-
-                _context4.next = 14;
-                return this.db.updateSearchJob({
-                  id: job.id,
-                  ended: new Date()
-                });
-
-              case 14:
-                _context4.next = 9;
-                break;
-
-              case 16:
-                _context4.next = 21;
-                break;
-
-              case 18:
-                _context4.prev = 18;
-                _context4.t0 = _context4["catch"](7);
-
-                _iterator.e(_context4.t0);
-
-              case 21:
-                _context4.prev = 21;
-
-                _iterator.f();
-
-                return _context4.finish(21);
-
-              case 24:
-                this.activeStreams["delete"](String(searchId));
-
-              case 25:
-              case "end":
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this, [[7, 18, 21, 24]]);
-      }));
-
-      function stopStream(_x4) {
-        return _stopStream.apply(this, arguments);
-      }
-
-      return stopStream;
+      return stop;
     }()
   }]);
   return StreamLoader;

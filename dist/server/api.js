@@ -1,8 +1,8 @@
 "use strict";
 
-var _interopRequireWildcard = require("@babel/runtime/helpers/interopRequireWildcard");
-
 var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
+
+var _typeof = require("@babel/runtime/helpers/typeof");
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -26,21 +26,22 @@ var _archive = require("./archive");
 
 var _auth = require("./auth");
 
-var _streamLoader = require("./stream-loader");
+function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
-function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 var app = (0, _express["default"])();
 var db = new _db.Database();
-var streamLoader = new _streamLoader.StreamLoaderController();
 db.startTrendsWatcher({
   interval: 60 * 1000
 });
@@ -581,7 +582,7 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
         switch (_context8.prev = _context8.next) {
           case 0:
             if (!req.user) {
-              _context8.next = 35;
+              _context8.next = 37;
               break;
             }
 
@@ -590,8 +591,8 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
 
           case 3:
             search = _context8.sent;
-            // get any tweet text that was sent and remove it from the body
-            // since it's not a property of the search
+            // get any tweet text that was POSTed and remove it from the body
+            // since it's not really a property of the search object
             tweetText = req.body.tweetText;
             delete req.body.tweetText;
             newSearch = _objectSpread(_objectSpread({}, search), req.body);
@@ -605,74 +606,77 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
             }
 
             db.importFromSearch(search);
-            _context8.next = 32;
+            _context8.next = 34;
             break;
 
           case 13:
             if (!(search.active && !newSearch.active)) {
-              _context8.next = 17;
+              _context8.next = 18;
               break;
             }
 
-            streamLoader.stopStream(search.id); // stop search too?
+            _context8.next = 16;
+            return db.stopStream(search);
 
-            _context8.next = 32;
+          case 16:
+            _context8.next = 34;
             break;
 
-          case 17:
+          case 18:
             if (!(!search.active && newSearch.active)) {
-              _context8.next = 31;
+              _context8.next = 33;
               break;
             }
 
-            _context8.next = 20;
+            _context8.next = 21;
             return db.updateSearch({
               id: search.id,
               "public": new Date()
             });
 
-          case 20:
+          case 21:
             // tweet the announcement if we were given text to tweet
             tweetId = null;
 
             if (!tweetText) {
-              _context8.next = 28;
+              _context8.next = 29;
               break;
             }
 
-            _context8.next = 24;
+            _context8.next = 25;
             return db.getTwitterClientForUser(req.user);
 
-          case 24:
+          case 25:
             twtr = _context8.sent;
-            _context8.next = 27;
+            _context8.next = 28;
             return twtr.sendTweet(tweetText);
 
-          case 27:
+          case 28:
             tweetId = _context8.sent;
 
-          case 28:
-            // start the collection
-            streamLoader.startStream(search.id, tweetId); // start search too?
-
-            _context8.next = 32;
-            break;
+          case 29:
+            _context8.next = 31;
+            return db.startStream(search, tweetId);
 
           case 31:
+            _context8.next = 34;
+            break;
+
+          case 33:
             if (!search.archiveStarted && newSearch.archiveStarted) {
               archive = new _archive.Archive();
               archive.createArchive(search);
             }
 
-          case 32:
+          case 34:
             res.json(newSearch);
-            _context8.next = 36;
+            _context8.next = 38;
             break;
 
-          case 35:
+          case 37:
             notAuthorized(res);
 
-          case 36:
+          case 38:
           case "end":
             return _context8.stop();
         }
