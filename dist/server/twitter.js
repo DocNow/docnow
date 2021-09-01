@@ -63,24 +63,33 @@ var Twitter = /*#__PURE__*/function () {
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN;
     this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET; // a client for v1.1 endpoints
 
-    this.twit = new _twit["default"]({
-      consumer_key: this.consumerKey,
-      consumer_secret: this.consumerSecret,
-      access_token: this.accessToken,
-      access_token_secret: this.accessTokenSecret
-    }); // a client for v2 endpoints
+    if (this.consumerKey && this.consumerSecret && this.accessToken && this.accessTokenSecret) {
+      this.twit = new _twit["default"]({
+        consumer_key: this.consumerKey,
+        consumer_secret: this.consumerSecret,
+        access_token: this.accessToken,
+        access_token_secret: this.accessTokenSecret
+      }); // a client for v2 endpoints
 
-    this.twitterV2 = new _twitterV["default"]({
-      consumer_key: this.consumerKey,
-      consumer_secret: this.consumerSecret,
-      access_token_key: this.accessToken,
-      access_token_secret: this.accessTokenSecret
-    }); // a app auth client for v2 endpoints
+      this.twitterV2 = new _twitterV["default"]({
+        consumer_key: this.consumerKey,
+        consumer_secret: this.consumerSecret,
+        access_token_key: this.accessToken,
+        access_token_secret: this.accessTokenSecret
+      });
+    } else {
+      _logger["default"].warn('not configuring user client for v1.1 and v2 endpoints since not all keys are present');
+    } // a app auth client for v2 endpoints
 
-    this.twitterV2app = new _twitterV["default"]({
-      consumer_key: this.consumerKey,
-      consumer_secret: this.consumerSecret
-    });
+
+    if (this.consumerKey && this.consumerSecret) {
+      this.twitterV2app = new _twitterV["default"]({
+        consumer_key: this.consumerKey,
+        consumer_secret: this.consumerSecret
+      });
+    } else {
+      _logger["default"].warn('unable to configure app client for v2 endpoint since not all keys are present');
+    }
   }
 
   (0, _createClass2["default"])(Twitter, [{
