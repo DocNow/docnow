@@ -102,7 +102,7 @@
     "style-loader": "^0.23.1",
     "tweet-archive": "^0.0.14",
     "twit": "^2.2.11",
-    "twitter-v2": "^1.1.0",
+    "twitter-v2": "github:edsu/twitter-v2",
     "url-loader": "^1.1.2",
     "uuid": "^3.4.0",
     "winston": "^3.3.3"
