@@ -67,7 +67,7 @@ export default class Webpage extends Component {
         </CardMedia>
         <CardContent style={{overflowY: 'scroll', height: '190px'}}>
           <Typography variant="h2" component="h2">
-            {this.props.title}
+            <a href={this.props.url}>{this.props.title}</a>
           </Typography>
           <Typography variant="body2" color="textSecondary" component="p">
             {this.props.description}
