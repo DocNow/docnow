@@ -1,4 +1,30 @@
-version: '3'
+version: '3.4'
+
+# shared config for webserver, url-fetcher and stream-loader services
+
+x-docnow: &docnow
+  environment:
+    - REDIS_HOST=redis
+    - DB_HOSTNAME=db
+    - DB_USERNAME
+    - DB_PASSWORD
+    - DB_DATABASE
+    - NODE_ENV
+    - CONSUMER_KEY
+    - CONSUMER_SECRET
+    - ACCESS_TOKEN
+    - ACCESS_TOKEN_SECRET
+  build:
+    context: .
+  volumes:
+    - ./src:/code/src
+  depends_on:
+    - db
+    - redis
+  links:
+    - db
+    - redis
+
 services:
 
   redis:
@@ -13,31 +39,19 @@ services:
       POSTGRES_DB: "${DB_DATABASE}"
     command: postgres -c logging_collector=on -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
 
-  app:
-    environment:
-      - REDIS_HOST=redis
-      - DB_HOSTNAME=db
-      - DB_USERNAME
-      - DB_PASSWORD
-      - DB_DATABASE
-      - NODE_ENV
-      - CONSUMER_KEY
-      - CONSUMER_SECRET
-      - ACCESS_TOKEN
-      - ACCESS_TOKEN_SECRET
+  webapp:
+    <<: *docnow
+    entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- ./entrypoint.sh
     ports:
       - 3000:3000
-    build:
-      context: .
-    volumes:
-      - ./src:/code/src
-    depends_on:
-      - db
-      - redis
-    links:
-      - db
-      - redis
-    entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- ./entrypoint.sh
+
+  stream-loader:
+    <<: *docnow
+    entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- npm run stream-loader 
+
+  url-fetcher:
+    <<: *docnow
+    entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- npm run url-fetcher 
 
   pghero:
     image: ankane/pghero
