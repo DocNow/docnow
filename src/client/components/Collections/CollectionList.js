@@ -25,18 +25,6 @@ export default class CollectionList extends Component {
 
   componentDidMount() {
     this.props.getFoundInSearches()
-    this.tick()
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 3000)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-  }
-
-  tick() {
-    this.props.getFoundInSearches()
     this.props.getPublicSearches()
   }
 
