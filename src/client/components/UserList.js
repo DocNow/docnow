@@ -24,21 +24,8 @@ export default class UserList extends Component {
 
   componentDidMount() {
     if (this.props.users.length === 0) {
-      this.tick()
+      this.props.getUsers()
     }
-
-    this.timerId = setInterval(() => {
-      this.tick()
-    }, 10000)
-
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timerId)
-  }
-
-  tick() {
-    this.props.getUsers()
   }
 
   toggleActive(user) {
