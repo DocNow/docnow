@@ -72,7 +72,7 @@ export default class UserList extends Component {
               <TableCell className={style.Username}><Link to={`/searches/${user.id}`}>{user.twitterScreenName}</Link></TableCell>
               <TableCell className={style.Name}>{user.name}</TableCell>
               <TableCell className={style.Collections}>{user.searches.length}</TableCell>
-              <TableCell className={style.Tweets}>{tweetCount}</TableCell>
+              <TableCell className={style.Tweets}>{tweetCount.toLocaleString()}</TableCell>
               <TableCell className={style.Active}>
                 <Switch
                   checked={user.active}

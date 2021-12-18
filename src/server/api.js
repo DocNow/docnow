@@ -242,18 +242,17 @@ app.post('/searches', (req, res) => {
 
 app.get('/search/:searchId', async (req, res) => {
   if (req.user) {
-    const search = await db.getSearch(req.params.searchId)
-    const summ = await db.getSearchSummary(search)
-    const lastQuery = summ.queries[summ.queries.length - 1]
-    summ.query = lastQuery.value.or
-    res.json(summ)
+    const search = await db.getSearch(req.params.searchId, true)
+    // ensure user owns the search
+    const lastQuery = search.queries[search.queries.length - 1]
+    search.query = lastQuery.value.or
+    res.json(search)
   } else {
     const search = await db.getPublicSearch(req.params.searchId)
     if (search) {
-      const summ = await db.getSearchSummary(search)
-      const lastQuery = summ.queries[summ.queries.length - 1]
-      summ.query = lastQuery.value.or
-      res.json(summ)
+      const lastQuery = search.queries[search.queries.length - 1]
+      search.query = lastQuery.value.or
+      res.json(search)
     } else {
       res.status(401).json({error: 'Not Authorized'})
     }

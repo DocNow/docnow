@@ -84,7 +84,7 @@ export default class CollectionList extends Component {
                   { foundCount }
                 </TableCell>
                 <TableCell>
-                  {search.userCount}
+                  {search.userCount.toLocaleString()}
                 </TableCell>
                 <TableCell>
                   {created}

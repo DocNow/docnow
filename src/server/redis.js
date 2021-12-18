@@ -49,3 +49,9 @@ export const deselectedUrlsKey = (search) => {return `urlsdeselected:${search.id
 
 // metadata for wayback information for a url
 export const waybackKey = (url) => {return `wayback:${url}`}
+
+// total number of tweets by user
+export const userTweetsCountKey = (user) => {return `usertweetcount:${user.id}`}
+
+// a json blob of stats for a search
+export const searchStatsKey = (search) => {return `searchstats:${search.id}`} 

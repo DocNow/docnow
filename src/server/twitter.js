@@ -40,6 +40,13 @@ export class Twitter {
         access_token_secret: this.accessTokenSecret
       })
 
+      // a client for v2 endpoints
+      this.twitterV2App = new TwitterV2({
+        consumer_key: this.consumerKey,
+        consumer_secret: this.consumerSecret
+      })
+
+
     } else {
       log.warn('not configuring user client for v1.1 and v2 endpoints since not all keys are present')
     }
@@ -108,13 +115,15 @@ export class Twitter {
       params.until_id = opts.maxId
     }
 
-    const endpoint = opts.all ? 'tweets/search/all' : 'tweets/search/recent'
+    // const endpoint = opts.all ? 'tweets/search/all' : 'tweets/search/recent'
+    const endpoint = 'tweets/search/all'
+    params.start_time = '2006-03-21T00:00:00+00:00'
 
     const recurse = (nextToken, total) => {
       if (nextToken) {
         params.next_token = nextToken
       }
-      this.twitterV2.get(endpoint, params).then((resp) => {
+      this.twitterV2App.get(endpoint, params).then((resp) => {
         if (resp.data) {
           const tweets = flatten(resp).data
           const newTotal = total + tweets.length

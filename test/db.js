@@ -217,7 +217,7 @@ describe('database', () => {
 
   it('should get summary', (done) => {
     db.getSearch(testSearch.id).then((search) => {
-      db.getSearchSummary(search).then((summ) => {
+      db.getSearchStats(search).then((summ) => {
         ok(typeof(summ.count), 'number')
         ok(summ.count > 100, 'count')
         ok(summ.maxDate, 'maxDate')

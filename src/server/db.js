@@ -16,9 +16,9 @@ import log from './logger'
 import { Twitter } from './twitter'
 import { UrlFetcher } from './url-fetcher'
 import knexfile from '../../knexfile'
-import { getRedis } from './redis'
 import Query from './models/Query'
 import SearchJob from './models/SearchJob'
+import { getRedis, searchStatsKey } from './redis'
 
 const urlFetcher = new UrlFetcher()
 
@@ -322,8 +322,8 @@ export class Database {
     return s2
   }
 
-  async getSearch(searchId) {
-    const search = await Search.query()
+  async getSearch(searchId, includeSummary = false) {
+    let search = await Search.query()
       .findById(searchId)
       .withGraphJoined('creator')
       .withGraphJoined('queries.searchJobs')
@@ -332,11 +332,15 @@ export class Database {
       return null
     }
 
-    const stats = await this.getSearchStats(search)
-    return {
-      ...search,
-      ...stats
+    if (includeSummary) {
+      const stats = await this.getSearchStats(search)
+      search = {
+        ...search,
+        ...stats
+      }
     }
+
+    return search
   }
 
   async getPublicSearch(searchId) {
@@ -423,30 +427,11 @@ export class Database {
 
   async updateSearch(search) {
     // search properties are explicitly used to guard against trying
-    // to persist properties that were added by getSearchSummary
+    // to persist properties that were added by getSearchStats
     const safeSearch = this.removeStatsProps(search)
     await Search.query()
       .patch({...safeSearch, updated: new Date()})
       .where('id', safeSearch.id)
-  }
-
-  async getSearchSummary(search) {
-    const results = await Tweet.query()
-      .min('created')
-      .max('created')
-      .count('id')
-      .where('searchId', search.id)
-
-    this.convertCounts(results)
-    const stats = await this.getSearchStats(search)
-
-    return {
-      ...search,
-      ...stats,
-      count: results[0].count,
-      minDate: results[0].min,
-      maxDate: results[0].max
-    }
   }
 
   removeStatsProps(o) {
@@ -467,34 +452,44 @@ export class Database {
 
   async getSearchStats(search) {
 
-    // Perhaps there could be views of this data or it could be cached?
+    return this.cache(searchStatsKey(search), 60, async () => {
 
-    const users = await Tweet.query()
-      .countDistinct('screenName')
-      .where({searchId: search.id})
-      .first()
+      // Perhaps there could be views of this data or it could be cached?
 
-    const tweets = await Tweet.query()
-      .count('tweetId')
-      .where({searchId: search.id})
-      .first()
+      const dates = await Tweet.query()
+        .min('created')
+        .max('created')
+        .where({'searchId': search.id})
 
-    const urls = await Tweet.query()
-      .join('tweetUrl', 'id', 'tweetUrl.tweetId')
-      .select('type')
-      .countDistinct('url')
-      .where({searchId: search.id})
-      .groupBy('type')
+      const users = await Tweet.query()
+        .countDistinct('screenName')
+        .where({searchId: search.id})
+        .first()
 
-    const urlCounts = new Map(urls.map(r => [r.type, r.count]))
+      const tweets = await Tweet.query()
+        .count('tweetId')
+        .where({searchId: search.id})
+        .first()
 
-    return {
-      tweetCount: parseInt(tweets.count, 10),
-      userCount: parseInt(users.count, 10),
-      imageCount: parseInt(urlCounts.get('image'), 10),
-      videoCount: parseInt(urlCounts.get('video'), 10),
-      urlCount: parseInt(urlCounts.get('page'), 10)
-    }
+      const urls = await Tweet.query()
+        .join('tweetUrl', 'id', 'tweetUrl.tweetId')
+        .select('type')
+        .countDistinct('url')
+        .where({searchId: search.id})
+        .groupBy('type')
+
+      const urlCounts = new Map(urls.map(r => [r.type, r.count]))
+
+      return {
+        minDate: dates[0].min,
+        maxDate: dates[0].max,
+        tweetCount: parseInt(tweets.count, 10),
+        userCount: parseInt(users.count, 10),
+        imageCount: parseInt(urlCounts.get('image'), 10),
+        videoCount: parseInt(urlCounts.get('video'), 10),
+        urlCount: parseInt(urlCounts.get('page'), 10)
+      }
+    });
   }
 
   async importFromSearch(search, maxTweets = 1000) {
@@ -1012,6 +1007,17 @@ export class Database {
     await SearchJob.query()
       .patch({...job, updated: new Date()})
       .where('id', job.id)
+  }
+
+  async cache(key, secs, f) {
+    let value = await this.redis.getAsync(key) 
+    if (value) {
+      return JSON.parse(value)
+    } else {
+      value = await f()
+      await this.redis.setAsync(key, JSON.stringify(value), "EX", secs)
+      return value
+    }
   }
 
 }
