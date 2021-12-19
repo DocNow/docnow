@@ -2,7 +2,7 @@ import { bindActionCreators } from 'redux'
 import { connect } from 'react-redux'
 import SearchList from '../components/SearchList'
 import { updateSearch, deleteSearch } from '../actions/search'
-import { getSearches } from '../actions/searches'
+import { getSearches, getSearchesCounts } from '../actions/searches'
 
 const mapStateToProps = (state, ownProps) => {
   return {
@@ -16,7 +16,8 @@ const mapStateToProps = (state, ownProps) => {
 const actions = {
   getSearches,
   updateSearch,
-  deleteSearch
+  deleteSearch,
+  getSearchesCounts
 }
 
 const mapDispatchToProps = (dispatch) => bindActionCreators(actions, dispatch)

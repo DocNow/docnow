@@ -19,6 +19,22 @@ export default class SearchList extends Component {
   componentDidMount() {
     const userId = this.props.forUserId || this.props.user.id
     this.props.getSearches(userId)
+    this.timerId = setInterval(() => {
+      this.tick()
+    }, 2000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId)
+  }
+
+  tick() {
+    if (this.props.searches) {
+      const ids = this.props.searches.filter(s => s.active).map(s => s.id)
+      if (ids.length > 0) {
+        this.props.getSearchesCounts(ids)
+      }
+    } 
   }
 
   render() {
@@ -112,6 +128,7 @@ SearchList.propTypes = {
   updateSearch: PropTypes.func,
   deleteSearch: PropTypes.func,
   getSearches: PropTypes.func,
+  getSearchesCounts: PropTypes.func,
   user: PropTypes.object,
   forUserId: PropTypes.number,
   instanceTweetText: PropTypes.string,

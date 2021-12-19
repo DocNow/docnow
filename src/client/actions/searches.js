@@ -1,4 +1,5 @@
 export const SET_SEARCHES = 'SET_SEARCHES'
+export const SET_SEARCHES_COUNTS = 'SET_SEARCHES_COUNTS'
 
 export const setSearches = (searches) => {
   return {
@@ -29,5 +30,19 @@ export const getPublicSearches = () => {
       .then((result) => {
         dispatch(setSearches(result))
       })
-   }
+  }
+}
+
+export const getSearchesCounts = searchIds => {
+  return (dispatch) => {
+    const url = `/api/v1/counts?searchIds=${searchIds.join(",")}`
+    fetch(url, {credentials: 'same-origin'})
+      .then((resp) => resp.json())
+      .then((result) => {
+        dispatch({
+          type: SET_SEARCHES_COUNTS,
+          searches: result
+        })
+      })
+  }
 }

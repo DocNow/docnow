@@ -83,5 +83,5 @@ export default class TabBarComponent extends MediaQueryComponent {
 TabBarComponent.propTypes = {
   location: PropTypes.string,
   isSuperUser: PropTypes.bool,
-  navigateTo: PropTypes.func
+  navigateTo: PropTypes.func,
 }

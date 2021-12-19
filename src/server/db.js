@@ -98,7 +98,7 @@ export class Database {
 
       return newUser
     } catch (e) { 
-      console.error(e)
+      log.error(e)
     }
 
   }
@@ -132,20 +132,8 @@ export class Database {
       .withGraphJoined('places')
       .withGraphJoined('searches')
 
-    // this is a stop gap until redis goes away
-    // we need to add aggregate stats to each search
-    // maybe there should be a view for these?
-
     for (const user of users) {
-      const searchesWithStats = []
-      for (const search of user.searches) {
-        const stats = await this.getSearchStats(search)
-        searchesWithStats.push({
-          ...search,
-          ...stats
-        })
-      }
-      user.searches = searchesWithStats
+      user.tweetCount = await this.getUserTweetCount(user)
     }
 
     return users
@@ -322,7 +310,15 @@ export class Database {
     return s2
   }
 
-  async getSearch(searchId, includeSummary = false) {
+  /**
+   * Fetches a search from the database.
+   * @param {number} searchId the search id to look up
+   * @param {boolean} includeSummary whether to calcuate summary statistics
+   * @param {number} ttl how many seconds to cache summary stats for 
+   * @returns a search object
+   */
+
+  async getSearch(searchId, includeSummary = false, ttl = 60) {
     let search = await Search.query()
       .findById(searchId)
       .withGraphJoined('creator')
@@ -333,7 +329,7 @@ export class Database {
     }
 
     if (includeSummary) {
-      const stats = await this.getSearchStats(search)
+      const stats = await this.getSearchStats(search, ttl)
       search = {
         ...search,
         ...stats
@@ -373,17 +369,43 @@ export class Database {
       .withGraphJoined('queries')
       .orderBy('created', 'DESC')
 
-    // add stats to each search
-    const searches = []
     for (const search of results) {
-      const stats = await this.getSearchStats(search)
-      searches.push({
-        ...search,
-        ...stats
-      })
+      search.tweetCount = await this.getSearchTweetCount(search)
     }
 
-    return searches
+    return results
+  }
+
+  async getSearchTweetCount(search) {
+    const result = await this.pg('tweet')
+      .join('search', 'tweet.search_id', '=', 'search.id')
+      .where('search.id', '=', search.id)
+      .count()
+      .first()
+    return parseInt(result.count, 10)
+  }
+
+  async getUserTweetCount(user) {
+    const result = await this.pg('tweet')
+      .join('search', 'tweet.search_id', '=', 'search.id')
+      .join('user', 'search.user_id', '=', 'user.id')
+      .where('user.id', '=', user.id)
+      .count()
+      .first()
+    return parseInt(result.count, 10)
+  }
+
+  async getSearchCounts(searchIds) {
+    const results = await this.pg('tweet')
+      .select('search_id')
+      .whereIn('search_id', searchIds)
+      .groupBy('search_id')
+      .count('tweet.id')
+    const counts = {}
+    for (const r of results) {
+      counts[r.searchId] = parseInt(r.count, 10)
+    }
+    return counts
   }
 
   async getPublicSearches() {
@@ -450,11 +472,10 @@ export class Database {
     return newO
   }
 
-  async getSearchStats(search) {
+  async getSearchStats(search, ttl = 60) {
 
-    return this.cache(searchStatsKey(search), 60, async () => {
-
-      // Perhaps there could be views of this data or it could be cached?
+    const key = searchStatsKey(search)
+    return this.cache(key, ttl, async () => {
 
       const dates = await Tweet.query()
         .min('created')
@@ -489,7 +510,8 @@ export class Database {
         videoCount: parseInt(urlCounts.get('video'), 10),
         urlCount: parseInt(urlCounts.get('page'), 10)
       }
-    });
+    })
+
   }
 
   async importFromSearch(search, maxTweets = 1000) {
@@ -652,7 +674,7 @@ export class Database {
       })
 
     } catch (error) {
-      console.error(`loadTweets transaction failed: ${error}`)
+      log.error(`loadTweets transaction failed: ${error}`)
     }
 
   }
@@ -1009,15 +1031,18 @@ export class Database {
       .where('id', job.id)
   }
 
-  async cache(key, secs, f) {
+  async cache(key, ttl = 60, f) {
+    console.log(key, ttl)
     let value = await this.redis.getAsync(key) 
     if (value) {
       return JSON.parse(value)
     } else {
+      // this would be a good place to prevent thundering herd problem
+      // by setting a semaphore key in redis to indicate that the query
+      // is being run, and then waiting till it has stopped
       value = await f()
-      await this.redis.setAsync(key, JSON.stringify(value), "EX", secs)
+      await this.redis.setAsync(key, JSON.stringify(value), "EX", ttl)
       return value
     }
   }
-
 }

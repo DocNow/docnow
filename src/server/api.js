@@ -241,14 +241,18 @@ app.post('/searches', (req, res) => {
 })
 
 app.get('/search/:searchId', async (req, res) => {
+  const searchId = req.params.searchId
+  const includeSummary = true
+  const ttl = 2
+
   if (req.user) {
-    const search = await db.getSearch(req.params.searchId, true)
-    // ensure user owns the search
+    const search = await db.getSearch(searchId, includeSummary, ttl)
+    // need to ensure that user owns the search!
     const lastQuery = search.queries[search.queries.length - 1]
     search.query = lastQuery.value.or
     res.json(search)
   } else {
-    const search = await db.getPublicSearch(req.params.searchId)
+    const search = await db.getPublicSearch(req.params.searchId, includeSummary, ttl)
     if (search) {
       const lastQuery = search.queries[search.queries.length - 1]
       search.query = lastQuery.value.or
@@ -261,7 +265,7 @@ app.get('/search/:searchId', async (req, res) => {
 
 app.put('/search/:searchId', async (req, res) => {
   if (req.user) {
-    const search = await db.getSearch(req.body.id)
+    const search = await db.getSearch(req.body.id, true)
 
     // get any tweet text that was POSTed and remove it from the body
     // since it's not really a property of the search object
@@ -570,6 +574,29 @@ app.get('/findme', async (req, res) => {
   if (req.user) {
     const results = await db.getSearchesWithUser(req.user.twitterScreenName)
     res.json(results)
+  } else {
+    notAuthorized(res)
+  }
+})
+
+app.get('/counts', async (req, res) => {
+  if (req.user && req.query.searchIds) {
+    // turn searchIds into a list of numbers
+    const searchIds = req
+      .query
+      .searchIds
+      .split(',')
+      .map(s => parseInt(s, 10))
+      .filter(n => ! isNaN(n))
+
+    if (searchIds.length > 0) {
+      const searchCounts = await db.getSearchCounts(searchIds)
+      res.json(searchCounts)
+    } else {
+      res.status(400).json({error: 'searchIds must be a comma separated list of numbers'})
+    }
+  } else if (! req.query.searchIds) {
+    res.status(400).json({error: 'please supply searchIds query parameter'})
   } else {
     notAuthorized(res)
   }

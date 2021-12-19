@@ -1,4 +1,4 @@
-import { SET_SEARCHES } from '../actions/searches'
+import { SET_SEARCHES, SET_SEARCHES_COUNTS } from '../actions/searches'
 import { SET_TWITTER_SEARCH, DELETE_SEARCH, ADD_SEARCH } from '../actions/search'
 
 const initialState = []
@@ -38,9 +38,12 @@ export default function searches(state = initialState, action) {
     }
 
     case SET_TWITTER_SEARCH: {
+
+      /*
       if (action.search.active === false) {
         return state
       }
+      */
 
       const pos = state.findIndex((s) => {
         return s.id === action.search.id
@@ -72,6 +75,21 @@ export default function searches(state = initialState, action) {
         action.search,
         ...state
       ]
+    }
+
+    case SET_SEARCHES_COUNTS: {
+      return state.map(s => {
+        if (action.searches[s.id]) {
+          return {
+            ...s,
+            tweetCount: action.searches[s.id]
+          }
+        } else {
+          return {
+            ...s
+          }
+        }
+      })
     }
 
     default: {

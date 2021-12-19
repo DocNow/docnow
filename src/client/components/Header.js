@@ -66,5 +66,5 @@ Header.propTypes = {
   logoUrl: PropTypes.string,
   isSuperUser: PropTypes.bool,
   notifications: PropTypes.number,
-  navigateTo: PropTypes.func
+  navigateTo: PropTypes.func,
 }

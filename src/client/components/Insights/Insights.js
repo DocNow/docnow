@@ -9,6 +9,17 @@ export default class Insights extends Component {
   
   componentDidMount() {
     this.props.resetTwitterSearch()
+    this.fetchData()
+    this.timerId = setInterval(() => {
+      this.tick()
+    }, 2000)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timerId)
+  }
+
+  fetchData() {
     this.props.getSearch(this.props.searchId)
     this.props.getUsers(this.props.searchId)
     this.props.getTweets(this.props.searchId)
@@ -17,6 +28,12 @@ export default class Insights extends Component {
     this.props.getWebpages(this.props.searchId)
     this.props.getHashtags(this.props.searchId)
     this.props.getActions(this.props.searchId, true)
+  }
+
+  tick() {
+    if (this.props.search.active) {
+      this.fetchData()
+    }
   }
 
   render() {

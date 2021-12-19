@@ -49,7 +49,6 @@ export default class CollectionList extends Component {
             <TableRow>            
               <TableCell>Title</TableCell>
               <TableCell>Tweets</TableCell>
-              <TableCell>Users</TableCell>
               <TableCell>Created</TableCell>
               <TableCell>Last Update</TableCell>
               <TableCell>Collector</TableCell>
@@ -82,9 +81,6 @@ export default class CollectionList extends Component {
                   &nbsp;
                   { search.tweetCount.toLocaleString() }
                   { foundCount }
-                </TableCell>
-                <TableCell>
-                  {search.userCount.toLocaleString()}
                 </TableCell>
                 <TableCell>
                   {created}
