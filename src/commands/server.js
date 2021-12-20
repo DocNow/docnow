@@ -15,8 +15,7 @@ import api from '../server/api'
 import auth from '../server/auth'
 import log from '../server/logger'
 import config from '../../webpack.dev.config.js'
-import { UrlFetcher } from '../server/url-fetcher'
-import { StreamLoader } from '../server/stream-loader'
+import { QuotaChecker } from '../server/quota-checker'
 
 const projectDir = path.join(__dirname, '..', '..')
 const clientDir = path.join(projectDir, 'dist', 'client')
@@ -65,18 +64,10 @@ if (isDevelopment) {
   app.get('*', (req, res) => res.sendFile(path.join(clientDir, 'index.html')))
 }
 
-// As a convenience embed a UrlFetcher and StreamLoader in development mode.
-// This would not be a good idea to do in production as a it could
-// really bog down the web server process if lots of data collection is
-// going on.
+const qc = new QuotaChecker()
+qc.start()
 
-if (isDevelopment) {
-  const urlFetcher = new UrlFetcher()
-  urlFetcher.start()
-
-  const streamLoader = new StreamLoader()
-  streamLoader.start()
-}
+// put TrendWatcher here too?
 
 log.info('starting app')
 app.listen(app.get('port'))

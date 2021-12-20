@@ -111,7 +111,13 @@ export class Database {
         user.places[pos].position = pos
       }
     }
+
+    // don't update searches as they could be stale
     delete user.searches
+
+    // don't set tweetCount since it's not a column in user and is
+    // added by the API
+    delete user.tweetCount
 
     const u = await User.query()
       .allowGraph('places')
@@ -376,6 +382,20 @@ export class Database {
     return results
   }
 
+  async getActiveSearches() {
+    const results = await Search.query()
+      .where({"search.active": true, "saved": true})
+      .withGraphJoined('creator')
+      .withGraphJoined('queries.searchJobs')
+      .orderBy('created', 'DESC')
+
+    for (const search of results) {
+      search.tweetCount = await this.getSearchTweetCount(search)
+    }
+
+    return results
+  }
+
   async getSearchTweetCount(search) {
     const result = await this.pg('tweet')
       .join('search', 'tweet.search_id', '=', 'search.id')
@@ -439,12 +459,8 @@ export class Database {
   }
 
   async userOverQuota(user) {
-    const result = await Tweet.query()
-      .count()
-      .where({'search.userId': user.id})
-      .innerJoin('search', 'tweet.searchId', 'search.id')
-      .first()
-    return result.count > user.tweetQuota
+    const count = await this.getUserTweetCount(user)
+    return count > user.tweetQuota
   }
 
   async updateSearch(search) {
@@ -1032,7 +1048,6 @@ export class Database {
   }
 
   async cache(key, ttl = 60, f) {
-    console.log(key, ttl)
     let value = await this.redis.getAsync(key) 
     if (value) {
       return JSON.parse(value)
