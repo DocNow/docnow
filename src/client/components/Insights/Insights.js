@@ -17,6 +17,7 @@ export default class Insights extends Component {
 
   componentWillUnmount() {
     clearInterval(this.timerId)
+    this.props.resetTwitterSearch()
   }
 
   fetchData() {

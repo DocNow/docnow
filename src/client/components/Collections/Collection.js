@@ -45,6 +45,10 @@ export default class CollectionList extends Component {
     this.props.getUserTweetsInSearch(this.props.searchId)
   }
 
+  componentWillUnmount() {
+    this.props.resetTwitterSearch()
+  }
+
   handleFindUserInput(user) {
     const findingUser = user === '' ? false : this.state.findingUser
     this.setState({
@@ -290,6 +294,7 @@ CollectionList.propTypes = {
   user: PropTypes.object,
   searchId: PropTypes.string,
   search: PropTypes.object,
+  foundUserTweets: PropTypes.array,
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,
   getUsers: PropTypes.func,
@@ -297,6 +302,6 @@ CollectionList.propTypes = {
   getTweetsForUser: PropTypes.func,
   getUserTweetsInSearch: PropTypes.func,
   setConsentActions: PropTypes.func,
-  foundUserTweets: PropTypes.array,
-  revokeConsent: PropTypes.func
+  revokeConsent: PropTypes.func,
+  resetTwitterSearch: PropTypes.func,
 }

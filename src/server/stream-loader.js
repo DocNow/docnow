@@ -74,6 +74,7 @@ export class StreamLoader {
         isLoading = true
 
         for (const [searchId, searchTweets] of tweets.entries()) {
+          log.info(`loading ${searchTweets.length} tweets for ${searchId}`)
           await this.db.loadTweets({id: searchId}, searchTweets)
         }
 
