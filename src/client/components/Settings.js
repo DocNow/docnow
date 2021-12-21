@@ -54,6 +54,11 @@ function Error({message, callbackUrl}) {
   }
 }
 
+Error.propTypes = {
+  message: PropTypes.string,
+  callbackUrl: PropTypes.string,
+}
+
 export default class Settings extends MediaQueryComponent {
 
   componentWillMount() {
