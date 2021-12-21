@@ -1,5 +1,6 @@
 import React from 'react'
 import MediaQueryComponent from '../components/MediaQueryComponent'
+import Message from './Message'
 import { Route, Switch } from 'react-router'
 import { push } from 'connected-react-router'
 import store from '../store'
@@ -45,6 +46,7 @@ class App extends MediaQueryComponent {
       .then(result => {
         if (! result) { store.dispatch(push('/settings/')) }
       })
+    console.log(store.getState())
   }
 
   componentDidMount() {
@@ -75,6 +77,7 @@ class App extends MediaQueryComponent {
               <Route exact name="collection" path="/collection/:searchId/" component={CollectionPage} />
             </Switch>
           </ScrollToTop>
+          <Message />
         </main>
       </div>
     )

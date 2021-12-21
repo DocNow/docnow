@@ -266,6 +266,7 @@ app.get('/search/:searchId', async (req, res) => {
 app.put('/search/:searchId', async (req, res) => {
   if (req.user) {
     const search = await db.getSearch(req.body.id, true)
+    let error = null 
 
     // get any tweet text that was POSTed and remove it from the body
     // since it's not really a property of the search object
@@ -275,28 +276,49 @@ app.put('/search/:searchId', async (req, res) => {
     const newSearch = {...search, ...req.body}
     await db.updateSearch(newSearch)
 
+    // are they updating a search in the explore view?
     if (req.query.refreshTweets) {
       db.importFromSearch(search)
+    
+    // are they stopping a stream?
     } else if (search.active && ! newSearch.active) {
       await db.stopStream(search)
-      // stop search too?
+
+    // are they starting a stream
     } else if (! search.active && newSearch.active) {
-      // make the search public
-      await db.updateSearch({id: search.id, public: new Date()})
-      // tweet the announcement if we were given text to tweet
-      let tweetId = null
-      if (tweetText) {
-        const twtr = await db.getTwitterClientForUser(req.user)
-        tweetId = await twtr.sendTweet(tweetText)
+      if (await db.userOverQuota(req.user)) {
+        error = {
+          message: 'You have exceeded your tweet quota.',
+          code: 1
+        }
+        newSearch.active = false
+      } else {
+        // make the search public
+        await db.updateSearch({id: search.id, public: new Date()})
+        // tweet the announcement if we were given text to tweet
+        let tweetId = null
+        if (tweetText) {
+          const twtr = await db.getTwitterClientForUser(req.user)
+          tweetId = await twtr.sendTweet(tweetText)
+        }
+        // start the streaming 
+        db.startStream(search, tweetId)
       }
-      // start the streaming 
-      await db.startStream(search, tweetId)
-      // start a search too?
+
+    // are they starting an archive process
     } else if (! search.archiveStarted && newSearch.archiveStarted) {
       const archive = new Archive()
       archive.createArchive(search)
     }
-    res.json(newSearch)
+
+    // if we ran into an error return that, otherwise return the new search!
+    if (error) {
+      newSearch.error = error
+      res.status(403).json(newSearch)
+    } else {
+      res.json(newSearch)
+    }
+
   } else {
     notAuthorized(res)
   }

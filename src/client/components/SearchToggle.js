@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
-import Message from './Message'
 import Modal from 'react-modal'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
@@ -25,7 +24,6 @@ export default class SearchToggle extends Component {
     this.state = {
       error: null,
       modalOpen: false,
-      active: this.props.search.active,
       title: this.props.search.title,
       description: this.props.search.description,
       descriptionError: false,
@@ -65,26 +63,20 @@ export default class SearchToggle extends Component {
 
     this.setState({
       modalOpen: false,
-      active: true
     })
   }
 
   stop() {
     this.props.updateSearch({
       id: this.props.search.id,
-      active: false,
-      archived: false
-    })
-    this.setState({
       active: false
     })
   }
 
   render() {
     const app = document.getElementById('App')
-    const title = this.state.active ? 'Stop Data Collection' : 'Start Data Collection'
-    const color = this.state.active ? 'primary' : 'secondary'
-    const msg = this.state.error ? <Message type="error" text={this.state.error} onClose={this.resetError} /> : ''
+    const title = this.props.search.active ? 'Stop Data Collection' : 'Start Data Collection'
+    const color = this.props.search.active ? 'primary' : 'secondary'
 
     const modalStyle = {
       content: {
@@ -101,11 +93,11 @@ export default class SearchToggle extends Component {
       <>
 
         <Switch className={ServerStyleSheets.Admin}
-          checked={this.state.active}
+          checked={this.props.search.active}
           color={color}
           title={title}
           onChange={() => {
-            if (this.state.active) {
+            if (this.props.search.active) {
               this.stop()
             } else {
               this.setState({
@@ -115,8 +107,6 @@ export default class SearchToggle extends Component {
               })
             }
           }} />
-
-        {msg}
 
         <Modal 
           onClose={() => this.setState({modalOpen: false})} 

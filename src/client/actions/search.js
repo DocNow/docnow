@@ -16,6 +16,7 @@ export const DELETE_SEARCH = 'DELETE_SEARCH'
 export const ADD_SEARCH = 'ADD_SEARCH'
 
 import { push } from 'connected-react-router'
+import { setMessage } from './message'
 
 const setTwitterSearch = (search) => {
   return {
@@ -152,6 +153,7 @@ export const createSearch = (query) => {
 
 export const updateSearch = (search) => {
   return (dispatch) => {
+
     dispatch(setTwitterSearch(search))
     const opts = {
       method: 'PUT',
@@ -161,10 +163,15 @@ export const updateSearch = (search) => {
     }
     const url = `/api/v1/search/${search.id}`
     return fetch(url, opts)
-      .then((resp) => resp.json())
-      .then((result) => {
-        dispatch(setTwitterSearch(result))
-      })
+      .then(resp => resp.json().then(result => {
+        if (resp.status == 200) {
+          dispatch(setTwitterSearch(result))
+        } else {
+          dispatch(setMessage(result.error))
+          delete result.error
+          dispatch(setTwitterSearch(result))
+        }
+      }))
   }
 }
 

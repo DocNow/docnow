@@ -39,12 +39,6 @@ export default function searches(state = initialState, action) {
 
     case SET_TWITTER_SEARCH: {
 
-      /*
-      if (action.search.active === false) {
-        return state
-      }
-      */
-
       const pos = state.findIndex((s) => {
         return s.id === action.search.id
       })

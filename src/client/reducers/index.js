@@ -11,6 +11,7 @@ import webpages from './webpages'
 import queue from './queue'
 import tweets from './tweets'
 import stats from './stats'
+import message from './message'
 
 export default (history) => combineReducers({
   settings,
@@ -23,5 +24,6 @@ export default (history) => combineReducers({
   queue,
   tweets,
   stats,
+  message,
   router: connectRouter(history)
 })
