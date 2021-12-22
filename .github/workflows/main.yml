@@ -22,7 +22,7 @@ jobs:
           CONSUMER_SECRET: ${{ secrets.consumer_secret }}
           ACCESS_TOKEN: ${{ secrets.access_token }}
           ACCESS_TOKEN_SECRET: ${{ secrets.access_token_secret }}
-        run: docker-compose up --build --exit-code-from app
+        run: docker-compose up --build --exit-code-from webapp
 
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
