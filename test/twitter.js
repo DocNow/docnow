@@ -66,11 +66,7 @@ describe('twitter', () => {
         if (t.retweet) {
           ok(t.retweet.id, 'retweet.id')
         }
-
         ok('quote' in t, 'quote')
-        if (t.quote) {
-          ok(t.quote.id, 'quote.id')
-        }
       }
     })
   })
