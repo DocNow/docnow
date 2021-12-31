@@ -5,6 +5,9 @@ import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
 import Switch from '@material-ui/core/Switch'
 import CloseModal from './Insights/CloseModal'
+import DateFnsUtils from '@date-io/moment'
+import { MuiPickersUtilsProvider, DatePicker } from '@material-ui/pickers'
+
 import { ServerStyleSheets } from '@material-ui/styles'
 import style from './SearchToggle.css'
 
@@ -29,6 +32,8 @@ export default class SearchToggle extends Component {
       descriptionError: false,
       tweetText: tweetText,
       tweetTextError: false,
+      limit: null,
+      startDate: null
     }
   }
 
@@ -166,6 +171,45 @@ export default class SearchToggle extends Component {
                 helperText={`Starting tweet collection will cause a tweet to be sent on your behalf letting users know about your collection.${adminNote}`}
                 value={this.state.tweetText} 
                 onChange={e => this.setState({tweetText: e.target.value})} />
+            </section>
+
+            <section>
+              <TextField
+                error={this.state.limitError}
+                required={false}
+                variant="outlined"
+                id="limit"
+                name="limit"
+                label="Tweet Limit"
+                type="number"
+                helperText={`Limit the total number of tweets collected. If the box is left blank your search will accumulate tweets until your quota is met.`}
+                value={this.state.limit}
+                onChange={e => {
+                  const limit = parseInt(e.target.value, 10)
+                  if (e.target.value === '' || limit >= 0) {
+                    this.setState({limit: limit})
+                  } else {
+                    this.setState({limitError: true})
+                  }
+                }} />
+            </section>
+
+            <section>
+              <MuiPickersUtilsProvider 
+                utils={DateFnsUtils}>
+                <DatePicker
+                  label="Historical Tweets"
+                  value={this.state.startDate}
+                  disableFuture={true}
+                  inputVariant="outlined"
+                  minDate={new Date(2006, 2, 21)}
+                  autoOk={true}
+                  labelFunc={d => {
+                    return d ? d.format('LL') : ''
+                  }}
+                  helperText="Collect historical tweets back to this date. Your DocNow instance will need to have Academic Research API keys to search more than a week into the past. If left blank only new tweets will be collected."
+                  onChange={d => this.setState({startDate: d})} />
+              </MuiPickersUtilsProvider>
             </section>
 
             <section>
