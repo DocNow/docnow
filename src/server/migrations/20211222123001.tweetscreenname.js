@@ -9,6 +9,6 @@ exports.up = async knex => {
 exports.down = async knex => {
   return knex.schema.alterTable('tweet', table => {
     table.dropIndex(['searchId', 'screenName'])
-    table.addIndex(['searchId'])
+    table.index(['searchId'])
   })
 }
