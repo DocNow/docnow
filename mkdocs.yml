@@ -1,0 +1,23 @@
+site_name: docnow 
+site_url: https://readthedocs.org/projects/docnow/
+site_description: A Twitter data collection and appraisal tool.
+
+repo_url: https://github.com/docnow/docnow
+repo_name: docnow
+edit_uri: edit/main/docs/
+
+theme:
+  name: "material"
+  logo: images/docnow.png
+  palette:
+    scheme: preference
+
+nav: 
+  - Home: README.md
+  - API: api.md
+  - Database: database.md
+
+plugins:
+- search
+
+markdown_extensions:
