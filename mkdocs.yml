@@ -15,7 +15,7 @@ theme:
 nav: 
   - Home: README.md
   - API: api.md
-  - Database: database.md
+  - Database: db.md
 
 plugins:
 - search
