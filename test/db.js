@@ -218,11 +218,10 @@ describe('database', () => {
   it('should get summary', (done) => {
     db.getSearch(testSearch.id).then((search) => {
       db.getSearchStats(search).then((summ) => {
-        ok(typeof(summ.count), 'number')
-        ok(summ.count > 100, 'count')
+        ok(typeof(summ.tweetCount), 'number')
+        ok(summ.tweetCount > 100, 'count')
         ok(summ.maxDate, 'maxDate')
         ok(summ.minDate, 'minDate')
-        ok(summ.maxTweetId, 'maxTweetId')
         done()
       })
     })
@@ -323,6 +322,8 @@ describe('database', () => {
   })
 
   /*
+  
+  it would be nice to bring this back if we figure out a way to get video URLs from the API
 
   it('should get tweets for video', async () => {
     // get a url to test with
@@ -340,8 +341,8 @@ describe('database', () => {
     ok(users[0].id, 'user.id')
     ok(users[0].searches.length > 0, 'user.searches')
     ok(users[0].searches[0].id, 'search.id')
-    ok(typeof(users[0].searches[0].tweetCount), 'number')
-    ok(users[0].searches[0].tweetCount > 0, 'search.tweetCount')
+    ok(typeof(users[0].tweetCount), 'number')
+    ok(users[0].tweetCount > 0, 'search.tweetCount')
   })
 
   it('should get stats', async() => {

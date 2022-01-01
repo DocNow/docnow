@@ -1,3 +1,5 @@
+require('../src/env')
+
 import fs from 'fs'
 import { Database } from '../src/server/db'
 import { ok } from 'assert'

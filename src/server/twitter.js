@@ -23,8 +23,10 @@ export class Twitter {
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN
     this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET
 
-    // a client for v1.1 endpoints
+    // client for Twitter v1.1 and v2 API endpoints
     if (this.consumerKey && this.consumerSecret && this.accessToken && this.accessTokenSecret) {
+
+      // v1.1
       this.twit = new Twit({
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
@@ -32,7 +34,7 @@ export class Twitter {
         access_token_secret: this.accessTokenSecret
       })
 
-      // a client for v2 endpoints
+      // v2
       this.twitterV2 = new TwitterV2({
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
@@ -40,18 +42,11 @@ export class Twitter {
         access_token_secret: this.accessTokenSecret
       })
 
-      // a client for v2 endpoints
-      this.twitterV2App = new TwitterV2({
-        consumer_key: this.consumerKey,
-        consumer_secret: this.consumerSecret
-      })
-
-
     } else {
       log.warn('not configuring user client for v1.1 and v2 endpoints since not all keys are present')
     }
 
-    // a app auth client for v2 endpoints
+    // an app auth client for v2 endpoints
     if (this.consumerKey && this.consumerSecret) {
       this.twitterV2app = new TwitterV2({
         consumer_key: this.consumerKey,
@@ -98,6 +93,7 @@ export class Twitter {
 
   search(opts, cb) {
     log.info('searching for', opts)
+
     // count is the total number of tweets to return across all API requests
     const count = opts.count || 100
 
@@ -107,23 +103,27 @@ export class Twitter {
       "max_results": 100,
     }
 
+    let endpoint = 'tweets/search/recent'
+
+    if (opts.all) {
+      endpoint = 'tweets/search/all'
+      params.start_time = '2006-03-21T00:00:00+00:00'
+    }
+
     if (opts.sinceId) {
       params.since_id = opts.sinceId
+      delete params.start_time
     } 
 
     if (opts.maxId) {
       params.until_id = opts.maxId
     }
 
-    // const endpoint = opts.all ? 'tweets/search/all' : 'tweets/search/recent'
-    const endpoint = 'tweets/search/all'
-    params.start_time = '2006-03-21T00:00:00+00:00'
-
     const recurse = (nextToken, total) => {
       if (nextToken) {
         params.next_token = nextToken
       }
-      this.twitterV2App.get(endpoint, params).then((resp) => {
+      this.twitterV2app.get(endpoint, params).then((resp) => {
         if (resp.data) {
           const tweets = flatten(resp).data
           const newTotal = total + tweets.length
@@ -174,7 +174,7 @@ export class Twitter {
   }
 
   async filter(cb) {
-    log.info('starting filter stream')
+    log.info('starting filter stream ...')
 
     let err = 0
     while (true) {
@@ -184,7 +184,7 @@ export class Twitter {
       } catch (e) {
         err += 1
         const secs = err ** 2
-        log.error(`caught ${e} while connecting to stream, sleeping ${secs}`)
+        log.info(`caught ${e} while connecting to stream, sleeping ${secs}`)
         await timer(secs * 1000)
       }
     }
@@ -213,11 +213,12 @@ export class Twitter {
       // if stream is undefined that means closeFilter() has been called 
       if (this.stream) {
         log.error(`stream disconnected normally by Twitter, reconnecting`)
+        await timer(1000)
         this.filter(cb)
       }
     } catch (error) {
-      log.warn(`stream disconnected with error, retrying`, error)
-      this.filter(cb)
+      await timer(1000)
+      log.error(`stream disconnected with error`, error)
     }
   }
 

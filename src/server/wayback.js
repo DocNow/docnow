@@ -42,7 +42,12 @@ async function get(url) {
 async function saveArchive(url) {
   const saveUrl = `https://web.archive.org/save/` + url
   try {
-    const resp = await request.get({url: saveUrl, resolveWithFullResponse: true})
+    // the instance settings should include Internet Archive keys to be configured
+    const headers = {
+      accept: "application/json",
+      authorization: "LOW ia_access_key:ia_access_secret"
+    }
+    const resp = await request.get({url: saveUrl, headers: headers, resolveWithFullResponse: true})
     const location = resp.headers.location
     const iaUrl = 'https://wayback.archive.org/' + location
     const time = moment(location.split('/')[2] + 'Z', 'YYYYMMDDhhmmssZ').toDate()

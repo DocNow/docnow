@@ -1,8 +1,9 @@
 import { ok, strictEqual as equal } from 'assert'
 import { Twitter } from '../src/server/twitter'
+import { timer } from '../src/server/utils'
 
 const now = new Date()
-const tag = `test-${now / 1000}`
+const tag = `test-${now / 100000}`
 
 describe('twitter', () => {
 
@@ -97,9 +98,9 @@ describe('twitter', () => {
     ok(rules[0].id)
   })
 
-  it('should filter', (done) => {
+  it('should filter', async () => {
     let count = 0
-    t.filter((tweet, tags) => {
+    await t.filter(async (tweet, tags) => {
       count += 1
       ok(tweet.id, 'check id in streamed tweet')
       ok(tweet.text, 'check text in streamed tweet')
@@ -107,9 +108,13 @@ describe('twitter', () => {
       ok(tags.indexOf(tag) != -1, `tweet has tag ${tag}`)
       if (count > 5) {
         t.closeFilter()
-        done()
+        return false
       }
+      return true
     })
+
+    await timer(5000)
+    ok(count > 1)
   })
 
   it('should remove filter rule', async () => {

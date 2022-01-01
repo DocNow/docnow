@@ -18,6 +18,7 @@ x-docnow: &docnow
     context: .
   volumes:
     - ./src:/code/src
+    - ./test:/code/test
   depends_on:
     - db
     - redis
