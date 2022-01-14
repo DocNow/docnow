@@ -107,7 +107,11 @@ export class Twitter {
 
     if (opts.all) {
       endpoint = 'tweets/search/all'
-      params.start_time = '2006-03-21T00:00:00+00:00'
+      // start time is important to set explicitly when searching /all endpoint
+      params.start_time = opts.startDate ? opts.startDate : '2006-03-21T00:00:00+00:00'
+      if (opts.endDate) {
+        params.end_time = opts.endDate
+      }
     }
 
     if (opts.sinceId) {
@@ -117,6 +121,11 @@ export class Twitter {
 
     if (opts.maxId) {
       params.until_id = opts.maxId
+    }
+
+    // if a next token was passed in use it
+    if (opts.nextToken) {
+      params.next_token = opts.nextToken
     }
 
     const recurse = (nextToken, total) => {

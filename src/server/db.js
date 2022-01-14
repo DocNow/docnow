@@ -18,7 +18,7 @@ import { UrlFetcher } from './url-fetcher'
 import knexfile from '../../knexfile'
 import Query from './models/Query'
 import SearchJob from './models/SearchJob'
-import { getRedis, searchStatsKey } from './redis'
+import { getRedis, searchStatsKey, startSearchJobKey, stopSearchJobKey } from './redis'
 
 const urlFetcher = new UrlFetcher()
 
@@ -609,6 +609,44 @@ export class Database {
           id: job.id,
           ended: new Date()
         })
+      }
+    }
+
+    return this.updateSearch({...search, active: false, archived: false})
+  }
+
+  async startSearch(search, tweetId) {
+    log.info(`starting search for ${search.id}`)
+    const lastQuery = search.queries[search.queries.length - 1]
+    const job = await this.createSearchJob({
+      queryId: lastQuery.id, 
+      tweetId: tweetId,
+      started: new Date()
+    })
+    log.info(`adding job ${job.id} to search job queue`)
+    return this.redis.lpushAsync(startSearchJobKey, {
+      jobId: job.id,
+      nextToken: null
+    })
+  }
+
+  async stopSearch(search) {
+    log.info(`stopping search ${search.id}`)
+
+    // need a better way to identify the search job that needs to 
+    // be ended but for now just mark any search job that has no 
+    // ended time. once we can do historical collection it will be 
+    // important to only end the filter stream job
+
+    const query = search.queries[search.queries.length - 1]
+    for (const job of query.searchJobs) {
+      if (! job.ended) {
+        await this.updateSearchJob({
+          id: job.id,
+          ended: new Date()
+        })
+        log.info(`adding job ${job.id} to stop search job queue`)
+        this.redis.lpushAsync(stopSearchJobKey, job.id)
       }
     }
 

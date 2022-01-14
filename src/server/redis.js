@@ -24,34 +24,40 @@ export function getRedis(opts = {}) {
 // Functions to help construct redis keys consistently.
 
 // url to url mappings
-export const urlKey = (url) => {return `url:${url}`}
+export const urlKey = (url) => `url:${url}`
 
 // url metadata
-export const metadataKey = (url) => {return `metadata:${url}`}
+export const metadataKey = (url) => `metadata:${url}`
 
 // a search's sorted set of url counts
-export const urlsKey = (search) => {return `urls:${search.id}`}
+export const urlsKey = (search) => `urls:${search.id}`
 
 // the number of urls yet to be fetched for a search
-export const queueCountKey = (search) => {return `queue:${search.id}`}
+export const queueCountKey = (search) => `queue:${search.id}`
 
 // the total number of urls to be checked in a search
-export const urlsCountKey = (search) => {return `urlscount:${search.id}`}
+export const urlsCountKey = (search) => `urlscount:${search.id}`
 
 // the set of tweet ids that mention a url in a search
-export const tweetsKey = (search, url) => {return `tweets:${url}:${search.id}`}
+export const tweetsKey = (search, url) => `tweets:${url}:${search.id}`
 
 // the selected urls in a search
-export const selectedUrlsKey = (search) => {return `urlsselected:${search.id}`}
+export const selectedUrlsKey = (search) => `urlsselected:${search.id}`
 
 // the deselected urls in a search
-export const deselectedUrlsKey = (search) => {return `urlsdeselected:${search.id}`}
+export const deselectedUrlsKey = (search) => `urlsdeselected:${search.id}`
 
 // metadata for wayback information for a url
-export const waybackKey = (url) => {return `wayback:${url}`}
+export const waybackKey = (url) => `wayback:${url}`
 
 // total number of tweets by user
-export const userTweetsCountKey = (user) => {return `usertweetcount:${user.id}`}
+export const userTweetsCountKey = (user) => `usertweetcount:${user.id}`
 
 // a json blob of stats for a search
-export const searchStatsKey = (search) => {return `searchstats:${search.id}`} 
+export const searchStatsKey = (search) => `searchstats:${search.id}` 
+
+// a queue for search jobs to run
+export const startSearchJobKey = `searchjob`
+
+// a queue to stop a search job
+export const stopSearchJobKey = `stopsearchjob`
