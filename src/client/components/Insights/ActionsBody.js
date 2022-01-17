@@ -19,7 +19,7 @@ export default class ActionsBody extends Component {
           field: 'created',
           width: 200,
           headerName: 'Created',
-          valueGetter: params => moment(params.value).local().format('MMM D h:mm:ss A'),
+          valueGetter: params => moment(params.value).local().format('MMM D Y h:mm:ss A'),
         },
         {
           field: 'user',

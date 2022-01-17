@@ -91,6 +91,25 @@ export class Twitter {
     return trends
   }
 
+  /**
+   * Gets search results from the Twitter API. Only opts.q and cb are required.
+   * The callback function will be called with tweets whenever a certain set of
+   * search results have been returned. The search function will keep fetching
+   * results until it has fetched opts.count tweets or there are no more to
+   * fetch.
+   * @param {Object} opts  The options to use when doing the search
+   * @param {function} cb  A callback that should receive three arguments: err, tweets, and nextToken
+   * @param {string} opts.q  The query to use in the search
+   * @param {string} opts.nextToken  A next token to use to get more results
+   * @param {string} opts.count  The total number of tweets to fetch (100)
+   * @param {boolean} opts.all  Whether to search the full archive (false)
+   * @param {string} opts.startDate  A date w/ optional time to search from
+   * @param {string} opts.endDate  A date w/ optional time to search until
+   * @param {string} opts.sinceId  Get tweets that match query since a tweet id
+   * @param {string} opts.maxId  Get tweets that match query until a tweet id
+   * @returns {Promise}  A promise to indicate the search is complete.
+   */
+
   search(opts, cb) {
     log.info('searching for', opts)
 
@@ -107,11 +126,15 @@ export class Twitter {
 
     if (opts.all) {
       endpoint = 'tweets/search/all'
-      // start time is important to set explicitly when searching /all endpoint
-      params.start_time = opts.startDate ? opts.startDate : '2006-03-21T00:00:00+00:00'
-      if (opts.endDate) {
-        params.end_time = opts.endDate
-      }
+      params.start_time = '2006-03-21T00:00:00+00:00'
+    }
+
+    if (opts.startDate) {
+      params.start_time = opts.startDate
+    }
+
+    if (opts.endDate) {
+      params.end_time = opts.endDate
     }
 
     if (opts.sinceId) {
@@ -123,35 +146,35 @@ export class Twitter {
       params.until_id = opts.maxId
     }
 
-    // if a next token was passed in use it
     if (opts.nextToken) {
       params.next_token = opts.nextToken
     }
 
-    const recurse = (nextToken, total) => {
-      if (nextToken) {
-        params.next_token = nextToken
+    const recurse = (token, total) => {
+      if (token) {
+        params.next_token = token
       }
       this.twitterV2app.get(endpoint, params).then((resp) => {
         if (resp.data) {
+          const nextToken = resp.meta.next_token
           const tweets = flatten(resp).data
           const newTotal = total + tweets.length
-          cb(null, tweets.map(t => this.extractTweet(t)))
+          cb(null, tweets.map(t => this.extractTweet(t)), nextToken)
             .then(() => {
-              if (newTotal < count && resp.meta.next_token) {
-                recurse(resp.meta.next_token, newTotal)
+              if (newTotal < count && nextToken) {
+                recurse(nextToken, newTotal)
               } else {
-                cb(null, [])
+                cb(null, [], null)
               }
             })
         } else {
           log.warn(`received search response with no data stanza`)
-          cb(null, [])
+          cb(null, [], null)
         }
       })
       .catch(err => {
         log.error(`error during search: ${err}`)
-        cb(err, null)
+        cb(err, null, null)
       })
     }
 

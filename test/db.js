@@ -337,6 +337,8 @@ describe('database', () => {
   */
 
   it('should get users', async () => {
+    // flag the search as saved or else it won't appear in a user's searches
+    await db.updateSearch({id: testSearch.id, saved: true})
     const users = await db.getUsers()
     ok(users[0].id, 'user.id')
     ok(users[0].searches.length > 0, 'user.searches')
@@ -364,7 +366,7 @@ describe('database', () => {
   })
 
   it('should close', async() => {
-    await db.close()
+    db.close()
   })
 
 })

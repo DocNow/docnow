@@ -50,8 +50,8 @@ export default class SearchInfo extends Component {
     } else if (this.state.goHome) {
       return <Redirect to="/searches" push={true} />
     }
-    const created = moment(this.props.search.created).local().format('MMM D h:mm A')
-    const modified = moment(this.props.search.modified).local().format('MMM D h:mm A')
+    const created = moment(this.props.search.created).local().format('MMM D Y h:mm A')
+    const modified = moment(this.props.search.modified).local().format('MMM D Y h:mm A')
 
     // only admins can change whether a search is public (a collection) or not
     const setPublicColumn = this.props.user.admin ? <TableCell>Public</TableCell> : ''

@@ -18,7 +18,7 @@ import { UrlFetcher } from './url-fetcher'
 import knexfile from '../../knexfile'
 import Query from './models/Query'
 import SearchJob from './models/SearchJob'
-import { getRedis, searchStatsKey, startSearchJobKey, stopSearchJobKey } from './redis'
+import { getRedis, searchStatsKey, startSearchJobKey } from './redis'
 
 const urlFetcher = new UrlFetcher()
 
@@ -137,6 +137,7 @@ export class Database {
     const users = await User.query()
       .withGraphJoined('places')
       .withGraphJoined('searches')
+      .orderBy('user.twitterScreenName')
 
     for (const user of users) {
       user.tweetCount = await this.getUserTweetCount(user)
@@ -409,7 +410,10 @@ export class Database {
     const result = await this.pg('tweet')
       .join('search', 'tweet.search_id', '=', 'search.id')
       .join('user', 'search.user_id', '=', 'user.id')
-      .where('user.id', '=', user.id)
+      .where({
+        'user.id': user.id,
+        'search.saved': true
+      })
       .count()
       .first()
     return parseInt(result.count, 10)
@@ -575,6 +579,7 @@ export class Database {
     const lastQuery = search.queries[search.queries.length - 1]
     const q = lastQuery.twitterQuery()
     const job = await this.createSearchJob({
+      type: 'stream',
       queryId: lastQuery.id, 
       tweetId: tweetId,
       started: new Date()
@@ -617,17 +622,18 @@ export class Database {
 
   async startSearch(search, tweetId) {
     log.info(`starting search for ${search.id}`)
+    await this.updateSearch({id: search.id, active: true})
+
     const lastQuery = search.queries[search.queries.length - 1]
     const job = await this.createSearchJob({
+      type: 'search',
       queryId: lastQuery.id, 
       tweetId: tweetId,
       started: new Date()
     })
+
     log.info(`adding job ${job.id} to search job queue`)
-    return this.redis.lpushAsync(startSearchJobKey, {
-      jobId: job.id,
-      nextToken: null
-    })
+    return this.redis.lpushAsync(startSearchJobKey, job.id)
   }
 
   async stopSearch(search) {
@@ -635,8 +641,7 @@ export class Database {
 
     // need a better way to identify the search job that needs to 
     // be ended but for now just mark any search job that has no 
-    // ended time. once we can do historical collection it will be 
-    // important to only end the filter stream job
+    // ended time. 
 
     const query = search.queries[search.queries.length - 1]
     for (const job of query.searchJobs) {
@@ -645,8 +650,6 @@ export class Database {
           id: job.id,
           ended: new Date()
         })
-        log.info(`adding job ${job.id} to stop search job queue`)
-        this.redis.lpushAsync(stopSearchJobKey, job.id)
       }
     }
 
@@ -1074,7 +1077,6 @@ export class Database {
   async getSearchJob(searchJobId) {
     const job = await SearchJob.query()
       .findById(searchJobId)
-      .withGraphJoined('query')
       .withGraphJoined('query.search')
     return job
   }

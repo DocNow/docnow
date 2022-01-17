@@ -3,7 +3,7 @@ import { Database } from './db'
 
 /*
  * QuotaChecker monitors active searches and stops them if the user 
- * is over their quota.
+ * is over their quota or if the search is over its defined limit.
  */
 
 export class QuotaChecker {
@@ -22,11 +22,23 @@ export class QuotaChecker {
 
   async check() {
     for (const search of await this.db.getActiveSearches()) {
+
+      // is the user over their quota?
       const user = search.creator
       if (await this.db.userOverQuota(user)) {
         log.info(`user ${user.id} is over quota, stopping ${search.id}`)
-        this.db.stopStream(search)
+        await this.db.stopStream(search)
+        await this.db.stopSearch(search)
       } 
+
+      // is the search over its limit?
+      const lastQuery = search.queries[search.queries.length - 1]
+      if (lastQuery.value.limit && search.tweetCount > lastQuery.value.limit) {
+        log.info(`search ${search.id} exceeded its limit ${lastQuery.value.limit}`)
+        await this.db.stopStream(search)
+        await this.db.stopSearch(search)
+      }
+      
     }
   } 
 
@@ -34,7 +46,7 @@ export class QuotaChecker {
     log.info('stopping QuotaChecker')
     clearInterval(this.timerId)
     this.started = false
-    await this.db.close()
+    this.db.close()
   }
 
 }

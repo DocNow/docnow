@@ -25,7 +25,6 @@ import CollectionPage from './CollectionPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
-import { getSearches } from '../actions/searches'
 
 import styles from './App.css'
 
@@ -40,7 +39,6 @@ class App extends MediaQueryComponent {
     store.dispatch(getSettings())
     store.dispatch(getUser())
     store.dispatch(getWorld())
-    store.dispatch(getSearches())
     fetch('/api/v1/setup', {credentials: 'same-origin'})
       .then(resp => resp.json())
       .then(result => {

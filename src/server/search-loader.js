@@ -1,7 +1,7 @@
 import log from './logger'
 import { timer } from './utils'
 import { Database } from './db'
-import { startSearchJobKey, stopSearchJobKey } from './redis'
+import { startSearchJobKey } from './redis'
 
 /*
  * SearchLoader connects will fetch search jobs from the queue and run them.
@@ -11,86 +11,84 @@ export class SearchLoader {
 
   constructor(db = null) {
     this.db = db || new Database()
+    this.redisBlocking = this.db.redis.duplicate()
     this.twtr = null
     this.active = false
-    this.stopSearches = new Set()
   }
 
   async start() {
     log.info(`starting SearchLoader`)
     await this.setupTwitterClient()
-    this.active = True
-    
+    this.active = true 
+
     while (this.active) {
 
-      // get a search job from queue
+      // get a search job from queue and make sure it hasn't been stopped
       const job = await this.fetchSearchJob()
-      if (job) {
+      if (job && job.ended === null && job.query.search.active) {
 
-        const query = job.query
+        const opts = {
+          q: job.query.twitterQuery(),
+          all: true,
+        }
 
-        this.twtr.search({
-          q: q,
-          startDate: job.startDate,
-          endDate: job.endDate,
-          nextToken: job.nextToken
-        }, async (err, results) => {
+        if (job.query.value.startDate) {
+          opts.startDate = job.query.value.StartDate
+        }
 
-    /*
-    // flag the search as active or running
-    await this.updateSearch({id: search.id, active: true})
+        if (job.query.value.endDate) {
+          opts.endDate = job.query.value.endDate
+        }
 
-    // determine the query to run
-    const lastQuery = search.queries[search.queries.length - 1]
-    const q = lastQuery.twitterQuery()
+        if (job.nextToken) {
+          opts.nextToken = job.nextToken
+        }
 
-    // run the search!
-    let maxTweetId = null
-    let count = 0
-    return new Promise((resolve, reject) => {
-      twtr.search({q: q, sinceId: search.maxTweetId, count: maxTweets}, async (err, results) => {
-        if (err) {
-          log.error(`caught error during search: ${err}`)
-          reject(err)
-        } else if (results.length === 0) {
-          await this.updateSearch({
-            id: search.id,
-            maxTweetId: maxTweetId,
-            active: false
-          })
-          log.info(`no more search results, returning ${count}`)
-          resolve(count)
-        } else {
-          if (maxTweetId === null) {
-            maxTweetId = results[0].id
+        this.twtr.search(opts, async (err, tweets, nextToken) => {
+
+          if (err) {
+            log.error(err)
+            return
           }
-          await this.loadTweets(search, results)
-          count += results.length
-          log.info(`bulk loaded ${results.length} tweets, with total=${count}`)
-        }
-      })
-    })
-    */
-         
-        // load the tweets
-        if (this.stopSearches.has(job.id)) {
-          this.stopSearches.delete(job.id)
-        } else {
-          await timer(1000)
 
-          this.redis.lpushAsync(startSearchJobKey, job.id)
-          // queue next job
-        }
-      }
+          if (tweets == 0) {
+            return
+          }
 
-      // drain all the stop search job ids
-      while (true) {
-        const jobId = await this.fetchStopSearchJob()
-        if (jobId === null) {
-          break
-        } else {
-          this.stopSearches.add(jobId)
-        }
+          // this callback could get called after the searchloader is no longer 
+          // active, so make sure it's still running
+          
+          if (this.active) {
+
+            await this.db.loadTweets(job.query.search, tweets)
+
+            // note: we rely on QuotaChecker to notice if this job needs to be
+            // stopped because it has hit a limit set in the search. all we care
+            // about is whether there are more results to get.
+
+            if (nextToken) {
+              log.info(`queueing next search job ${job.id}`)
+              await this.db.updateSearchJob({
+                id: job.id,
+                nextToken: nextToken
+              })
+              this.db.redis.lpushAsync(startSearchJobKey, job.id)
+            } else {
+              log.info(`no more search results for search job ${job.id}`)
+              await this.db.updateSearchJob({
+                id: job.id,
+                ended: new Date()
+              })
+            }
+
+          } else {
+            log.warn('search loader callback received tweets when no longer active')
+          }
+
+        })
+
+      } else if (job) {
+        log.info(`job ${job.id} is no longer active`)
       }
 
     }
@@ -103,24 +101,16 @@ export class SearchLoader {
     let job = null
     const item = await this.redisBlocking.blpopAsync(startSearchJobKey, 30)
     if (item) {
-      const info = JSON.parse(item[1])
-      job = await this.db.getSearchJob(info.jobId)
-      job.nextToken = info.nextToken
+      const jobId = parseInt(item[1], 10)
+      job = await this.db.getSearchJob(jobId)
     }
     return job
   }
 
-  async fetchStopSearchJob() {
-    let jobId = null
-    const item = await this.redis.lpopAsync(stopSearchJobKey)
-    if (item) {
-      jobId = parseInt(item[1], 10)
-    }
-    return jobId
-  }
-
   async stop() {
     this.active = false
+    this.db.close()
+    this.redisBlocking.quit()
     log.info(`stopping SearchLoader`)
   }
 

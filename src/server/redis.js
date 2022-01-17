@@ -58,6 +58,3 @@ export const searchStatsKey = (search) => `searchstats:${search.id}`
 
 // a queue for search jobs to run
 export const startSearchJobKey = `searchjob`
-
-// a queue to stop a search job
-export const stopSearchJobKey = `stopsearchjob`

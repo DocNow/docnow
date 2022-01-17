@@ -56,8 +56,8 @@ export default class SearchList extends Component {
         </TableHead>
         <TableBody>
         {this.props.searches.map(search => {
-          const created = moment(search.created).local().format('MMM D h:mm A')
-          const updated = moment(search.updated).local().format('MMM D h:mm A')
+          const created = moment(search.created).local().format('MMM D, Y')
+          const updated = moment(search.updated).local().format('MMM D, Y')
 
           // only admins can set whether a search is a public collection or not
           let setPublicCell = ''

@@ -187,7 +187,7 @@ export default class CollectionList extends Component {
     }
 
     let usersInfo = (<div>
-      <Typography variant="body2">Showing {this.props.search.users.length} of {this.props.search.userCount} users.</Typography>
+      <Typography variant="body2">Showing {this.props.search.users.length} of {this.props.search.userCount.toLocaleString()} users.</Typography>
       {this.props.search.users.map((u, i) => {
         return (
           <a 

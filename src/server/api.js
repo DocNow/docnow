@@ -585,7 +585,7 @@ app.get('/stats', async (req, res) => {
 })
 
 app.get('/users', async (req, res) => {
-  if (req.user.isSuperUser) {
+  if (req.user.isAdmin()) {
     res.json(await db.getUsers())
   } else {
     notAuthorized(res)

@@ -3,10 +3,11 @@ import { ok, equal } from 'assert'
 import { SearchLoader } from '../src/server/search-loader'
 import { timer } from '../src/server/utils'
 
-let db = new Database({redis: {db: 9}})
+const db = new Database({redis: {db: 9}})
 let user = null
 let search = null
 let query = null
+let loader = null
 
 describe('search-loader', () => {
 
@@ -62,7 +63,7 @@ describe('search-loader', () => {
   it('should load historical tweets', async () => {
 
     // start the search loader
-    const loader = new SearchLoader(db)
+    loader = new SearchLoader(db)
     loader.start()
 
     // flag our search as starting
@@ -77,25 +78,14 @@ describe('search-loader', () => {
 
     // stop the search 
     await db.stopSearch(search)
-
-    // stop the search loader
-    await loader.stop()
   })
 
-  /*
   it('should get saved tweets', async () => {
-    await timer(5000)
-
-    // stopping the stream above closes the db so we need to reopen
-    db = new Database({redis: {db: 9}})
-
     const tweets = await db.getTweets(search)
     ok(tweets.length > 0, 'historical tweets were saved')
   })
-  */
 
   it('should have created a SearchJob', async () => {
-    await timer(6000)
     const q = await db.getQuery(query.id)
 
     ok(q, 'found query')
@@ -108,8 +98,8 @@ describe('search-loader', () => {
     ok(job.tweetId, 'job tweet id is set')
   })
 
-  it('db should close', () => {
-    db.close()
+  it('db should close', async () => {
+    await loader.stop()
   })
 
 })

@@ -34,6 +34,10 @@ class User extends Model {
     }
   }
 
+  isAdmin() {
+    return this.admin || this.isSuperUser
+  }
+
 }
 
 module.exports = User
