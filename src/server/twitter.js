@@ -103,8 +103,8 @@ export class Twitter {
    * @param {string} opts.nextToken  A next token to use to get more results
    * @param {string} opts.count  The total number of tweets to fetch (100)
    * @param {boolean} opts.all  Whether to search the full archive (false)
-   * @param {string} opts.startDate  A date w/ optional time to search from
-   * @param {string} opts.endDate  A date w/ optional time to search until
+   * @param {string} opts.startDate  A Date or string w/ optional time to search from
+   * @param {string} opts.endDate  A Date or string w/ optional time to search until
    * @param {string} opts.sinceId  Get tweets that match query since a tweet id
    * @param {string} opts.maxId  Get tweets that match query until a tweet id
    * @returns {Promise}  A promise to indicate the search is complete.
@@ -126,15 +126,17 @@ export class Twitter {
 
     if (opts.all) {
       endpoint = 'tweets/search/all'
-      params.start_time = '2006-03-21T00:00:00+00:00'
+      params.start_time = '2006-03-21T00:00:00Z'
     }
 
     if (opts.startDate) {
-      params.start_time = opts.startDate
+      const t = new Date(params.startDate)
+      params.start_time = t.toISOString().replace(/\.\d+Z$/, 'Z')
     }
 
     if (opts.endDate) {
-      params.end_time = opts.endDate
+      const t = new Date(opts.endDate)
+      params.end_time = t.toISOString().replace(/\.\d+Z$/, 'Z')
     }
 
     if (opts.sinceId) {
@@ -154,6 +156,7 @@ export class Twitter {
       if (token) {
         params.next_token = token
       }
+      log.info(`running search ${JSON.stringify(params)}`)
       this.twitterV2app.get(endpoint, params).then((resp) => {
         if (resp.data) {
           const nextToken = resp.meta.next_token

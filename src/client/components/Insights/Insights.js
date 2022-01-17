@@ -12,7 +12,7 @@ export default class Insights extends Component {
     this.fetchData()
     this.timerId = setInterval(() => {
       this.tick()
-    }, 2000)
+    }, 10000)
   }
 
   componentWillUnmount() {

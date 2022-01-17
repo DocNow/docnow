@@ -62,6 +62,8 @@ export default class SearchToggle extends Component {
       id: this.props.search.id,
       description: this.state.description,
       tweetText: this.state.tweetText,
+      startDate: this.state.startDate,
+      limit: this.state.limit,
       active: true,
       archived: false,
     })

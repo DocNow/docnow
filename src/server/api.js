@@ -268,11 +268,18 @@ app.put('/search/:searchId', async (req, res) => {
     const search = await db.getSearch(req.body.id, true)
     let error = null 
 
-    // get any tweet text that was POSTed and remove it from the body
-    // since it's not really a property of the search object
+    // these are important but aren't part of the search body
+    
     const tweetText = req.body.tweetText
     delete req.body.tweetText
 
+    const startDate = req.body.startDate
+    delete req.body.startDate
+
+    const limit = req.body.limit
+    delete req.body.limit
+
+    // update the search
     const newSearch = {...search, ...req.body}
     await db.updateSearch(newSearch)
 
@@ -280,11 +287,12 @@ app.put('/search/:searchId', async (req, res) => {
     if (req.query.refreshTweets) {
       db.importFromSearch(search)
     
-    // are they stopping a stream?
+    // are they stopping collection?
     } else if (search.active && ! newSearch.active) {
       await db.stopStream(search)
+      await db.stopSearch(search)
 
-    // are they starting a stream
+    // are they starting collection
     } else if (! search.active && newSearch.active) {
       if (await db.userOverQuota(req.user)) {
         error = {
@@ -293,16 +301,31 @@ app.put('/search/:searchId', async (req, res) => {
         }
         newSearch.active = false
       } else {
+
         // make the search public
         await db.updateSearch({id: search.id, public: new Date()})
+
         // tweet the announcement if we were given text to tweet
         let tweetId = null
         if (tweetText) {
           const twtr = await db.getTwitterClientForUser(req.user)
           tweetId = await twtr.sendTweet(tweetText)
         }
-        // start the streaming 
-        db.startStream(search, tweetId)
+
+        // update the query with any limit or startDate that was given
+        const lastQuery = newSearch.queries[newSearch.queries.length - 1]
+        lastQuery.value.startDate = startDate
+        lastQuery.value.limit = limit
+        await db.updateQuery(lastQuery)
+ 
+        // start the streaming
+        await db.startStream(newSearch, tweetId)
+
+        // start historical search if asked, but update the limit
+        if (startDate) {
+          await db.startSearch(newSearch, tweetId)
+        }
+        
       }
 
     // are they starting an archive process

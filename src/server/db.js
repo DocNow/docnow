@@ -1,6 +1,7 @@
 import '../env'
 
 import knex from 'knex'
+import moment from 'moment'
 import { Model } from 'objection'
 import Setting from './models/Setting'
 import Place from './models/Place'
@@ -624,7 +625,20 @@ export class Database {
     log.info(`starting search for ${search.id}`)
     await this.updateSearch({id: search.id, active: true})
 
+    // get the most recent query
     const lastQuery = search.queries[search.queries.length - 1]
+
+    // set the endDate of the search to the earliest tweet time or now
+    const stats = this.getSearchStats(search)
+    if (stats.minDate) {
+      lastQuery.value.endDate = stats.minDate
+      await this.updateQuery(lastQuery)
+    } else {
+      // note: the Twitter API throws an error if current time is used!?
+      lastQuery.value.endDate = moment().subtract(1, 'minutes')
+      await this.updateQuery(lastQuery)
+    }
+
     const job = await this.createSearchJob({
       type: 'search',
       queryId: lastQuery.id, 
@@ -1085,6 +1099,12 @@ export class Database {
     await SearchJob.query()
       .patch({...job, updated: new Date()})
       .where('id', job.id)
+  }
+
+  async updateQuery(query) {
+    await Query.query()
+      .patch(query)
+      .where('id', query.id)
   }
 
   async cache(key, ttl = 60, f) {

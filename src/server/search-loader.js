@@ -27,6 +27,10 @@ export class SearchLoader {
       const job = await this.fetchSearchJob()
       if (job && job.ended === null && job.query.search.active) {
 
+        // Twitter requires sleeping at least a second between searches
+        // sleeping only 1 second seems to triggeer errors, so lets sleep 5
+        await timer(5000)
+
         const opts = {
           q: job.query.twitterQuery(),
           all: true,
@@ -98,6 +102,7 @@ export class SearchLoader {
 
   async fetchSearchJob() {
     // wait up to 30 seconds for a new job
+    log.info('looking for job in the search queue')
     let job = null
     const item = await this.redisBlocking.blpopAsync(startSearchJobKey, 30)
     if (item) {

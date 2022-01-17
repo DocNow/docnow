@@ -10,4 +10,5 @@ export CONSUMER_SECRET=CHANGE_ME
 export ACCESS_TOKEN=CHANGE_ME
 export ACCESS_TOKEN_SECRET=CHANGE_ME
 
+rm test.log
 npm run test

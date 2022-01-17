@@ -46,9 +46,9 @@ services:
     ports:
       - 3000:3000
 
-  stream-loader:
+  tweet-loader:
     <<: *docnow
-    entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- npm run stream-loader 
+    entrypoint: src/commands/wait-for-it.sh -t 120 db:5432 -- npm run tweet-loader
 
   url-fetcher:
     <<: *docnow
