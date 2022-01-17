@@ -33,7 +33,12 @@ var User = /*#__PURE__*/function (_Model) {
     return _super.apply(this, arguments);
   }
 
-  (0, _createClass2["default"])(User, null, [{
+  (0, _createClass2["default"])(User, [{
+    key: "isAdmin",
+    value: function isAdmin() {
+      return this.admin || this.isSuperUser;
+    }
+  }], [{
     key: "tableName",
     get: function get() {
       return 'user';

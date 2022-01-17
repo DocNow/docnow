@@ -5,8 +5,9 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.deselectedUrlsKey = void 0;
 exports.getRedis = getRedis;
-exports.waybackKey = exports.deselectedUrlsKey = exports.selectedUrlsKey = exports.tweetsKey = exports.urlsCountKey = exports.queueCountKey = exports.urlsKey = exports.metadataKey = exports.urlKey = void 0;
+exports.waybackKey = exports.userTweetsCountKey = exports.urlsKey = exports.urlsCountKey = exports.urlKey = exports.tweetsKey = exports.startSearchJobKey = exports.selectedUrlsKey = exports.searchStatsKey = exports.queueCountKey = exports.metadataKey = void 0;
 
 var _redis = _interopRequireDefault(require("redis"));
 
@@ -97,6 +98,23 @@ exports.deselectedUrlsKey = deselectedUrlsKey;
 
 var waybackKey = function waybackKey(url) {
   return "wayback:".concat(url);
-};
+}; // total number of tweets by user
+
 
 exports.waybackKey = waybackKey;
+
+var userTweetsCountKey = function userTweetsCountKey(user) {
+  return "usertweetcount:".concat(user.id);
+}; // a json blob of stats for a search
+
+
+exports.userTweetsCountKey = userTweetsCountKey;
+
+var searchStatsKey = function searchStatsKey(search) {
+  return "searchstats:".concat(search.id);
+}; // a queue for search jobs to run
+
+
+exports.searchStatsKey = searchStatsKey;
+var startSearchJobKey = "searchjob";
+exports.startSearchJobKey = startSearchJobKey;

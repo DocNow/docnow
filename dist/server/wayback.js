@@ -99,20 +99,26 @@ function saveArchive(_x2) {
 
 function _saveArchive() {
   _saveArchive = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2(url) {
-    var saveUrl, resp, location, iaUrl, time, metadata;
+    var saveUrl, headers, resp, location, iaUrl, time, metadata;
     return _regenerator["default"].wrap(function _callee2$(_context2) {
       while (1) {
         switch (_context2.prev = _context2.next) {
           case 0:
             saveUrl = "https://web.archive.org/save/" + url;
             _context2.prev = 1;
-            _context2.next = 4;
+            // the instance settings should include Internet Archive keys to be configured
+            headers = {
+              accept: "application/json",
+              authorization: "LOW ia_access_key:ia_access_secret"
+            };
+            _context2.next = 5;
             return _requestPromise["default"].get({
               url: saveUrl,
+              headers: headers,
               resolveWithFullResponse: true
             });
 
-          case 4:
+          case 5:
             resp = _context2.sent;
             location = resp.headers.location;
             iaUrl = 'https://wayback.archive.org/' + location;
@@ -124,20 +130,20 @@ function _saveArchive() {
             save(url, metadata);
             return _context2.abrupt("return", metadata);
 
-          case 13:
-            _context2.prev = 13;
+          case 14:
+            _context2.prev = 14;
             _context2.t0 = _context2["catch"](1);
 
             _logger["default"].warn("got error when fetching ".concat(saveUrl), _context2.t0);
 
             return _context2.abrupt("return", null);
 
-          case 17:
+          case 18:
           case "end":
             return _context2.stop();
         }
       }
-    }, _callee2, null, [[1, 13]]);
+    }, _callee2, null, [[1, 14]]);
   }));
   return _saveArchive.apply(this, arguments);
 }

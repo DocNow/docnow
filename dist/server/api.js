@@ -36,9 +36,9 @@ function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o =
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 var app = (0, _express["default"])();
 var db = new _db.Database();
@@ -507,62 +507,51 @@ app.post('/searches', function (req, res) {
 });
 app.get('/search/:searchId', /*#__PURE__*/function () {
   var _ref7 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(req, res) {
-    var search, summ, lastQuery, _search, _summ, _lastQuery;
+    var searchId, includeSummary, ttl, search, lastQuery, _search, _lastQuery;
 
     return _regenerator["default"].wrap(function _callee7$(_context7) {
       while (1) {
         switch (_context7.prev = _context7.next) {
           case 0:
+            searchId = req.params.searchId;
+            includeSummary = true;
+            ttl = 2;
+
             if (!req.user) {
               _context7.next = 12;
               break;
             }
 
-            _context7.next = 3;
-            return db.getSearch(req.params.searchId);
-
-          case 3:
-            search = _context7.sent;
             _context7.next = 6;
-            return db.getSearchSummary(search);
+            return db.getSearch(searchId, includeSummary, ttl);
 
           case 6:
-            summ = _context7.sent;
-            lastQuery = summ.queries[summ.queries.length - 1];
-            summ.query = lastQuery.value.or;
-            res.json(summ);
-            _context7.next = 25;
+            search = _context7.sent;
+            // need to ensure that user owns the search!
+            lastQuery = search.queries[search.queries.length - 1];
+            search.query = lastQuery.value.or;
+            res.json(search);
+            _context7.next = 16;
             break;
 
           case 12:
             _context7.next = 14;
-            return db.getPublicSearch(req.params.searchId);
+            return db.getPublicSearch(req.params.searchId, includeSummary, ttl);
 
           case 14:
             _search = _context7.sent;
 
-            if (!_search) {
-              _context7.next = 24;
-              break;
+            if (_search) {
+              _lastQuery = _search.queries[_search.queries.length - 1];
+              _search.query = _lastQuery.value.or;
+              res.json(_search);
+            } else {
+              res.status(401).json({
+                error: 'Not Authorized'
+              });
             }
 
-            _context7.next = 18;
-            return db.getSearchSummary(_search);
-
-          case 18:
-            _summ = _context7.sent;
-            _lastQuery = _summ.queries[_summ.queries.length - 1];
-            _summ.query = _lastQuery.value.or;
-            res.json(_summ);
-            _context7.next = 25;
-            break;
-
-          case 24:
-            res.status(401).json({
-              error: 'Not Authorized'
-            });
-
-          case 25:
+          case 16:
           case "end":
             return _context7.stop();
         }
@@ -576,107 +565,147 @@ app.get('/search/:searchId', /*#__PURE__*/function () {
 }());
 app.put('/search/:searchId', /*#__PURE__*/function () {
   var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(req, res) {
-    var search, tweetText, newSearch, tweetId, twtr, archive;
+    var search, error, tweetText, newSearch, tweetId, twtr, archive;
     return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
             if (!req.user) {
-              _context8.next = 37;
+              _context8.next = 50;
               break;
             }
 
             _context8.next = 3;
-            return db.getSearch(req.body.id);
+            return db.getSearch(req.body.id, true);
 
           case 3:
             search = _context8.sent;
-            // get any tweet text that was POSTed and remove it from the body
+            error = null; // get any tweet text that was POSTed and remove it from the body
             // since it's not really a property of the search object
+
             tweetText = req.body.tweetText;
             delete req.body.tweetText;
             newSearch = _objectSpread(_objectSpread({}, search), req.body);
-            _context8.next = 9;
+            _context8.next = 10;
             return db.updateSearch(newSearch);
 
-          case 9:
+          case 10:
             if (!req.query.refreshTweets) {
-              _context8.next = 13;
+              _context8.next = 14;
               break;
             }
 
-            db.importFromSearch(search);
-            _context8.next = 34;
+            db.importFromSearch(search); // are they stopping collection?
+
+            _context8.next = 47;
             break;
 
-          case 13:
+          case 14:
             if (!(search.active && !newSearch.active)) {
-              _context8.next = 18;
+              _context8.next = 21;
               break;
             }
 
-            _context8.next = 16;
+            _context8.next = 17;
             return db.stopStream(search);
 
-          case 16:
-            _context8.next = 34;
+          case 17:
+            _context8.next = 19;
+            return db.stopSearch(search);
+
+          case 19:
+            _context8.next = 47;
             break;
 
-          case 18:
+          case 21:
             if (!(!search.active && newSearch.active)) {
-              _context8.next = 33;
+              _context8.next = 46;
               break;
             }
 
-            _context8.next = 21;
+            _context8.next = 24;
+            return db.userOverQuota(req.user);
+
+          case 24:
+            if (!_context8.sent) {
+              _context8.next = 29;
+              break;
+            }
+
+            error = {
+              message: 'You have exceeded your tweet quota.',
+              code: 1
+            };
+            newSearch.active = false;
+            _context8.next = 44;
+            break;
+
+          case 29:
+            _context8.next = 31;
             return db.updateSearch({
               id: search.id,
               "public": new Date()
             });
 
-          case 21:
+          case 31:
             // tweet the announcement if we were given text to tweet
             tweetId = null;
 
             if (!tweetText) {
-              _context8.next = 29;
+              _context8.next = 39;
               break;
             }
 
-            _context8.next = 25;
+            _context8.next = 35;
             return db.getTwitterClientForUser(req.user);
 
-          case 25:
+          case 35:
             twtr = _context8.sent;
-            _context8.next = 28;
+            _context8.next = 38;
             return twtr.sendTweet(tweetText);
 
-          case 28:
+          case 38:
             tweetId = _context8.sent;
 
-          case 29:
-            _context8.next = 31;
+          case 39:
+            _context8.next = 41;
             return db.startStream(search, tweetId);
 
-          case 31:
-            _context8.next = 34;
+          case 41:
+            if (!search.query.value.startDate) {
+              _context8.next = 44;
+              break;
+            }
+
+            _context8.next = 44;
+            return db.startSearch(search);
+
+          case 44:
+            _context8.next = 47;
             break;
 
-          case 33:
+          case 46:
             if (!search.archiveStarted && newSearch.archiveStarted) {
               archive = new _archive.Archive();
               archive.createArchive(search);
             }
 
-          case 34:
-            res.json(newSearch);
-            _context8.next = 38;
+          case 47:
+            // if we ran into an error return that, otherwise return the new search!
+            if (error) {
+              newSearch.error = error;
+              res.status(403).json(newSearch);
+            } else {
+              res.json(newSearch);
+            }
+
+            _context8.next = 51;
             break;
 
-          case 37:
+          case 50:
             notAuthorized(res);
 
-          case 38:
+          case 51:
           case "end":
             return _context8.stop();
         }
@@ -1301,7 +1330,7 @@ app.get('/users', /*#__PURE__*/function () {
       while (1) {
         switch (_context20.prev = _context20.next) {
           case 0:
-            if (!req.user.isSuperUser) {
+            if (!req.user.isAdmin()) {
               _context20.next = 8;
               break;
             }
@@ -1367,6 +1396,69 @@ app.get('/findme', /*#__PURE__*/function () {
 
   return function (_x41, _x42) {
     return _ref21.apply(this, arguments);
+  };
+}());
+app.get('/counts', /*#__PURE__*/function () {
+  var _ref22 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee22(req, res) {
+    var searchIds, searchCounts;
+    return _regenerator["default"].wrap(function _callee22$(_context22) {
+      while (1) {
+        switch (_context22.prev = _context22.next) {
+          case 0:
+            if (!(req.user && req.query.searchIds)) {
+              _context22.next = 12;
+              break;
+            }
+
+            // turn searchIds into a list of numbers
+            searchIds = req.query.searchIds.split(',').map(function (s) {
+              return parseInt(s, 10);
+            }).filter(function (n) {
+              return !isNaN(n);
+            });
+
+            if (!(searchIds.length > 0)) {
+              _context22.next = 9;
+              break;
+            }
+
+            _context22.next = 5;
+            return db.getSearchCounts(searchIds);
+
+          case 5:
+            searchCounts = _context22.sent;
+            res.json(searchCounts);
+            _context22.next = 10;
+            break;
+
+          case 9:
+            res.status(400).json({
+              error: 'searchIds must be a comma separated list of numbers'
+            });
+
+          case 10:
+            _context22.next = 13;
+            break;
+
+          case 12:
+            if (!req.query.searchIds) {
+              res.status(400).json({
+                error: 'please supply searchIds query parameter'
+              });
+            } else {
+              notAuthorized(res);
+            }
+
+          case 13:
+          case "end":
+            return _context22.stop();
+        }
+      }
+    }, _callee22);
+  }));
+
+  return function (_x43, _x44) {
+    return _ref22.apply(this, arguments);
   };
 }());
 module.exports = app;

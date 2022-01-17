@@ -21,6 +21,8 @@ require("../env");
 
 var _knex = _interopRequireDefault(require("knex"));
 
+var _moment = _interopRequireDefault(require("moment"));
+
 var _objection = require("objection");
 
 var _Setting = _interopRequireDefault(require("./models/Setting"));
@@ -49,15 +51,15 @@ var _urlFetcher = require("./url-fetcher");
 
 var _knexfile = _interopRequireDefault(require("../../knexfile"));
 
-var _redis = require("./redis");
-
 var _Query = _interopRequireDefault(require("./models/Query"));
 
 var _SearchJob = _interopRequireDefault(require("./models/SearchJob"));
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+var _redis = require("./redis");
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
@@ -285,7 +287,8 @@ var Database = /*#__PURE__*/function () {
               case 19:
                 _context5.prev = 19;
                 _context5.t0 = _context5["catch"](9);
-                console.error(_context5.t0);
+
+                _logger["default"].error(_context5.t0);
 
               case 22:
               case "end":
@@ -316,20 +319,24 @@ var Database = /*#__PURE__*/function () {
                   for (pos = 0; pos < user.places.length; pos += 1) {
                     user.places[pos].position = pos;
                   }
-                }
+                } // don't update searches as they could be stale
 
-                delete user.searches;
-                _context6.next = 4;
+
+                delete user.searches; // don't set tweetCount since it's not a column in user and is
+                // added by the API
+
+                delete user.tweetCount;
+                _context6.next = 5;
                 return _User["default"].query().allowGraph('places').upsertGraph(user, {
                   relate: true,
                   unrelate: true
                 });
 
-              case 4:
+              case 5:
                 u = _context6.sent;
                 return _context6.abrupt("return", u);
 
-              case 6:
+              case 7:
               case "end":
                 return _context6.stop();
             }
@@ -377,20 +384,17 @@ var Database = /*#__PURE__*/function () {
     key: "getUsers",
     value: function () {
       var _getUsers = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8() {
-        var users, _iterator2, _step2, user, searchesWithStats, _iterator3, _step3, search, stats;
+        var users, _iterator2, _step2, user;
 
         return _regenerator["default"].wrap(function _callee8$(_context8) {
           while (1) {
             switch (_context8.prev = _context8.next) {
               case 0:
                 _context8.next = 2;
-                return _User["default"].query().withGraphJoined('places').withGraphJoined('searches');
+                return _User["default"].query().withGraphJoined('places').withGraphJoined('searches').orderBy('user.twitterScreenName');
 
               case 2:
                 users = _context8.sent;
-                // this is a stop gap until redis goes away
-                // we need to add aggregate stats to each search
-                // maybe there should be a view for these?
                 _iterator2 = _createForOfIteratorHelper(users);
                 _context8.prev = 4;
 
@@ -398,85 +402,47 @@ var Database = /*#__PURE__*/function () {
 
               case 6:
                 if ((_step2 = _iterator2.n()).done) {
-                  _context8.next = 31;
+                  _context8.next = 13;
                   break;
                 }
 
                 user = _step2.value;
-                searchesWithStats = [];
-                _iterator3 = _createForOfIteratorHelper(user.searches);
-                _context8.prev = 10;
+                _context8.next = 10;
+                return this.getUserTweetCount(user);
 
-                _iterator3.s();
+              case 10:
+                user.tweetCount = _context8.sent;
 
-              case 12:
-                if ((_step3 = _iterator3.n()).done) {
-                  _context8.next = 20;
-                  break;
-                }
-
-                search = _step3.value;
-                _context8.next = 16;
-                return this.getSearchStats(search);
-
-              case 16:
-                stats = _context8.sent;
-                searchesWithStats.push(_objectSpread(_objectSpread({}, search), stats));
-
-              case 18:
-                _context8.next = 12;
-                break;
-
-              case 20:
-                _context8.next = 25;
-                break;
-
-              case 22:
-                _context8.prev = 22;
-                _context8.t0 = _context8["catch"](10);
-
-                _iterator3.e(_context8.t0);
-
-              case 25:
-                _context8.prev = 25;
-
-                _iterator3.f();
-
-                return _context8.finish(25);
-
-              case 28:
-                user.searches = searchesWithStats;
-
-              case 29:
+              case 11:
                 _context8.next = 6;
                 break;
 
-              case 31:
-                _context8.next = 36;
+              case 13:
+                _context8.next = 18;
                 break;
 
-              case 33:
-                _context8.prev = 33;
-                _context8.t1 = _context8["catch"](4);
+              case 15:
+                _context8.prev = 15;
+                _context8.t0 = _context8["catch"](4);
 
-                _iterator2.e(_context8.t1);
+                _iterator2.e(_context8.t0);
 
-              case 36:
-                _context8.prev = 36;
+              case 18:
+                _context8.prev = 18;
 
                 _iterator2.f();
 
-                return _context8.finish(36);
+                return _context8.finish(18);
 
-              case 39:
+              case 21:
                 return _context8.abrupt("return", users);
 
-              case 40:
+              case 22:
               case "end":
                 return _context8.stop();
             }
           }
-        }, _callee8, this, [[4, 33, 36, 39], [10, 22, 25, 28]]);
+        }, _callee8, this, [[4, 15, 18, 21]]);
       }));
 
       function getUsers() {
@@ -509,7 +475,7 @@ var Database = /*#__PURE__*/function () {
     key: "importLatestTrends",
     value: function () {
       var _importLatestTrends = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee9() {
-        var trends, seenPlaces, _iterator4, _step4, user, _iterator5, _step5, place;
+        var trends, seenPlaces, _iterator3, _step3, user, _iterator4, _step4, place;
 
         return _regenerator["default"].wrap(function _callee9$(_context9) {
           while (1) {
@@ -523,36 +489,36 @@ var Database = /*#__PURE__*/function () {
 
               case 5:
                 _context9.t1 = _context9.sent;
-                _iterator4 = (0, _context9.t0)(_context9.t1);
+                _iterator3 = (0, _context9.t0)(_context9.t1);
                 _context9.prev = 7;
 
-                _iterator4.s();
+                _iterator3.s();
 
               case 9:
-                if ((_step4 = _iterator4.n()).done) {
+                if ((_step3 = _iterator3.n()).done) {
                   _context9.next = 36;
                   break;
                 }
 
-                user = _step4.value;
+                user = _step3.value;
 
                 if (!user.places) {
                   _context9.next = 34;
                   break;
                 }
 
-                _iterator5 = _createForOfIteratorHelper(user.places);
+                _iterator4 = _createForOfIteratorHelper(user.places);
                 _context9.prev = 13;
 
-                _iterator5.s();
+                _iterator4.s();
 
               case 15:
-                if ((_step5 = _iterator5.n()).done) {
+                if ((_step4 = _iterator4.n()).done) {
                   _context9.next = 26;
                   break;
                 }
 
-                place = _step5.value;
+                place = _step4.value;
 
                 if (seenPlaces.has(place.id)) {
                   _context9.next = 24;
@@ -580,12 +546,12 @@ var Database = /*#__PURE__*/function () {
                 _context9.prev = 28;
                 _context9.t4 = _context9["catch"](13);
 
-                _iterator5.e(_context9.t4);
+                _iterator4.e(_context9.t4);
 
               case 31:
                 _context9.prev = 31;
 
-                _iterator5.f();
+                _iterator4.f();
 
                 return _context9.finish(31);
 
@@ -601,12 +567,12 @@ var Database = /*#__PURE__*/function () {
                 _context9.prev = 38;
                 _context9.t5 = _context9["catch"](7);
 
-                _iterator4.e(_context9.t5);
+                _iterator3.e(_context9.t5);
 
               case 41:
                 _context9.prev = 41;
 
-                _iterator4.f();
+                _iterator3.f();
 
                 return _context9.finish(41);
 
@@ -631,7 +597,7 @@ var Database = /*#__PURE__*/function () {
     key: "importLatestTrendsForPlace",
     value: function () {
       var _importLatestTrendsForPlace = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee10(place, user) {
-        var twitter, allTrends, created, trends, _iterator6, _step6, trend, newTrends;
+        var twitter, allTrends, created, trends, _iterator5, _step5, trend, newTrends;
 
         return _regenerator["default"].wrap(function _callee10$(_context10) {
           while (1) {
@@ -649,11 +615,11 @@ var Database = /*#__PURE__*/function () {
 
               case 7:
                 trends = _context10.sent;
-                _iterator6 = _createForOfIteratorHelper(trends);
+                _iterator5 = _createForOfIteratorHelper(trends);
 
                 try {
-                  for (_iterator6.s(); !(_step6 = _iterator6.n()).done;) {
-                    trend = _step6.value;
+                  for (_iterator5.s(); !(_step5 = _iterator5.n()).done;) {
+                    trend = _step5.value;
 
                     if (trend.count !== null) {
                       allTrends.push({
@@ -665,9 +631,9 @@ var Database = /*#__PURE__*/function () {
                     }
                   }
                 } catch (err) {
-                  _iterator6.e(err);
+                  _iterator5.e(err);
                 } finally {
-                  _iterator6.f();
+                  _iterator5.f();
                 }
 
                 _context10.next = 12;
@@ -759,7 +725,7 @@ var Database = /*#__PURE__*/function () {
     key: "getUserTrends",
     value: function () {
       var _getUserTrends = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee12(user) {
-        var results, _iterator7, _step7, place;
+        var results, _iterator6, _step6, place;
 
         return _regenerator["default"].wrap(function _callee12$(_context12) {
           while (1) {
@@ -773,18 +739,18 @@ var Database = /*#__PURE__*/function () {
                   break;
                 }
 
-                _iterator7 = _createForOfIteratorHelper(user.places);
+                _iterator6 = _createForOfIteratorHelper(user.places);
                 _context12.prev = 3;
 
-                _iterator7.s();
+                _iterator6.s();
 
               case 5:
-                if ((_step7 = _iterator7.n()).done) {
+                if ((_step6 = _iterator6.n()).done) {
                   _context12.next = 13;
                   break;
                 }
 
-                place = _step7.value;
+                place = _step6.value;
                 _context12.next = 9;
                 return this.getRecentTrendsForPlace(place);
 
@@ -804,12 +770,12 @@ var Database = /*#__PURE__*/function () {
                 _context12.prev = 15;
                 _context12.t0 = _context12["catch"](3);
 
-                _iterator7.e(_context12.t0);
+                _iterator6.e(_context12.t0);
 
               case 18:
                 _context12.prev = 18;
 
-                _iterator7.f();
+                _iterator6.f();
 
                 return _context12.finish(18);
 
@@ -1007,37 +973,59 @@ var Database = /*#__PURE__*/function () {
 
       return createSearch;
     }()
+    /**
+     * Fetches a search from the database.
+     * @param {number} searchId the search id to look up
+     * @param {boolean} includeSummary whether to calcuate summary statistics
+     * @param {number} ttl how many seconds to cache summary stats for 
+     * @returns a search object
+     */
+
   }, {
     key: "getSearch",
     value: function () {
       var _getSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee17(searchId) {
-        var search, stats;
+        var includeSummary,
+            ttl,
+            search,
+            stats,
+            _args17 = arguments;
         return _regenerator["default"].wrap(function _callee17$(_context17) {
           while (1) {
             switch (_context17.prev = _context17.next) {
               case 0:
-                _context17.next = 2;
+                includeSummary = _args17.length > 1 && _args17[1] !== undefined ? _args17[1] : false;
+                ttl = _args17.length > 2 && _args17[2] !== undefined ? _args17[2] : 60;
+                _context17.next = 4;
                 return _Search["default"].query().findById(searchId).withGraphJoined('creator').withGraphJoined('queries.searchJobs');
 
-              case 2:
+              case 4:
                 search = _context17.sent;
 
                 if (search) {
-                  _context17.next = 5;
+                  _context17.next = 7;
                   break;
                 }
 
                 return _context17.abrupt("return", null);
 
-              case 5:
-                _context17.next = 7;
-                return this.getSearchStats(search);
-
               case 7:
-                stats = _context17.sent;
-                return _context17.abrupt("return", _objectSpread(_objectSpread({}, search), stats));
+                if (!includeSummary) {
+                  _context17.next = 12;
+                  break;
+                }
 
-              case 9:
+                _context17.next = 10;
+                return this.getSearchStats(search, ttl);
+
+              case 10:
+                stats = _context17.sent;
+                search = _objectSpread(_objectSpread({}, search), stats);
+
+              case 12:
+                return _context17.abrupt("return", search);
+
+              case 13:
               case "end":
                 return _context17.stop();
             }
@@ -1108,7 +1096,7 @@ var Database = /*#__PURE__*/function () {
     key: "getUserSearches",
     value: function () {
       var _getUserSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee19(user) {
-        var results, searches, _iterator8, _step8, search, stats;
+        var results, _iterator7, _step7, search;
 
         return _regenerator["default"].wrap(function _callee19$(_context19) {
           while (1) {
@@ -1122,57 +1110,54 @@ var Database = /*#__PURE__*/function () {
 
               case 2:
                 results = _context19.sent;
-                // add stats to each search
-                searches = [];
-                _iterator8 = _createForOfIteratorHelper(results);
-                _context19.prev = 5;
+                _iterator7 = _createForOfIteratorHelper(results);
+                _context19.prev = 4;
 
-                _iterator8.s();
+                _iterator7.s();
 
-              case 7:
-                if ((_step8 = _iterator8.n()).done) {
-                  _context19.next = 15;
+              case 6:
+                if ((_step7 = _iterator7.n()).done) {
+                  _context19.next = 13;
                   break;
                 }
 
-                search = _step8.value;
-                _context19.next = 11;
-                return this.getSearchStats(search);
+                search = _step7.value;
+                _context19.next = 10;
+                return this.getSearchTweetCount(search);
+
+              case 10:
+                search.tweetCount = _context19.sent;
 
               case 11:
-                stats = _context19.sent;
-                searches.push(_objectSpread(_objectSpread({}, search), stats));
+                _context19.next = 6;
+                break;
 
               case 13:
-                _context19.next = 7;
+                _context19.next = 18;
                 break;
 
               case 15:
-                _context19.next = 20;
-                break;
+                _context19.prev = 15;
+                _context19.t0 = _context19["catch"](4);
 
-              case 17:
-                _context19.prev = 17;
-                _context19.t0 = _context19["catch"](5);
+                _iterator7.e(_context19.t0);
 
-                _iterator8.e(_context19.t0);
+              case 18:
+                _context19.prev = 18;
 
-              case 20:
-                _context19.prev = 20;
+                _iterator7.f();
 
-                _iterator8.f();
+                return _context19.finish(18);
 
-                return _context19.finish(20);
+              case 21:
+                return _context19.abrupt("return", results);
 
-              case 23:
-                return _context19.abrupt("return", searches);
-
-              case 24:
+              case 22:
               case "end":
                 return _context19.stop();
             }
           }
-        }, _callee19, this, [[5, 17, 20, 23]]);
+        }, _callee19, this, [[4, 15, 18, 21]]);
       }));
 
       function getUserSearches(_x14) {
@@ -1182,20 +1167,202 @@ var Database = /*#__PURE__*/function () {
       return getUserSearches;
     }()
   }, {
-    key: "getPublicSearches",
+    key: "getActiveSearches",
     value: function () {
-      var _getPublicSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee20() {
-        var results, searches, _iterator9, _step9, search, stats;
+      var _getActiveSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee20() {
+        var results, _iterator8, _step8, search;
 
         return _regenerator["default"].wrap(function _callee20$(_context20) {
           while (1) {
             switch (_context20.prev = _context20.next) {
               case 0:
                 _context20.next = 2;
-                return _Search["default"].query().whereNotNull("public").withGraphJoined('creator').withGraphJoined('queries').orderBy('created', 'DESC');
+                return _Search["default"].query().where({
+                  "search.active": true,
+                  "saved": true
+                }).withGraphJoined('creator').withGraphJoined('queries.searchJobs').orderBy('created', 'DESC');
 
               case 2:
                 results = _context20.sent;
+                _iterator8 = _createForOfIteratorHelper(results);
+                _context20.prev = 4;
+
+                _iterator8.s();
+
+              case 6:
+                if ((_step8 = _iterator8.n()).done) {
+                  _context20.next = 13;
+                  break;
+                }
+
+                search = _step8.value;
+                _context20.next = 10;
+                return this.getSearchTweetCount(search);
+
+              case 10:
+                search.tweetCount = _context20.sent;
+
+              case 11:
+                _context20.next = 6;
+                break;
+
+              case 13:
+                _context20.next = 18;
+                break;
+
+              case 15:
+                _context20.prev = 15;
+                _context20.t0 = _context20["catch"](4);
+
+                _iterator8.e(_context20.t0);
+
+              case 18:
+                _context20.prev = 18;
+
+                _iterator8.f();
+
+                return _context20.finish(18);
+
+              case 21:
+                return _context20.abrupt("return", results);
+
+              case 22:
+              case "end":
+                return _context20.stop();
+            }
+          }
+        }, _callee20, this, [[4, 15, 18, 21]]);
+      }));
+
+      function getActiveSearches() {
+        return _getActiveSearches.apply(this, arguments);
+      }
+
+      return getActiveSearches;
+    }()
+  }, {
+    key: "getSearchTweetCount",
+    value: function () {
+      var _getSearchTweetCount = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee21(search) {
+        var result;
+        return _regenerator["default"].wrap(function _callee21$(_context21) {
+          while (1) {
+            switch (_context21.prev = _context21.next) {
+              case 0:
+                _context21.next = 2;
+                return this.pg('tweet').join('search', 'tweet.search_id', '=', 'search.id').where('search.id', '=', search.id).count().first();
+
+              case 2:
+                result = _context21.sent;
+                return _context21.abrupt("return", parseInt(result.count, 10));
+
+              case 4:
+              case "end":
+                return _context21.stop();
+            }
+          }
+        }, _callee21, this);
+      }));
+
+      function getSearchTweetCount(_x15) {
+        return _getSearchTweetCount.apply(this, arguments);
+      }
+
+      return getSearchTweetCount;
+    }()
+  }, {
+    key: "getUserTweetCount",
+    value: function () {
+      var _getUserTweetCount = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee22(user) {
+        var result;
+        return _regenerator["default"].wrap(function _callee22$(_context22) {
+          while (1) {
+            switch (_context22.prev = _context22.next) {
+              case 0:
+                _context22.next = 2;
+                return this.pg('tweet').join('search', 'tweet.search_id', '=', 'search.id').join('user', 'search.user_id', '=', 'user.id').where({
+                  'user.id': user.id,
+                  'search.saved': true
+                }).count().first();
+
+              case 2:
+                result = _context22.sent;
+                return _context22.abrupt("return", parseInt(result.count, 10));
+
+              case 4:
+              case "end":
+                return _context22.stop();
+            }
+          }
+        }, _callee22, this);
+      }));
+
+      function getUserTweetCount(_x16) {
+        return _getUserTweetCount.apply(this, arguments);
+      }
+
+      return getUserTweetCount;
+    }()
+  }, {
+    key: "getSearchCounts",
+    value: function () {
+      var _getSearchCounts = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee23(searchIds) {
+        var results, counts, _iterator9, _step9, r;
+
+        return _regenerator["default"].wrap(function _callee23$(_context23) {
+          while (1) {
+            switch (_context23.prev = _context23.next) {
+              case 0:
+                _context23.next = 2;
+                return this.pg('tweet').select('search_id').whereIn('search_id', searchIds).groupBy('search_id').count('tweet.id');
+
+              case 2:
+                results = _context23.sent;
+                counts = {};
+                _iterator9 = _createForOfIteratorHelper(results);
+
+                try {
+                  for (_iterator9.s(); !(_step9 = _iterator9.n()).done;) {
+                    r = _step9.value;
+                    counts[r.searchId] = parseInt(r.count, 10);
+                  }
+                } catch (err) {
+                  _iterator9.e(err);
+                } finally {
+                  _iterator9.f();
+                }
+
+                return _context23.abrupt("return", counts);
+
+              case 7:
+              case "end":
+                return _context23.stop();
+            }
+          }
+        }, _callee23, this);
+      }));
+
+      function getSearchCounts(_x17) {
+        return _getSearchCounts.apply(this, arguments);
+      }
+
+      return getSearchCounts;
+    }()
+  }, {
+    key: "getPublicSearches",
+    value: function () {
+      var _getPublicSearches = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee24() {
+        var results, searches, _iterator10, _step10, search, stats;
+
+        return _regenerator["default"].wrap(function _callee24$(_context24) {
+          while (1) {
+            switch (_context24.prev = _context24.next) {
+              case 0:
+                _context24.next = 2;
+                return _Search["default"].query().whereNotNull("public").withGraphJoined('creator').withGraphJoined('queries').orderBy('created', 'DESC');
+
+              case 2:
+                results = _context24.sent;
                 // remove all info except for the creator's name and id
                 results.map(function (s) {
                   s.creator = {
@@ -1207,55 +1374,55 @@ var Database = /*#__PURE__*/function () {
                 }); // add stats to each search
 
                 searches = [];
-                _iterator9 = _createForOfIteratorHelper(results);
-                _context20.prev = 6;
+                _iterator10 = _createForOfIteratorHelper(results);
+                _context24.prev = 6;
 
-                _iterator9.s();
+                _iterator10.s();
 
               case 8:
-                if ((_step9 = _iterator9.n()).done) {
-                  _context20.next = 16;
+                if ((_step10 = _iterator10.n()).done) {
+                  _context24.next = 16;
                   break;
                 }
 
-                search = _step9.value;
-                _context20.next = 12;
+                search = _step10.value;
+                _context24.next = 12;
                 return this.getSearchStats(search);
 
               case 12:
-                stats = _context20.sent;
+                stats = _context24.sent;
                 searches.push(_objectSpread(_objectSpread({}, search), stats));
 
               case 14:
-                _context20.next = 8;
+                _context24.next = 8;
                 break;
 
               case 16:
-                _context20.next = 21;
+                _context24.next = 21;
                 break;
 
               case 18:
-                _context20.prev = 18;
-                _context20.t0 = _context20["catch"](6);
+                _context24.prev = 18;
+                _context24.t0 = _context24["catch"](6);
 
-                _iterator9.e(_context20.t0);
+                _iterator10.e(_context24.t0);
 
               case 21:
-                _context20.prev = 21;
+                _context24.prev = 21;
 
-                _iterator9.f();
+                _iterator10.f();
 
-                return _context20.finish(21);
+                return _context24.finish(21);
 
               case 24:
-                return _context20.abrupt("return", searches);
+                return _context24.abrupt("return", searches);
 
               case 25:
               case "end":
-                return _context20.stop();
+                return _context24.stop();
             }
           }
-        }, _callee20, this, [[6, 18, 21, 24]]);
+        }, _callee24, this, [[6, 18, 21, 24]]);
       }));
 
       function getPublicSearches() {
@@ -1267,30 +1434,28 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "userOverQuota",
     value: function () {
-      var _userOverQuota = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee21(user) {
-        var result;
-        return _regenerator["default"].wrap(function _callee21$(_context21) {
+      var _userOverQuota = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee25(user) {
+        var count;
+        return _regenerator["default"].wrap(function _callee25$(_context25) {
           while (1) {
-            switch (_context21.prev = _context21.next) {
+            switch (_context25.prev = _context25.next) {
               case 0:
-                _context21.next = 2;
-                return _Tweet["default"].query().count().where({
-                  'search.userId': user.id
-                }).innerJoin('search', 'tweet.searchId', 'search.id').first();
+                _context25.next = 2;
+                return this.getUserTweetCount(user);
 
               case 2:
-                result = _context21.sent;
-                return _context21.abrupt("return", result.count > user.tweetQuota);
+                count = _context25.sent;
+                return _context25.abrupt("return", count > user.tweetQuota);
 
               case 4:
               case "end":
-                return _context21.stop();
+                return _context25.stop();
             }
           }
-        }, _callee21);
+        }, _callee25, this);
       }));
 
-      function userOverQuota(_x15) {
+      function userOverQuota(_x18) {
         return _userOverQuota.apply(this, arguments);
       }
 
@@ -1299,73 +1464,33 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "updateSearch",
     value: function () {
-      var _updateSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee22(search) {
+      var _updateSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee26(search) {
         var safeSearch;
-        return _regenerator["default"].wrap(function _callee22$(_context22) {
+        return _regenerator["default"].wrap(function _callee26$(_context26) {
           while (1) {
-            switch (_context22.prev = _context22.next) {
+            switch (_context26.prev = _context26.next) {
               case 0:
                 // search properties are explicitly used to guard against trying
-                // to persist properties that were added by getSearchSummary
+                // to persist properties that were added by getSearchStats
                 safeSearch = this.removeStatsProps(search);
-                _context22.next = 3;
+                _context26.next = 3;
                 return _Search["default"].query().patch(_objectSpread(_objectSpread({}, safeSearch), {}, {
                   updated: new Date()
                 })).where('id', safeSearch.id);
 
               case 3:
               case "end":
-                return _context22.stop();
+                return _context26.stop();
             }
           }
-        }, _callee22, this);
+        }, _callee26, this);
       }));
 
-      function updateSearch(_x16) {
+      function updateSearch(_x19) {
         return _updateSearch.apply(this, arguments);
       }
 
       return updateSearch;
-    }()
-  }, {
-    key: "getSearchSummary",
-    value: function () {
-      var _getSearchSummary = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee23(search) {
-        var results, stats;
-        return _regenerator["default"].wrap(function _callee23$(_context23) {
-          while (1) {
-            switch (_context23.prev = _context23.next) {
-              case 0:
-                _context23.next = 2;
-                return _Tweet["default"].query().min('created').max('created').count('id').where('searchId', search.id);
-
-              case 2:
-                results = _context23.sent;
-                this.convertCounts(results);
-                _context23.next = 6;
-                return this.getSearchStats(search);
-
-              case 6:
-                stats = _context23.sent;
-                return _context23.abrupt("return", _objectSpread(_objectSpread(_objectSpread({}, search), stats), {}, {
-                  count: results[0].count,
-                  minDate: results[0].min,
-                  maxDate: results[0].max
-                }));
-
-              case 8:
-              case "end":
-                return _context23.stop();
-            }
-          }
-        }, _callee23, this);
-      }));
-
-      function getSearchSummary(_x17) {
-        return _getSearchSummary.apply(this, arguments);
-      }
-
-      return getSearchSummary;
     }()
   }, {
     key: "removeStatsProps",
@@ -1380,53 +1505,80 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getSearchStats",
     value: function () {
-      var _getSearchStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee24(search) {
-        var users, tweets, urls, urlCounts;
-        return _regenerator["default"].wrap(function _callee24$(_context24) {
+      var _getSearchStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee28(search) {
+        var ttl,
+            key,
+            _args28 = arguments;
+        return _regenerator["default"].wrap(function _callee28$(_context28) {
           while (1) {
-            switch (_context24.prev = _context24.next) {
+            switch (_context28.prev = _context28.next) {
               case 0:
-                _context24.next = 2;
-                return _Tweet["default"].query().countDistinct('screenName').where({
-                  searchId: search.id
-                }).first();
+                ttl = _args28.length > 1 && _args28[1] !== undefined ? _args28[1] : 60;
+                key = (0, _redis.searchStatsKey)(search);
+                return _context28.abrupt("return", this.cache(key, ttl, /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee27() {
+                  var dates, users, tweets, urls, urlCounts;
+                  return _regenerator["default"].wrap(function _callee27$(_context27) {
+                    while (1) {
+                      switch (_context27.prev = _context27.next) {
+                        case 0:
+                          _context27.next = 2;
+                          return _Tweet["default"].query().min('created').max('created').where({
+                            'searchId': search.id
+                          });
 
-              case 2:
-                users = _context24.sent;
-                _context24.next = 5;
-                return _Tweet["default"].query().count('tweetId').where({
-                  searchId: search.id
-                }).first();
+                        case 2:
+                          dates = _context27.sent;
+                          _context27.next = 5;
+                          return _Tweet["default"].query().countDistinct('screenName').where({
+                            searchId: search.id
+                          }).first();
 
-              case 5:
-                tweets = _context24.sent;
-                _context24.next = 8;
-                return _Tweet["default"].query().join('tweetUrl', 'id', 'tweetUrl.tweetId').select('type').countDistinct('url').where({
-                  searchId: search.id
-                }).groupBy('type');
+                        case 5:
+                          users = _context27.sent;
+                          _context27.next = 8;
+                          return _Tweet["default"].query().count('tweetId').where({
+                            searchId: search.id
+                          }).first();
 
-              case 8:
-                urls = _context24.sent;
-                urlCounts = new Map(urls.map(function (r) {
-                  return [r.type, r.count];
-                }));
-                return _context24.abrupt("return", {
-                  tweetCount: parseInt(tweets.count, 10),
-                  userCount: parseInt(users.count, 10),
-                  imageCount: parseInt(urlCounts.get('image'), 10),
-                  videoCount: parseInt(urlCounts.get('video'), 10),
-                  urlCount: parseInt(urlCounts.get('page'), 10)
-                });
+                        case 8:
+                          tweets = _context27.sent;
+                          _context27.next = 11;
+                          return _Tweet["default"].query().join('tweetUrl', 'id', 'tweetUrl.tweetId').select('type').countDistinct('url').where({
+                            searchId: search.id
+                          }).groupBy('type');
 
-              case 11:
+                        case 11:
+                          urls = _context27.sent;
+                          urlCounts = new Map(urls.map(function (r) {
+                            return [r.type, r.count];
+                          }));
+                          return _context27.abrupt("return", {
+                            minDate: dates[0].min,
+                            maxDate: dates[0].max,
+                            tweetCount: parseInt(tweets.count, 10),
+                            userCount: parseInt(users.count, 10),
+                            imageCount: parseInt(urlCounts.get('image'), 10),
+                            videoCount: parseInt(urlCounts.get('video'), 10),
+                            urlCount: parseInt(urlCounts.get('page'), 10)
+                          });
+
+                        case 14:
+                        case "end":
+                          return _context27.stop();
+                      }
+                    }
+                  }, _callee27);
+                }))));
+
+              case 3:
               case "end":
-                return _context24.stop();
+                return _context28.stop();
             }
           }
-        }, _callee24);
+        }, _callee28, this);
       }));
 
-      function getSearchStats(_x18) {
+      function getSearchStats(_x20) {
         return _getSearchStats.apply(this, arguments);
       }
 
@@ -1435,7 +1587,7 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "importFromSearch",
     value: function () {
-      var _importFromSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee26(search) {
+      var _importFromSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee30(search) {
         var _this = this;
 
         var maxTweets,
@@ -1445,23 +1597,23 @@ var Database = /*#__PURE__*/function () {
             q,
             maxTweetId,
             count,
-            _args26 = arguments;
-        return _regenerator["default"].wrap(function _callee26$(_context26) {
+            _args30 = arguments;
+        return _regenerator["default"].wrap(function _callee30$(_context30) {
           while (1) {
-            switch (_context26.prev = _context26.next) {
+            switch (_context30.prev = _context30.next) {
               case 0:
-                maxTweets = _args26.length > 1 && _args26[1] !== undefined ? _args26[1] : 1000;
-                _context26.next = 3;
+                maxTweets = _args30.length > 1 && _args30[1] !== undefined ? _args30[1] : 1000;
+                _context30.next = 3;
                 return this.getUser(search.creator.id);
 
               case 3:
-                user = _context26.sent;
-                _context26.next = 6;
+                user = _context30.sent;
+                _context30.next = 6;
                 return this.getTwitterClientForUser(user);
 
               case 6:
-                twtr = _context26.sent;
-                _context26.next = 9;
+                twtr = _context30.sent;
+                _context30.next = 9;
                 return this.updateSearch({
                   id: search.id,
                   active: true
@@ -1474,35 +1626,35 @@ var Database = /*#__PURE__*/function () {
 
                 maxTweetId = null;
                 count = 0;
-                return _context26.abrupt("return", new Promise(function (resolve, reject) {
+                return _context30.abrupt("return", new Promise(function (resolve, reject) {
                   twtr.search({
                     q: q,
                     sinceId: search.maxTweetId,
                     count: maxTweets
                   }, /*#__PURE__*/function () {
-                    var _ref2 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee25(err, results) {
-                      return _regenerator["default"].wrap(function _callee25$(_context25) {
+                    var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee29(err, results) {
+                      return _regenerator["default"].wrap(function _callee29$(_context29) {
                         while (1) {
-                          switch (_context25.prev = _context25.next) {
+                          switch (_context29.prev = _context29.next) {
                             case 0:
                               if (!err) {
-                                _context25.next = 5;
+                                _context29.next = 5;
                                 break;
                               }
 
                               _logger["default"].error("caught error during search: ".concat(err));
 
                               reject(err);
-                              _context25.next = 17;
+                              _context29.next = 17;
                               break;
 
                             case 5:
                               if (!(results.length === 0)) {
-                                _context25.next = 12;
+                                _context29.next = 12;
                                 break;
                               }
 
-                              _context25.next = 8;
+                              _context29.next = 8;
                               return _this.updateSearch({
                                 id: search.id,
                                 maxTweetId: maxTweetId,
@@ -1513,7 +1665,7 @@ var Database = /*#__PURE__*/function () {
                               _logger["default"].info("no more search results, returning ".concat(count));
 
                               resolve(count);
-                              _context25.next = 17;
+                              _context29.next = 17;
                               break;
 
                             case 12:
@@ -1521,7 +1673,7 @@ var Database = /*#__PURE__*/function () {
                                 maxTweetId = results[0].id;
                               }
 
-                              _context25.next = 15;
+                              _context29.next = 15;
                               return _this.loadTweets(search, results);
 
                             case 15:
@@ -1531,27 +1683,27 @@ var Database = /*#__PURE__*/function () {
 
                             case 17:
                             case "end":
-                              return _context25.stop();
+                              return _context29.stop();
                           }
                         }
-                      }, _callee25);
+                      }, _callee29);
                     }));
 
-                    return function (_x20, _x21) {
-                      return _ref2.apply(this, arguments);
+                    return function (_x22, _x23) {
+                      return _ref3.apply(this, arguments);
                     };
                   }());
                 }));
 
               case 14:
               case "end":
-                return _context26.stop();
+                return _context30.stop();
             }
           }
-        }, _callee26, this);
+        }, _callee30, this);
       }));
 
-      function importFromSearch(_x19) {
+      function importFromSearch(_x21) {
         return _importFromSearch.apply(this, arguments);
       }
 
@@ -1560,44 +1712,45 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "startStream",
     value: function () {
-      var _startStream = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee27(search, tweetId) {
+      var _startStream = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee31(search, tweetId) {
         var lastQuery, q, job, twtr;
-        return _regenerator["default"].wrap(function _callee27$(_context27) {
+        return _regenerator["default"].wrap(function _callee31$(_context31) {
           while (1) {
-            switch (_context27.prev = _context27.next) {
+            switch (_context31.prev = _context31.next) {
               case 0:
                 _logger["default"].info("starting stream for ".concat(search.id));
 
                 lastQuery = search.queries[search.queries.length - 1];
                 q = lastQuery.twitterQuery();
-                _context27.next = 5;
+                _context31.next = 5;
                 return this.createSearchJob({
+                  type: 'stream',
                   queryId: lastQuery.id,
                   tweetId: tweetId,
                   started: new Date()
                 });
 
               case 5:
-                job = _context27.sent;
+                job = _context31.sent;
 
                 _logger["default"].info("created job ".concat(job.id));
 
-                _context27.next = 9;
+                _context31.next = 9;
                 return this.getTwitterClientForApp();
 
               case 9:
-                twtr = _context27.sent;
-                return _context27.abrupt("return", twtr.addFilterRule(q, "search-".concat(search.id)));
+                twtr = _context31.sent;
+                return _context31.abrupt("return", twtr.addFilterRule(q, "search-".concat(search.id)));
 
               case 11:
               case "end":
-                return _context27.stop();
+                return _context31.stop();
             }
           }
-        }, _callee27, this);
+        }, _callee31, this);
       }));
 
-      function startStream(_x22, _x23) {
+      function startStream(_x24, _x25) {
         return _startStream.apply(this, arguments);
       }
 
@@ -1606,71 +1759,71 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "stopStream",
     value: function () {
-      var _stopStream = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee28(search) {
-        var twtr, _iterator10, _step10, rule, query, _iterator11, _step11, job;
+      var _stopStream = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee32(search) {
+        var twtr, _iterator11, _step11, rule, query, _iterator12, _step12, job;
 
-        return _regenerator["default"].wrap(function _callee28$(_context28) {
+        return _regenerator["default"].wrap(function _callee32$(_context32) {
           while (1) {
-            switch (_context28.prev = _context28.next) {
+            switch (_context32.prev = _context32.next) {
               case 0:
                 _logger["default"].info("stopping stream for search ".concat(search.id)); // remove all filter rules for this search
 
 
-                _context28.next = 3;
+                _context32.next = 3;
                 return this.getTwitterClientForApp();
 
               case 3:
-                twtr = _context28.sent;
-                _context28.t0 = _createForOfIteratorHelper;
-                _context28.next = 7;
+                twtr = _context32.sent;
+                _context32.t0 = _createForOfIteratorHelper;
+                _context32.next = 7;
                 return twtr.getFilterRules();
 
               case 7:
-                _context28.t1 = _context28.sent;
-                _iterator10 = (0, _context28.t0)(_context28.t1);
-                _context28.prev = 9;
+                _context32.t1 = _context32.sent;
+                _iterator11 = (0, _context32.t0)(_context32.t1);
+                _context32.prev = 9;
 
-                _iterator10.s();
+                _iterator11.s();
 
               case 11:
-                if ((_step10 = _iterator10.n()).done) {
-                  _context28.next = 19;
+                if ((_step11 = _iterator11.n()).done) {
+                  _context32.next = 19;
                   break;
                 }
 
-                rule = _step10.value;
+                rule = _step11.value;
 
                 if (!(rule.tag == "search-".concat(search.id))) {
-                  _context28.next = 17;
+                  _context32.next = 17;
                   break;
                 }
 
-                _context28.next = 16;
+                _context32.next = 16;
                 return twtr.deleteFilterRule(rule.id);
 
               case 16:
                 _logger["default"].info("removing filter rule ".concat(rule.id, " for ").concat(search.id));
 
               case 17:
-                _context28.next = 11;
+                _context32.next = 11;
                 break;
 
               case 19:
-                _context28.next = 24;
+                _context32.next = 24;
                 break;
 
               case 21:
-                _context28.prev = 21;
-                _context28.t2 = _context28["catch"](9);
+                _context32.prev = 21;
+                _context32.t2 = _context32["catch"](9);
 
-                _iterator10.e(_context28.t2);
+                _iterator11.e(_context32.t2);
 
               case 24:
-                _context28.prev = 24;
+                _context32.prev = 24;
 
-                _iterator10.f();
+                _iterator11.f();
 
-                return _context28.finish(24);
+                return _context32.finish(24);
 
               case 27:
                 // need a better way to identify the search job that needs to 
@@ -1678,100 +1831,254 @@ var Database = /*#__PURE__*/function () {
                 // ended time. once we can do historical collection it will be 
                 // important to only end the filter stream job
                 query = search.queries[search.queries.length - 1];
-                _iterator11 = _createForOfIteratorHelper(query.searchJobs);
-                _context28.prev = 29;
+                _iterator12 = _createForOfIteratorHelper(query.searchJobs);
+                _context32.prev = 29;
 
-                _iterator11.s();
+                _iterator12.s();
 
               case 31:
-                if ((_step11 = _iterator11.n()).done) {
-                  _context28.next = 38;
+                if ((_step12 = _iterator12.n()).done) {
+                  _context32.next = 38;
                   break;
                 }
 
-                job = _step11.value;
+                job = _step12.value;
 
                 if (job.ended) {
-                  _context28.next = 36;
+                  _context32.next = 36;
                   break;
                 }
 
-                _context28.next = 36;
+                _context32.next = 36;
                 return this.updateSearchJob({
                   id: job.id,
                   ended: new Date()
                 });
 
               case 36:
-                _context28.next = 31;
+                _context32.next = 31;
                 break;
 
               case 38:
-                _context28.next = 43;
+                _context32.next = 43;
                 break;
 
               case 40:
-                _context28.prev = 40;
-                _context28.t3 = _context28["catch"](29);
+                _context32.prev = 40;
+                _context32.t3 = _context32["catch"](29);
 
-                _iterator11.e(_context28.t3);
+                _iterator12.e(_context32.t3);
 
               case 43:
-                _context28.prev = 43;
+                _context32.prev = 43;
 
-                _iterator11.f();
+                _iterator12.f();
 
-                return _context28.finish(43);
+                return _context32.finish(43);
 
               case 46:
-                return _context28.abrupt("return", this.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
+                return _context32.abrupt("return", this.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
                   active: false,
                   archived: false
                 })));
 
               case 47:
               case "end":
-                return _context28.stop();
+                return _context32.stop();
             }
           }
-        }, _callee28, this, [[9, 21, 24, 27], [29, 40, 43, 46]]);
+        }, _callee32, this, [[9, 21, 24, 27], [29, 40, 43, 46]]);
       }));
 
-      function stopStream(_x24) {
+      function stopStream(_x26) {
         return _stopStream.apply(this, arguments);
       }
 
       return stopStream;
     }()
   }, {
+    key: "startSearch",
+    value: function () {
+      var _startSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee33(search, tweetId) {
+        var lastQuery, stats, job;
+        return _regenerator["default"].wrap(function _callee33$(_context33) {
+          while (1) {
+            switch (_context33.prev = _context33.next) {
+              case 0:
+                _logger["default"].info("starting search for ".concat(search.id));
+
+                _context33.next = 3;
+                return this.updateSearch({
+                  id: search.id,
+                  active: true
+                });
+
+              case 3:
+                // get the most recent query
+                lastQuery = search.queries[search.queries.length - 1]; // set the endDate of the search to the earliest tweet time or now
+
+                stats = this.getSearchStats(search);
+
+                if (!stats.minDate) {
+                  _context33.next = 11;
+                  break;
+                }
+
+                lastQuery.value.endDate = stats.minDate;
+                _context33.next = 9;
+                return this.updateQuery(lastQuery);
+
+              case 9:
+                _context33.next = 14;
+                break;
+
+              case 11:
+                // otherwise use the current time minus a minute
+                // note: the Twitter API throws an error if current time is used?
+                lastQuery.value.endDate = (0, _moment["default"])().subtract(1, 'minutes');
+                _context33.next = 14;
+                return this.updateQuery(lastQuery);
+
+              case 14:
+                _context33.next = 16;
+                return this.createSearchJob({
+                  type: 'search',
+                  queryId: lastQuery.id,
+                  tweetId: tweetId,
+                  started: new Date()
+                });
+
+              case 16:
+                job = _context33.sent;
+
+                _logger["default"].info("adding job ".concat(job.id, " to search job queue"));
+
+                return _context33.abrupt("return", this.redis.lpushAsync(_redis.startSearchJobKey, job.id));
+
+              case 19:
+              case "end":
+                return _context33.stop();
+            }
+          }
+        }, _callee33, this);
+      }));
+
+      function startSearch(_x27, _x28) {
+        return _startSearch.apply(this, arguments);
+      }
+
+      return startSearch;
+    }()
+  }, {
+    key: "stopSearch",
+    value: function () {
+      var _stopSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee34(search) {
+        var query, _iterator13, _step13, job;
+
+        return _regenerator["default"].wrap(function _callee34$(_context34) {
+          while (1) {
+            switch (_context34.prev = _context34.next) {
+              case 0:
+                _logger["default"].info("stopping search ".concat(search.id)); // need a better way to identify the search job that needs to 
+                // be ended but for now just mark any search job that has no 
+                // ended time. 
+
+
+                query = search.queries[search.queries.length - 1];
+                _iterator13 = _createForOfIteratorHelper(query.searchJobs);
+                _context34.prev = 3;
+
+                _iterator13.s();
+
+              case 5:
+                if ((_step13 = _iterator13.n()).done) {
+                  _context34.next = 12;
+                  break;
+                }
+
+                job = _step13.value;
+
+                if (job.ended) {
+                  _context34.next = 10;
+                  break;
+                }
+
+                _context34.next = 10;
+                return this.updateSearchJob({
+                  id: job.id,
+                  ended: new Date()
+                });
+
+              case 10:
+                _context34.next = 5;
+                break;
+
+              case 12:
+                _context34.next = 17;
+                break;
+
+              case 14:
+                _context34.prev = 14;
+                _context34.t0 = _context34["catch"](3);
+
+                _iterator13.e(_context34.t0);
+
+              case 17:
+                _context34.prev = 17;
+
+                _iterator13.f();
+
+                return _context34.finish(17);
+
+              case 20:
+                return _context34.abrupt("return", this.updateSearch(_objectSpread(_objectSpread({}, search), {}, {
+                  active: false,
+                  archived: false
+                })));
+
+              case 21:
+              case "end":
+                return _context34.stop();
+            }
+          }
+        }, _callee34, this, [[3, 14, 17, 20]]);
+      }));
+
+      function stopSearch(_x29) {
+        return _stopSearch.apply(this, arguments);
+      }
+
+      return stopSearch;
+    }()
+  }, {
     key: "loadTweets",
     value: function () {
-      var _loadTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee30(search, tweets) {
-        var tweetRows, _iterator12, _step12, tweet, _iterator18, _step18, url;
+      var _loadTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee36(search, tweets) {
+        var tweetRows, _iterator14, _step14, tweet, _iterator20, _step20, url;
 
-        return _regenerator["default"].wrap(function _callee30$(_context30) {
+        return _regenerator["default"].wrap(function _callee36$(_context36) {
           while (1) {
-            switch (_context30.prev = _context30.next) {
+            switch (_context36.prev = _context36.next) {
               case 0:
                 _logger["default"].info("loading ".concat(tweets.length, " tweets for searchId=").concat(search.id));
 
                 tweetRows = [];
-                _iterator12 = _createForOfIteratorHelper(tweets);
+                _iterator14 = _createForOfIteratorHelper(tweets);
 
                 try {
-                  for (_iterator12.s(); !(_step12 = _iterator12.n()).done;) {
-                    tweet = _step12.value;
-                    _iterator18 = _createForOfIteratorHelper(tweet.urls);
+                  for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
+                    tweet = _step14.value;
+                    _iterator20 = _createForOfIteratorHelper(tweet.urls);
 
                     try {
-                      for (_iterator18.s(); !(_step18 = _iterator18.n()).done;) {
-                        url = _step18.value;
+                      for (_iterator20.s(); !(_step20 = _iterator20.n()).done;) {
+                        url = _step20.value;
                         urlFetcher.add(search, url["long"], tweet.id);
                       }
                     } catch (err) {
-                      _iterator18.e(err);
+                      _iterator20.e(err);
                     } finally {
-                      _iterator18.f();
+                      _iterator20.f();
                     }
 
                     tweetRows.push({
@@ -1796,81 +2103,44 @@ var Database = /*#__PURE__*/function () {
                     });
                   }
                 } catch (err) {
-                  _iterator12.e(err);
+                  _iterator14.e(err);
                 } finally {
-                  _iterator12.f();
+                  _iterator14.f();
                 }
 
-                _context30.prev = 4;
-                _context30.next = 7;
+                _context36.prev = 4;
+                _context36.next = 7;
                 return _Tweet["default"].transaction( /*#__PURE__*/function () {
-                  var _ref3 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee29(trx) {
-                    var results, hashtagRows, urlRows, _iterator13, _step13, row, hashtags, _iterator14, _step14, name, urls, _iterator15, _step15, url, _iterator16, _step16, _url, _iterator17, _step17, _url2;
+                  var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee35(trx) {
+                    var results, hashtagRows, urlRows, _iterator15, _step15, row, hashtags, _iterator16, _step16, name, urls, _iterator17, _step17, url, _iterator18, _step18, _url, _iterator19, _step19, _url2;
 
-                    return _regenerator["default"].wrap(function _callee29$(_context29) {
+                    return _regenerator["default"].wrap(function _callee35$(_context35) {
                       while (1) {
-                        switch (_context29.prev = _context29.next) {
+                        switch (_context35.prev = _context35.next) {
                           case 0:
-                            _context29.next = 2;
+                            _context35.next = 2;
                             return _Tweet["default"].query(trx).insert(tweetRows).returning(['id', 'tweetId']);
 
                           case 2:
-                            results = _context29.sent;
+                            results = _context35.sent;
                             // now we have the tweet id we can attach relevant 
                             // hashtags and urls
                             hashtagRows = [];
                             urlRows = [];
-                            _iterator13 = _createForOfIteratorHelper(results);
+                            _iterator15 = _createForOfIteratorHelper(results);
 
                             try {
-                              for (_iterator13.s(); !(_step13 = _iterator13.n()).done;) {
-                                row = _step13.value;
+                              for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
+                                row = _step15.value;
                                 // make sure the hashtags are unique!
                                 hashtags = new Set(row.json.hashtags);
-                                _iterator14 = _createForOfIteratorHelper(hashtags);
-
-                                try {
-                                  for (_iterator14.s(); !(_step14 = _iterator14.n()).done;) {
-                                    name = _step14.value;
-                                    hashtagRows.push({
-                                      name: name,
-                                      tweetId: row.id
-                                    });
-                                  }
-                                } catch (err) {
-                                  _iterator14.e(err);
-                                } finally {
-                                  _iterator14.f();
-                                }
-
-                                urls = new Set(row.json.urls.map(function (r) {
-                                  return r["long"];
-                                }));
-                                _iterator15 = _createForOfIteratorHelper(urls);
-
-                                try {
-                                  for (_iterator15.s(); !(_step15 = _iterator15.n()).done;) {
-                                    url = _step15.value;
-                                    urlRows.push({
-                                      url: url,
-                                      type: 'page',
-                                      tweetId: row.id
-                                    });
-                                  }
-                                } catch (err) {
-                                  _iterator15.e(err);
-                                } finally {
-                                  _iterator15.f();
-                                }
-
-                                _iterator16 = _createForOfIteratorHelper(new Set(row.json.images));
+                                _iterator16 = _createForOfIteratorHelper(hashtags);
 
                                 try {
                                   for (_iterator16.s(); !(_step16 = _iterator16.n()).done;) {
-                                    _url = _step16.value;
-                                    urlRows.push({
-                                      url: _url,
-                                      type: 'image',
+                                    name = _step16.value;
+                                    hashtagRows.push({
+                                      name: name,
                                       tweetId: row.id
                                     });
                                   }
@@ -1880,14 +2150,17 @@ var Database = /*#__PURE__*/function () {
                                   _iterator16.f();
                                 }
 
-                                _iterator17 = _createForOfIteratorHelper(new Set(row.json.videos));
+                                urls = new Set(row.json.urls.map(function (r) {
+                                  return r["long"];
+                                }));
+                                _iterator17 = _createForOfIteratorHelper(urls);
 
                                 try {
                                   for (_iterator17.s(); !(_step17 = _iterator17.n()).done;) {
-                                    _url2 = _step17.value;
+                                    url = _step17.value;
                                     urlRows.push({
-                                      url: _url2,
-                                      type: 'video',
+                                      url: url,
+                                      type: 'page',
                                       tweetId: row.id
                                     });
                                   }
@@ -1896,54 +2169,89 @@ var Database = /*#__PURE__*/function () {
                                 } finally {
                                   _iterator17.f();
                                 }
+
+                                _iterator18 = _createForOfIteratorHelper(new Set(row.json.images));
+
+                                try {
+                                  for (_iterator18.s(); !(_step18 = _iterator18.n()).done;) {
+                                    _url = _step18.value;
+                                    urlRows.push({
+                                      url: _url,
+                                      type: 'image',
+                                      tweetId: row.id
+                                    });
+                                  }
+                                } catch (err) {
+                                  _iterator18.e(err);
+                                } finally {
+                                  _iterator18.f();
+                                }
+
+                                _iterator19 = _createForOfIteratorHelper(new Set(row.json.videos));
+
+                                try {
+                                  for (_iterator19.s(); !(_step19 = _iterator19.n()).done;) {
+                                    _url2 = _step19.value;
+                                    urlRows.push({
+                                      url: _url2,
+                                      type: 'video',
+                                      tweetId: row.id
+                                    });
+                                  }
+                                } catch (err) {
+                                  _iterator19.e(err);
+                                } finally {
+                                  _iterator19.f();
+                                }
                               }
                             } catch (err) {
-                              _iterator13.e(err);
+                              _iterator15.e(err);
                             } finally {
-                              _iterator13.f();
+                              _iterator15.f();
                             }
 
-                            _context29.next = 9;
+                            _context35.next = 9;
                             return _TweetHashtag["default"].query(trx).insert(hashtagRows);
 
                           case 9:
-                            _context29.next = 11;
+                            _context35.next = 11;
                             return _TweetUrl["default"].query(trx).insert(urlRows);
 
                           case 11:
-                            return _context29.abrupt("return", results.length);
+                            return _context35.abrupt("return", results.length);
 
                           case 12:
                           case "end":
-                            return _context29.stop();
+                            return _context35.stop();
                         }
                       }
-                    }, _callee29);
+                    }, _callee35);
                   }));
 
-                  return function (_x27) {
-                    return _ref3.apply(this, arguments);
+                  return function (_x32) {
+                    return _ref4.apply(this, arguments);
                   };
                 }());
 
               case 7:
-                _context30.next = 12;
+                _context36.next = 12;
                 break;
 
               case 9:
-                _context30.prev = 9;
-                _context30.t0 = _context30["catch"](4);
-                console.error("loadTweets transaction failed: ".concat(_context30.t0));
+                _context36.prev = 9;
+                _context36.t0 = _context36["catch"](4);
+
+                _logger["default"].error("loadTweets transaction failed: ".concat(_context36.t0));
 
               case 12:
               case "end":
-                return _context30.stop();
+                return _context36.stop();
             }
           }
-        }, _callee30, null, [[4, 9]]);
+        }, _callee36, null, [[4, 9]]);
       }));
 
-      function loadTweets(_x25, _x26) {
+      function loadTweets(_x30, _x31) {
         return _loadTweets.apply(this, arguments);
       }
 
@@ -1976,22 +2284,22 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getAllTweets",
     value: function () {
-      var _getAllTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee31(search) {
-        return _regenerator["default"].wrap(function _callee31$(_context31) {
+      var _getAllTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee37(search) {
+        return _regenerator["default"].wrap(function _callee37$(_context37) {
           while (1) {
-            switch (_context31.prev = _context31.next) {
+            switch (_context37.prev = _context37.next) {
               case 0:
-                return _context31.abrupt("return", this.pickJson(_Tweet["default"].query().where('searchId', search.id)));
+                return _context37.abrupt("return", this.pickJson(_Tweet["default"].query().where('searchId', search.id)));
 
               case 1:
               case "end":
-                return _context31.stop();
+                return _context37.stop();
             }
           }
-        }, _callee31, this);
+        }, _callee37, this);
       }));
 
-      function getAllTweets(_x28) {
+      function getAllTweets(_x33) {
         return _getAllTweets.apply(this, arguments);
       }
 
@@ -2000,15 +2308,15 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTweetsForUrl",
     value: function () {
-      var _getTweetsForUrl = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee32(search, url) {
+      var _getTweetsForUrl = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee38(search, url) {
         var type,
-            _args32 = arguments;
-        return _regenerator["default"].wrap(function _callee32$(_context32) {
+            _args38 = arguments;
+        return _regenerator["default"].wrap(function _callee38$(_context38) {
           while (1) {
-            switch (_context32.prev = _context32.next) {
+            switch (_context38.prev = _context38.next) {
               case 0:
-                type = _args32.length > 2 && _args32[2] !== undefined ? _args32[2] : 'page';
-                return _context32.abrupt("return", this.pickJson(_Tweet["default"].query().where({
+                type = _args38.length > 2 && _args38[2] !== undefined ? _args38[2] : 'page';
+                return _context38.abrupt("return", this.pickJson(_Tweet["default"].query().where({
                   searchId: search.id,
                   url: url,
                   type: type
@@ -2016,13 +2324,13 @@ var Database = /*#__PURE__*/function () {
 
               case 2:
               case "end":
-                return _context32.stop();
+                return _context38.stop();
             }
           }
-        }, _callee32, this);
+        }, _callee38, this);
       }));
 
-      function getTweetsForUrl(_x29, _x30) {
+      function getTweetsForUrl(_x34, _x35) {
         return _getTweetsForUrl.apply(this, arguments);
       }
 
@@ -2041,25 +2349,25 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTweetsForUser",
     value: function () {
-      var _getTweetsForUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee33(search, userId) {
-        return _regenerator["default"].wrap(function _callee33$(_context33) {
+      var _getTweetsForUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee39(search, userId) {
+        return _regenerator["default"].wrap(function _callee39$(_context39) {
           while (1) {
-            switch (_context33.prev = _context33.next) {
+            switch (_context39.prev = _context39.next) {
               case 0:
-                return _context33.abrupt("return", this.pickJson(_Tweet["default"].query().where({
+                return _context39.abrupt("return", this.pickJson(_Tweet["default"].query().where({
                   searchId: search.id,
                   userId: userId
                 }).whereNull('retweetId').orderBy('id', 'DESC').limit(100)));
 
               case 1:
               case "end":
-                return _context33.stop();
+                return _context39.stop();
             }
           }
-        }, _callee33, this);
+        }, _callee39, this);
       }));
 
-      function getTweetsForUser(_x31, _x32) {
+      function getTweetsForUser(_x36, _x37) {
         return _getTweetsForUser.apply(this, arguments);
       }
 
@@ -2068,24 +2376,24 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTweetsByIds",
     value: function () {
-      var _getTweetsByIds = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee34(search, ids) {
-        return _regenerator["default"].wrap(function _callee34$(_context34) {
+      var _getTweetsByIds = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee40(search, ids) {
+        return _regenerator["default"].wrap(function _callee40$(_context40) {
           while (1) {
-            switch (_context34.prev = _context34.next) {
+            switch (_context40.prev = _context40.next) {
               case 0:
-                return _context34.abrupt("return", this.pickJson(_Tweet["default"].query().where({
+                return _context40.abrupt("return", this.pickJson(_Tweet["default"].query().where({
                   searchId: search.id
                 }).whereIn('tweetId', ids).orderBy('id', 'DESC').limit(100)));
 
               case 1:
               case "end":
-                return _context34.stop();
+                return _context40.stop();
             }
           }
-        }, _callee34, this);
+        }, _callee40, this);
       }));
 
-      function getTweetsByIds(_x33, _x34) {
+      function getTweetsByIds(_x38, _x39) {
         return _getTweetsByIds.apply(this, arguments);
       }
 
@@ -2094,29 +2402,29 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getTwitterUsers",
     value: function () {
-      var _getTwitterUsers = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee35(search) {
+      var _getTwitterUsers = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee41(search) {
         var offset,
             limit,
             userCounts,
             users,
             seen,
             results,
-            _iterator19,
-            _step19,
+            _iterator21,
+            _step21,
             u,
-            _args35 = arguments;
+            _args41 = arguments;
 
-        return _regenerator["default"].wrap(function _callee35$(_context35) {
+        return _regenerator["default"].wrap(function _callee41$(_context41) {
           while (1) {
-            switch (_context35.prev = _context35.next) {
+            switch (_context41.prev = _context41.next) {
               case 0:
-                offset = _args35.length > 1 && _args35[1] !== undefined ? _args35[1] : 0;
-                limit = _args35.length > 2 && _args35[2] !== undefined ? _args35[2] : 100;
-                _context35.next = 4;
+                offset = _args41.length > 1 && _args41[1] !== undefined ? _args41[1] : 0;
+                limit = _args41.length > 2 && _args41[2] !== undefined ? _args41[2] : 100;
+                _context41.next = 4;
                 return _Tweet["default"].query().select('screenName').count('* as total').where('searchId', search.id).groupBy('screenName').orderBy('total', 'DESC').offset(offset).limit(limit);
 
               case 4:
-                userCounts = _context35.sent;
+                userCounts = _context41.sent;
                 this.convertCounts(userCounts, 'total'); // turn database results into a map of screename -> total
 
                 userCounts = new Map(userCounts.map(function (r) {
@@ -2125,20 +2433,20 @@ var Database = /*#__PURE__*/function () {
                 // but perhaps its better to pull them out adhoc until
                 // we actually have a conversaton with them?
 
-                _context35.next = 9;
+                _context41.next = 9;
                 return _Tweet["default"].query().select('json', 'screenName').where('searchId', search.id).whereIn('screenName', Array.from(userCounts.keys()));
 
               case 9:
-                users = _context35.sent;
+                users = _context41.sent;
                 // seen is needed because we could get multiple tweets from the same user
                 // and would end up with more than one results for a user 
                 seen = new Set();
                 results = [];
-                _iterator19 = _createForOfIteratorHelper(users);
+                _iterator21 = _createForOfIteratorHelper(users);
 
                 try {
-                  for (_iterator19.s(); !(_step19 = _iterator19.n()).done;) {
-                    u = _step19.value;
+                  for (_iterator21.s(); !(_step21 = _iterator21.n()).done;) {
+                    u = _step21.value;
 
                     if (!seen.has(u.screenName)) {
                       results.push(_objectSpread(_objectSpread({}, u.json.user), {}, {
@@ -2149,25 +2457,25 @@ var Database = /*#__PURE__*/function () {
                   } // sort them again
 
                 } catch (err) {
-                  _iterator19.e(err);
+                  _iterator21.e(err);
                 } finally {
-                  _iterator19.f();
+                  _iterator21.f();
                 }
 
                 results.sort(function (a, b) {
                   return b.tweetsInSearch - a.tweetsInSearch;
                 });
-                return _context35.abrupt("return", results);
+                return _context41.abrupt("return", results);
 
               case 16:
               case "end":
-                return _context35.stop();
+                return _context41.stop();
             }
           }
-        }, _callee35, this);
+        }, _callee41, this);
       }));
 
-      function getTwitterUsers(_x35) {
+      function getTwitterUsers(_x40) {
         return _getTwitterUsers.apply(this, arguments);
       }
 
@@ -2176,28 +2484,28 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getHashtags",
     value: function () {
-      var _getHashtags = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee36(search) {
+      var _getHashtags = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee42(search) {
         var results;
-        return _regenerator["default"].wrap(function _callee36$(_context36) {
+        return _regenerator["default"].wrap(function _callee42$(_context42) {
           while (1) {
-            switch (_context36.prev = _context36.next) {
+            switch (_context42.prev = _context42.next) {
               case 0:
-                _context36.next = 2;
+                _context42.next = 2;
                 return _Tweet["default"].query().where('searchId', search.id).join('tweetHashtag', 'tweet.id', 'tweetHashtag.tweetId').select('name as hashtag').count('name').groupBy('hashtag').orderBy('count', 'DESC');
 
               case 2:
-                results = _context36.sent;
-                return _context36.abrupt("return", this.convertCounts(results));
+                results = _context42.sent;
+                return _context42.abrupt("return", this.convertCounts(results));
 
               case 4:
               case "end":
-                return _context36.stop();
+                return _context42.stop();
             }
           }
-        }, _callee36, this);
+        }, _callee42, this);
       }));
 
-      function getHashtags(_x36) {
+      function getHashtags(_x41) {
         return _getHashtags.apply(this, arguments);
       }
 
@@ -2206,31 +2514,31 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getUrls",
     value: function () {
-      var _getUrls = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee37(search) {
+      var _getUrls = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee43(search) {
         var results;
-        return _regenerator["default"].wrap(function _callee37$(_context37) {
+        return _regenerator["default"].wrap(function _callee43$(_context43) {
           while (1) {
-            switch (_context37.prev = _context37.next) {
+            switch (_context43.prev = _context43.next) {
               case 0:
-                _context37.next = 2;
+                _context43.next = 2;
                 return _Tweet["default"].query().where({
                   searchId: search.id,
                   type: 'page'
                 }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url').count('url').groupBy('url').orderBy('count', 'DESC');
 
               case 2:
-                results = _context37.sent;
-                return _context37.abrupt("return", this.convertCounts(results));
+                results = _context43.sent;
+                return _context43.abrupt("return", this.convertCounts(results));
 
               case 4:
               case "end":
-                return _context37.stop();
+                return _context43.stop();
             }
           }
-        }, _callee37, this);
+        }, _callee43, this);
       }));
 
-      function getUrls(_x37) {
+      function getUrls(_x42) {
         return _getUrls.apply(this, arguments);
       }
 
@@ -2239,31 +2547,31 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getImages",
     value: function () {
-      var _getImages = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee38(search) {
+      var _getImages = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee44(search) {
         var results;
-        return _regenerator["default"].wrap(function _callee38$(_context38) {
+        return _regenerator["default"].wrap(function _callee44$(_context44) {
           while (1) {
-            switch (_context38.prev = _context38.next) {
+            switch (_context44.prev = _context44.next) {
               case 0:
-                _context38.next = 2;
+                _context44.next = 2;
                 return _Tweet["default"].query().where({
                   searchId: search.id,
                   type: 'image'
                 }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url').count('url').groupBy('url').orderBy('count', 'DESC');
 
               case 2:
-                results = _context38.sent;
-                return _context38.abrupt("return", this.convertCounts(results));
+                results = _context44.sent;
+                return _context44.abrupt("return", this.convertCounts(results));
 
               case 4:
               case "end":
-                return _context38.stop();
+                return _context44.stop();
             }
           }
-        }, _callee38, this);
+        }, _callee44, this);
       }));
 
-      function getImages(_x38) {
+      function getImages(_x43) {
         return _getImages.apply(this, arguments);
       }
 
@@ -2272,31 +2580,31 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getVideos",
     value: function () {
-      var _getVideos = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee39(search) {
+      var _getVideos = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee45(search) {
         var results;
-        return _regenerator["default"].wrap(function _callee39$(_context39) {
+        return _regenerator["default"].wrap(function _callee45$(_context45) {
           while (1) {
-            switch (_context39.prev = _context39.next) {
+            switch (_context45.prev = _context45.next) {
               case 0:
-                _context39.next = 2;
+                _context45.next = 2;
                 return _Tweet["default"].query().where({
                   searchId: search.id,
                   type: 'video'
                 }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url').count('url').groupBy('url').orderBy('count', 'DESC');
 
               case 2:
-                results = _context39.sent;
-                return _context39.abrupt("return", this.convertCounts(results));
+                results = _context45.sent;
+                return _context45.abrupt("return", this.convertCounts(results));
 
               case 4:
               case "end":
-                return _context39.stop();
+                return _context45.stop();
             }
           }
-        }, _callee39, this);
+        }, _callee45, this);
       }));
 
-      function getVideos(_x39) {
+      function getVideos(_x44) {
         return _getVideos.apply(this, arguments);
       }
 
@@ -2353,47 +2661,47 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getSearchesWithUser",
     value: function () {
-      var _getSearchesWithUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee40(twitterScreenName) {
-        var results, counts, _iterator20, _step20, row, tweets;
+      var _getSearchesWithUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee46(twitterScreenName) {
+        var results, counts, _iterator22, _step22, row, tweets;
 
-        return _regenerator["default"].wrap(function _callee40$(_context40) {
+        return _regenerator["default"].wrap(function _callee46$(_context46) {
           while (1) {
-            switch (_context40.prev = _context40.next) {
+            switch (_context46.prev = _context46.next) {
               case 0:
-                _context40.next = 2;
+                _context46.next = 2;
                 return _Tweet["default"].query().where({
                   screenName: twitterScreenName
                 }).whereNull('retweetId').select('searchId', 'tweetId').groupBy('searchId', 'tweetId');
 
               case 2:
-                results = _context40.sent;
+                results = _context46.sent;
                 counts = new Map();
-                _iterator20 = _createForOfIteratorHelper(results);
+                _iterator22 = _createForOfIteratorHelper(results);
 
                 try {
-                  for (_iterator20.s(); !(_step20 = _iterator20.n()).done;) {
-                    row = _step20.value;
+                  for (_iterator22.s(); !(_step22 = _iterator22.n()).done;) {
+                    row = _step22.value;
                     tweets = counts.get(row.searchId) || [];
                     tweets.push(row.tweetId);
                     counts.set(row.searchId, tweets);
                   }
                 } catch (err) {
-                  _iterator20.e(err);
+                  _iterator22.e(err);
                 } finally {
-                  _iterator20.f();
+                  _iterator22.f();
                 }
 
-                return _context40.abrupt("return", Object.fromEntries(counts));
+                return _context46.abrupt("return", Object.fromEntries(counts));
 
               case 7:
               case "end":
-                return _context40.stop();
+                return _context46.stop();
             }
           }
-        }, _callee40);
+        }, _callee46);
       }));
 
-      function getSearchesWithUser(_x40) {
+      function getSearchesWithUser(_x45) {
         return _getSearchesWithUser.apply(this, arguments);
       }
 
@@ -2402,33 +2710,33 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getSystemStats",
     value: function () {
-      var _getSystemStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee41() {
+      var _getSystemStats = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee47() {
         var tweets, users;
-        return _regenerator["default"].wrap(function _callee41$(_context41) {
+        return _regenerator["default"].wrap(function _callee47$(_context47) {
           while (1) {
-            switch (_context41.prev = _context41.next) {
+            switch (_context47.prev = _context47.next) {
               case 0:
-                _context41.next = 2;
+                _context47.next = 2;
                 return _Tweet["default"].query().count().first();
 
               case 2:
-                tweets = _context41.sent;
-                _context41.next = 5;
+                tweets = _context47.sent;
+                _context47.next = 5;
                 return _User["default"].query().count().first();
 
               case 5:
-                users = _context41.sent;
-                return _context41.abrupt("return", {
+                users = _context47.sent;
+                return _context47.abrupt("return", {
                   tweetCount: Number.parseInt(tweets.count, 10),
                   userCount: Number.parseInt(users.count, 10)
                 });
 
               case 7:
               case "end":
-                return _context41.stop();
+                return _context47.stop();
             }
           }
-        }, _callee41);
+        }, _callee47);
       }));
 
       function getSystemStats() {
@@ -2440,30 +2748,30 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "pickJson",
     value: function () {
-      var _pickJson = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee42(query) {
+      var _pickJson = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee48(query) {
         var results;
-        return _regenerator["default"].wrap(function _callee42$(_context42) {
+        return _regenerator["default"].wrap(function _callee48$(_context48) {
           while (1) {
-            switch (_context42.prev = _context42.next) {
+            switch (_context48.prev = _context48.next) {
               case 0:
-                _context42.next = 2;
+                _context48.next = 2;
                 return query;
 
               case 2:
-                results = _context42.sent;
-                return _context42.abrupt("return", results.map(function (o) {
+                results = _context48.sent;
+                return _context48.abrupt("return", results.map(function (o) {
                   return o.json;
                 }));
 
               case 4:
               case "end":
-                return _context42.stop();
+                return _context48.stop();
             }
           }
-        }, _callee42);
+        }, _callee48);
       }));
 
-      function pickJson(_x41) {
+      function pickJson(_x46) {
         return _pickJson.apply(this, arguments);
       }
 
@@ -2472,42 +2780,42 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "convertCounts",
     value: function () {
-      var _convertCounts = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee43(l) {
+      var _convertCounts = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee49(l) {
         var prop,
-            _iterator21,
-            _step21,
+            _iterator23,
+            _step23,
             o,
-            _args43 = arguments;
+            _args49 = arguments;
 
-        return _regenerator["default"].wrap(function _callee43$(_context43) {
+        return _regenerator["default"].wrap(function _callee49$(_context49) {
           while (1) {
-            switch (_context43.prev = _context43.next) {
+            switch (_context49.prev = _context49.next) {
               case 0:
-                prop = _args43.length > 1 && _args43[1] !== undefined ? _args43[1] : 'count';
-                _iterator21 = _createForOfIteratorHelper(l);
+                prop = _args49.length > 1 && _args49[1] !== undefined ? _args49[1] : 'count';
+                _iterator23 = _createForOfIteratorHelper(l);
 
                 try {
-                  for (_iterator21.s(); !(_step21 = _iterator21.n()).done;) {
-                    o = _step21.value;
+                  for (_iterator23.s(); !(_step23 = _iterator23.n()).done;) {
+                    o = _step23.value;
                     o[prop] = Number.parseInt(o[prop], 10);
                   }
                 } catch (err) {
-                  _iterator21.e(err);
+                  _iterator23.e(err);
                 } finally {
-                  _iterator21.f();
+                  _iterator23.f();
                 }
 
-                return _context43.abrupt("return", l);
+                return _context49.abrupt("return", l);
 
               case 4:
               case "end":
-                return _context43.stop();
+                return _context49.stop();
             }
           }
-        }, _callee43);
+        }, _callee49);
       }));
 
-      function convertCounts(_x42) {
+      function convertCounts(_x47) {
         return _convertCounts.apply(this, arguments);
       }
 
@@ -2516,17 +2824,17 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getActions",
     value: function () {
-      var _getActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee44(search) {
+      var _getActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee50(search) {
         var user,
             includeArchived,
             q,
-            _args44 = arguments;
-        return _regenerator["default"].wrap(function _callee44$(_context44) {
+            _args50 = arguments;
+        return _regenerator["default"].wrap(function _callee50$(_context50) {
           while (1) {
-            switch (_context44.prev = _context44.next) {
+            switch (_context50.prev = _context50.next) {
               case 0:
-                user = _args44.length > 1 && _args44[1] !== undefined ? _args44[1] : null;
-                includeArchived = _args44.length > 2 && _args44[2] !== undefined ? _args44[2] : false;
+                user = _args50.length > 1 && _args50[1] !== undefined ? _args50[1] : null;
+                includeArchived = _args50.length > 2 && _args50[2] !== undefined ? _args50[2] : false;
                 q = {
                   'action.searchId': search.id
                 };
@@ -2536,24 +2844,24 @@ var Database = /*#__PURE__*/function () {
                 }
 
                 if (!includeArchived) {
-                  _context44.next = 8;
+                  _context50.next = 8;
                   break;
                 }
 
-                return _context44.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).orderBy('created', 'desc'));
+                return _context50.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).orderBy('created', 'desc'));
 
               case 8:
-                return _context44.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).whereNull('archived').orderBy('created', 'desc'));
+                return _context50.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).whereNull('archived').orderBy('created', 'desc'));
 
               case 9:
               case "end":
-                return _context44.stop();
+                return _context50.stop();
             }
           }
-        }, _callee44);
+        }, _callee50);
       }));
 
-      function getActions(_x43) {
+      function getActions(_x48) {
         return _getActions.apply(this, arguments);
       }
 
@@ -2562,30 +2870,30 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "setActions",
     value: function () {
-      var _setActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee45(search, user, tweetIds, name) {
+      var _setActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee51(search, user, tweetIds, name) {
         var remove,
             results,
             localTweetIds,
-            _iterator22,
-            _step22,
+            _iterator24,
+            _step24,
             tweetId,
-            _args45 = arguments;
+            _args51 = arguments;
 
-        return _regenerator["default"].wrap(function _callee45$(_context45) {
+        return _regenerator["default"].wrap(function _callee51$(_context51) {
           while (1) {
-            switch (_context45.prev = _context45.next) {
+            switch (_context51.prev = _context51.next) {
               case 0:
-                remove = _args45.length > 4 && _args45[4] !== undefined ? _args45[4] : false;
-                _context45.next = 3;
+                remove = _args51.length > 4 && _args51[4] !== undefined ? _args51[4] : false;
+                _context51.next = 3;
                 return _Tweet["default"].query().where('searchId', search.id).andWhere('tweetId', 'in', tweetIds);
 
               case 3:
-                results = _context45.sent;
+                results = _context51.sent;
                 localTweetIds = results.map(function (t) {
                   return t.id;
                 }); // archive existing label actions for these tweet ids
 
-                _context45.next = 7;
+                _context51.next = 7;
                 return _Action["default"].query().patch({
                   archived: new Date()
                 }).where({
@@ -2596,23 +2904,23 @@ var Database = /*#__PURE__*/function () {
 
               case 7:
                 if (remove) {
-                  _context45.next = 25;
+                  _context51.next = 25;
                   break;
                 }
 
-                _iterator22 = _createForOfIteratorHelper(localTweetIds);
-                _context45.prev = 9;
+                _iterator24 = _createForOfIteratorHelper(localTweetIds);
+                _context51.prev = 9;
 
-                _iterator22.s();
+                _iterator24.s();
 
               case 11:
-                if ((_step22 = _iterator22.n()).done) {
-                  _context45.next = 17;
+                if ((_step24 = _iterator24.n()).done) {
+                  _context51.next = 17;
                   break;
                 }
 
-                tweetId = _step22.value;
-                _context45.next = 15;
+                tweetId = _step24.value;
+                _context51.next = 15;
                 return _Action["default"].query().insert({
                   searchId: search.id,
                   userId: user.id,
@@ -2621,35 +2929,35 @@ var Database = /*#__PURE__*/function () {
                 });
 
               case 15:
-                _context45.next = 11;
+                _context51.next = 11;
                 break;
 
               case 17:
-                _context45.next = 22;
+                _context51.next = 22;
                 break;
 
               case 19:
-                _context45.prev = 19;
-                _context45.t0 = _context45["catch"](9);
+                _context51.prev = 19;
+                _context51.t0 = _context51["catch"](9);
 
-                _iterator22.e(_context45.t0);
+                _iterator24.e(_context51.t0);
 
               case 22:
-                _context45.prev = 22;
+                _context51.prev = 22;
 
-                _iterator22.f();
+                _iterator24.f();
 
-                return _context45.finish(22);
+                return _context51.finish(22);
 
               case 25:
               case "end":
-                return _context45.stop();
+                return _context51.stop();
             }
           }
-        }, _callee45, null, [[9, 19, 22, 25]]);
+        }, _callee51, null, [[9, 19, 22, 25]]);
       }));
 
-      function setActions(_x44, _x45, _x46, _x47) {
+      function setActions(_x49, _x50, _x51, _x52) {
         return _setActions.apply(this, arguments);
       }
 
@@ -2658,38 +2966,38 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getUserActions",
     value: function () {
-      var _getUserActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee46(user) {
+      var _getUserActions = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee52(user) {
         var includeArchived,
             q,
-            _args46 = arguments;
-        return _regenerator["default"].wrap(function _callee46$(_context46) {
+            _args52 = arguments;
+        return _regenerator["default"].wrap(function _callee52$(_context52) {
           while (1) {
-            switch (_context46.prev = _context46.next) {
+            switch (_context52.prev = _context52.next) {
               case 0:
-                includeArchived = _args46.length > 1 && _args46[1] !== undefined ? _args46[1] : false;
+                includeArchived = _args52.length > 1 && _args52[1] !== undefined ? _args52[1] : false;
                 q = {
                   'action.userId': user.id
                 };
 
                 if (!includeArchived) {
-                  _context46.next = 6;
+                  _context52.next = 6;
                   break;
                 }
 
-                return _context46.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).orderBy('created', 'desc'));
+                return _context52.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).orderBy('created', 'desc'));
 
               case 6:
-                return _context46.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).whereNull('archived').orderBy('created', 'desc'));
+                return _context52.abrupt("return", _Action["default"].query().withGraphFetched('tweet').withGraphFetched('user').where(q).whereNull('archived').orderBy('created', 'desc'));
 
               case 7:
               case "end":
-                return _context46.stop();
+                return _context52.stop();
             }
           }
-        }, _callee46);
+        }, _callee52);
       }));
 
-      function getUserActions(_x48) {
+      function getUserActions(_x53) {
         return _getUserActions.apply(this, arguments);
       }
 
@@ -2698,28 +3006,28 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getQuery",
     value: function () {
-      var _getQuery = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee47(queryId) {
+      var _getQuery = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee53(queryId) {
         var query;
-        return _regenerator["default"].wrap(function _callee47$(_context47) {
+        return _regenerator["default"].wrap(function _callee53$(_context53) {
           while (1) {
-            switch (_context47.prev = _context47.next) {
+            switch (_context53.prev = _context53.next) {
               case 0:
-                _context47.next = 2;
+                _context53.next = 2;
                 return _Query["default"].query().findById(queryId).withGraphJoined('search').withGraphJoined('searchJobs').withGraphJoined('search.creator').orderBy('searchJobs.created', 'ASC');
 
               case 2:
-                query = _context47.sent;
-                return _context47.abrupt("return", query);
+                query = _context53.sent;
+                return _context53.abrupt("return", query);
 
               case 4:
               case "end":
-                return _context47.stop();
+                return _context53.stop();
             }
           }
-        }, _callee47);
+        }, _callee53);
       }));
 
-      function getQuery(_x49) {
+      function getQuery(_x54) {
         return _getQuery.apply(this, arguments);
       }
 
@@ -2733,28 +3041,28 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "getSearchJob",
     value: function () {
-      var _getSearchJob = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee48(searchJobId) {
+      var _getSearchJob = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee54(searchJobId) {
         var job;
-        return _regenerator["default"].wrap(function _callee48$(_context48) {
+        return _regenerator["default"].wrap(function _callee54$(_context54) {
           while (1) {
-            switch (_context48.prev = _context48.next) {
+            switch (_context54.prev = _context54.next) {
               case 0:
-                _context48.next = 2;
-                return _SearchJob["default"].query().findById(searchJobId).withGraphJoined('query').withGraphJoined('query.search');
+                _context54.next = 2;
+                return _SearchJob["default"].query().findById(searchJobId).withGraphJoined('query.search');
 
               case 2:
-                job = _context48.sent;
-                return _context48.abrupt("return", job);
+                job = _context54.sent;
+                return _context54.abrupt("return", job);
 
               case 4:
               case "end":
-                return _context48.stop();
+                return _context54.stop();
             }
           }
-        }, _callee48);
+        }, _callee54);
       }));
 
-      function getSearchJob(_x50) {
+      function getSearchJob(_x55) {
         return _getSearchJob.apply(this, arguments);
       }
 
@@ -2763,29 +3071,107 @@ var Database = /*#__PURE__*/function () {
   }, {
     key: "updateSearchJob",
     value: function () {
-      var _updateSearchJob = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee49(job) {
-        return _regenerator["default"].wrap(function _callee49$(_context49) {
+      var _updateSearchJob = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee55(job) {
+        return _regenerator["default"].wrap(function _callee55$(_context55) {
           while (1) {
-            switch (_context49.prev = _context49.next) {
+            switch (_context55.prev = _context55.next) {
               case 0:
-                _context49.next = 2;
+                _context55.next = 2;
                 return _SearchJob["default"].query().patch(_objectSpread(_objectSpread({}, job), {}, {
                   updated: new Date()
                 })).where('id', job.id);
 
               case 2:
               case "end":
-                return _context49.stop();
+                return _context55.stop();
             }
           }
-        }, _callee49);
+        }, _callee55);
       }));
 
-      function updateSearchJob(_x51) {
+      function updateSearchJob(_x56) {
         return _updateSearchJob.apply(this, arguments);
       }
 
       return updateSearchJob;
+    }()
+  }, {
+    key: "updateQuery",
+    value: function () {
+      var _updateQuery = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee56(query) {
+        return _regenerator["default"].wrap(function _callee56$(_context56) {
+          while (1) {
+            switch (_context56.prev = _context56.next) {
+              case 0:
+                _context56.next = 2;
+                return _Query["default"].query().patch(query).where('id', query.id);
+
+              case 2:
+              case "end":
+                return _context56.stop();
+            }
+          }
+        }, _callee56);
+      }));
+
+      function updateQuery(_x57) {
+        return _updateQuery.apply(this, arguments);
+      }
+
+      return updateQuery;
+    }()
+  }, {
+    key: "cache",
+    value: function () {
+      var _cache = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee57(key) {
+        var ttl,
+            f,
+            value,
+            _args57 = arguments;
+        return _regenerator["default"].wrap(function _callee57$(_context57) {
+          while (1) {
+            switch (_context57.prev = _context57.next) {
+              case 0:
+                ttl = _args57.length > 1 && _args57[1] !== undefined ? _args57[1] : 60;
+                f = _args57.length > 2 ? _args57[2] : undefined;
+                _context57.next = 4;
+                return this.redis.getAsync(key);
+
+              case 4:
+                value = _context57.sent;
+
+                if (!value) {
+                  _context57.next = 9;
+                  break;
+                }
+
+                return _context57.abrupt("return", JSON.parse(value));
+
+              case 9:
+                _context57.next = 11;
+                return f();
+
+              case 11:
+                value = _context57.sent;
+                _context57.next = 14;
+                return this.redis.setAsync(key, JSON.stringify(value), "EX", ttl);
+
+              case 14:
+                return _context57.abrupt("return", value);
+
+              case 15:
+              case "end":
+                return _context57.stop();
+            }
+          }
+        }, _callee57, this);
+      }));
+
+      function cache(_x58) {
+        return _cache.apply(this, arguments);
+      }
+
+      return cache;
     }()
   }]);
   return Database;

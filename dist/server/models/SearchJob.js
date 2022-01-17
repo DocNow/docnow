@@ -34,6 +34,22 @@ var SearchJob = /*#__PURE__*/function (_Model) {
     get: function get() {
       return 'searchJob';
     }
+  }, {
+    key: "relationMappings",
+    get: function get() {
+      var Query = require('./Query');
+
+      return {
+        query: {
+          relation: Model.HasOneRelation,
+          modelClass: Query,
+          join: {
+            from: 'searchJob.queryId',
+            to: 'query.id'
+          }
+        }
+      };
+    }
   }]);
   return SearchJob;
 }(Model);

@@ -31,9 +31,7 @@ var _logger = _interopRequireDefault(require("../server/logger"));
 
 var _webpackDevConfig = _interopRequireDefault(require("../../webpack.dev.config.js"));
 
-var _urlFetcher = require("../server/url-fetcher");
-
-var _streamLoader = require("../server/stream-loader");
+var _quotaChecker = require("../server/quota-checker");
 
 var projectDir = _path["default"].join(__dirname, '..', '..');
 
@@ -82,18 +80,10 @@ if (isDevelopment) {
   app.get('*', function (req, res) {
     return res.sendFile(_path["default"].join(clientDir, 'index.html'));
   });
-} // As a convenience embed a UrlFetcher and StreamLoader in development mode.
-// This would not be a good idea to do in production as a it could
-// really bog down the web server process if lots of data collection is
-// going on.
-
-
-if (isDevelopment) {
-  var urlFetcher = new _urlFetcher.UrlFetcher();
-  urlFetcher.start();
-  var streamLoader = new _streamLoader.StreamLoader();
-  streamLoader.start();
 }
+
+var qc = new _quotaChecker.QuotaChecker();
+qc.start(); // put TrendWatcher here too?
 
 _logger["default"].info('starting app');
 

@@ -17,8 +17,6 @@ var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/cl
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-var _asyncIterator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncIterator"));
-
 require("../env");
 
 var _url = _interopRequireDefault(require("url"));
@@ -37,15 +35,19 @@ var _htmlEntities = require("html-entities");
 
 var _flattenTweet = require("flatten-tweet");
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { (0, _defineProperty2["default"])(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
 
 function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
 
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+function _asyncIterator(iterable) { var method, async, sync, retry = 2; for ("undefined" != typeof Symbol && (async = Symbol.asyncIterator, sync = Symbol.iterator); retry--;) { if (async && null != (method = iterable[async])) return method.call(iterable); if (sync && null != (method = iterable[sync])) return new AsyncFromSyncIterator(method.call(iterable)); async = "@@asyncIterator", sync = "@@iterator"; } throw new TypeError("Object is not async iterable"); }
+
+function AsyncFromSyncIterator(s) { function AsyncFromSyncIteratorContinuation(r) { if (Object(r) !== r) return Promise.reject(new TypeError(r + " is not an object.")); var done = r.done; return Promise.resolve(r.value).then(function (value) { return { value: value, done: done }; }); } return AsyncFromSyncIterator = function AsyncFromSyncIterator(s) { this.s = s, this.n = s.next; }, AsyncFromSyncIterator.prototype = { s: null, n: null, next: function next() { return AsyncFromSyncIteratorContinuation(this.n.apply(this.s, arguments)); }, "return": function _return(value) { var ret = this.s["return"]; return void 0 === ret ? Promise.resolve({ value: value, done: !0 }) : AsyncFromSyncIteratorContinuation(ret.apply(this.s, arguments)); }, "throw": function _throw(value) { var thr = this.s["return"]; return void 0 === thr ? Promise.reject(value) : AsyncFromSyncIteratorContinuation(thr.apply(this.s, arguments)); } }, new AsyncFromSyncIterator(s); }
 
 var emojiMatch = (0, _emojiRegex["default"])();
 var entities = new _htmlEntities.AllHtmlEntities();
@@ -61,15 +63,16 @@ var Twitter = /*#__PURE__*/function () {
     this.consumerKey = keys.consumerKey || process.env.CONSUMER_KEY;
     this.consumerSecret = keys.consumerSecret || process.env.CONSUMER_SECRET;
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN;
-    this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET; // a client for v1.1 endpoints
+    this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET; // client for Twitter v1.1 and v2 API endpoints
 
     if (this.consumerKey && this.consumerSecret && this.accessToken && this.accessTokenSecret) {
+      // v1.1
       this.twit = new _twit["default"]({
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
         access_token: this.accessToken,
         access_token_secret: this.accessTokenSecret
-      }); // a client for v2 endpoints
+      }); // v2
 
       this.twitterV2 = new _twitterV["default"]({
         consumer_key: this.consumerKey,
@@ -79,7 +82,7 @@ var Twitter = /*#__PURE__*/function () {
       });
     } else {
       _logger["default"].warn('not configuring user client for v1.1 and v2 endpoints since not all keys are present');
-    } // a app auth client for v2 endpoints
+    } // an app auth client for v2 endpoints
 
 
     if (this.consumerKey && this.consumerSecret) {
@@ -189,6 +192,25 @@ var Twitter = /*#__PURE__*/function () {
 
       return getTrendsAtPlace;
     }()
+    /**
+     * Gets search results from the Twitter API. Only opts.q and cb are required.
+     * The callback function will be called with tweets whenever a certain set of
+     * search results have been returned. The search function will keep fetching
+     * results until it has fetched opts.count tweets or there are no more to
+     * fetch.
+     * @param {Object} opts  The options to use when doing the search
+     * @param {function} cb  A callback that should receive three arguments: err, tweets, and nextToken
+     * @param {string} opts.q  The query to use in the search
+     * @param {string} opts.nextToken  A next token to use to get more results
+     * @param {string} opts.count  The total number of tweets to fetch (100)
+     * @param {boolean} opts.all  Whether to search the full archive (false)
+     * @param {string} opts.startDate  A Date or string w/ optional time to search from
+     * @param {string} opts.endDate  A Date or string w/ optional time to search until
+     * @param {string} opts.sinceId  Get tweets that match query since a tweet id
+     * @param {string} opts.maxId  Get tweets that match query until a tweet id
+     * @returns {Promise}  A promise to indicate the search is complete.
+     */
+
   }, {
     key: "search",
     value: function search(opts, cb) {
@@ -204,43 +226,67 @@ var Twitter = /*#__PURE__*/function () {
         "max_results": 100
       });
 
+      var endpoint = 'tweets/search/recent';
+
+      if (opts.all) {
+        endpoint = 'tweets/search/all';
+        params.start_time = '2006-03-21T00:00:00Z';
+      }
+
+      if (opts.startDate) {
+        var t = new Date(params.startDate);
+        params.start_time = t.toISOString().replace(/\.\d+Z$/, 'Z');
+      }
+
+      if (opts.endDate) {
+        var _t = new Date(opts.endDate);
+
+        params.end_time = _t.toISOString().replace(/\.\d+Z$/, 'Z');
+      }
+
       if (opts.sinceId) {
         params.since_id = opts.sinceId;
+        delete params.start_time;
       }
 
       if (opts.maxId) {
         params.until_id = opts.maxId;
       }
 
-      var endpoint = opts.all ? 'tweets/search/all' : 'tweets/search/recent';
+      if (opts.nextToken) {
+        params.next_token = opts.nextToken;
+      }
 
-      var recurse = function recurse(nextToken, total) {
-        if (nextToken) {
-          params.next_token = nextToken;
+      var recurse = function recurse(token, total) {
+        if (token) {
+          params.next_token = token;
         }
 
-        _this2.twitterV2.get(endpoint, params).then(function (resp) {
+        _logger["default"].info("running search ".concat(JSON.stringify(params)));
+
+        _this2.twitterV2app.get(endpoint, params).then(function (resp) {
           if (resp.data) {
+            var nextToken = resp.meta.next_token;
             var tweets = (0, _flattenTweet.flatten)(resp).data;
             var newTotal = total + tweets.length;
             cb(null, tweets.map(function (t) {
               return _this2.extractTweet(t);
-            })).then(function () {
-              if (newTotal < count && resp.meta.next_token) {
-                recurse(resp.meta.next_token, newTotal);
+            }), nextToken).then(function () {
+              if (newTotal < count && nextToken) {
+                recurse(nextToken, newTotal);
               } else {
-                cb(null, []);
+                cb(null, [], null);
               }
             });
           } else {
             _logger["default"].warn("received search response with no data stanza");
 
-            cb(null, []);
+            cb(null, [], null);
           }
         })["catch"](function (err) {
           _logger["default"].error("error during search: ".concat(err));
 
-          cb(err, null);
+          cb(err, null, null);
         });
       };
 
@@ -364,7 +410,7 @@ var Twitter = /*#__PURE__*/function () {
           while (1) {
             switch (_context5.prev = _context5.next) {
               case 0:
-                _logger["default"].info('starting filter stream');
+                _logger["default"].info('starting filter stream ...');
 
                 err = 0;
 
@@ -384,7 +430,7 @@ var Twitter = /*#__PURE__*/function () {
                 err += 1;
                 secs = Math.pow(err, 2);
 
-                _logger["default"].error("caught ".concat(_context5.t0, " while connecting to stream, sleeping ").concat(secs));
+                _logger["default"].info("caught ".concat(_context5.t0, " while connecting to stream, sleeping ").concat(secs));
 
                 _context5.next = 15;
                 return (0, _utils.timer)(secs * 1000);
@@ -398,7 +444,7 @@ var Twitter = /*#__PURE__*/function () {
                 _iteratorAbruptCompletion = false;
                 _didIteratorError = false;
                 _context5.prev = 20;
-                _iterator = (0, _asyncIterator2["default"])(this.stream);
+                _iterator = _asyncIterator(this.stream);
 
               case 22:
                 _context5.next = 24;
@@ -491,30 +537,38 @@ var Twitter = /*#__PURE__*/function () {
                 return _context5.finish(47);
 
               case 57:
-                // if stream is undefined that means closeFilter() has been called 
-                if (this.stream) {
-                  _logger["default"].error("stream disconnected normally by Twitter, reconnecting");
-
-                  this.filter(cb);
+                if (!this.stream) {
+                  _context5.next = 62;
+                  break;
                 }
 
-                _context5.next = 64;
-                break;
+                _logger["default"].error("stream disconnected normally by Twitter, reconnecting");
 
-              case 60:
-                _context5.prev = 60;
-                _context5.t2 = _context5["catch"](17);
+                _context5.next = 61;
+                return (0, _utils.timer)(1000);
 
-                _logger["default"].warn("stream disconnected with error, retrying", _context5.t2);
-
+              case 61:
                 this.filter(cb);
 
+              case 62:
+                _context5.next = 69;
+                break;
+
               case 64:
+                _context5.prev = 64;
+                _context5.t2 = _context5["catch"](17);
+                _context5.next = 68;
+                return (0, _utils.timer)(1000);
+
+              case 68:
+                _logger["default"].error("stream disconnected with error", _context5.t2);
+
+              case 69:
               case "end":
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[3, 8], [17, 60], [20, 43, 47, 57], [48,, 52, 56]]);
+        }, _callee5, this, [[3, 8], [17, 64], [20, 43, 47, 57], [48,, 52, 56]]);
       }));
 
       function filter(_x5) {
