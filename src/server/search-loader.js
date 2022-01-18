@@ -28,7 +28,7 @@ export class SearchLoader {
       if (job && job.ended === null && job.query.search.active) {
 
         // Twitter requires sleeping at least a second between searches
-        // sleeping only 1 second seems to triggeer errors, so lets sleep 2 
+        // sleeping only 1 second seems to trigger errors, so lets sleep 2 
         await timer(2000)
 
         const opts = {

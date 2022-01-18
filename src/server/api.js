@@ -321,7 +321,7 @@ app.put('/search/:searchId', async (req, res) => {
         // start the streaming
         await db.startStream(newSearch, tweetId)
 
-        // start historical search if asked, but update the limit
+        // start historical search if they asked for earlier tweets
         if (startDate) {
           await db.startSearch(newSearch, tweetId)
         }
