@@ -565,13 +565,13 @@ app.get('/search/:searchId', /*#__PURE__*/function () {
 }());
 app.put('/search/:searchId', /*#__PURE__*/function () {
   var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(req, res) {
-    var search, error, tweetText, newSearch, tweetId, twtr, archive;
+    var search, error, tweetText, startDate, limit, newSearch, tweetId, twtr, lastQuery, archive;
     return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
             if (!req.user) {
-              _context8.next = 50;
+              _context8.next = 59;
               break;
             }
 
@@ -580,55 +580,59 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
 
           case 3:
             search = _context8.sent;
-            error = null; // get any tweet text that was POSTed and remove it from the body
-            // since it's not really a property of the search object
+            error = null; // these are important but aren't part of the search body
 
             tweetText = req.body.tweetText;
             delete req.body.tweetText;
+            startDate = req.body.startDate;
+            delete req.body.startDate;
+            limit = req.body.limit;
+            delete req.body.limit; // update the search
+
             newSearch = _objectSpread(_objectSpread({}, search), req.body);
-            _context8.next = 10;
+            _context8.next = 14;
             return db.updateSearch(newSearch);
 
-          case 10:
+          case 14:
             if (!req.query.refreshTweets) {
-              _context8.next = 14;
+              _context8.next = 18;
               break;
             }
 
             db.importFromSearch(search); // are they stopping collection?
 
-            _context8.next = 47;
+            _context8.next = 56;
             break;
 
-          case 14:
+          case 18:
             if (!(search.active && !newSearch.active)) {
-              _context8.next = 21;
+              _context8.next = 25;
               break;
             }
 
-            _context8.next = 17;
+            _context8.next = 21;
             return db.stopStream(search);
 
-          case 17:
-            _context8.next = 19;
+          case 21:
+            _context8.next = 23;
             return db.stopSearch(search);
 
-          case 19:
-            _context8.next = 47;
+          case 23:
+            _context8.next = 56;
             break;
 
-          case 21:
+          case 25:
             if (!(!search.active && newSearch.active)) {
-              _context8.next = 46;
+              _context8.next = 55;
               break;
             }
 
-            _context8.next = 24;
+            _context8.next = 28;
             return db.userOverQuota(req.user);
 
-          case 24:
+          case 28:
             if (!_context8.sent) {
-              _context8.next = 29;
+              _context8.next = 33;
               break;
             }
 
@@ -637,60 +641,68 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
               code: 1
             };
             newSearch.active = false;
-            _context8.next = 44;
+            _context8.next = 53;
             break;
 
-          case 29:
-            _context8.next = 31;
+          case 33:
+            _context8.next = 35;
             return db.updateSearch({
               id: search.id,
               "public": new Date()
             });
 
-          case 31:
+          case 35:
             // tweet the announcement if we were given text to tweet
             tweetId = null;
 
             if (!tweetText) {
-              _context8.next = 39;
+              _context8.next = 43;
               break;
             }
 
-            _context8.next = 35;
+            _context8.next = 39;
             return db.getTwitterClientForUser(req.user);
 
-          case 35:
+          case 39:
             twtr = _context8.sent;
-            _context8.next = 38;
+            _context8.next = 42;
             return twtr.sendTweet(tweetText);
 
-          case 38:
+          case 42:
             tweetId = _context8.sent;
 
-          case 39:
-            _context8.next = 41;
-            return db.startStream(search, tweetId);
+          case 43:
+            // update the query with any limit or startDate that were given
+            lastQuery = newSearch.queries[newSearch.queries.length - 1];
+            lastQuery.value.startDate = startDate;
+            lastQuery.value.limit = limit;
+            _context8.next = 48;
+            return db.updateQuery(lastQuery);
 
-          case 41:
-            if (!search.query.value.startDate) {
-              _context8.next = 44;
+          case 48:
+            _context8.next = 50;
+            return db.startStream(newSearch, tweetId);
+
+          case 50:
+            if (!startDate) {
+              _context8.next = 53;
               break;
             }
 
-            _context8.next = 44;
-            return db.startSearch(search);
+            _context8.next = 53;
+            return db.startSearch(newSearch, tweetId);
 
-          case 44:
-            _context8.next = 47;
+          case 53:
+            _context8.next = 56;
             break;
 
-          case 46:
+          case 55:
             if (!search.archiveStarted && newSearch.archiveStarted) {
               archive = new _archive.Archive();
               archive.createArchive(search);
             }
 
-          case 47:
+          case 56:
             // if we ran into an error return that, otherwise return the new search!
             if (error) {
               newSearch.error = error;
@@ -699,13 +711,13 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
               res.json(newSearch);
             }
 
-            _context8.next = 51;
+            _context8.next = 60;
             break;
 
-          case 50:
+          case 59:
             notAuthorized(res);
 
-          case 51:
+          case 60:
           case "end":
             return _context8.stop();
         }

@@ -1900,7 +1900,7 @@ var Database = /*#__PURE__*/function () {
     key: "startSearch",
     value: function () {
       var _startSearch = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee33(search, tweetId) {
-        var lastQuery, stats, job;
+        var lastQuery, earliest, recent, job;
         return _regenerator["default"].wrap(function _callee33$(_context33) {
           while (1) {
             switch (_context33.prev = _context33.next) {
@@ -1917,30 +1917,34 @@ var Database = /*#__PURE__*/function () {
                 // get the most recent query
                 lastQuery = search.queries[search.queries.length - 1]; // set the endDate of the search to the earliest tweet time or now
 
-                stats = this.getSearchStats(search);
+                _context33.next = 6;
+                return this.getEarliestTweet(search);
 
-                if (!stats.minDate) {
-                  _context33.next = 11;
+              case 6:
+                earliest = _context33.sent;
+
+                if (!earliest) {
+                  _context33.next = 13;
                   break;
                 }
 
-                lastQuery.value.endDate = stats.minDate;
-                _context33.next = 9;
+                lastQuery.value.endDate = earliest;
+                _context33.next = 11;
                 return this.updateQuery(lastQuery);
-
-              case 9:
-                _context33.next = 14;
-                break;
 
               case 11:
-                // otherwise use the current time minus a minute
-                // note: the Twitter API throws an error if current time is used?
-                lastQuery.value.endDate = (0, _moment["default"])().subtract(1, 'minutes');
-                _context33.next = 14;
+                _context33.next = 17;
+                break;
+
+              case 13:
+                // note: the Twitter API throws an error if current time is used!?
+                recent = (0, _moment["default"])().subtract(1, 'minutes');
+                lastQuery.value.endDate = recent;
+                _context33.next = 17;
                 return this.updateQuery(lastQuery);
 
-              case 14:
-                _context33.next = 16;
+              case 17:
+                _context33.next = 19;
                 return this.createSearchJob({
                   type: 'search',
                   queryId: lastQuery.id,
@@ -1948,14 +1952,14 @@ var Database = /*#__PURE__*/function () {
                   started: new Date()
                 });
 
-              case 16:
+              case 19:
                 job = _context33.sent;
 
                 _logger["default"].info("adding job ".concat(job.id, " to search job queue"));
 
                 return _context33.abrupt("return", this.redis.lpushAsync(_redis.startSearchJobKey, job.id));
 
-              case 19:
+              case 22:
               case "end":
                 return _context33.stop();
             }
@@ -3121,53 +3125,94 @@ var Database = /*#__PURE__*/function () {
       return updateQuery;
     }()
   }, {
-    key: "cache",
+    key: "getEarliestTweet",
     value: function () {
-      var _cache = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee57(key) {
-        var ttl,
-            f,
-            value,
-            _args57 = arguments;
+      var _getEarliestTweet = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee57(search) {
+        var results;
         return _regenerator["default"].wrap(function _callee57$(_context57) {
           while (1) {
             switch (_context57.prev = _context57.next) {
               case 0:
-                ttl = _args57.length > 1 && _args57[1] !== undefined ? _args57[1] : 60;
-                f = _args57.length > 2 ? _args57[2] : undefined;
-                _context57.next = 4;
-                return this.redis.getAsync(key);
+                _context57.next = 2;
+                return _Tweet["default"].query().min('created').where({
+                  'searchId': search.id
+                });
 
-              case 4:
-                value = _context57.sent;
+              case 2:
+                results = _context57.sent;
 
-                if (!value) {
-                  _context57.next = 9;
+                if (!(results.length > 0)) {
+                  _context57.next = 7;
                   break;
                 }
 
-                return _context57.abrupt("return", JSON.parse(value));
+                return _context57.abrupt("return", results[0].min);
 
-              case 9:
-                _context57.next = 11;
-                return f();
+              case 7:
+                return _context57.abrupt("return", null);
 
-              case 11:
-                value = _context57.sent;
-                _context57.next = 14;
-                return this.redis.setAsync(key, JSON.stringify(value), "EX", ttl);
-
-              case 14:
-                return _context57.abrupt("return", value);
-
-              case 15:
+              case 8:
               case "end":
                 return _context57.stop();
             }
           }
-        }, _callee57, this);
+        }, _callee57);
       }));
 
-      function cache(_x58) {
+      function getEarliestTweet(_x58) {
+        return _getEarliestTweet.apply(this, arguments);
+      }
+
+      return getEarliestTweet;
+    }()
+  }, {
+    key: "cache",
+    value: function () {
+      var _cache = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee58(key) {
+        var ttl,
+            f,
+            value,
+            _args58 = arguments;
+        return _regenerator["default"].wrap(function _callee58$(_context58) {
+          while (1) {
+            switch (_context58.prev = _context58.next) {
+              case 0:
+                ttl = _args58.length > 1 && _args58[1] !== undefined ? _args58[1] : 60;
+                f = _args58.length > 2 ? _args58[2] : undefined;
+                _context58.next = 4;
+                return this.redis.getAsync(key);
+
+              case 4:
+                value = _context58.sent;
+
+                if (!value) {
+                  _context58.next = 9;
+                  break;
+                }
+
+                return _context58.abrupt("return", JSON.parse(value));
+
+              case 9:
+                _context58.next = 11;
+                return f();
+
+              case 11:
+                value = _context58.sent;
+                _context58.next = 14;
+                return this.redis.setAsync(key, JSON.stringify(value), "EX", ttl);
+
+              case 14:
+                return _context58.abrupt("return", value);
+
+              case 15:
+              case "end":
+                return _context58.stop();
+            }
+          }
+        }, _callee58, this);
+      }));
+
+      function cache(_x59) {
         return _cache.apply(this, arguments);
       }
 

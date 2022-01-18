@@ -629,13 +629,14 @@ export class Database {
     const lastQuery = search.queries[search.queries.length - 1]
 
     // set the endDate of the search to the earliest tweet time or now
-    const stats = this.getSearchStats(search)
-    if (stats.minDate) {
-      lastQuery.value.endDate = stats.minDate
+    const earliest = await this.getEarliestTweet(search)
+    if (earliest) {
+      lastQuery.value.endDate = earliest
       await this.updateQuery(lastQuery)
     } else {
       // note: the Twitter API throws an error if current time is used!?
-      lastQuery.value.endDate = moment().subtract(1, 'minutes')
+      const recent = moment().subtract(1, 'minutes')
+      lastQuery.value.endDate = recent
       await this.updateQuery(lastQuery)
     }
 
@@ -1105,6 +1106,17 @@ export class Database {
     await Query.query()
       .patch(query)
       .where('id', query.id)
+  }
+
+  async getEarliestTweet(search) {
+    const results = await Tweet.query()
+      .min('created')
+      .where({'searchId': search.id})
+    if (results.length > 0) {
+      return results[0].min
+    } else {
+      return null
+    }
   }
 
   async cache(key, ttl = 60, f) {

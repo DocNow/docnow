@@ -107,6 +107,7 @@ export class Twitter {
    * @param {string} opts.endDate  A Date or string w/ optional time to search until
    * @param {string} opts.sinceId  Get tweets that match query since a tweet id
    * @param {string} opts.maxId  Get tweets that match query until a tweet id
+   * @param {boolean} opts.once  Just get one set of results, do not page
    * @returns {Promise}  A promise to indicate the search is complete.
    */
 
@@ -114,7 +115,7 @@ export class Twitter {
     log.info('searching for', opts)
 
     // count is the total number of tweets to return across all API requests
-    const count = opts.count || 100
+    const count = opts.count || 101
 
     const params =  {
       ...EVERYTHING,
@@ -164,7 +165,7 @@ export class Twitter {
           const newTotal = total + tweets.length
           cb(null, tweets.map(t => this.extractTweet(t)), nextToken)
             .then(() => {
-              if (newTotal < count && nextToken) {
+              if (! opts.once && newTotal < count && nextToken) {
                 recurse(nextToken, newTotal)
               } else {
                 cb(null, [], null)

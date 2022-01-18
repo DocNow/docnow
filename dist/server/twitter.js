@@ -208,6 +208,7 @@ var Twitter = /*#__PURE__*/function () {
      * @param {string} opts.endDate  A Date or string w/ optional time to search until
      * @param {string} opts.sinceId  Get tweets that match query since a tweet id
      * @param {string} opts.maxId  Get tweets that match query until a tweet id
+     * @param {boolean} opts.once  Just get one set of results, do not page
      * @returns {Promise}  A promise to indicate the search is complete.
      */
 
@@ -219,7 +220,7 @@ var Twitter = /*#__PURE__*/function () {
       _logger["default"].info('searching for', opts); // count is the total number of tweets to return across all API requests
 
 
-      var count = opts.count || 100;
+      var count = opts.count || 101;
 
       var params = _objectSpread(_objectSpread({}, _flattenTweet.EVERYTHING), {}, {
         "query": opts.q,
@@ -272,7 +273,7 @@ var Twitter = /*#__PURE__*/function () {
             cb(null, tweets.map(function (t) {
               return _this2.extractTweet(t);
             }), nextToken).then(function () {
-              if (newTotal < count && nextToken) {
+              if (!opts.once && newTotal < count && nextToken) {
                 recurse(nextToken, newTotal);
               } else {
                 cb(null, [], null);

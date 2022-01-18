@@ -67,109 +67,126 @@ var SearchLoader = /*#__PURE__*/function () {
                         case 2:
                           job = _context2.sent;
 
-                          if (job && job.ended === null && job.query.search.active) {
-                            opts = {
-                              q: job.query.twitterQuery(),
-                              all: true
-                            };
+                          if (!(job && job.ended === null && job.query.search.active)) {
+                            _context2.next = 13;
+                            break;
+                          }
 
-                            if (job.query.value.startDate) {
-                              opts.startDate = job.query.value.StartDate;
-                            }
+                          _context2.next = 6;
+                          return (0, _utils.timer)(2000);
 
-                            if (job.query.value.endDate) {
-                              opts.endDate = job.query.value.endDate;
-                            }
+                        case 6:
+                          opts = {
+                            q: job.query.twitterQuery(),
+                            all: true,
+                            once: true
+                          };
 
-                            if (job.nextToken) {
-                              opts.nextToken = job.nextToken;
-                            }
+                          if (job.query.value.startDate) {
+                            opts.startDate = job.query.value.StartDate;
+                          }
 
-                            _this.twtr.search(opts, /*#__PURE__*/function () {
-                              var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(err, tweets, nextToken) {
-                                return _regenerator["default"].wrap(function _callee$(_context) {
-                                  while (1) {
-                                    switch (_context.prev = _context.next) {
-                                      case 0:
-                                        if (!err) {
-                                          _context.next = 3;
-                                          break;
-                                        }
+                          if (job.query.value.endDate) {
+                            opts.endDate = job.query.value.endDate;
+                          }
 
-                                        _logger["default"].error(err);
+                          if (job.nextToken) {
+                            opts.nextToken = job.nextToken;
+                          }
 
-                                        return _context.abrupt("return");
-
-                                      case 3:
-                                        if (!(tweets == 0)) {
-                                          _context.next = 5;
-                                          break;
-                                        }
-
-                                        return _context.abrupt("return");
-
-                                      case 5:
-                                        if (!_this.active) {
-                                          _context.next = 20;
-                                          break;
-                                        }
-
-                                        _context.next = 8;
-                                        return _this.db.loadTweets(job.query.search, tweets);
-
-                                      case 8:
-                                        if (!nextToken) {
-                                          _context.next = 15;
-                                          break;
-                                        }
-
-                                        _logger["default"].info("queueing next search job ".concat(job.id));
-
-                                        _context.next = 12;
-                                        return _this.db.updateSearchJob({
-                                          id: job.id,
-                                          nextToken: nextToken
-                                        });
-
-                                      case 12:
-                                        _this.db.redis.lpushAsync(_redis.startSearchJobKey, job.id);
-
-                                        _context.next = 18;
+                          _this.twtr.search(opts, /*#__PURE__*/function () {
+                            var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(err, tweets, nextToken) {
+                              return _regenerator["default"].wrap(function _callee$(_context) {
+                                while (1) {
+                                  switch (_context.prev = _context.next) {
+                                    case 0:
+                                      if (!err) {
+                                        _context.next = 3;
                                         break;
+                                      }
 
-                                      case 15:
-                                        _logger["default"].info("no more search results for search job ".concat(job.id));
+                                      _logger["default"].error(err);
 
-                                        _context.next = 18;
-                                        return _this.db.updateSearchJob({
-                                          id: job.id,
-                                          ended: new Date()
-                                        });
+                                      return _context.abrupt("return");
 
-                                      case 18:
-                                        _context.next = 21;
+                                    case 3:
+                                      if (!(tweets == 0)) {
+                                        _context.next = 5;
                                         break;
+                                      }
 
-                                      case 20:
-                                        _logger["default"].warn('search loader callback received tweets when no longer active');
+                                      return _context.abrupt("return");
 
-                                      case 21:
-                                      case "end":
-                                        return _context.stop();
-                                    }
+                                    case 5:
+                                      if (!_this.active) {
+                                        _context.next = 20;
+                                        break;
+                                      }
+
+                                      _context.next = 8;
+                                      return _this.db.loadTweets(job.query.search, tweets);
+
+                                    case 8:
+                                      if (!nextToken) {
+                                        _context.next = 15;
+                                        break;
+                                      }
+
+                                      _logger["default"].info("queueing next search job ".concat(job.id));
+
+                                      _context.next = 12;
+                                      return _this.db.updateSearchJob({
+                                        id: job.id,
+                                        nextToken: nextToken
+                                      });
+
+                                    case 12:
+                                      _this.db.redis.lpushAsync(_redis.startSearchJobKey, job.id);
+
+                                      _context.next = 18;
+                                      break;
+
+                                    case 15:
+                                      _logger["default"].info("no more search results for search job ".concat(job.id));
+
+                                      _context.next = 18;
+                                      return _this.db.updateSearchJob({
+                                        id: job.id,
+                                        ended: new Date()
+                                      });
+
+                                    case 18:
+                                      _context.next = 21;
+                                      break;
+
+                                    case 20:
+                                      _logger["default"].warn('search loader callback received tweets when no longer active');
+
+                                    case 21:
+                                      return _context.abrupt("return", false);
+
+                                    case 22:
+                                    case "end":
+                                      return _context.stop();
                                   }
-                                }, _callee);
-                              }));
+                                }
+                              }, _callee);
+                            }));
 
-                              return function (_x, _x2, _x3) {
-                                return _ref.apply(this, arguments);
-                              };
-                            }());
-                          } else if (job) {
+                            return function (_x, _x2, _x3) {
+                              return _ref.apply(this, arguments);
+                            };
+                          }());
+
+                          _context2.next = 14;
+                          break;
+
+                        case 13:
+                          if (job) {
                             _logger["default"].info("job ".concat(job.id, " is no longer active"));
                           }
 
-                        case 4:
+                        case 14:
                         case "end":
                           return _context2.stop();
                       }

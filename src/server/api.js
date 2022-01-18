@@ -312,7 +312,7 @@ app.put('/search/:searchId', async (req, res) => {
           tweetId = await twtr.sendTweet(tweetText)
         }
 
-        // update the query with any limit or startDate that was given
+        // update the query with any limit or startDate that were given
         const lastQuery = newSearch.queries[newSearch.queries.length - 1]
         lastQuery.value.startDate = startDate
         lastQuery.value.limit = limit

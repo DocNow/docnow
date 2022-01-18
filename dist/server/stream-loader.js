@@ -144,7 +144,7 @@ var StreamLoader = /*#__PURE__*/function () {
                             elapsed = new Date() - lastUpdate;
 
                             if (!(!isLoading && (totalTweets >= 100 || totalTweets > 0 && elapsed > 5000))) {
-                              _context.next = 30;
+                              _context.next = 29;
                               break;
                             }
 
@@ -156,56 +156,53 @@ var StreamLoader = /*#__PURE__*/function () {
 
                           case 11:
                             if ((_step2 = _iterator2.n()).done) {
-                              _context.next = 18;
+                              _context.next = 17;
                               break;
                             }
 
                             _step2$value = (0, _slicedToArray2["default"])(_step2.value, 2), searchId = _step2$value[0], searchTweets = _step2$value[1];
-
-                            _logger["default"].info("loading ".concat(searchTweets.length, " tweets for ").concat(searchId));
-
-                            _context.next = 16;
+                            _context.next = 15;
                             return _this.db.loadTweets({
                               id: searchId
                             }, searchTweets);
 
-                          case 16:
+                          case 15:
                             _context.next = 11;
                             break;
 
-                          case 18:
-                            _context.next = 23;
+                          case 17:
+                            _context.next = 22;
                             break;
 
-                          case 20:
-                            _context.prev = 20;
+                          case 19:
+                            _context.prev = 19;
                             _context.t0 = _context["catch"](9);
 
                             _iterator2.e(_context.t0);
 
-                          case 23:
-                            _context.prev = 23;
+                          case 22:
+                            _context.prev = 22;
 
                             _iterator2.f();
 
-                            return _context.finish(23);
+                            return _context.finish(22);
 
-                          case 26:
+                          case 25:
                             // reset these so we can collect more tweets to insert
                             tweets = new Map();
                             totalTweets = 0;
                             lastUpdate = new Date();
                             isLoading = false;
 
-                          case 30:
+                          case 29:
                             return _context.abrupt("return", true);
 
-                          case 31:
+                          case 30:
                           case "end":
                             return _context.stop();
                         }
                       }
-                    }, _callee, null, [[9, 20, 23, 26]]);
+                    }, _callee, null, [[9, 19, 22, 25]]);
                   }));
 
                   return function (_x, _x2) {
