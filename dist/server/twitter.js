@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Twitter = void 0;
+exports.isAcademic = isAcademic;
 
 var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 
@@ -782,3 +783,70 @@ var Twitter = /*#__PURE__*/function () {
 }();
 
 exports.Twitter = Twitter;
+
+function isAcademic(_x7, _x8) {
+  return _isAcademic.apply(this, arguments);
+}
+
+function _isAcademic() {
+  _isAcademic = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(consumerKey, consumerSecret) {
+    var twtr, endpoint, params, resp;
+    return _regenerator["default"].wrap(function _callee7$(_context7) {
+      while (1) {
+        switch (_context7.prev = _context7.next) {
+          case 0:
+            _context7.prev = 0;
+            twtr = new _twitterV["default"]({
+              consumer_key: consumerKey,
+              consumer_secret: consumerSecret
+            });
+            endpoint = 'tweets/search/all';
+            params = {
+              query: 'hi',
+              start_time: '2006-03-21T00:00:00Z',
+              end_time: '2007-03-21T00:00:00Z'
+            };
+
+            _logger["default"].info(endpoint, params);
+
+            _context7.next = 7;
+            return twtr.get(endpoint, params);
+
+          case 7:
+            resp = _context7.sent;
+
+            if (!(resp.data && resp.data.length > 0)) {
+              _context7.next = 13;
+              break;
+            }
+
+            _logger["default"].info('app keys have academic search');
+
+            return _context7.abrupt("return", true);
+
+          case 13:
+            _logger["default"].info('app keys do not have academic search: no results');
+
+            return _context7.abrupt("return", false);
+
+          case 15:
+            _context7.next = 21;
+            break;
+
+          case 17:
+            _context7.prev = 17;
+            _context7.t0 = _context7["catch"](0);
+
+            _logger["default"].info("app keys do not have academic search turned on: ".concat(_context7.t0));
+
+            return _context7.abrupt("return", false);
+
+          case 21:
+          case "end":
+            return _context7.stop();
+        }
+      }
+    }, _callee7, null, [[0, 17]]);
+  }));
+  return _isAcademic.apply(this, arguments);
+}

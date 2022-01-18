@@ -101,71 +101,77 @@ var SearchLoader = /*#__PURE__*/function () {
                                   switch (_context.prev = _context.next) {
                                     case 0:
                                       if (!err) {
-                                        _context.next = 3;
+                                        _context.next = 6;
                                         break;
                                       }
 
                                       _logger["default"].error(err);
 
+                                      _context.next = 4;
+                                      return (0, _utils.timer)(3000);
+
+                                    case 4:
+                                      _this.db.redis.lpushAsync(_redis.startSearchJobKey, job.id);
+
                                       return _context.abrupt("return");
 
-                                    case 3:
+                                    case 6:
                                       if (!(tweets == 0)) {
-                                        _context.next = 5;
+                                        _context.next = 8;
                                         break;
                                       }
 
                                       return _context.abrupt("return");
-
-                                    case 5:
-                                      if (!_this.active) {
-                                        _context.next = 20;
-                                        break;
-                                      }
-
-                                      _context.next = 8;
-                                      return _this.db.loadTweets(job.query.search, tweets);
 
                                     case 8:
+                                      if (!_this.active) {
+                                        _context.next = 23;
+                                        break;
+                                      }
+
+                                      _context.next = 11;
+                                      return _this.db.loadTweets(job.query.search, tweets);
+
+                                    case 11:
                                       if (!nextToken) {
-                                        _context.next = 15;
+                                        _context.next = 18;
                                         break;
                                       }
 
                                       _logger["default"].info("queueing next search job ".concat(job.id));
 
-                                      _context.next = 12;
+                                      _context.next = 15;
                                       return _this.db.updateSearchJob({
                                         id: job.id,
                                         nextToken: nextToken
                                       });
 
-                                    case 12:
+                                    case 15:
                                       _this.db.redis.lpushAsync(_redis.startSearchJobKey, job.id);
 
-                                      _context.next = 18;
+                                      _context.next = 21;
                                       break;
 
-                                    case 15:
+                                    case 18:
                                       _logger["default"].info("no more search results for search job ".concat(job.id));
 
-                                      _context.next = 18;
+                                      _context.next = 21;
                                       return _this.db.updateSearchJob({
                                         id: job.id,
                                         ended: new Date()
                                       });
 
-                                    case 18:
-                                      _context.next = 21;
+                                    case 21:
+                                      _context.next = 24;
                                       break;
 
-                                    case 20:
+                                    case 23:
                                       _logger["default"].warn('search loader callback received tweets when no longer active');
 
-                                    case 21:
+                                    case 24:
                                       return _context.abrupt("return", false);
 
-                                    case 22:
+                                    case 25:
                                     case "end":
                                       return _context.stop();
                                   }

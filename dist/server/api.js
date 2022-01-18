@@ -26,6 +26,8 @@ var _archive = require("./archive");
 
 var _auth = require("./auth");
 
+var _twitter = require("./twitter");
+
 function _getRequireWildcardCache(nodeInterop) { if (typeof WeakMap !== "function") return null; var cacheBabelInterop = new WeakMap(); var cacheNodeInterop = new WeakMap(); return (_getRequireWildcardCache = function _getRequireWildcardCache(nodeInterop) { return nodeInterop ? cacheNodeInterop : cacheBabelInterop; })(nodeInterop); }
 
 function _interopRequireWildcard(obj, nodeInterop) { if (!nodeInterop && obj && obj.__esModule) { return obj; } if (obj === null || _typeof(obj) !== "object" && typeof obj !== "function") { return { "default": obj }; } var cache = _getRequireWildcardCache(nodeInterop); if (cache && cache.has(obj)) { return cache.get(obj); } var newObj = {}; var hasPropertyDescriptor = Object.defineProperty && Object.getOwnPropertyDescriptor; for (var key in obj) { if (key !== "default" && Object.prototype.hasOwnProperty.call(obj, key)) { var desc = hasPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : null; if (desc && (desc.get || desc.set)) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } newObj["default"] = obj; if (cache) { cache.set(obj, newObj); } return newObj; }
@@ -211,58 +213,77 @@ app.put('/settings', /*#__PURE__*/function () {
             superUser = _context4.sent;
 
             if (!(!superUser || req.user && req.user.isSuperUser)) {
-              _context4.next = 18;
+              _context4.next = 34;
               break;
             }
 
+            _context4.t0 = req.body.logoUrl;
+            _context4.t1 = req.body.instanceTitle;
+            _context4.t2 = req.body.appKey;
+            _context4.t3 = req.body.appSecret;
+            _context4.t4 = req.body.instanceInfoLink;
+            _context4.t5 = req.body.instanceDescription;
+            _context4.t6 = req.body.instanceTweetText;
+            _context4.t7 = req.body.emailHost;
+            _context4.t8 = req.body.emailPort;
+            _context4.t9 = req.body.emailUser;
+            _context4.t10 = req.body.emailPassword;
+            _context4.t11 = req.body.emailFromAddress;
+            _context4.t12 = parseInt(req.body.defaultQuota, 10) || 50000;
+            _context4.next = 19;
+            return (0, _twitter.isAcademic)(req.body.appKey, req.body.appSecret);
+
+          case 19:
+            _context4.t13 = _context4.sent;
             settings = {
-              logoUrl: req.body.logoUrl,
-              instanceTitle: req.body.instanceTitle,
-              appKey: req.body.appKey,
-              appSecret: req.body.appSecret,
-              instanceInfoLink: req.body.instanceInfoLink,
-              instanceDescription: req.body.instanceDescription,
-              instanceTweetText: req.body.instanceTweetText,
-              emailHost: req.body.emailHost,
-              emailPort: req.body.emailPort,
-              emailUser: req.body.emailUser,
-              emailPassword: req.body.emailPassword,
-              emailFromAddress: req.body.emailFromAddress,
-              defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000
+              logoUrl: _context4.t0,
+              instanceTitle: _context4.t1,
+              appKey: _context4.t2,
+              appSecret: _context4.t3,
+              instanceInfoLink: _context4.t4,
+              instanceDescription: _context4.t5,
+              instanceTweetText: _context4.t6,
+              emailHost: _context4.t7,
+              emailPort: _context4.t8,
+              emailUser: _context4.t9,
+              emailPassword: _context4.t10,
+              emailFromAddress: _context4.t11,
+              defaultQuota: _context4.t12,
+              academic: _context4.t13
             };
-            _context4.prev = 5;
-            _context4.next = 8;
+            _context4.prev = 21;
+            _context4.next = 24;
             return db.addSettings(settings);
 
-          case 8:
+          case 24:
             (0, _auth.activateKeys)();
             res.json({
               status: 'updated'
             });
-            _context4.next = 16;
+            _context4.next = 32;
             break;
 
-          case 12:
-            _context4.prev = 12;
-            _context4.t0 = _context4["catch"](5);
-            console.error(_context4.t0);
+          case 28:
+            _context4.prev = 28;
+            _context4.t14 = _context4["catch"](21);
+            console.error(_context4.t14);
             res.json({
               status: 'error'
             });
 
-          case 16:
-            _context4.next = 19;
+          case 32:
+            _context4.next = 35;
             break;
 
-          case 18:
+          case 34:
             notAuthorized(res);
 
-          case 19:
+          case 35:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[5, 12]]);
+    }, _callee4, null, [[21, 28]]);
   }));
 
   return function (_x7, _x8) {
