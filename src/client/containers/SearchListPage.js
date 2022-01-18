@@ -9,7 +9,8 @@ const mapStateToProps = (state, ownProps) => {
     searches: state.searches,
     user: state.user,
     forUserId: ownProps.match.params.userId,
-    instanceTweetText: state.settings.instanceTweetText
+    instanceTweetText: state.settings.instanceTweetText,
+    academic: state.settings.academic
   }
 }
 

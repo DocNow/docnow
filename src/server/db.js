@@ -73,6 +73,8 @@ export class Database {
       settings[row.name] = row.value
     }
 
+    settings.academic = settings.academic == "true" ? true : false
+
     if (! settings.instanceTweetText) {
       settings.instanceTweetText = "I'm creating a collection of tweets that match {query}. You can learn more about why I'm creating it and specify your terms of your consent here {collection-url}"
     }

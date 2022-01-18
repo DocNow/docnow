@@ -17,7 +17,8 @@ const mapStateToProps = (state, ownProps) => {
     total: state.queue.total,
     remaining: state.queue.remaining,
     tweets: state.tweets,
-    instanceTweetText: state.settings.instanceTweetText
+    instanceTweetText: state.settings.instanceTweetText,
+    academic: state.settings.academic
   }
 }
 

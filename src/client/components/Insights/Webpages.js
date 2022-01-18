@@ -49,6 +49,7 @@ export default class Webpages extends Component {
           search={this.props.search}
           user={this.props.user}
           instanceTweetText={this.props.instanceTweetText}
+          academic={this.props.academic}
           updateSearch={this.props.updateSearch} />
 
         <BackButton 
@@ -81,6 +82,7 @@ Webpages.propTypes = {
   search: PropTypes.object,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean,
   webpages: PropTypes.array,
   getWebpages: PropTypes.func,
   resetWebpages: PropTypes.func,

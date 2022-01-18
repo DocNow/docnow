@@ -20,6 +20,7 @@ export default class Actions extends Component {
           search={this.props.search}
           user={this.props.user}
           instanceTweetText={this.props.instanceTweetText}
+          academic={this.props.academic}
           updateSearch={this.props.updateSearch}
           deleteSearch={this.props.deleteSearch}
           createArchive={this.props.createArchive} />
@@ -42,6 +43,7 @@ Actions.propTypes = {
   search: PropTypes.object,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean,
   getSearch: PropTypes.func,
   getActions: PropTypes.func,
   updateSearch: PropTypes.func,

@@ -7,6 +7,7 @@ import wayback from './wayback'
 import { Database } from './db'
 import { Archive } from './archive'
 import { activateKeys } from './auth'
+import { isAcademic } from './twitter'
 
 const app = express()
 
@@ -109,6 +110,7 @@ app.put('/settings', async (req, res) => {
       emailPassword: req.body.emailPassword,
       emailFromAddress: req.body.emailFromAddress,
       defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000,
+      academic: await isAcademic(req.body.appKey, req.body.appSecret)
     }
     try {
       await db.addSettings(settings)

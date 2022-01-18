@@ -15,6 +15,7 @@ const initialState = {
   emailPassword: '',
   emailFromAddress: '',
   updated: false,
+  academic: false
 }
 
 export default function settings(state = initialState, action) {
@@ -36,7 +37,8 @@ export default function settings(state = initialState, action) {
         emailPort: action.emailPort,
         emailUser: action.emailUser,
         emailPassword: action.emailPassword,
-        emailFromAddress: action.emailFromAddress
+        emailFromAddress: action.emailFromAddress,
+        academic: action.academic
       }
     }
 

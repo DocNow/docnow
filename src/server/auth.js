@@ -39,6 +39,13 @@ const activateKeys = () => {
                 return cb(null, u.id)
               })
             } else {
+              db.updateUser({
+                ...user, 
+                twitterScreenName: profile.username,
+                twitterAvatarUrl: profile.photos[0].value,
+                twitterAccessToken: token,
+                twitterAccessTokenSecret: tokenSecret
+              })
               return cb(null, user.id)
             }
           })

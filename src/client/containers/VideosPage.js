@@ -13,6 +13,7 @@ const mapStateToProps = (state, ownProps) => {
     tweets: state.tweets,
     location: state.router.location.pathname,
     instanceTweetText: state.settings.instanceTweetText,
+    academic: state.settings.academic
   }
 }
 

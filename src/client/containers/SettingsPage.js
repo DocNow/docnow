@@ -15,6 +15,7 @@ const mapStateToProps = (state) => {
     instanceInfoLink: state.settings.instanceInfoLink,
     instanceDescription: state.settings.instanceDescription,
     instanceTweetText: state.settings.instanceTweetText,
+    academic: state.settings.academic,
     emailHost: state.settings.emailHost,
     emailPort: state.settings.emailPort,
     emailUser: state.settings.emailUser,

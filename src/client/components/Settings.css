@@ -40,3 +40,14 @@
 .SettingsUnder780px input {
   width: 90%;
 }
+
+.Settings .Academic {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.Settings .Academic .Emoji {
+  font-size: 32pt;
+}
+

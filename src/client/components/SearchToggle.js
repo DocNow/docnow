@@ -1,3 +1,4 @@
+import moment from 'moment'
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import Modal from 'react-modal'
@@ -95,6 +96,12 @@ export default class SearchToggle extends Component {
     }
 
     const adminNote = ' Since you are an adminstrator on this instance you can leave this blank.'
+
+    // determine the farthest back the instance can search depending on whether
+    // it has academic search turned on for the twitter app credentials
+    const minDate = this.props.academic 
+      ? new Date(2006, 2, 21)
+      : moment().subtract(1, 'week')
 
     return (
       <>
@@ -204,7 +211,7 @@ export default class SearchToggle extends Component {
                   value={this.state.startDate}
                   disableFuture={true}
                   inputVariant="outlined"
-                  minDate={new Date(2006, 2, 21)}
+                  minDate={minDate}
                   autoOk={true}
                   labelFunc={d => {
                     return d ? d.format('LL') : ''
@@ -235,4 +242,5 @@ SearchToggle.propTypes = {
   user: PropTypes.object,
   updateSearch: PropTypes.func,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean
 }

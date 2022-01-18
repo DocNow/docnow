@@ -53,6 +53,8 @@ export class SearchLoader {
 
           if (err) {
             log.error(err)
+            await timer(3000)
+            this.db.redis.lpushAsync(startSearchJobKey, job.id)
             return
           }
 

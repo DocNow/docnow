@@ -9,7 +9,8 @@ const mapStateToProps = (state, ownProps) => {
     searchId: parseInt(ownProps.match.params.searchId, 10),
     search: state.search,
     user: state.user,
-    instanceTweetText: state.settings.instanceTweetText
+    instanceTweetText: state.settings.instanceTweetText,
+    academic: state.settings.academic
   }
 }
 

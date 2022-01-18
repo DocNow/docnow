@@ -104,6 +104,7 @@ export default class SearchInfo extends Component {
             <SearchToggle
               search={this.props.search}
               instanceTweetText={this.props.instanceTweetText}
+              academic={this.props.academic}
               user={this.props.user}
               updateSearch={this.props.updateSearch} />  
           </TableCell>
@@ -134,6 +135,7 @@ SearchInfo.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean,
   updateSearch: PropTypes.func,
   deleteSearch: PropTypes.func,
   createArchive: PropTypes.func

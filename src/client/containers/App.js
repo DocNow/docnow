@@ -44,7 +44,6 @@ class App extends MediaQueryComponent {
       .then(result => {
         if (! result) { store.dispatch(push('/settings/')) }
       })
-    console.log(store.getState())
   }
 
   componentDidMount() {

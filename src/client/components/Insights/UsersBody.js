@@ -86,19 +86,19 @@ export default class UsersBody extends Component {
           tweets={this.props.tweets} />
 
         <div className={cardStyle.CardHolder}>
-          {this.state.users.map(t => {
+          {this.state.users.map((u, i) => {
             return (
               <User
-                key={t.id}
-                name={t.name}
-                screenName={t.screenName}
-                avatarUrl={t.avatarUrl}
-                url={t.url}
-                created={t.created}
-                desc={t.description}
-                count={t.tweetsInSearch}
-                friends={t.friendsCount}
-                followers={t.followersCount}
+                key={`${u.id}-${i}`}
+                name={u.name}
+                screenName={u.screenName}
+                avatarUrl={u.avatarUrl}
+                url={u.url}
+                created={u.created}
+                desc={u.description}
+                count={u.tweetsInSearch}
+                friends={u.friendsCount}
+                followers={u.followersCount}
                 searchId={this.props.searchId}
                 getTweetsForUser={this.props.getTweetsForUser} />
             )

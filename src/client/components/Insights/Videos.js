@@ -44,6 +44,7 @@ export default class Videos extends Component {
           search={this.props.search}
           user={this.props.user}
           instanceTweetText={this.props.instanceTweetText}
+          academic={this.props.academic}
           updateSearch={this.props.updateSearch} />
 
         <BackButton 
@@ -67,6 +68,7 @@ Videos.propTypes = {
   search: PropTypes.object,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean,
   getVideos: PropTypes.func,
   getSearch: PropTypes.func,
   getTweetsForVideo: PropTypes.func,

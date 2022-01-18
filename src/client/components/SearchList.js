@@ -97,6 +97,7 @@ export default class SearchList extends Component {
                   id={search.id}
                   search={search}
                   instanceTweetText={this.props.instanceTweetText}
+                  academic={this.props.academic}
                   user={this.props.user}
                   updateSearch={this.props.updateSearch} />
               </TableCell>
@@ -132,4 +133,5 @@ SearchList.propTypes = {
   user: PropTypes.object,
   forUserId: PropTypes.number,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean
 }

@@ -46,6 +46,7 @@ export default class Images extends Component {
           search={this.props.search}
           user={this.props.user}
           instanceTweetText={this.props.instanceTweetText}
+          academic={this.props.academic}
           updateSearch={this.props.updateSearch} />
 
         <BackButton 
@@ -69,6 +70,7 @@ Images.propTypes = {
   search: PropTypes.object,
   user: PropTypes.user,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean,
   getImages: PropTypes.func,
   getSearch: PropTypes.func,
   getTweetsForImage: PropTypes.func,

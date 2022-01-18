@@ -59,6 +59,23 @@ Error.propTypes = {
   callbackUrl: PropTypes.string,
 }
 
+function Academic({active}) {
+  if (active) {
+    return (
+      <div className={style.Academic}>
+        <div className={style.Emoji}>🧑‍🎓</div>
+        <div>Academic Search Product Track <em>enabled</em></div>
+      </div>
+    )
+  } else {
+    return ''
+  }
+}
+
+Academic.propTypes = {
+  active: PropTypes.boolean
+}
+
 export default class Settings extends MediaQueryComponent {
 
   componentWillMount() {
@@ -228,6 +245,8 @@ export default class Settings extends MediaQueryComponent {
               onChange={this.props.updateSettings} />
           </div>
 
+          <Academic active={this.props.academic} /> 
+
           <div className={style.Separator}>
             <h2>Email Settings 📨</h2>
             <p>
@@ -328,6 +347,7 @@ Settings.propTypes = {
   logoUrl: PropTypes.string,
   appKey: PropTypes.string,
   appSecret: PropTypes.string,
+  academic: PropTypes.boolean,
   defaultQuota: PropTypes.number,
   userLoggedIn: PropTypes.bool,
   isSuperUser: PropTypes.bool,

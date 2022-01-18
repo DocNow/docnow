@@ -51,6 +51,7 @@ export default class Insights extends Component {
           search={this.props.search}
           user={this.props.user}
           instanceTweetText={this.props.instanceTweetText}
+          academic={this.props.academic}
           updateSearch={this.props.updateSearch}
           deleteSearch={this.props.deleteSearch}
           createArchive={this.props.createArchive} />
@@ -72,6 +73,7 @@ Insights.propTypes = {
   actions: PropTypes.array,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean,
   webpages: PropTypes.array,
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,

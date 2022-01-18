@@ -389,3 +389,30 @@ export class Twitter {
   }
 
 }
+
+export async function isAcademic(consumerKey, consumerSecret) {
+  try {
+    const twtr = new TwitterV2({
+      consumer_key: consumerKey,
+      consumer_secret: consumerSecret
+    })
+    const endpoint = 'tweets/search/all'
+    const params = {
+      query: 'hi', 
+      start_time: '2006-03-21T00:00:00Z',
+      end_time: '2007-03-21T00:00:00Z'
+    }
+    log.info(endpoint, params)
+    const resp = await twtr.get(endpoint, params)
+    if (resp.data && resp.data.length > 0) {
+      log.info('app keys have academic search')
+      return true
+    } else {
+      log.info('app keys do not have academic search: no results') 
+      return false
+    }
+  } catch (err) {
+    log.info(`app keys do not have academic search turned on: ${err}`)
+    return false
+  }
+}

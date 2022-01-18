@@ -18,6 +18,7 @@ class Tweets extends Component {
           search={this.props.search}
           user={this.props.user}
           instanceTweetText={this.props.instanceTweetText}
+          academic={this.props.academic}
           updateSearch={this.props.updateSearch} />
 
         <BackButton 
@@ -44,6 +45,7 @@ Tweets.propTypes = {
   search: PropTypes.object,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
+  academic: PropTypes.boolean,
   getTweets: PropTypes.func,
   getSearch: PropTypes.func,
   updateSearch: PropTypes.func,
