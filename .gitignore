@@ -6,3 +6,4 @@ node_modules
 settings.txt
 *.swp
 .node-version
+Pipfile
