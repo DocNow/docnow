@@ -73,7 +73,7 @@ var SearchLoader = /*#__PURE__*/function () {
                           }
 
                           _context2.next = 6;
-                          return (0, _utils.timer)(2000);
+                          return (0, _utils.timer)(3000);
 
                         case 6:
                           opts = {

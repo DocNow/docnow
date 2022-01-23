@@ -27,9 +27,16 @@ export class SearchLoader {
       const job = await this.fetchSearchJob()
       if (job && job.ended === null && job.query.search.active) {
 
-        // Twitter requires sleeping at least a second between searches
-        // sleeping only 1 second seems to trigger errors, so lets sleep 2 
-        await timer(2000)
+        /*
+         
+        Twitter requires sleeping at least a second between searches.
+        In addition they only allow 300 requests per 15 minute window.
+        To be on the safe side we sleep between requests
+        See: https://developer.twitter.com/en/docs/twitter-api/tweets/search/api-reference/get-tweets-search-all
+
+        */
+        
+        await timer(3000)
 
         const opts = {
           q: job.query.twitterQuery(),

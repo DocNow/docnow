@@ -64,7 +64,7 @@ function Academic({active}) {
     return (
       <div className={style.Academic}>
         <div className={style.Emoji}>🧑‍🎓</div>
-        <div>Academic Search Product Track <em>enabled</em></div>
+        <div>Academic Research Product Track <em>enabled</em></div>
       </div>
     )
   } else {
