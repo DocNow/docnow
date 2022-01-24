@@ -11,9 +11,19 @@ theme:
   logo: images/docnow.png
   palette:
     scheme: preference
+  features:
+    - navigation.expand
+    - navigation.indexes
 
 nav: 
-  - Home: README.md
+  - Introduction: index.md
+  - Run Locally: local.md
+  - Run in the Cloud:
+    - Overview: cloud/index.md
+    - AWS: cloud/aws.md
+    - Digital Ocean: cloud/digital-ocean.md
+    - Scaleway: cloud/scaleway.md
+  - Troubleshooting: troubleshooting.md
   - API: api.md
   - Database: db.md
 
