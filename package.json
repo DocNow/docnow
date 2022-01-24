@@ -12,8 +12,8 @@
     "build:commands": "babel src/commands --out-dir dist/commands",
     "build": "better-npm-run build",
     "clean": "rimraf dist/*",
-    "test": "better-npm-run test",
-    "wtest": "better-npm-run wtest",
+    "test": "docker-compose run --rm --use-aliases -e NODE_ENV=test -v $PWD/.env.test:/code/.env.test webapp",
+    "test:cmd": "better-npm-run test:cmd",
     "eslint:server": "eslint src/server/*",
     "reset": "node dist/commands/reset",
     "update-indexes": "node dist/commands/update-indexes",
@@ -44,13 +44,7 @@
         "NODE_ENV": "development"
       }
     },
-    "wtest": {
-      "command": "nodemon --exec 'npm run eslint:server && mocha --timeout 20000 --require @babel/polyfill --require @babel/register test/*.js'",
-      "env": {
-        "NODE_ENV": "test"
-      }
-    },
-    "test": {
+    "test:cmd": {
       "command": "npm run eslint:server && mocha --timeout 60000 --require @babel/register --require @babel/polyfill test/*.js",
       "env": {
         "NODE_ENV": "test"

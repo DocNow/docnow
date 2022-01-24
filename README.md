@@ -37,52 +37,31 @@ follow these instructions:
 
 1. git clone https://github.com/docnow/docnow
 1. cd docnow
-1. cp .env.docker .env
+1. cp .env.dev .env
 1. docker-compose build --no-cache
 1. docker-compose up
 1. make some ☕️
 1. open http://localhost:3000
 
-If you run into an error above
+If you run into an error above and want to clean out *all* your docker containers and images you can run this: 
 
 1. sh clean-up.sh
 
 ## Testing
 
-The test suite runs automatically via a GitHub Action. If you want to run the tests yourself you will need to run the supplied `test.sh` script. The test suite needs to talk to the Twitter API so you will need to add your keys to the test.sh script. Please be careful not to commit them!
-
-If you are developing with the docker-compose setup outlined in the previous section you will need to first create a new database that is distinct from your development database (so you don't delete data that you are experimenting with). To do this you need to identify the `postgres` container, connect to it, connect to postgres, and create the database. For example:
+The test suite runs automatically via a GitHub Action. If you want to run the tests yourself you will need to:
 
 ```
-$ docker ps --format "{{.ID}} {{.Image}}"
-f35af00270b4 docnow_webapp
-51dbd96b6f58 docnow_stream-loader
-6c02318d6225 docnow_url-fetcher
-3cb269d64d96 ankane/pghero
-27b17b92f77b postgres
-d9b39c12c952 redis
-
-$ docker exec -ti 27b17b92f77b bash
-root@27b17b92f77b:/ psql --user docnow postgres
-postgres=# create database docnow_test;
-postgres=# quit
+cp .env.test-sample .env.test
 ```
 
-Then to run the tests you will need to connect to the `docnow_webapp` container
-and run test.sh from inside the container. For example, using the listing of 
-docker containers obtained above:
+Replace the `CHANGE_ME` values in .env.test to the respective Twitter API credentials. Then run the tests.
 
-```bash
-$ docker exec -ti f35af00270b4a bash
-
-root@f35af00270b4:/code# ./test.sh
-  archive
-✓ should setup (4315ms)
-✓ should create archive (190ms)
-✓ should be flagged as archived
-✓ should close things
-...
 ```
+npm run test
+```
+
+Do not commit `.env.test` to git since it contains your Twitter API keys!
 
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/

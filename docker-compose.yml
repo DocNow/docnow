@@ -38,6 +38,9 @@ services:
       POSTGRES_USER: "${DB_USERNAME}"
       POSTGRES_PASSWORD: "${DB_PASSWORD}"
       POSTGRES_DB: "${DB_DATABASE}"
+    volumes:
+      - ./config/init-db.sh:/docker-entrypoint-initdb.d/init-db.sh
+
     command: postgres -c logging_collector=on -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all
 
   webapp:
