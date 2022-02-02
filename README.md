@@ -31,6 +31,8 @@ provision and configure DocNow in the cloud.
 
 ## Development
 
+The *main* branch of this repository represents the latest tested features of the DocNow application following the [trunk based development] model. Tagged version [releases] can be used for production deployments. Development usually happens on short lived branches which are merged into *main* once they have been reviewed and approved. If you'd like to contribute to the DocNow project please fork this repository, create a branch for your feature or bug fix, and then send a pull request to have it reviewed and merged.
+
 To set up DocNow locally on your workstation you will need to install [Git]
 and [Docker]. Once you've got them installed open a terminal window and
 follow these instructions:
@@ -66,3 +68,5 @@ Do not commit `.env.test` to git since it contains your Twitter API keys!
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/
 [Appraisal]: https://www2.archivists.org/glossary/terms/a/appraisal
+[releases]: https://github.com/DocNow/docnow/releases
+[trunk based development]: https://www.atlassian.com/continuous-delivery/continuous-integration/trunk-based-development
