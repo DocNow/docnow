@@ -1,5 +1,5 @@
-import metaweb from 'metaweb'
 import log from './logger'
+import metaweb from 'metaweb'
 
 import {
   getRedis,
