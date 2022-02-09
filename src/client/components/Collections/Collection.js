@@ -67,7 +67,7 @@ export default class CollectionList extends Component {
     }
   }
 
-  setAllTweets(checked) {    
+  setAllTweets(checked) {
     if (checked) {
       this.setState({
         allSelected: true,
@@ -123,7 +123,7 @@ export default class CollectionList extends Component {
       ? <a href={`mailto:${this.props.search.creator.email}`}>{this.props.search.creator.email}</a>
       : 'No contact provided.'
     let tweets = 'Loading tweets...'
-    if (this.props.search.tweets.length > 0) {      
+    if (this.props.search.tweets.length > 0) {
       tweets = this.props.search.tweets.slice(this.randomTweet, this.randomTweet + 2).map((t, i) => {
         return <Tweet key={`t${i}`} data={t} />
       })
@@ -147,13 +147,13 @@ export default class CollectionList extends Component {
               <FormControlLabel
                 value="all"
                 control={
-                  <Checkbox color="primary" 
-                    onChange={t => this.setAllTweets(t.target.checked)} 
+                  <Checkbox color="primary"
+                    onChange={t => this.setAllTweets(t.target.checked)}
                     checked={this.state.allSelected} />}
                     label={`Select all ${this.props.user.tweets.length} tweets`} />
             </FormGroup>
           </FormControl>
-          <Button 
+          <Button
             disabled={consentDisabled}
             variant="contained"
             onClick={() => this.openModal()}>
@@ -165,9 +165,9 @@ export default class CollectionList extends Component {
             return (
               <Grid container spacing={0} key={`ut${i}`}>
                 <Grid item xs={2} className={style.ConsentTweet}>
-                  <Checkbox 
-                    color="primary" 
-                    checked={selected} 
+                  <Checkbox
+                    color="primary"
+                    checked={selected}
                     onChange={() => this.toggleOneTweet(tweet)} />
                   <br />
                   {tweet.consentActions.map(action => (
@@ -178,7 +178,7 @@ export default class CollectionList extends Component {
                   <Tweet data={tweet} />
                 </Grid>
               </Grid>
-            )            
+            )
           })}
         </>)
       } else {
@@ -190,12 +190,12 @@ export default class CollectionList extends Component {
       <Typography variant="body2">Showing {this.props.search.users.length} of {this.props.search.userCount.toLocaleString()} users.</Typography>
       {this.props.search.users.map((u, i) => {
         return (
-          <a 
+          <a
             href={`https://twitter.com/${u.screenName}`}
-            key={`user-${i}`} 
+            key={`user-${i}`}
             rel="noreferrer"
             target="_blank">
-            <img 
+            <img
               className={style.UserImg}
               src={u.avatarUrl}
               alt={u.screenName}
@@ -203,7 +203,7 @@ export default class CollectionList extends Component {
               title={u.screenName} />
           </a>
         )
-      })}      
+      })}
     </div>)
 
     if (this.state.findingUser) {
@@ -224,19 +224,19 @@ export default class CollectionList extends Component {
           isOpen={this.state.modalOpen}
           close={() => this.closeModal()}
           searchId={this.props.searchId}
-          selectedTweets={this.state.selectedTweets} 
-          setConsentActions={this.props.setConsentActions} 
+          selectedTweets={this.state.selectedTweets}
+          setConsentActions={this.props.setConsentActions}
           revokeConsent={this.props.revokeConsent} />
 
         <Grid container spacing={3} className={listStyle.Header}>
           <Grid item xs={12} className={listStyle.Title}>
             <Typography variant="h2">
               <Link to="/collections">ALL COLLECTIONS</Link> ➔ {this.props.search.title.toUpperCase()}
-            </Typography>            
+            </Typography>
           </Grid>
           <Grid item xs={12}>
             <Typography variant="body1">
-              { this.props.search.description || 'No description provided for this collection.' }
+              Collection Description:{ this.props.search.description || 'No description provided for this collection.' }
             </Typography>
           </Grid>
           <Grid item xs={2}>
@@ -245,18 +245,13 @@ export default class CollectionList extends Component {
                 @{this.props.search.creator.twitterScreenName}</a></strong>
             </Typography>
           </Grid>
-          <Grid item xs={2}>
-            <Typography variant="body1">
-              Contact: <strong>{contact}</strong>
-            </Typography>
-          </Grid>
         </Grid>
 
         <div className={`${card.CardHolder} ${style.CardHolder}`}>
           <Card raised className={`${card.Card} ${style.Card}`} >
             <CardContent>
               <div className={style.CardTitle}>
-                <FindMe user={this.props.user} dest={`/collection/${this.props.searchId}`}/>                
+                <FindMe user={this.props.user} dest={`/collection/${this.props.searchId}`}/>
               </div>
               {userTweets}
             </CardContent>
@@ -265,7 +260,7 @@ export default class CollectionList extends Component {
             <CardContent>
               <div className={style.CardTitle}>
                 <Paper id="box" elevation={4} className={style.Search}>
-                  <TextField name="usersearch" className={style.SearchInput} 
+                  <TextField name="usersearch" className={style.SearchInput}
                     onChange={(e) => this.handleFindUserInput(e.target.value)} />
                   <IconButton color="primary" onClick={() => this.findUser()}>
                     <ion-icon name="search"></ion-icon>
