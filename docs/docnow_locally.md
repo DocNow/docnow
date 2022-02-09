@@ -10,6 +10,8 @@ Steps to install on [macOS](macOSREADME.md)
 
 ## Install on Microsoft Windows
 
+Steps to install on [Microsoft Windows](mswinOSREADME.md)
+
 ## Install on Ubuntu
 
 Steps to install on [Ubuntu](ubuntuREADME.md)
