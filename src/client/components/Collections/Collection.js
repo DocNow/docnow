@@ -119,9 +119,6 @@ export default class CollectionList extends Component {
 
     const tweetCount = this.props.search.tweetCount.toLocaleString()
 
-    const contact = this.props.search.creator.email
-      ? <a href={`mailto:${this.props.search.creator.email}`}>{this.props.search.creator.email}</a>
-      : 'No contact provided.'
     let tweets = 'Loading tweets...'
     if (this.props.search.tweets.length > 0) {
       tweets = this.props.search.tweets.slice(this.randomTweet, this.randomTweet + 2).map((t, i) => {
