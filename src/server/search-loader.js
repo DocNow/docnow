@@ -44,12 +44,12 @@ export class SearchLoader {
           once: true
         }
 
-        if (job.query.value.startDate) {
-          opts.startDate = job.query.value.StartDate
+        if (job.tweetsStart) {
+          opts.startDate = job.tweetsStart
         }
 
-        if (job.query.value.endDate) {
-          opts.endDate = job.query.value.endDate
+        if (job.tweetsEnd) {
+          opts.endDate = job.tweetsEnd
         }
 
         if (job.nextToken) {
@@ -61,7 +61,6 @@ export class SearchLoader {
           if (err) {
             log.error(err)
             await timer(3000)
-            this.db.redis.lpushAsync(startSearchJobKey, job.id)
             return
           }
 
@@ -81,18 +80,40 @@ export class SearchLoader {
             // about is whether there are more results to get.
 
             if (nextToken) {
+
               log.info(`queueing next search job ${job.id}`)
               await this.db.updateSearchJob({
                 id: job.id,
                 nextToken: nextToken
               })
               this.db.redis.lpushAsync(startSearchJobKey, job.id)
+
             } else {
+
               log.info(`no more search results for search job ${job.id}`)
               await this.db.updateSearchJob({
                 id: job.id,
                 ended: new Date()
               })
+
+              // determine if there's an active stream job for this search
+              let activeStream = false
+              const query = await this.db.getQuery(job.query.id)
+              for (const j of query.searchJobs) {
+                if (j.type == 'stream' && ! j.ended) {
+                  activeStream = true
+                }
+              }
+
+              // set search to inactive if there's not an active stream
+              if (! activeStream) {
+                await this.db.updateSearch({
+                  id: query.search.id,
+                  active: false
+                })
+                log.info(`flagging search ${query.search.id} as inactive`)
+              }
+
             }
 
           } else {

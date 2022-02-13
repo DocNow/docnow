@@ -131,13 +131,17 @@ export class Twitter {
     }
 
     if (opts.startDate) {
-      const t = new Date(params.startDate)
+      const t = new Date(opts.startDate)
       params.start_time = t.toISOString().replace(/\.\d+Z$/, 'Z')
     }
 
     if (opts.endDate) {
-      const t = new Date(opts.endDate)
-      params.end_time = t.toISOString().replace(/\.\d+Z$/, 'Z')
+      const t = new Date(opts.endDate) 
+      if (t > new Date()) {
+        log.info('ignoring search endDate in the future') 
+      } else {
+        params.end_time = t.toISOString().replace(/\.\d+Z$/, 'Z')
+      }
     }
 
     if (opts.sinceId) {
@@ -297,14 +301,10 @@ export class Twitter {
       : []
 
     let place = null
-    if (t.geo && t.geo.place_id) {
+    if (t.geo) {
       place = {
-        name: t.geo.full_name,
-        type: t.geo.place_type,
         id: t.geo.place_id,
-        country: t.geo.country,
-        countryCode: t.geo.country_code,
-        boundingBox: t.geo.geo.bbox
+        coordinates: t.geo.coordinates
       }
     }
 

@@ -278,6 +278,9 @@ app.put('/search/:searchId', async (req, res) => {
     const startDate = req.body.startDate
     delete req.body.startDate
 
+    const endDate = req.body.endDate
+    delete req.body.endDate
+
     const limit = req.body.limit
     delete req.body.limit
 
@@ -317,15 +320,19 @@ app.put('/search/:searchId', async (req, res) => {
         // update the query with any limit or startDate that were given
         const lastQuery = newSearch.queries[newSearch.queries.length - 1]
         lastQuery.value.startDate = startDate
+        lastQuery.value.endDate = endDate
         lastQuery.value.limit = limit
         await db.updateQuery(lastQuery)
- 
-        // start the streaming
-        await db.startStream(newSearch, tweetId)
 
-        // start historical search if they asked for earlier tweets
-        if (startDate) {
+        // start a search if startDate is in the past
+        const now = new Date()
+        if (new Date(startDate) < now) {
           await db.startSearch(newSearch, tweetId)
+        }
+ 
+        // start streaming if endDate is in the future
+        if (new Date(endDate) > now) {
+          await db.startStream(newSearch, tweetId)
         }
         
       }

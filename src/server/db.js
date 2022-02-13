@@ -367,8 +367,10 @@ export class Database {
     }
   }
 
-  deleteSearch(search) {
-    log.info('deleting search', {id: search.id})
+  async deleteSearch(search) {
+    log.info(`deleting search ${search.id}`)
+    await this.stopSearch(search)
+    await this.stopStream(search)
     return Search.query().del().where('id', search.id)
   }
 
@@ -585,7 +587,9 @@ export class Database {
       type: 'stream',
       queryId: lastQuery.id, 
       tweetId: tweetId,
-      started: new Date()
+      started: new Date(),
+      tweets_start: new Date(),
+      tweets_end: lastQuery.value.endDate
     })
     log.info(`created job ${job.id}`)
 
@@ -630,27 +634,27 @@ export class Database {
     // get the most recent query
     const lastQuery = search.queries[search.queries.length - 1]
 
-    // set the endDate of the search to the earliest tweet time or now
-    const earliest = await this.getEarliestTweet(search)
-    if (earliest) {
-      lastQuery.value.endDate = earliest
-      await this.updateQuery(lastQuery)
-    } else {
-      // note: the Twitter API throws an error if current time is used!?
-      const recent = moment().subtract(1, 'minutes')
-      lastQuery.value.endDate = recent
-      await this.updateQuery(lastQuery)
+    // can't search into the future
+    let tweetsEnd = moment().subtract(1, 'minutes')
+    if (moment(lastQuery.value.endDate) < tweetsEnd) {
+      tweetsEnd = lastQuery.value.endDate
     }
 
-    const job = await this.createSearchJob({
-      type: 'search',
-      queryId: lastQuery.id, 
-      tweetId: tweetId,
-      started: new Date()
-    })
+    const tweetsStart = lastQuery.value.startDate
 
-    log.info(`adding job ${job.id} to search job queue`)
-    return this.redis.lpushAsync(startSearchJobKey, job.id)
+    if (tweetsStart < tweetsEnd) {
+      const job = await this.createSearchJob({
+        type: 'search',
+        queryId: lastQuery.id,
+        tweetId: tweetId,
+        started: new Date(),
+        tweetsStart: tweetsStart,
+        tweetsEnd: tweetsEnd
+      })
+
+      log.info(`adding job ${job.id} to search job queue`)
+      return this.redis.lpushAsync(startSearchJobKey, job.id)
+    }
   }
 
   async stopSearch(search) {

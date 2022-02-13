@@ -50,8 +50,9 @@ export default class SearchInfo extends Component {
     } else if (this.state.goHome) {
       return <Redirect to="/searches" push={true} />
     }
-    const created = moment(this.props.search.created).local().format('MMM D Y h:mm A')
-    const modified = moment(this.props.search.modified).local().format('MMM D Y h:mm A')
+    const created = moment(this.props.search.created).local().format('LL')
+    const minDate = moment(this.props.search.minDate).local().format('LLL')
+    const maxDate = moment(this.props.search.maxDate).local().format('LLL')
 
     // only admins can change whether a search is public (a collection) or not
     const setPublicColumn = this.props.user.admin ? <TableCell>Public</TableCell> : ''
@@ -76,7 +77,7 @@ export default class SearchInfo extends Component {
             <TableCell>Title</TableCell>
             <TableCell>Tweet Count</TableCell>
             <TableCell>Created</TableCell>
-            <TableCell>Last Update</TableCell>
+            <TableCell>Tweet Time Range</TableCell>
             <TableCell>Active</TableCell>
             {setPublicColumn}
             <TableCell>Archive</TableCell>
@@ -98,7 +99,7 @@ export default class SearchInfo extends Component {
             {created}
           </TableCell>
           <TableCell>
-            {modified}
+            {minDate} - {maxDate}
           </TableCell>
           <TableCell>
             <SearchToggle

@@ -15,9 +15,9 @@ var _classCallCheck2 = _interopRequireDefault(require("@babel/runtime/helpers/cl
 
 var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 
-var _metaweb = _interopRequireDefault(require("metaweb"));
-
 var _logger = _interopRequireDefault(require("./logger"));
+
+var _metaweb = _interopRequireDefault(require("metaweb"));
 
 var _redis = require("./redis");
 

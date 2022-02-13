@@ -236,14 +236,18 @@ var Twitter = /*#__PURE__*/function () {
       }
 
       if (opts.startDate) {
-        var t = new Date(params.startDate);
+        var t = new Date(opts.startDate);
         params.start_time = t.toISOString().replace(/\.\d+Z$/, 'Z');
       }
 
       if (opts.endDate) {
         var _t = new Date(opts.endDate);
 
-        params.end_time = _t.toISOString().replace(/\.\d+Z$/, 'Z');
+        if (_t > new Date()) {
+          _logger["default"].info('ignoring search endDate in the future');
+        } else {
+          params.end_time = _t.toISOString().replace(/\.\d+Z$/, 'Z');
+        }
       }
 
       if (opts.sinceId) {
@@ -638,14 +642,10 @@ var Twitter = /*#__PURE__*/function () {
       }) : [];
       var place = null;
 
-      if (t.geo && t.geo.place_id) {
+      if (t.geo) {
         place = {
-          name: t.geo.full_name,
-          type: t.geo.place_type,
           id: t.geo.place_id,
-          country: t.geo.country,
-          countryCode: t.geo.country_code,
-          boundingBox: t.geo.geo.bbox
+          coordinates: t.geo.coordinates
         };
       }
 
