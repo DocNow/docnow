@@ -105,7 +105,7 @@ export default class SearchToggle extends Component {
       }
     }
 
-    const adminNote = ' Since you are an adminstrator on this instance you can leave this blank.'
+    const adminNote = this.props.user.admin ? 'Since you are an adminstrator on this instance you can adjust the text or leave it blank.' : ''
 
     // determine the farthest back the instance can search depending on whether
     // it has academic search turned on for the twitter app credentials
@@ -171,7 +171,7 @@ export default class SearchToggle extends Component {
                 label="Collection Description"
                 multiline={true}
                 rows={5}
-                helperText={`A description of your search to help others understand why you are creating the collection.${adminNote}`}
+                helperText={`A description of your search to help others understand why you are creating the collection.`}
                 placeholder="For example: This collection is being created to document this significant event in our community. Data will be stored in our community center."
                 value={this.state.description || ''} 
                 onChange={e => this.setState({description: e.target.value})} />
@@ -187,8 +187,11 @@ export default class SearchToggle extends Component {
                 label="Tweet Text"
                 multiline={true}
                 rows={5}
-                helperText={`Starting tweet collection will cause a tweet to be sent on your behalf letting users know about your collection.${adminNote}`}
+                helperText={`Starting tweet collection will cause this tweet to be sent on your behalf to let users know about your collection, and to give them an opportunity to specify their terms of consent. ${adminNote}`}
                 value={this.state.tweetText} 
+                InputProps={{
+                  readOnly: ! this.props.user.admin
+                }}
                 onChange={e => this.setState({tweetText: e.target.value})} />
             </section>
 
