@@ -16,8 +16,6 @@
     "test:cmd": "better-npm-run test:cmd",
     "eslint:server": "eslint src/server/*",
     "reset": "node dist/commands/reset",
-    "update-indexes": "node dist/commands/update-indexes",
-    "merge-indexes": "node dist/commands/merge-indexes",
     "load-places": "node dist/commands/load-places",
     "sudo": "node dist/commands/sudo",
     "url-fetcher": "node dist/commands/url-fetcher",

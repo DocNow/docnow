@@ -47,7 +47,6 @@ export default class SearchList extends Component {
             <TableCell>Title</TableCell>
             <TableCell>Tweet Count</TableCell>
             <TableCell>Created</TableCell>
-            <TableCell>Last Update</TableCell>
             <TableCell>Active</TableCell>
             {setPublicColumn}
             <TableCell>Archive</TableCell>
@@ -56,8 +55,7 @@ export default class SearchList extends Component {
         </TableHead>
         <TableBody>
         {this.props.searches.map(search => {
-          const created = moment(search.created).local().format('MMM D, Y')
-          const updated = moment(search.updated).local().format('MMM D, Y')
+          const created = moment(search.created).local().format('LL')
 
           // only admins can set whether a search is a public collection or not
           let setPublicCell = ''
@@ -88,9 +86,6 @@ export default class SearchList extends Component {
               </TableCell>
               <TableCell>
                 {created}
-              </TableCell>
-              <TableCell>
-                {updated}
               </TableCell>
               <TableCell>
                 <SearchToggle

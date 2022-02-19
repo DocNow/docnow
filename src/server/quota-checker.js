@@ -3,7 +3,9 @@ import { Database } from './db'
 
 /*
  * QuotaChecker monitors active searches and stops them if the user 
- * is over their quota or if the search is over its defined limit.
+ * is over their quota, if the search is over its defined limit,
+ * or if the stream should be stopped because it is past its end
+ * date.
  */
 
 export class QuotaChecker {
@@ -38,9 +40,17 @@ export class QuotaChecker {
         await this.db.stopStream(search)
         await this.db.stopSearch(search)
       }
-      
+
+      // check if the search should stop streaming?
+      const now = new Date()
+      for (const job of lastQuery.searchJobs) {
+        if (job.type === 'stream' && ! job.ended && now > new Date(job.tweetsEnd)) {
+          log.info(`stopping stream for ${search.id} since it is past its end time`)
+          await this.db.stopStream(search)
+        }
+      }
     }
-  } 
+  }
 
   async stop() {
     log.info('stopping QuotaChecker')

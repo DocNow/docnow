@@ -23,6 +23,12 @@ var _db = require("./db");
 
 var _redis = require("./redis");
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it = typeof Symbol !== "undefined" && o[Symbol.iterator] || o["@@iterator"]; if (!it) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = it.call(o); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e2) { didErr = true; err = _e2; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
 /*
  * SearchLoader connects will fetch search jobs from the queue and run them.
  */
@@ -83,11 +89,11 @@ var SearchLoader = /*#__PURE__*/function () {
                           };
 
                           if (job.query.value.startDate) {
-                            opts.startDate = job.query.value.StartDate;
+                            opts.startDate = job.tweetsStart;
                           }
 
                           if (job.query.value.endDate) {
-                            opts.endDate = job.query.value.endDate;
+                            opts.endDate = job.tweetsEnd;
                           }
 
                           if (job.nextToken) {
@@ -96,12 +102,14 @@ var SearchLoader = /*#__PURE__*/function () {
 
                           _this.twtr.search(opts, /*#__PURE__*/function () {
                             var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee(err, tweets, nextToken) {
+                              var activeStream, query, _iterator, _step, j;
+
                               return _regenerator["default"].wrap(function _callee$(_context) {
                                 while (1) {
                                   switch (_context.prev = _context.next) {
                                     case 0:
                                       if (!err) {
-                                        _context.next = 6;
+                                        _context.next = 5;
                                         break;
                                       }
 
@@ -111,67 +119,104 @@ var SearchLoader = /*#__PURE__*/function () {
                                       return (0, _utils.timer)(3000);
 
                                     case 4:
-                                      _this.db.redis.lpushAsync(_redis.startSearchJobKey, job.id);
-
                                       return _context.abrupt("return");
 
-                                    case 6:
+                                    case 5:
                                       if (!(tweets == 0)) {
-                                        _context.next = 8;
+                                        _context.next = 7;
                                         break;
                                       }
 
                                       return _context.abrupt("return");
 
-                                    case 8:
+                                    case 7:
                                       if (!_this.active) {
-                                        _context.next = 23;
+                                        _context.next = 32;
                                         break;
                                       }
 
-                                      _context.next = 11;
+                                      _context.next = 10;
                                       return _this.db.loadTweets(job.query.search, tweets);
 
-                                    case 11:
+                                    case 10:
                                       if (!nextToken) {
-                                        _context.next = 18;
+                                        _context.next = 17;
                                         break;
                                       }
 
                                       _logger["default"].info("queueing next search job ".concat(job.id));
 
-                                      _context.next = 15;
+                                      _context.next = 14;
                                       return _this.db.updateSearchJob({
                                         id: job.id,
                                         nextToken: nextToken
                                       });
 
-                                    case 15:
+                                    case 14:
                                       _this.db.redis.lpushAsync(_redis.startSearchJobKey, job.id);
 
-                                      _context.next = 21;
+                                      _context.next = 30;
                                       break;
 
-                                    case 18:
+                                    case 17:
                                       _logger["default"].info("no more search results for search job ".concat(job.id));
 
-                                      _context.next = 21;
+                                      _context.next = 20;
                                       return _this.db.updateSearchJob({
                                         id: job.id,
                                         ended: new Date()
                                       });
 
-                                    case 21:
-                                      _context.next = 24;
-                                      break;
+                                    case 20:
+                                      // determine if there's an active stream job for this search
+                                      activeStream = false;
+                                      _context.next = 23;
+                                      return _this.db.getQuery(job.query.id);
 
                                     case 23:
+                                      query = _context.sent;
+                                      _iterator = _createForOfIteratorHelper(query.searchJobs);
+
+                                      try {
+                                        for (_iterator.s(); !(_step = _iterator.n()).done;) {
+                                          j = _step.value;
+
+                                          if (j.type == 'stream' && !j.ended) {
+                                            activeStream = true;
+                                          }
+                                        } // set search to inactive if there's not an active stream
+
+                                      } catch (err) {
+                                        _iterator.e(err);
+                                      } finally {
+                                        _iterator.f();
+                                      }
+
+                                      if (activeStream) {
+                                        _context.next = 30;
+                                        break;
+                                      }
+
+                                      _context.next = 29;
+                                      return _this.db.updateSearch({
+                                        id: query.search.id,
+                                        active: false
+                                      });
+
+                                    case 29:
+                                      _logger["default"].info("flagging search ".concat(query.search.id, " as inactive"));
+
+                                    case 30:
+                                      _context.next = 33;
+                                      break;
+
+                                    case 32:
                                       _logger["default"].warn('search loader callback received tweets when no longer active');
 
-                                    case 24:
+                                    case 33:
                                       return _context.abrupt("return", false);
 
-                                    case 25:
+                                    case 34:
                                     case "end":
                                       return _context.stop();
                                   }

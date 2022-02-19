@@ -113,7 +113,7 @@ describe('twitter', () => {
       return true
     })
 
-    await timer(5000)
+    await timer(10000)
     ok(count > 1)
   })
 

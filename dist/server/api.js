@@ -586,13 +586,13 @@ app.get('/search/:searchId', /*#__PURE__*/function () {
 }());
 app.put('/search/:searchId', /*#__PURE__*/function () {
   var _ref8 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(req, res) {
-    var search, error, tweetText, startDate, limit, newSearch, tweetId, twtr, lastQuery, archive;
+    var search, error, tweetText, startDate, endDate, limit, newSearch, tweetId, twtr, lastQuery, now, archive;
     return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
         switch (_context8.prev = _context8.next) {
           case 0:
             if (!req.user) {
-              _context8.next = 59;
+              _context8.next = 64;
               break;
             }
 
@@ -607,53 +607,55 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
             delete req.body.tweetText;
             startDate = req.body.startDate;
             delete req.body.startDate;
+            endDate = req.body.endDate;
+            delete req.body.endDate;
             limit = req.body.limit;
             delete req.body.limit; // update the search
 
             newSearch = _objectSpread(_objectSpread({}, search), req.body);
-            _context8.next = 14;
+            _context8.next = 16;
             return db.updateSearch(newSearch);
 
-          case 14:
+          case 16:
             if (!req.query.refreshTweets) {
-              _context8.next = 18;
+              _context8.next = 20;
               break;
             }
 
             db.importFromSearch(search); // are they stopping collection?
 
-            _context8.next = 56;
+            _context8.next = 61;
             break;
 
-          case 18:
+          case 20:
             if (!(search.active && !newSearch.active)) {
-              _context8.next = 25;
+              _context8.next = 27;
               break;
             }
 
-            _context8.next = 21;
+            _context8.next = 23;
             return db.stopStream(search);
 
-          case 21:
-            _context8.next = 23;
+          case 23:
+            _context8.next = 25;
             return db.stopSearch(search);
 
-          case 23:
-            _context8.next = 56;
+          case 25:
+            _context8.next = 61;
             break;
 
-          case 25:
+          case 27:
             if (!(!search.active && newSearch.active)) {
-              _context8.next = 55;
+              _context8.next = 60;
               break;
             }
 
-            _context8.next = 28;
+            _context8.next = 30;
             return db.userOverQuota(req.user);
 
-          case 28:
+          case 30:
             if (!_context8.sent) {
-              _context8.next = 33;
+              _context8.next = 35;
               break;
             }
 
@@ -662,68 +664,77 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
               code: 1
             };
             newSearch.active = false;
-            _context8.next = 53;
+            _context8.next = 58;
             break;
 
-          case 33:
-            _context8.next = 35;
+          case 35:
+            _context8.next = 37;
             return db.updateSearch({
               id: search.id,
               "public": new Date()
             });
 
-          case 35:
+          case 37:
             // tweet the announcement if we were given text to tweet
             tweetId = null;
 
             if (!tweetText) {
-              _context8.next = 43;
+              _context8.next = 45;
               break;
             }
 
-            _context8.next = 39;
+            _context8.next = 41;
             return db.getTwitterClientForUser(req.user);
 
-          case 39:
+          case 41:
             twtr = _context8.sent;
-            _context8.next = 42;
+            _context8.next = 44;
             return twtr.sendTweet(tweetText);
 
-          case 42:
+          case 44:
             tweetId = _context8.sent;
 
-          case 43:
+          case 45:
             // update the query with any limit or startDate that were given
             lastQuery = newSearch.queries[newSearch.queries.length - 1];
             lastQuery.value.startDate = startDate;
+            lastQuery.value.endDate = endDate;
             lastQuery.value.limit = limit;
-            _context8.next = 48;
+            _context8.next = 51;
             return db.updateQuery(lastQuery);
 
-          case 48:
-            _context8.next = 50;
-            return db.startStream(newSearch, tweetId);
+          case 51:
+            // start a search if either startDate or endDate are in the past
+            now = new Date();
 
-          case 50:
-            if (!startDate) {
-              _context8.next = 53;
+            if (!(new Date(startDate) < now)) {
+              _context8.next = 55;
               break;
             }
 
-            _context8.next = 53;
+            _context8.next = 55;
             return db.startSearch(newSearch, tweetId);
 
-          case 53:
-            _context8.next = 56;
+          case 55:
+            if (!(new Date(endDate) > now)) {
+              _context8.next = 58;
+              break;
+            }
+
+            _context8.next = 58;
+            return db.startStream(newSearch, tweetId);
+
+          case 58:
+            _context8.next = 61;
             break;
 
-          case 55:
+          case 60:
             if (!search.archiveStarted && newSearch.archiveStarted) {
               archive = new _archive.Archive();
               archive.createArchive(search);
             }
 
-          case 56:
+          case 61:
             // if we ran into an error return that, otherwise return the new search!
             if (error) {
               newSearch.error = error;
@@ -732,13 +743,13 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
               res.json(newSearch);
             }
 
-            _context8.next = 60;
+            _context8.next = 65;
             break;
 
-          case 59:
+          case 64:
             notAuthorized(res);
 
-          case 60:
+          case 65:
           case "end":
             return _context8.stop();
         }
