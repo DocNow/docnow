@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import style from './SearchTerm.css'
 import TextField from '@material-ui/core/TextField'
+import Tooltip from '@material-ui/core/Tooltip'
 
 export default class SearchTerm extends Component {
 
@@ -98,24 +99,16 @@ export default class SearchTerm extends Component {
     const cssClass = this.cssClass(type)
     const otherClassNames = this.props.className ? this.props.className : ''
     let chip = (
-      <span className={`${style.SearchTerm} ${otherClassNames}`}
+      <Tooltip title={`Explore tweets with the ${type} "${this.props.value}"`} placement="right" arrow>
+        <div className={`${style.SearchTerm} ${otherClassNames}`}
           ref={this.chip}          
           onClick={(e) => this.click(e)}          
           data-type={type}>
-          {this.props.value}</span>
+          {this.props.value}
+        </div>
+      </Tooltip>
     )
     if (this.props.onInput) {
-      // chip = (
-      //   <input className={`mdc-chip__text ${style.SearchTerm} ${otherClassNames}`}
-      //     spellCheck={false}
-      //     ref={this.chip}
-      //     data-type={type}
-      //     onKeyDown={(e) => {this.keyDown(e)}}
-      //     onChange={(e) => {this.update(e)}}
-      //     onBlur={(e) => {this.update(e)}}
-      //     value={this.props.value}
-      //     style={{width: `${this.props.value.length || 1}ch`}}/>
-      // )
       chip = (
         <TextField
           ref={this.chip}

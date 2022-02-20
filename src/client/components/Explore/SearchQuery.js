@@ -24,7 +24,7 @@ export default class SearchQuery extends Component {
     if (this.props.query.length === 0 && ! this.props.active) {
       placeHolder = (
         <div>
-          enter a <span className={style.SearchTerm + ' ' + style.Keyword}>&nbsp;keyword&nbsp;</span> &nbsp;
+          enter <span className={style.SearchTerm + ' ' + style.Keyword}>&nbsp;keyword&nbsp;</span> &nbsp;
           <span className={style.SearchTerm + ' ' + style.Phrase}>&nbsp;a phrase&nbsp;</span> &nbsp;
           <span className={style.SearchTerm + ' ' + style.Hashtag}>&nbsp;#hashtag&nbsp;</span> &nbsp;
           <span className={style.SearchTerm + ' ' + style.User}>&nbsp;@user&nbsp;</span>
