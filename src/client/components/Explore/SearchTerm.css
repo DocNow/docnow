@@ -1,19 +1,16 @@
 .SearchTerm {
-  outline: none;
   cursor: pointer;
   color: rgba(0, 0, 0, 0.87);
-  border: none;
   cursor: default;
   height: 32px;
   display: inline-flex;
   outline: 0;
-  padding: 0;
-  font-size: 0.8125rem;
+  margin-right: 5px;
   box-sizing: border-box;
   transition: background-color 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1) 0ms;
   align-items: center;
   white-space: nowrap;
-  border-radius: 16px;
+  border-radius: 4px;
   vertical-align: middle;
   justify-content: center;
   text-decoration: none;
