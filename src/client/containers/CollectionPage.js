@@ -13,6 +13,7 @@ const mapStateToProps = (state, ownProps) => {
     user: state.user,
     searchId: ownProps.match.params.searchId,
     search: state.search,
+    randomTweets: state.randomTweets
   }
 }
 

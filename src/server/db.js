@@ -817,6 +817,17 @@ export class Database {
     )
   }
 
+  async getTweetsForScreenName(search, screenName) {
+    return this.pickJson(
+      Tweet.query()
+        .where({searchId: search.id, screenName: screenName})
+        .whereNull('retweetId')
+        .orderBy('id', 'DESC')
+        .limit(100)
+    )
+  }
+
+
   async getTweetsByIds(search, ids) {
     return this.pickJson(
       Tweet.query()
