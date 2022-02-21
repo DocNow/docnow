@@ -653,7 +653,11 @@ export class Database {
       })
 
       log.info(`adding job ${job.id} to search job queue`)
-      return this.redis.lpushAsync(startSearchJobKey, job.id)
+      this.redis.lpushAsync(startSearchJobKey, job.id)
+
+      return job
+    } else {
+      return null
     }
   }
 
