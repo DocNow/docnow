@@ -37,7 +37,7 @@ export default class Trends extends MediaQueryComponent {
           <p>
           Welcome to DocNow, a social media appraisal tool.
           </p>
-          <Button 
+          <Button
             variant="contained" color="primary"
             onClick={() => {window.location = '/auth/twitter'; return false}}>
             <ion-icon name="logo-twitter"></ion-icon> &nbsp; Login with Twitter
@@ -45,6 +45,12 @@ export default class Trends extends MediaQueryComponent {
         </div>
       )
     } else {
+      introElement = (
+        <div className={style.Intro}>
+          <p>Add a Twitter Place to find currently trending terms. Click a term to start exploring the tweets, users, and associated media.
+          </p>
+        </div>
+      )
       newLocation = (
         <AddPlace
           limit={6}
@@ -75,7 +81,7 @@ export default class Trends extends MediaQueryComponent {
                 createSearch={this.props.createSearch}/>
             ))}
             {newLocation}
-          </div>          
+          </div>
         </div>
       </div>
     )
