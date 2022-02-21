@@ -10,6 +10,7 @@ import users from './users'
 import webpages from './webpages'
 import queue from './queue'
 import tweets from './tweets'
+import randomTweets from './random-tweets'
 import stats from './stats'
 import message from './message'
 
@@ -23,6 +24,7 @@ export default (history) => combineReducers({
   webpages,
   queue,
   tweets,
+  randomTweets,
   stats,
   message,
   router: connectRouter(history)

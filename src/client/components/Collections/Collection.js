@@ -35,7 +35,6 @@ export default class CollectionList extends Component {
       findingUser: false,
       lastUserLookup: ''
     }
-    this.randomTweet = Math.floor(Math.random() * (98))
   }
 
   componentDidMount() {
@@ -118,13 +117,6 @@ export default class CollectionList extends Component {
     }
 
     const tweetCount = this.props.search.tweetCount.toLocaleString()
-
-    let tweets = 'Loading tweets...'
-    if (this.props.search.tweets.length > 0) {
-      tweets = this.props.search.tweets.slice(this.randomTweet, this.randomTweet + 2).map((t, i) => {
-        return <Tweet key={`t${i}`} data={t} />
-      })
-    }
 
     let userTweets = (<div className={style.CardInnerContent}>
       <Typography variant="body1">Authenticate to Twitter to find out if any of your tweets are
@@ -272,8 +264,10 @@ export default class CollectionList extends Component {
               <Typography variant="h2" className={style.CardTitle}>
                 {tweetCount} tweets (all users)
               </Typography>
-              <Typography variant="body2">Showing 2 random tweets from the collection.</Typography>
-              {tweets}
+              <Typography variant="body2">Showing random tweets from the collection.</Typography>
+              { this.props.randomTweets.slice(0, 10).map((t, i) => (
+                <Tweet key={`t${i}`} data={t} />
+              ))}
             </CardContent>
           </Card>
         </div>
@@ -296,4 +290,5 @@ CollectionList.propTypes = {
   setConsentActions: PropTypes.func,
   revokeConsent: PropTypes.func,
   resetTwitterSearch: PropTypes.func,
+  randomTweets: PropTypes.array
 }

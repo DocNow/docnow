@@ -396,6 +396,11 @@ app.get('/search/:searchId/tweets', (req, res) => {
        } else {
          res.json([])
        }
+    } else if (req.query.user) {
+      db.getTweetsForScreenName(search, req.query.user)
+        .then((tweets) => {
+          res.json(tweets)
+        })
     } else if (req.query.image) {
       db.getTweetsForImage(search, req.query.image)
         .then((tweets) => {
