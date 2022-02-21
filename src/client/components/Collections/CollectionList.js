@@ -41,7 +41,8 @@ export default class CollectionList extends Component {
             <FindMe user={this.props.user} />
           </Grid>
           <Grid item xs={12} className={style.Title}>
-            <Typography variant="h2">Public Collections</Typography>
+          <Typography variant="h2">COLLECTIONS</Typography>
+            <Typography variant="h2">Here you will find all active collections being collected by our DocNow users. Use the Find Me <sup><small><b>beta</b></small></sup>&nbsp; feature to learn if your content is in a collection and how you can specify or revoke consent.</Typography>
           </Grid>
         </Grid>
         <Table>
