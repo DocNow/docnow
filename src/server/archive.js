@@ -115,32 +115,11 @@ export class Archive {
   }
 
   async saveData(data, searchDir) {
-    return new Promise(async (resolve, reject) => {
-      try {
+    const jsonData = JSON.stringify(data)
+    fs.writeFileSync(path.join(searchDir, 'data.json'), jsonData)
 
-        // Write a JSON representation of the data
-        const jsonPath = path.join(searchDir, 'data.json')
-        const jsonFh = fs.createWriteStream(jsonPath)
-        jsonFh.write(JSON.stringify(data, null, 2))
-        jsonFh.end('')
-      
-        // Write a JS representation of the data
-        const jsPath = path.join(searchDir, 'data.js')
-        const jsFh = fs.createWriteStream(jsPath)
-        jsFh.write('var searchData = ')
-        jsFh.write(JSON.stringify(data))
-        jsFh.end('')
-
-        jsonFh.on('close', () => {
-          jsFh.on('close', () => {
-            resolve(data)
-          })
-        })
-      } catch (err) {
-        console.log(err)
-        reject(`unable to write archive: ${err}`)
-      }
-    })
+    const jsData = `var searchData = ${jsonData};`
+    fs.writeFileSync(path.join(searchDir, 'data.js'), jsData)
   }
 
   writeZip(searchDir, zipPath) {
