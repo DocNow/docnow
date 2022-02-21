@@ -2,6 +2,7 @@ import { Database } from '../src/server/db'
 import { ok, equal } from 'assert'
 import { SearchLoader } from '../src/server/search-loader'
 import { timer } from '../src/server/utils'
+import moment from 'moment'
 
 const db = new Database({redis: {db: 9}})
 let user = null
@@ -31,6 +32,10 @@ describe('search-loader', () => {
       twitterAccessTokenSecret: process.env.ACCESS_TOKEN_SECRET
     })
 
+    const now = moment()
+    const start = moment().subtract(4, 'days').toDate()
+    const end  = moment().subtract(2, 'days').toDate()
+
     search = await db.createSearch({
       userId: user.id,
       title: 'Search Test',
@@ -45,7 +50,8 @@ describe('search-loader', () => {
                 value: 'music'
               }
             ],
-            startDate: '2008-12-31',
+            startDate: start,
+            endDate: end,
             limit: 200
           }
         }
@@ -68,7 +74,9 @@ describe('search-loader', () => {
 
     // flag our search as starting
     await timer(1000)
-    db.startSearch(search, '123')
+    const job = await db.startSearch(search, '123')
+    ok(job, 'startSearch returned a job')
+    ok(job.id, 'job.id is set')
 
     // wait 10 seconds for the search loader to load some tweets
     await timer(10000)
