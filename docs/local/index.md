@@ -1,7 +1,10 @@
-# Running in the Cloud
+# Running Locally
 
-I'm baby iPhone shoreditch af hella, hoodie put a bird on it DIY poutine live-edge synth ethical tacos. Umami adaptogen art party slow-carb. Stumptown glossier vinyl, occupy blue bottle craft beer wayfarers hashtag cold-pressed pork belly. Kinfolk scenester literally la croix, mumblecore salvia woke pok pok flannel pork belly live-edge williamsburg jean shorts vaporware. Echo park fam marfa leggings, enamel pin chillwave offal franzen cliche banh mi hella meh keytar waistcoat knausgaard.
+The Docnow App can be run as a local installation on a computer under your control. The instructions assume you have administrator (elevated) privileges on your local personal computer. 
 
-Celiac vinyl prism copper mug PBR&B kickstarter kombucha. Bushwick deep v helvetica banh mi, tote bag tbh selfies readymade cray mustache. Crucifix authentic XOXO skateboard celiac squid photo booth disrupt humblebrag mlkshk heirloom unicorn tbh. Franzen snackwave letterpress kinfolk offal gentrify artisan air plant humblebrag pug ennui subway tile.
+The use case for this is to find out what the Docnow App is capable of. The installation will have scaled down capabilities as the [Community Instance](https://community.docnow.io) but will be on your personal computer. 
 
-Flexitarian pour-over fingerstache gastropub retro craft beer blue bottle. Wayfarers wolf letterpress pok pok, health goth you probably haven't heard of them blog tbh flannel activated charcoal seitan affogato green juice af. Asymmetrical drinking vinegar blue bottle ethical banh mi pabst. Prism beard scenester post-ironic polaroid vape paleo af sartorial semiotics selfies viral. Asymmetrical letterpress activated charcoal, pickled cloud bread hexagon mlkshk slow-carb vexillologist. Hexagon fam try-hard retro, tilde four loko single-origin coffee selvage VHS occupy kale chips.
+Some of the limitations will include:
+ * the resulting URL cannot be shared for use with others
+ * the installation will not always be network connected (a requirement of the app to collect tweets)
+ * the installations performance will be impacted by other applications are running on your computer
