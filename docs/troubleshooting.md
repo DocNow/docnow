@@ -1,7 +1,3 @@
 # Troubleshooting
 
-I'm baby iPhone shoreditch af hella, hoodie put a bird on it DIY poutine live-edge synth ethical tacos. Umami adaptogen art party slow-carb. Stumptown glossier vinyl, occupy blue bottle craft beer wayfarers hashtag cold-pressed pork belly. Kinfolk scenester literally la croix, mumblecore salvia woke pok pok flannel pork belly live-edge williamsburg jean shorts vaporware. Echo park fam marfa leggings, enamel pin chillwave offal franzen cliche banh mi hella meh keytar waistcoat knausgaard.
-
-Celiac vinyl prism copper mug PBR&B kickstarter kombucha. Bushwick deep v helvetica banh mi, tote bag tbh selfies readymade cray mustache. Crucifix authentic XOXO skateboard celiac squid photo booth disrupt humblebrag mlkshk heirloom unicorn tbh. Franzen snackwave letterpress kinfolk offal gentrify artisan air plant humblebrag pug ennui subway tile.
-
-Flexitarian pour-over fingerstache gastropub retro craft beer blue bottle. Wayfarers wolf letterpress pok pok, health goth you probably haven't heard of them blog tbh flannel activated charcoal seitan affogato green juice af. Asymmetrical drinking vinegar blue bottle ethical banh mi pabst. Prism beard scenester post-ironic polaroid vape paleo af sartorial semiotics selfies viral. Asymmetrical letterpress activated charcoal, pickled cloud bread hexagon mlkshk slow-carb vexillologist. Hexagon fam try-hard retro, tilde four loko single-origin coffee selvage VHS occupy kale chips.
+If you are having difficulty running the Docnow App, the problem is likely with us and we would like to know. Please reach out to us by [creating an issue](https://github.com/DocNow/docnow/issues/new/choose)
