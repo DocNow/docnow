@@ -1,7 +1,23 @@
-# AWS
+## AWS Lightsail Service Provider
 
-I'm baby iPhone shoreditch af hella, hoodie put a bird on it DIY poutine live-edge synth ethical tacos. Umami adaptogen art party slow-carb. Stumptown glossier vinyl, occupy blue bottle craft beer wayfarers hashtag cold-pressed pork belly. Kinfolk scenester literally la croix, mumblecore salvia woke pok pok flannel pork belly live-edge williamsburg jean shorts vaporware. Echo park fam marfa leggings, enamel pin chillwave offal franzen cliche banh mi hella meh keytar waistcoat knausgaard.
 
-Celiac vinyl prism copper mug PBR&B kickstarter kombucha. Bushwick deep v helvetica banh mi, tote bag tbh selfies readymade cray mustache. Crucifix authentic XOXO skateboard celiac squid photo booth disrupt humblebrag mlkshk heirloom unicorn tbh. Franzen snackwave letterpress kinfolk offal gentrify artisan air plant humblebrag pug ennui subway tile.
+***The following instructions will cost you money. Please remember to turn off your VPS when you are done***
 
-Flexitarian pour-over fingerstache gastropub retro craft beer blue bottle. Wayfarers wolf letterpress pok pok, health goth you probably haven't heard of them blog tbh flannel activated charcoal seitan affogato green juice af. Asymmetrical drinking vinegar blue bottle ethical banh mi pabst. Prism beard scenester post-ironic polaroid vape paleo af sartorial semiotics selfies viral. Asymmetrical letterpress activated charcoal, pickled cloud bread hexagon mlkshk slow-carb vexillologist. Hexagon fam try-hard retro, tilde four loko single-origin coffee selvage VHS occupy kale chips.
+* Mininally you will need to [install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) Ansible will be used to configure the Virtual Private Server you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm) that will be hosting the docnow app.
+* You will need to [create ssh-keys](https://www.scaleway.com/en/docs/configure-new-ssh-key/)
+
+### Configure your account
+
+* Follow the instructions to [create an account here](https://portal.aws.amazon.com/billing/signup?client=lightsail&fid=1A3F6B376ECAC516-2C15C39C5ACECACB&redirect_url=https%3A%2F%2Flightsail.aws.amazon.com%2Fls%2Fsignup#/start)
+
+
+### Create your Virtual Machine
+
+* Create your [Virtual Private Server](https://aws.amazon.com/getting-started/hands-on/launch-a-virtual-machine/)
+  * Select France or Amsterdam
+  * Select Linux/Unix platform option
+  * Select either Ubuntu (18.04) or Centos (7)
+
+ 
+
+### Launch your application
