@@ -17,7 +17,12 @@ theme:
 
 nav: 
   - Introduction: index.md
-  - Run Locally: local.md
+  - Run Locally:
+    - Overview: local/index.md
+    - Centos: local/centOSREADME.md
+    - macOS: local/macOSREADME.md
+    - Ubuntu: local/ubuntuREADME.md
+    - Microsoft Windows: local/mswinOSREADME.md
   - Run in the Cloud:
     - Overview: cloud/index.md
     - AWS: cloud/aws.md
