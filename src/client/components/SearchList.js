@@ -13,6 +13,7 @@ import TableRow from '@material-ui/core/TableRow'
 import Trash from './Trash'
 import SearchToggle from './SearchToggle'
 import SearchPublic from './SearchPublic'
+import Intro from './Intro'
 
 export default class SearchList extends Component {
 
@@ -41,6 +42,10 @@ export default class SearchList extends Component {
 
     const setPublicColumn = this.props.user.admin ?  <TableCell>Public</TableCell> : ''
     return (
+      <>
+      <Intro>
+        Activate a search to start collecting, view insights <sup>beta</sup> into collections, and download Tweet IDs for sharing.
+      </Intro>
       <Table>
         <TableHead>
           <TableRow>
@@ -115,6 +120,7 @@ export default class SearchList extends Component {
         })}
         </TableBody>
       </Table>
+      </>
     )
   }
 }

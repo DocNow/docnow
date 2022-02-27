@@ -5,7 +5,8 @@ import PropTypes from 'prop-types'
 import FindMe from './FindMe'
 import Tweet from '../Explore/Tweet'
 import ConsentModal from './ConsentModal'
-import { ImageLabel } from '../Label.js'
+import { ImageLabel } from '../Label'
+import Intro from '../Intro'
 
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
@@ -224,9 +225,9 @@ export default class CollectionList extends Component {
             </Typography>
           </Grid>
           <Grid item xs={8}>
-            <Typography variant="body1">
-              Collection Description:{ this.props.search.description || 'No description provided for this collection.' }
-            </Typography>
+            <Intro>
+              Collection Description: { this.props.search.description || 'No description provided for this collection.' }
+            </Intro>
           </Grid>
           <Grid item xs={4}>
             <Typography variant="body1">

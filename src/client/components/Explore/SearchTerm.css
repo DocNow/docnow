@@ -14,6 +14,8 @@
   vertical-align: middle;
   justify-content: center;
   text-decoration: none;
+  padding-left: 3px;
+  padding-right: 3px;
 }
 
 .SearchTerm div::before, .SearchTerm div::after {

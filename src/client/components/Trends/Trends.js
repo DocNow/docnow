@@ -3,6 +3,7 @@ import MediaQueryComponent from '../MediaQueryComponent'
 import PropTypes from 'prop-types'
 import Place from './Place'
 import AddPlace from './AddPlace'
+import Intro from '../Intro'
 
 import card from '../Card.css'
 import style from './Trends.css'
@@ -33,23 +34,21 @@ export default class Trends extends MediaQueryComponent {
     let newLocation = null
     if (!loggedIn) {
       introElement = (
-        <div className={style.Intro}>
-          <p>
+        <Intro>
           Welcome to DocNow, a social media appraisal tool.
-          </p>
           <Button
             variant="contained" color="primary"
             onClick={() => {window.location = '/auth/twitter'; return false}}>
             <ion-icon name="logo-twitter"></ion-icon> &nbsp; Login with Twitter
           </Button>
-        </div>
+        </Intro>
       )
     } else {
       introElement = (
-        <div className={style.Intro}>
-          <p>Add a Twitter Place to find currently trending terms. Click a term to start exploring the tweets, users, and associated media.
-          </p>
-        </div>
+        <Intro>
+          Add a Twitter Place to find currently trending terms. Click a term to 
+          start exploring the tweets, users, and associated media.
+        </Intro>
       )
       newLocation = (
         <AddPlace

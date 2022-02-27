@@ -1,5 +1,10 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import Card from '@material-ui/core/Card'
+import CardActions from '@material-ui/core/CardActions'
+import CardContent from '@material-ui/core/CardContent'
+import Fab from '@material-ui/core/Fab'
+
 import TweetList from './TweetList'
 import UserList from './UserList'
 import HashtagChart from './HashtagChart'
@@ -8,16 +13,12 @@ import ImageList from './ImageList'
 import VideoList from './VideoList'
 import SearchSummary from './SearchSummary'
 import SearchQuery from './SearchQuery'
+import Intro from '../Intro'
 
 import styles from './Search.css'
+import searchTermStyle from './SearchTerm.css'
 import card from '../Card.css'
 import animations from '../animations.css'
-
-import Card from '@material-ui/core/Card'
-import CardActions from '@material-ui/core/CardActions'
-import CardContent from '@material-ui/core/CardContent'
-
-import Fab from '@material-ui/core/Fab'
 
 export default class Search extends Component {
 
@@ -114,6 +115,11 @@ export default class Search extends Component {
 
     return (
       <div>
+        <Intro>
+          Search for 
+          a <span className={searchTermStyle.Keyword}>keyword</span> <span className={searchTermStyle.Hashtag}>hashtag</span> <span className={searchTermStyle.User}>user</span> or <span className={searchTermStyle.Phrase}>phrase</span> to explore the most recent 1000 tweets containing that term. You can refine and re-run your search until you have the best terms for your collection, then save your search.
+        </Intro>
+
         <div className={styles.SearchBar}>
 
           <SearchQuery

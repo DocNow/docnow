@@ -10,7 +10,9 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
+
 import FindMe from './FindMe'
+import Intro from '../Intro'
 
 import style from './CollectionList.css'
 
@@ -42,7 +44,9 @@ export default class CollectionList extends Component {
           </Grid>
           <Grid item xs={12} className={style.Title}>
           <Typography variant="h2">COLLECTIONS</Typography>
-            <Typography variant="h2">Here you will find all active collections being collected by our DocNow users. Use the Find Me <sup><small><b>beta</b></small></sup>&nbsp; feature to learn if your content is in a collection and how you can specify or revoke consent.</Typography>
+            <Intro>
+              Here you will find all active collections being collected by our DocNow users. Use the Find Me <sup><small><b>beta</b></small></sup>&nbsp; feature to learn if your content is in a collection and how you can specify or revoke consent.
+            </Intro>
           </Grid>
         </Grid>
         <Table>
