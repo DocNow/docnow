@@ -23,37 +23,38 @@ export class Twitter {
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN
     this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET
 
-    // client for Twitter v1.1 and v2 API endpoints
+    // user client for Twitter v1.1 and v2 API endpoints
     if (this.consumerKey && this.consumerSecret && this.accessToken && this.accessTokenSecret) {
-
-      // v1.1
       this.twit = new Twit({
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
         access_token: this.accessToken,
         access_token_secret: this.accessTokenSecret
       })
-
-      // v2
       this.twitterV2 = new TwitterV2({
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
         access_token_key: this.accessToken,
         access_token_secret: this.accessTokenSecret
       })
-
     } else {
-      log.warn('not configuring user client for v1.1 and v2 endpoints since not all keys are present')
+      log.warn('unable to configure user client since not all keys are present')
     }
 
-    // an app auth client for v2 endpoints
+    // app auth client for v1.1 and v2 endpoints
     if (this.consumerKey && this.consumerSecret) {
       this.twitterV2app = new TwitterV2({
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
       })
+      this.twitApp = new Twit({
+        consumer_key: this.consumerKey,
+        consumer_secret: this.consumerSecret,
+        app_only_auth: true
+      })
+      log.info('configured app client for v1.1 and v2 endpoints')
     } else {
-      log.warn('unable to configure app client for v2 endpoint since not all keys are present')
+      log.warn('unable to configure app client since not all keys are present')
     }
   }
 
@@ -333,7 +334,10 @@ export class Twitter {
         if (e.type === 'photo') {
           images.push(e.url)
         } else if (e.type === 'video') {
-          videos.push(e.preview_image_url)
+          // It would be nice to get the mp4 URL here but Twitter's V2 API
+          // doesn't make that available for now we can look it up
+          // using the tweet id and the media_key against the v1.1 API
+          videos.push(e.media_key)
         } else if (e.type === 'animated_gif') {
           animatedGifs.push(e.preview_image_url)
         }
@@ -388,6 +392,22 @@ export class Twitter {
     return result.data.id_str
   }
 
+  // async hydrate(tweetIds, version = 1, app = true) {
+  async hydrate(tweetIds) {
+    log.info(`hydrating tweet ids: ${tweetIds.join(',')}`)
+
+    /*
+    if (version == 1 && app) {
+      try {
+        const results = await this.twitApp.get('statuses/lookup', {ids: tweetIds.join(',')})
+        return results
+      } catch(err) {
+        log.error(`caught error during statuses/lookup call: ${err}`)
+        return null
+      }
+    }
+    */
+  }
 }
 
 export async function isAcademic(consumerKey, consumerSecret) {

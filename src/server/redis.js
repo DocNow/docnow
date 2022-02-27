@@ -58,3 +58,6 @@ export const searchStatsKey = (search) => `searchstats:${search.id}`
 
 // a queue for search jobs to run
 export const startSearchJobKey = `searchjob`
+
+// a queue for video lookups
+export const fetchVideoKey = 'videoqueue'

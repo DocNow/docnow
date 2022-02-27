@@ -19,7 +19,7 @@ import { UrlFetcher } from './url-fetcher'
 import knexfile from '../../knexfile'
 import Query from './models/Query'
 import SearchJob from './models/SearchJob'
-import { getRedis, searchStatsKey, startSearchJobKey } from './redis'
+import { getRedis, searchStatsKey, startSearchJobKey, fetchVideoKey } from './redis'
 
 const urlFetcher = new UrlFetcher()
 
@@ -653,11 +653,7 @@ export class Database {
       })
 
       log.info(`adding job ${job.id} to search job queue`)
-      this.redis.lpushAsync(startSearchJobKey, job.id)
-
-      return job
-    } else {
-      return null
+      return this.redis.lpushAsync(startSearchJobKey, job.id)
     }
   }
 
@@ -689,6 +685,11 @@ export class Database {
 
       for (const url of tweet.urls) {
         urlFetcher.add(search, url.long, tweet.id)
+      }
+
+      for (const mediaId of tweet.videos) {
+        const job = {search, tweet, mediaId}
+        this.redis.lpushAsync(fetchVideoKey, JSON.stringify(job))
       }
 
       tweetRows.push({
@@ -743,9 +744,8 @@ export class Database {
             urlRows.push({url: url, type: 'image', tweetId: row.id})
           }
 
-          for (const url of new Set(row.json.videos)) {
-            urlRows.push({url: url, type: 'video', tweetId: row.id})
-          }
+          // NOTE: type 'video' are ignored because they need to be looked up
+          // asynchonously with the VideoFetcher (see above)
 
         }
 
@@ -820,17 +820,6 @@ export class Database {
         .limit(100)
     )
   }
-
-  async getTweetsForScreenName(search, screenName) {
-    return this.pickJson(
-      Tweet.query()
-        .where({searchId: search.id, screenName: screenName})
-        .whereNull('retweetId')
-        .orderBy('id', 'DESC')
-        .limit(100)
-    )
-  }
-
 
   async getTweetsByIds(search, ids) {
     return this.pickJson(
@@ -949,27 +938,6 @@ export class Database {
       .orderBy('count', 'DESC')
 
     return this.convertCounts(results)
-  }
-
-  addUrl(search, url) {
-    const job = {url, search}
-    return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
-  }
-
-  processUrl() {
-    return new Promise((resolve, reject) => {
-      this.redis.blpopAsync('urlqueue', 0)
-        .then((result) => {
-          const job = JSON.parse(result[1])
-          resolve({
-            url: job.url,
-            title: 'Twitter'
-          })
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    })
   }
 
   getWebpages(search, start = 0, limit =  100) {
