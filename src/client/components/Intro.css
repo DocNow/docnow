@@ -1,0 +1,23 @@
+.Intro {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  padding-top: 20px;
+}
+
+.Intro p {
+  font-size: 20px;
+  font-weight: 200 !important;
+  color: #000000;
+  background-color: white;
+  border-radius: 10px;
+  padding: 8px;
+  margin: 0 10% 0 10%;
+}
+
+.Intro button {
+  margin-left: 20px;
+  min-width: 250px;
+}
+
+

@@ -26,12 +26,16 @@ export default class AppBar extends Component {
     }
     return (
       <nav className={style.AppBar}>
+
+          <Link to="/profile/">
+            <ion-icon name="contact"></ion-icon> Account Profile - <span className={style.Access}>Full Access</span>
+          </Link>
+          <Link to="/termsofservice/">
+            <ion-icon name="document"></ion-icon> Terms of Service - <span className={style.Access}>Read</span>
+          </Link>
           <a href="/auth/logout">
             <ion-icon name="log-out"></ion-icon> Logout
           </a>
-          <Link to="/profile/">
-            <ion-icon name="contact"></ion-icon> Profile
-          </Link>
           {admin}
       </nav>
     )

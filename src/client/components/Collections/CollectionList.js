@@ -10,7 +10,9 @@ import TableHead from '@material-ui/core/TableHead'
 import TableRow from '@material-ui/core/TableRow'
 import Grid from '@material-ui/core/Grid'
 import Typography from '@material-ui/core/Typography'
+
 import FindMe from './FindMe'
+import Intro from '../Intro'
 
 import style from './CollectionList.css'
 
@@ -41,27 +43,26 @@ export default class CollectionList extends Component {
             <FindMe user={this.props.user} />
           </Grid>
           <Grid item xs={12} className={style.Title}>
-            <Typography variant="h2">Public Collections</Typography>
+          <Typography variant="h2">COLLECTIONS</Typography>
+            <Intro>
+              Here you will find all active collections being collected by our DocNow users. Use the Find Me <sup><small><b>beta</b></small></sup>&nbsp; feature to learn if your content is in a collection and how you can specify or revoke consent.
+            </Intro>
           </Grid>
         </Grid>
         <Table>
           <TableHead>
-            <TableRow>            
+            <TableRow>
               <TableCell>Title</TableCell>
               <TableCell>Tweets</TableCell>
               <TableCell>Created</TableCell>
               <TableCell>Last Update</TableCell>
               <TableCell>Collector</TableCell>
-              <TableCell>Contact</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
           {this.props.searches.map(search => {
             const created = moment(search.created).local().format('MMM D Y h:mm A')
             const updated = moment(search.updated).local().format('MMM D Y h:mm A')
-            const email = search.creator.email
-              ? <a href={`mailto:${search.creator.email}`}>{search.creator.email}</a>
-              : 'No email provided.'
 
             let rowStyle = style.NotFoundInSearch
             let foundCount = ''
@@ -93,7 +94,6 @@ export default class CollectionList extends Component {
                     {search.creator.twitterScreenName}
                   </a>
                 </TableCell>
-                <TableCell>{email}</TableCell>
               </TableRow>
             )
           })}
