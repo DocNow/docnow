@@ -5,7 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.deselectedUrlsKey = void 0;
+exports.fetchVideoKey = exports.deselectedUrlsKey = void 0;
 exports.getRedis = getRedis;
 exports.waybackKey = exports.userTweetsCountKey = exports.urlsKey = exports.urlsCountKey = exports.urlKey = exports.tweetsKey = exports.startSearchJobKey = exports.selectedUrlsKey = exports.searchStatsKey = exports.queueCountKey = exports.metadataKey = void 0;
 
@@ -116,5 +116,8 @@ var searchStatsKey = function searchStatsKey(search) {
 
 
 exports.searchStatsKey = searchStatsKey;
-var startSearchJobKey = "searchjob";
+var startSearchJobKey = "searchjob"; // a queue for video lookups
+
 exports.startSearchJobKey = startSearchJobKey;
+var fetchVideoKey = 'videoqueue';
+exports.fetchVideoKey = fetchVideoKey;

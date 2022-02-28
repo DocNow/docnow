@@ -19,7 +19,7 @@ import { UrlFetcher } from './url-fetcher'
 import knexfile from '../../knexfile'
 import Query from './models/Query'
 import SearchJob from './models/SearchJob'
-import { getRedis, searchStatsKey, startSearchJobKey } from './redis'
+import { getRedis, searchStatsKey, startSearchJobKey, fetchVideoKey } from './redis'
 
 const urlFetcher = new UrlFetcher()
 
@@ -653,11 +653,7 @@ export class Database {
       })
 
       log.info(`adding job ${job.id} to search job queue`)
-      this.redis.lpushAsync(startSearchJobKey, job.id)
-
-      return job
-    } else {
-      return null
+      return this.redis.lpushAsync(startSearchJobKey, job.id)
     }
   }
 
@@ -743,8 +739,18 @@ export class Database {
             urlRows.push({url: url, type: 'image', tweetId: row.id})
           }
 
-          for (const url of new Set(row.json.videos)) {
-            urlRows.push({url: url, type: 'video', tweetId: row.id})
+          // NOTE: For now we need to queue a video lookup job to get the mp4
+          // url for tweets. Hopefully the v2 API will eventually return mp4 URLs 
+          // for videos like v1.1 
+
+          for (const mediaId of row.json.videos) {
+            const job = {
+              searchId: search.id,
+              tweetRowId: row.id,
+              tweetId: row.json.id,
+              mediaId: mediaId
+            }
+            this.redis.lpushAsync(fetchVideoKey, JSON.stringify(job))
           }
 
         }
@@ -820,17 +826,6 @@ export class Database {
         .limit(100)
     )
   }
-
-  async getTweetsForScreenName(search, screenName) {
-    return this.pickJson(
-      Tweet.query()
-        .where({searchId: search.id, screenName: screenName})
-        .whereNull('retweetId')
-        .orderBy('id', 'DESC')
-        .limit(100)
-    )
-  }
-
 
   async getTweetsByIds(search, ids) {
     return this.pickJson(
@@ -943,33 +938,12 @@ export class Database {
     const results = await Tweet.query()
       .where({searchId: search.id, type: 'video'})
       .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
-      .select('url')
+      .select('url', 'thumbnailUrl')
       .count('url')
-      .groupBy('url')
+      .groupBy(['url', 'thumbnailUrl'])
       .orderBy('count', 'DESC')
 
     return this.convertCounts(results)
-  }
-
-  addUrl(search, url) {
-    const job = {url, search}
-    return this.redis.lpushAsync('urlqueue', JSON.stringify(job))
-  }
-
-  processUrl() {
-    return new Promise((resolve, reject) => {
-      this.redis.blpopAsync('urlqueue', 0)
-        .then((result) => {
-          const job = JSON.parse(result[1])
-          resolve({
-            url: job.url,
-            title: 'Twitter'
-          })
-        })
-        .catch((err) => {
-          reject(err)
-        })
-    })
   }
 
   getWebpages(search, start = 0, limit =  100) {
@@ -1138,6 +1112,10 @@ export class Database {
     } else {
       return null
     }
+  }
+
+  insertUrls(urls) {
+    return TweetUrl.query().insert(urls)
   }
 
   async cache(key, ttl = 60, f) {

@@ -27,7 +27,9 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
 /*
  * QuotaChecker monitors active searches and stops them if the user 
- * is over their quota or if the search is over its defined limit.
+ * is over their quota, if the search is over its defined limit,
+ * or if the stream should be stopped because it is past its end
+ * date.
  */
 var QuotaChecker = /*#__PURE__*/function () {
   function QuotaChecker() {
@@ -70,7 +72,7 @@ var QuotaChecker = /*#__PURE__*/function () {
     key: "check",
     value: function () {
       var _check = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee2() {
-        var _iterator, _step, search, user, lastQuery;
+        var _iterator, _step, search, user, lastQuery, now, _iterator2, _step2, job;
 
         return _regenerator["default"].wrap(function _callee2$(_context2) {
           while (1) {
@@ -89,7 +91,7 @@ var QuotaChecker = /*#__PURE__*/function () {
 
               case 7:
                 if ((_step = _iterator.n()).done) {
-                  _context2.next = 27;
+                  _context2.next = 47;
                   break;
                 }
 
@@ -133,32 +135,79 @@ var QuotaChecker = /*#__PURE__*/function () {
                 return this.db.stopSearch(search);
 
               case 25:
+                // check if the search should stop streaming?
+                now = new Date();
+                _iterator2 = _createForOfIteratorHelper(lastQuery.searchJobs);
+                _context2.prev = 27;
+
+                _iterator2.s();
+
+              case 29:
+                if ((_step2 = _iterator2.n()).done) {
+                  _context2.next = 37;
+                  break;
+                }
+
+                job = _step2.value;
+
+                if (!(job.type === 'stream' && !job.ended && now > new Date(job.tweetsEnd))) {
+                  _context2.next = 35;
+                  break;
+                }
+
+                _logger["default"].info("stopping stream for ".concat(search.id, " since it is past its end time"));
+
+                _context2.next = 35;
+                return this.db.stopStream(search);
+
+              case 35:
+                _context2.next = 29;
+                break;
+
+              case 37:
+                _context2.next = 42;
+                break;
+
+              case 39:
+                _context2.prev = 39;
+                _context2.t2 = _context2["catch"](27);
+
+                _iterator2.e(_context2.t2);
+
+              case 42:
+                _context2.prev = 42;
+
+                _iterator2.f();
+
+                return _context2.finish(42);
+
+              case 45:
                 _context2.next = 7;
                 break;
 
-              case 27:
-                _context2.next = 32;
+              case 47:
+                _context2.next = 52;
                 break;
 
-              case 29:
-                _context2.prev = 29;
-                _context2.t2 = _context2["catch"](5);
+              case 49:
+                _context2.prev = 49;
+                _context2.t3 = _context2["catch"](5);
 
-                _iterator.e(_context2.t2);
+                _iterator.e(_context2.t3);
 
-              case 32:
-                _context2.prev = 32;
+              case 52:
+                _context2.prev = 52;
 
                 _iterator.f();
 
-                return _context2.finish(32);
+                return _context2.finish(52);
 
-              case 35:
+              case 55:
               case "end":
                 return _context2.stop();
             }
           }
-        }, _callee2, this, [[5, 29, 32, 35]]);
+        }, _callee2, this, [[5, 49, 52, 55], [27, 39, 42, 45]]);
       }));
 
       function check() {

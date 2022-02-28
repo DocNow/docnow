@@ -30,7 +30,6 @@ export class UrlFetcher {
       for (let i = 0; i < this.concurrency; i++) {
         promises.push(this.fetchJob())
       }
-      log.info('waiting to process ' + this.concurrency + ' urls')
       await Promise.all(promises)
     }
     return true
@@ -57,7 +56,7 @@ export class UrlFetcher {
     const item = await this.redisBlocking.blpopAsync('urlqueue', 10)
     if (item) {
       const job = JSON.parse(item[1])
-      log.info('got job', job)
+      log.info(`got url-fetch job for ${job.url}`)
       result = await this.processJob(job)
     }
     return result

@@ -704,7 +704,7 @@ app.put('/search/:searchId', /*#__PURE__*/function () {
             return db.updateQuery(lastQuery);
 
           case 51:
-            // start a search if either startDate or endDate are in the past
+            // start a search if startDate is in the past
             now = new Date();
 
             if (!(new Date(startDate) < now)) {
@@ -842,6 +842,10 @@ app.get('/search/:searchId/tweets', function (req, res) {
       } else {
         res.json([]);
       }
+    } else if (req.query.user) {
+      db.getTweetsForScreenName(search, req.query.user).then(function (tweets) {
+        res.json(tweets);
+      });
     } else if (req.query.image) {
       db.getTweetsForImage(search, req.query.image).then(function (tweets) {
         res.json(tweets);
