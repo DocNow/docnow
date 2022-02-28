@@ -301,60 +301,26 @@ var Archive = /*#__PURE__*/function () {
   }, {
     key: "saveData",
     value: function () {
-      var _saveData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4(data, searchDir) {
-        return _regenerator["default"].wrap(function _callee4$(_context4) {
+      var _saveData = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(data, searchDir) {
+        var jsonData, jsData;
+        return _regenerator["default"].wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context4.prev = _context4.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
-                return _context4.abrupt("return", new Promise( /*#__PURE__*/function () {
-                  var _ref = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee3(resolve, reject) {
-                    var jsonPath, jsonFh, jsPath, jsFh;
-                    return _regenerator["default"].wrap(function _callee3$(_context3) {
-                      while (1) {
-                        switch (_context3.prev = _context3.next) {
-                          case 0:
-                            try {
-                              // Write a JSON representation of the data
-                              jsonPath = _path["default"].join(searchDir, 'data.json');
-                              jsonFh = _fs["default"].createWriteStream(jsonPath);
-                              jsonFh.write(JSON.stringify(data, null, 2));
-                              jsonFh.end(''); // Write a JS representation of the data
+                jsonData = JSON.stringify(data);
 
-                              // Write a JS representation of the data
-                              jsPath = _path["default"].join(searchDir, 'data.js');
-                              jsFh = _fs["default"].createWriteStream(jsPath);
-                              jsFh.write('var searchData = ');
-                              jsFh.write(JSON.stringify(data));
-                              jsFh.end('');
-                              jsonFh.on('close', function () {
-                                jsFh.on('close', function () {
-                                  resolve(data);
-                                });
-                              });
-                            } catch (err) {
-                              console.log(err);
-                              reject("unable to write archive: ".concat(err));
-                            }
+                _fs["default"].writeFileSync(_path["default"].join(searchDir, 'data.json'), jsonData);
 
-                          case 1:
-                          case "end":
-                            return _context3.stop();
-                        }
-                      }
-                    }, _callee3);
-                  }));
+                jsData = "var searchData = ".concat(jsonData, ";");
 
-                  return function (_x5, _x6) {
-                    return _ref.apply(this, arguments);
-                  };
-                }()));
+                _fs["default"].writeFileSync(_path["default"].join(searchDir, 'data.js'), jsData);
 
-              case 1:
+              case 4:
               case "end":
-                return _context4.stop();
+                return _context3.stop();
             }
           }
-        }, _callee4);
+        }, _callee3);
       }));
 
       function saveData(_x3, _x4) {
@@ -375,19 +341,19 @@ var Archive = /*#__PURE__*/function () {
         archive.on('finish', function () {
           _logger["default"].info("Archive: zip created, cleaning up.");
 
-          (0, _rimraf["default"])(searchDir, {}, /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
-            return _regenerator["default"].wrap(function _callee5$(_context5) {
+          (0, _rimraf["default"])(searchDir, {}, /*#__PURE__*/(0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
+            return _regenerator["default"].wrap(function _callee4$(_context4) {
               while (1) {
-                switch (_context5.prev = _context5.next) {
+                switch (_context4.prev = _context4.next) {
                   case 0:
                     resolve(zipPath);
 
                   case 1:
                   case "end":
-                    return _context5.stop();
+                    return _context4.stop();
                 }
               }
-            }, _callee5);
+            }, _callee4);
           })));
         });
         archive.finalize();
@@ -396,19 +362,19 @@ var Archive = /*#__PURE__*/function () {
   }, {
     key: "close",
     value: function () {
-      var _close = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee6() {
-        return _regenerator["default"].wrap(function _callee6$(_context6) {
+      var _close = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5() {
+        return _regenerator["default"].wrap(function _callee5$(_context5) {
           while (1) {
-            switch (_context6.prev = _context6.next) {
+            switch (_context5.prev = _context5.next) {
               case 0:
                 this.db.close();
 
               case 1:
               case "end":
-                return _context6.stop();
+                return _context5.stop();
             }
           }
-        }, _callee6, this);
+        }, _callee5, this);
       }));
 
       function close() {

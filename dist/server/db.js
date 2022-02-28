@@ -1953,7 +1953,13 @@ var Database = /*#__PURE__*/function () {
                 }
 
                 tweetsStart = lastQuery.value.startDate;
-                _context34.next = 9;
+
+                if (!(tweetsStart < tweetsEnd)) {
+                  _context34.next = 13;
+                  break;
+                }
+
+                _context34.next = 10;
                 return this.createSearchJob({
                   type: 'search',
                   queryId: lastQuery.id,
@@ -1963,14 +1969,14 @@ var Database = /*#__PURE__*/function () {
                   tweetsEnd: tweetsEnd
                 });
 
-              case 9:
+              case 10:
                 job = _context34.sent;
 
                 _logger["default"].info("adding job ".concat(job.id, " to search job queue"));
 
                 return _context34.abrupt("return", this.redis.lpushAsync(_redis.startSearchJobKey, job.id));
 
-              case 12:
+              case 13:
               case "end":
                 return _context34.stop();
             }
@@ -2069,6 +2075,8 @@ var Database = /*#__PURE__*/function () {
     key: "loadTweets",
     value: function () {
       var _loadTweets = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee37(search, tweets) {
+        var _this2 = this;
+
         var tweetRows, _iterator14, _step14, tweet, _iterator20, _step20, url;
 
         return _regenerator["default"].wrap(function _callee37$(_context37) {
@@ -2127,7 +2135,7 @@ var Database = /*#__PURE__*/function () {
                 _context37.next = 7;
                 return _Tweet["default"].transaction( /*#__PURE__*/function () {
                   var _ref4 = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee36(trx) {
-                    var results, hashtagRows, urlRows, _iterator15, _step15, row, hashtags, _iterator16, _step16, name, urls, _iterator17, _step17, url, _iterator18, _step18, _url, _iterator19, _step19, _url2;
+                    var results, hashtagRows, urlRows, _iterator15, _step15, row, hashtags, _iterator16, _step16, name, urls, _iterator17, _step17, url, _iterator18, _step18, _url, _iterator19, _step19, mediaId, job;
 
                     return _regenerator["default"].wrap(function _callee36$(_context36) {
                       while (1) {
@@ -2195,23 +2203,38 @@ var Database = /*#__PURE__*/function () {
                                       type: 'image',
                                       tweetId: row.id
                                     });
-                                  }
+                                  } // NOTE: For now we need to queue a video lookup job to get the mp4
+                                  // url for tweets. Hopefully the v2 API will eventually return mp4 URLs 
+                                  // for videos like v1.1 
+
                                 } catch (err) {
                                   _iterator18.e(err);
                                 } finally {
                                   _iterator18.f();
-                                }
+                                } // NOTE: For now we need to queue a video lookup job to get the mp4
+                                // url for tweets. Hopefully the v2 API will eventually return mp4 URLs 
+                                // for videos like v1.1 
 
-                                _iterator19 = _createForOfIteratorHelper(new Set(row.json.videos));
+
+                                // NOTE: For now we need to queue a video lookup job to get the mp4
+                                // url for tweets. Hopefully the v2 API will eventually return mp4 URLs 
+                                // for videos like v1.1 
+                                _iterator19 = _createForOfIteratorHelper(row.json.videos);
 
                                 try {
+                                  // NOTE: For now we need to queue a video lookup job to get the mp4
+                                  // url for tweets. Hopefully the v2 API will eventually return mp4 URLs 
+                                  // for videos like v1.1 
                                   for (_iterator19.s(); !(_step19 = _iterator19.n()).done;) {
-                                    _url2 = _step19.value;
-                                    urlRows.push({
-                                      url: _url2,
-                                      type: 'video',
-                                      tweetId: row.id
-                                    });
+                                    mediaId = _step19.value;
+                                    job = {
+                                      searchId: search.id,
+                                      tweetRowId: row.id,
+                                      tweetId: row.json.id,
+                                      mediaId: mediaId
+                                    };
+
+                                    _this2.redis.lpushAsync(_redis.fetchVideoKey, JSON.stringify(job));
                                   }
                                 } catch (err) {
                                   _iterator19.e(err);
@@ -2625,32 +2648,6 @@ var Database = /*#__PURE__*/function () {
 
       return getVideos;
     }()
-  }, {
-    key: "addUrl",
-    value: function addUrl(search, url) {
-      var job = {
-        url: url,
-        search: search
-      };
-      return this.redis.lpushAsync('urlqueue', JSON.stringify(job));
-    }
-  }, {
-    key: "processUrl",
-    value: function processUrl() {
-      var _this2 = this;
-
-      return new Promise(function (resolve, reject) {
-        _this2.redis.blpopAsync('urlqueue', 0).then(function (result) {
-          var job = JSON.parse(result[1]);
-          resolve({
-            url: job.url,
-            title: 'Twitter'
-          });
-        })["catch"](function (err) {
-          reject(err);
-        });
-      });
-    }
   }, {
     key: "getWebpages",
     value: function getWebpages(search) {
@@ -3176,6 +3173,11 @@ var Database = /*#__PURE__*/function () {
 
       return getEarliestTweet;
     }()
+  }, {
+    key: "insertUrls",
+    value: function insertUrls(urls) {
+      return _TweetUrl["default"].query().insert(urls);
+    }
   }, {
     key: "cache",
     value: function () {

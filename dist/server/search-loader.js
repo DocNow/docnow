@@ -88,11 +88,11 @@ var SearchLoader = /*#__PURE__*/function () {
                             once: true
                           };
 
-                          if (job.query.value.startDate) {
+                          if (job.tweetsStart) {
                             opts.startDate = job.tweetsStart;
                           }
 
-                          if (job.query.value.endDate) {
+                          if (job.tweetsEnd) {
                             opts.endDate = job.tweetsEnd;
                           }
 

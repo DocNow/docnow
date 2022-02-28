@@ -18,7 +18,9 @@ export default class VideoList extends Component {
         {loader}
         {this.props.videos.map((video) => (
           <div key={video.url} className={style.Video}>
-            <a href=""><img src={video.url} /></a>
+            <video controls preload="none" poster={video.thumbnailUrl}>
+              <source src={video.url} />
+            </video>
             <figcaption>
               <ion-icon name="repeat"></ion-icon> {video.count}
             </figcaption>

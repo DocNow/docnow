@@ -44,7 +44,7 @@ var UrlFetcher = /*#__PURE__*/function () {
 
               case 1:
                 if (!this.active) {
-                  _context.next = 9;
+                  _context.next = 8;
                   break;
                 }
 
@@ -54,19 +54,17 @@ var UrlFetcher = /*#__PURE__*/function () {
                   promises.push(this.fetchJob());
                 }
 
-                _logger["default"].info('waiting to process ' + this.concurrency + ' urls');
-
-                _context.next = 7;
+                _context.next = 6;
                 return Promise.all(promises);
 
-              case 7:
+              case 6:
                 _context.next = 1;
                 break;
 
-              case 9:
+              case 8:
                 return _context.abrupt("return", true);
 
-              case 10:
+              case 9:
               case "end":
                 return _context.stop();
             }
@@ -148,7 +146,7 @@ var UrlFetcher = /*#__PURE__*/function () {
 
                 job = JSON.parse(item[1]);
 
-                _logger["default"].info('got job', job);
+                _logger["default"].info("got url-fetch job for ".concat(job.url));
 
                 _context3.next = 9;
                 return this.processJob(job);

@@ -392,21 +392,23 @@ export class Twitter {
     return result.data.id_str
   }
 
-  // async hydrate(tweetIds, version = 1, app = true) {
   async hydrate(tweetIds) {
-    log.info(`hydrating tweet ids: ${tweetIds.join(',')}`)
-
-    /*
-    if (version == 1 && app) {
-      try {
-        const results = await this.twitApp.get('statuses/lookup', {ids: tweetIds.join(',')})
-        return results
-      } catch(err) {
-        log.error(`caught error during statuses/lookup call: ${err}`)
+    // note: at some point it might be useful to be able to hydrate for v2 as well
+    if (! tweetIds || tweetIds.length == 0) {
+      return null
+    }
+    try {
+      const resp = await this.twitApp.get('statuses/lookup', {id: tweetIds.join(',')})
+      if (resp.data && resp.data.length > 0) {
+        return resp.data
+      } else {
         return null
       }
+    } catch (err) {
+      // note: should raise quota exceeded error here?
+      log.error(`caught error during statuses/lookup call: ${err}`)
+      return null
     }
-    */
   }
 }
 

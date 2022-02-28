@@ -687,11 +687,6 @@ export class Database {
         urlFetcher.add(search, url.long, tweet.id)
       }
 
-      for (const mediaId of tweet.videos) {
-        const job = {search, tweet, mediaId}
-        this.redis.lpushAsync(fetchVideoKey, JSON.stringify(job))
-      }
-
       tweetRows.push({
         searchId: search.id,
         tweetId: tweet.id,
@@ -744,8 +739,19 @@ export class Database {
             urlRows.push({url: url, type: 'image', tweetId: row.id})
           }
 
-          // NOTE: type 'video' are ignored because they need to be looked up
-          // asynchonously with the VideoFetcher (see above)
+          // NOTE: For now we need to queue a video lookup job to get the mp4
+          // url for tweets. Hopefully the v2 API will eventually return mp4 URLs 
+          // for videos like v1.1 
+
+          for (const mediaId of row.json.videos) {
+            const job = {
+              searchId: search.id,
+              tweetRowId: row.id,
+              tweetId: row.json.id,
+              mediaId: mediaId
+            }
+            this.redis.lpushAsync(fetchVideoKey, JSON.stringify(job))
+          }
 
         }
 
@@ -932,9 +938,9 @@ export class Database {
     const results = await Tweet.query()
       .where({searchId: search.id, type: 'video'})
       .join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId')
-      .select('url')
+      .select('url', 'thumbnailUrl')
       .count('url')
-      .groupBy('url')
+      .groupBy(['url', 'thumbnailUrl'])
       .orderBy('count', 'DESC')
 
     return this.convertCounts(results)
@@ -1106,6 +1112,10 @@ export class Database {
     } else {
       return null
     }
+  }
+
+  insertUrls(urls) {
+    return TweetUrl.query().insert(urls)
   }
 
   async cache(key, ttl = 60, f) {

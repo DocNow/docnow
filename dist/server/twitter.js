@@ -64,17 +64,15 @@ var Twitter = /*#__PURE__*/function () {
     this.consumerKey = keys.consumerKey || process.env.CONSUMER_KEY;
     this.consumerSecret = keys.consumerSecret || process.env.CONSUMER_SECRET;
     this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN;
-    this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET; // client for Twitter v1.1 and v2 API endpoints
+    this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET; // user client for Twitter v1.1 and v2 API endpoints
 
     if (this.consumerKey && this.consumerSecret && this.accessToken && this.accessTokenSecret) {
-      // v1.1
       this.twit = new _twit["default"]({
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
         access_token: this.accessToken,
         access_token_secret: this.accessTokenSecret
-      }); // v2
-
+      });
       this.twitterV2 = new _twitterV["default"]({
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret,
@@ -82,8 +80,8 @@ var Twitter = /*#__PURE__*/function () {
         access_token_secret: this.accessTokenSecret
       });
     } else {
-      _logger["default"].warn('not configuring user client for v1.1 and v2 endpoints since not all keys are present');
-    } // an app auth client for v2 endpoints
+      _logger["default"].warn('unable to configure user client since not all keys are present');
+    } // app auth client for v1.1 and v2 endpoints
 
 
     if (this.consumerKey && this.consumerSecret) {
@@ -91,8 +89,15 @@ var Twitter = /*#__PURE__*/function () {
         consumer_key: this.consumerKey,
         consumer_secret: this.consumerSecret
       });
+      this.twitApp = new _twit["default"]({
+        consumer_key: this.consumerKey,
+        consumer_secret: this.consumerSecret,
+        app_only_auth: true
+      });
+
+      _logger["default"].info('configured app client for v1.1 and v2 endpoints');
     } else {
-      _logger["default"].warn('unable to configure app client for v2 endpoint since not all keys are present');
+      _logger["default"].warn('unable to configure app client since not all keys are present');
     }
   }
 
@@ -695,7 +700,10 @@ var Twitter = /*#__PURE__*/function () {
             if (_e.type === 'photo') {
               images.push(_e.url);
             } else if (_e.type === 'video') {
-              videos.push(_e.preview_image_url);
+              // It would be nice to get the mp4 URL here but Twitter's V2 API
+              // doesn't make that available for now we can look it up
+              // using the tweet id and the media_key against the v1.1 API
+              videos.push(_e.media_key);
             } else if (_e.type === 'animated_gif') {
               animatedGifs.push(_e.preview_image_url);
             }
@@ -778,24 +786,87 @@ var Twitter = /*#__PURE__*/function () {
 
       return sendTweet;
     }()
+  }, {
+    key: "hydrate",
+    value: function () {
+      var _hydrate = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(tweetIds) {
+        var resp;
+        return _regenerator["default"].wrap(function _callee7$(_context7) {
+          while (1) {
+            switch (_context7.prev = _context7.next) {
+              case 0:
+                if (!(!tweetIds || tweetIds.length == 0)) {
+                  _context7.next = 2;
+                  break;
+                }
+
+                return _context7.abrupt("return", null);
+
+              case 2:
+                _context7.prev = 2;
+                _context7.next = 5;
+                return this.twitApp.get('statuses/lookup', {
+                  id: tweetIds.join(',')
+                });
+
+              case 5:
+                resp = _context7.sent;
+
+                if (!(resp.data && resp.data.length > 0)) {
+                  _context7.next = 10;
+                  break;
+                }
+
+                return _context7.abrupt("return", resp.data);
+
+              case 10:
+                return _context7.abrupt("return", null);
+
+              case 11:
+                _context7.next = 17;
+                break;
+
+              case 13:
+                _context7.prev = 13;
+                _context7.t0 = _context7["catch"](2);
+
+                // note: should raise quota exceeded error here?
+                _logger["default"].error("caught error during statuses/lookup call: ".concat(_context7.t0));
+
+                return _context7.abrupt("return", null);
+
+              case 17:
+              case "end":
+                return _context7.stop();
+            }
+          }
+        }, _callee7, this, [[2, 13]]);
+      }));
+
+      function hydrate(_x7) {
+        return _hydrate.apply(this, arguments);
+      }
+
+      return hydrate;
+    }()
   }]);
   return Twitter;
 }();
 
 exports.Twitter = Twitter;
 
-function isAcademic(_x7, _x8) {
+function isAcademic(_x8, _x9) {
   return _isAcademic.apply(this, arguments);
 }
 
 function _isAcademic() {
-  _isAcademic = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee7(consumerKey, consumerSecret) {
+  _isAcademic = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee8(consumerKey, consumerSecret) {
     var twtr, endpoint, params, resp;
-    return _regenerator["default"].wrap(function _callee7$(_context7) {
+    return _regenerator["default"].wrap(function _callee8$(_context8) {
       while (1) {
-        switch (_context7.prev = _context7.next) {
+        switch (_context8.prev = _context8.next) {
           case 0:
-            _context7.prev = 0;
+            _context8.prev = 0;
             twtr = new _twitterV["default"]({
               consumer_key: consumerKey,
               consumer_secret: consumerSecret
@@ -809,44 +880,44 @@ function _isAcademic() {
 
             _logger["default"].info(endpoint, params);
 
-            _context7.next = 7;
+            _context8.next = 7;
             return twtr.get(endpoint, params);
 
           case 7:
-            resp = _context7.sent;
+            resp = _context8.sent;
 
             if (!(resp.data && resp.data.length > 0)) {
-              _context7.next = 13;
+              _context8.next = 13;
               break;
             }
 
             _logger["default"].info('app keys have academic search');
 
-            return _context7.abrupt("return", true);
+            return _context8.abrupt("return", true);
 
           case 13:
             _logger["default"].info('app keys do not have academic search: no results');
 
-            return _context7.abrupt("return", false);
+            return _context8.abrupt("return", false);
 
           case 15:
-            _context7.next = 21;
+            _context8.next = 21;
             break;
 
           case 17:
-            _context7.prev = 17;
-            _context7.t0 = _context7["catch"](0);
+            _context8.prev = 17;
+            _context8.t0 = _context8["catch"](0);
 
-            _logger["default"].info("app keys do not have academic search turned on: ".concat(_context7.t0));
+            _logger["default"].info("app keys do not have academic search turned on: ".concat(_context8.t0));
 
-            return _context7.abrupt("return", false);
+            return _context8.abrupt("return", false);
 
           case 21:
           case "end":
-            return _context7.stop();
+            return _context8.stop();
         }
       }
-    }, _callee7, null, [[0, 17]]);
+    }, _callee8, null, [[0, 17]]);
   }));
   return _isAcademic.apply(this, arguments);
 }

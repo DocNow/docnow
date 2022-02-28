@@ -11,7 +11,6 @@ export class VideoFetcher {
 
   constructor(db = null) {
     this.db = db || new Database()
-    this.redisBlocking = this.db.redis.duplicate()
     this.twtr = null
     this.active = false
   }
@@ -25,24 +24,53 @@ export class VideoFetcher {
     while (this.active) {
 
       // get a search job from queue and make sure it hasn't been stopped
-      const job = await this.fetchJob()
-      if (job) {
-        //  hydrate tweet and insert video info into the tweet_url table
+      const jobs = await this.fetchJobs()
+
+      // note: lookup mediaIds before hydrating to reduce duplication?
+      if (jobs.length > 0) {
+        const tweetIds = Array.from(new Set(jobs.map(j => j.tweetId)))
+        const tweets = await this.twtr.hydrate(tweetIds)
+        // note: catch api quota exceeded errors here, and increment timer
+        if (tweets) {
+          const urlRows = []
+          for (const tweet of tweets) {
+            for (const job of jobs) {
+              if (job.tweetId == tweet.id) {
+                const videoUrl = this.getVideoUrl(tweet)
+                if (videoUrl) {
+                  urlRows.push({
+                    tweetId: job.tweetRowId,
+                    url: videoUrl.url,
+                    thumbnailUrl: videoUrl.thumbnailUrl,
+                    type: 'video',
+                    mediaId: job.mediaId
+                  })
+                }
+              }
+            }
+          }
+          if (urlRows.length > 0) {
+            await this.db.insertUrls(urlRows)
+          }
+        }
       }
 
-      await timer(3000)
+      // v1 status/lookup endpoint can take 300 req / 15 minutes 
+      // which is 1 every 3 seconds we play it safe with 5 seconds 
+      // wait between requests
+      await timer(5000)
     }
 
     log.info(`VideoFetcher event loop stopping`)
   }
 
-  async fetchJob() {
-    // wait up to 30 seconds for a new job
-    const item = await this.redisBlocking.blpopAsync(fetchVideoKey, 30)
+  async fetchJobs() {
+    // get up to 100 tweet video lookups
+    const item = await this.db.redis.lpopAsync(fetchVideoKey, 100)
     if (item) {
-      return JSON.parse(item[1])
+      return item.map(s => JSON.parse(s))
     } else {
-      return null
+      return []
     }
   }
 
@@ -63,6 +91,25 @@ export class VideoFetcher {
         log.info('video-fetcher got twitter client!')
       }
     }
+  }
+
+  getVideoUrl(tweet) {
+    if (tweet.extended_entities && tweet.extended_entities.media) {
+      for (const media of tweet.extended_entities.media) {
+        if (media.video_info && media.video_info.variants) {
+          for (const variant of media.video_info.variants) {
+            // note: maybe should pick video with highest bitrate?
+            if (variant.content_type == 'video/mp4') {
+              return {
+                url: variant.url,
+                thumbnailUrl: media.media_url_https
+              }
+            }
+          }
+        }
+      }
+    }
+    return null
   }
 
 }

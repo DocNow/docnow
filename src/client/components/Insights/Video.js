@@ -17,7 +17,9 @@ export default class Video extends Component {
     return (
       <Card className={`${card.Card}`} style={{height: "365px"}}>
         <CardMedia>
-          <video style={{width: '300px', height: '300px'}} controls src={this.props.url}/>
+          <video style={{width: '300px', height: '300px'}} controls preload="false" poster={this.props.thumbnailUrl}>
+            <source src={this.props.url} />
+          </video>
         </CardMedia>
         <CardActions>
           <IconButton aria-label="show tweets" onClick={() => {this.showTweets()}}>
@@ -32,6 +34,7 @@ export default class Video extends Component {
 
 Video.propTypes = {
   url: PropTypes.string,
+  thumbnailUrl: PropTypes.string,
   count: PropTypes.number,
   searchId: PropTypes.number,
   getTweetsForVideo: PropTypes.func

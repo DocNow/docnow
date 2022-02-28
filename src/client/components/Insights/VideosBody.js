@@ -33,6 +33,7 @@ export default class VideosBody extends Component {
               <Video
                 key={i.url}
                 url={i.url}
+                thumbnailUrl={i.thumbnailUrl}
                 count={i.count}
                 searchId={this.props.searchId}
                 getTweetsForVideo={this.props.getTweetsForVideo} />
