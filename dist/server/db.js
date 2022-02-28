@@ -2628,7 +2628,7 @@ var Database = /*#__PURE__*/function () {
                 return _Tweet["default"].query().where({
                   searchId: search.id,
                   type: 'video'
-                }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url').count('url').groupBy('url').orderBy('count', 'DESC');
+                }).join('tweetUrl', 'tweet.id', 'tweetUrl.tweetId').select('url', 'thumbnailUrl').count('url').groupBy(['url', 'thumbnailUrl']).orderBy('count', 'DESC');
 
               case 2:
                 results = _context46.sent;
