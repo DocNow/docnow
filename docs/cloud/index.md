@@ -9,7 +9,7 @@ Installing DocNow in the cloud will cost money, both for running a server and co
 * You are the administrator of the application
 * Full control of collected data and 10 million tweet monthly data limit
 * User management
-* API key management
+* API key management (Academic Researcher keys allow collecting further than 7 days back)
 
 ## Cloud Service Providers
 
