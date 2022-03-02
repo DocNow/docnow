@@ -55,7 +55,7 @@ Now your computer has the tools it needs to interface with AWS.
   * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
 
-```ssh -i Documents/LightSailKeyPair.pem ubuntu@1.2.2.4```
+```ssh -i Documents/LightSailKeyPair.pem ubuntu@[yourIPaddresshere]```
 
 You will see:
 
