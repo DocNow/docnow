@@ -21,51 +21,41 @@ To host your Docnow Application on DigitalOcean you will need SSH
 
 SSH uses public and private keys.
 
--
-
-    Your public SSH key is what you\'ll provide DigitalOcean in order to
-
-    :   authorize access to your server.
-
--
-
-    Your private SSH key remains on your computer and is required to log
-
-    :   into your DigitalOcean server.
+* Your public SSH key is what you\'ll provide DigitalOcean in order to authorize access to your server.
+* Your private SSH key remains on your computer and is required to log into your DigitalOcean server.
 
 **Creating an SSH keypair**
 
 Open your computer\'s Terminal:
 
--   On macOS, this can be found by typing \'terminal\' in Spotlight, or
--   under \'Applications \> Utilities \> Terminal\'.
+-   On macOS, this can be found by typing `terminal`' in Spotlight, or under `Applications \> Utilities \> Terminal`.
 
 If you have never created an SSH keypair before, Type the following
 command and hit Enter:
 
-``` {.bash}
+```bash
 ssh-keygen -f ~/.ssh/docnow_id_rsa
 ```
 
 This will save your DigitalOcean keys under a hidden directory name
-/Users/\<username\>/.ssh which is the default location of your ssh keys.
+`/Users/<macOSusername>/.ssh` which is the default location of your ssh keys.
 You can list the contents of the directory by running the following:
 
-``` {.bash}
+```bash
 ls -alt ~/.ssh/
 ```
 
-If this your first time you will see the [docnow_id_rsa]{.title-ref}
-private key and it's public pair of [docnow_id_rsa.pub]{.title-ref}
+If this your first time you will see the `docnow_id_rsa`
+private key and it's public pair of `docnow_id_rsa.pub]`
 
-If you already have keys you will also see [id_rsa]{.title-ref} private
-key and [id_rsa.pub]{.title-ref} public pair.
+If you already have keys you will also see `id_rsa` private
+key and `id_rsa.pub` public pair.
 
-You\'ll then be prompted to enter the file where you want to save the
-key. If you\'ve never created an SSH key before on this computer, hit
+You'll then be prompted to enter the file where you want to save the
+key. If you've never created an SSH key before on this computer, hit
 Enter without typing anything to save it to the default location.
 
-``` {.bash}
+```bash
 Generating public/private rsa key pair.
 Enter file in which to save the key
 (/Users/username/.ssh/docnow_id_rsa):
@@ -79,7 +69,7 @@ We strongly recommend setting a passphrase. Keep in mind forgetting this
 passphrase will at least temporarily lock you out of your DigitalOcean
 server droplet.
 
-``` {.bash}
+```bash
 Enter passphrase (empty for no passphrase):
 Enter same passphrase again:
 ```
@@ -91,7 +81,7 @@ You now have a public and private key that you\'ll use to authenticate
 with the server droplet you\'ll create. The screen output will look like
 this:
 
-``` {.bash}
+```bash
 Your identification has been saved in
 /Users/username/.ssh/docnow_id_rsa.
 Your public key has been saved in
@@ -120,7 +110,7 @@ The key's randomart image is:
 After generating an SSH keypair, run the following command in your
 terminal to display your public key:
 
-``` {.bash}
+```bash
 cat ~/.ssh/docnow_id_rsa.pub*
 ```
 
@@ -175,8 +165,8 @@ checking the box for **Monitoring** in the additional options section:
 The monitoring option will allow you to later track your droplet\'s
 resource usage from your DigitalOcean account.
 
-Then, under the **Authentication** section, choose **\'SSH keys\'** and
-click **\'New SSH Key\'**.
+Then, under the **Authentication** section, choose **`SSH keys`** and
+click **`New SSH Key`**.
 
 In the dialogue box, paste the **public SSH key** you obtained earlier
 during key creation, name it, and click add:
@@ -189,35 +179,35 @@ button:
 After creating the droplet, note its **IP Address** shown on the
 following DigitalOcean screen:
 
-Open your computer\'s **Terminal** again if it\'s not still open. On
-macOS, this can be found by typing \'terminal\' in Spotlight, or under
-\'Applications \> Utilities \> Terminal\'.
+Open your computer's **Terminal** again if it's not still open. On
+macOS, this can be found by typing `terminal` in Spotlight, or under
+`Applications \> Utilities \> Terminal`.
 
 Then, run the following, but replacing 1.2.3.4 with the IP address of
 your droplet, and hit Enter:
 
-``` {.bash}
+```bash
 ssh root@1.2.3.4*
 ```
 
-You\'ll be asked if you\'re sure you want to continue connecting. Type
+You'll be asked if you're sure you want to continue connecting. Type
 yes and hit Enter.
 
-Then, you\'ll be prompted to enter the password you protected your SSH
+Then, you'll be prompted to enter the password you protected your SSH
 key with when creating it. Do so, and hit Enter.
 
 ⚠️Note: Nothing will appear in the terminal as you enter your
-passphrase. This is intentional. You\'re still typing though.
+passphrase. This is intentional. You're still typing though.
 
 When you see the prompt
 
-``` {.bash}
+```bash
 root@your-droplet:~#
 ```
 
 instead of
 
-``` {.bash}
+```bash
 your-name@your-mac ~ %
 ```
 
@@ -232,7 +222,7 @@ software
     option listed in the instructions to [install and configure
     git](https://github.com/git-guides/install-git).
 
-``` {.bash}
+```bash
 your-name@your-mac ~ % brew install git
 ```
 
@@ -240,17 +230,17 @@ your-name@your-mac ~ % brew install git
     [Ansible](https://www.ansible.com/). Othewise if you installed
     homebrew above install ansible via
 
-``` {.bash}
+```bash
 your-name@your-mac ~ % brew install ansible
 ```
 
--   Edit the [hosts.example]{.title-ref} file in the cloned
-    docnow-ansible repository. Replace the [1.2.3.4]{.title-ref} in the
+-   Edit the `hosts.example` file in the cloned
+    docnow-ansible repository. Replace the [1.2.3.4` in the
     file with your DigitalOcean Droplet IP address above. Make a copy of
-    the file and name it [hosts]{.title-ref}
+    the file and name it `hosts`
 -   You can now run:
 
-``` {.bash}
+```bash
 your-name@your-mac ~ % ansible-playbook -i hosts playbooks/do_install.yml
 ```
 
