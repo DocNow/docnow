@@ -50,7 +50,7 @@ Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-1021-aws x86_64)
 * Modify the `hosts.example` to have the IP address from the steps above. 
 * rename the file  `hosts.example` file to `hosts`
 
-Run the following command
+Run the following command in your Terminal application. 
 
 ```bash
 ansible-playbook -i hosts playbooks/lightsail_ubuntu_deploy.yml
