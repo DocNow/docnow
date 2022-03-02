@@ -57,6 +57,12 @@ Now your computer has the tools it needs to interface with AWS.
 
 ```ssh -i Documents/DocNowLightSailKeyPair.pem ubuntu@[yourIPaddresshere]```
 
+If you have permissions issues, run the following in Terminal:
+
+```chmod 0400 ~Documents/DocNowLightSailKeyPair.pem```
+
+```exit```
+
 You will see:
 
 The authenticity of host '1.2.2.4 (1.2.2.4)' cannot be established.
