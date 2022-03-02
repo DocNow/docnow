@@ -73,8 +73,6 @@ Run the following commands in Terminal:
 
 ``` cd [the directory where you stored docnow-ansible]```
 
-```bash
-ansible-playbook -i hosts playbooks/lightsail_ubuntu_deploy.yml
-```
+``` bash ansible-playbook -i hosts playbooks/lightsail_ubuntu_deploy.yml```
 
 When it completes if you point your browser to the IP in the example thus far http://1.2.2.4 you will see the configuration page for your docnow application
