@@ -10,8 +10,12 @@ Installing DocNow in the cloud will cost money, both for running a server and co
 * B
 * C
 
+## Cloud Service Providers
+
 The Docnow App has been successfully tested to run on the following Cloud Service Providers:
 
 * [AWS](https://docnow.readthedocs.io/en/latest/cloud/aws/)
 * [Digital Ocean](https://docnow.readthedocs.io/en/latest/cloud/digital-ocean/)
 * [Scaleway](https://docnow.readthedocs.io/en/latest/cloud/scaleway/)
+
+Looking to use a CSP not listed here? We'd love to work with you to add documentation. Feel free to edit this repository, or reach out to info@docnow.io
