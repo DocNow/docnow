@@ -7,12 +7,12 @@ The Docnow App has been successfully tested to run on the following Cloud Servic
 * [Scaleway](https://docnow.readthedocs.io/en/latest/cloud/scaleway/)
 
 
-Installing DocNow in the cloud will cost money, both for running a server and collecting and storing data. In all cases you will need to sign up to set up your own customized Docnow App. 
+Installing DocNow in the cloud will cost money, both for running a server and collecting and storing data. You will need a credit card and cloud service provider account to continue.  
 
-The installation will be the same as Documenting the Now's [Community Instance](https://community.docnow.io) but will be under your full management. You will need a credit card and cloud service provider account to continue.  
+The installation will be the same as Documenting the Now's [Community Instance](https://community.docnow.io) but will be under your full management. You will be the administrator of the application, which gives the privileges of user management, ability to edit Terms of Service, and other settings. 
 
-
-* the resulting URL cannot be shared for use with others
-* the installation will not always be network connected (a requirement of the app to collect tweets)
-* the installations performance will be impacted by other applications are running on your computer
+## Benefits of running your own instance
+* A
+* B
+* C
 
