@@ -26,10 +26,9 @@ Now your computer has the tools it needs to interface with AWS.
 ### 2. Set up your AWS account
 
 * Follow the AWS instructions to [create an account here](https://portal.aws.amazon.com/billing/signup?client=lightsail&fid=1A3F6B376ECAC516-2C15C39C5ACECACB&redirect_url=https%3A%2F%2Flightsail.aws.amazon.com%2Fls%2Fsignup#/start)
-* Once you create your account you can create the Virtual Private Server
 
 
-### 3. Create your Virtual Machine
+### 3. Create your Virtual Private Server
 
 * Create your [Virtual Private Server](https://aws.amazon.com/getting-started/hands-on/launch-a-virtual-machine/)
   * Select any Region
