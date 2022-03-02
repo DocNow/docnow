@@ -47,14 +47,15 @@ Now your computer has the tools it needs to interface with AWS.
   * Select: either Ubuntu (18.04) or Centos (7)
   * Change SSH Key Pair: Selecte "Create New"
     * Give your keys a name (example: LighSailKeyPair)
-    * Download  and save
+    * Download your keys
+    * Move key file to Documents directory
   * Choose the US$10 option
   * Identify your instance (Give it a name)
   * Create the Instance and take note of the resulting IP address (for example 1.2.2.4) of your Virtual Private Server
   * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
 
-```bash ssh -i ~/.ssh/LightSailKeyPair.cer ubuntu@1.2.2.4```
+```bash ssh -i Documents/LightSailKeyPair.cer ubuntu@1.2.2.4```
 
 You will see:
 
