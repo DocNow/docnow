@@ -19,6 +19,10 @@ Install Homebrew by copying the following into your Terminal:
 
 ``` /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" ```
 
+The first time you install homebrew you will need to run this:
+
+```git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow```
+
 Then install Ansible by copying the following into your Terminal:
 
 ``` brew install ansible ```
