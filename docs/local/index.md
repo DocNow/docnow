@@ -11,3 +11,10 @@ Some of the limitations will include:
 * the resulting URL cannot be shared for use with others
 * the installation will not always be network connected (a requirement of the app to collect tweets)
 * the installations performance will be impacted by other applications are running on your computer
+
+## Instructions per operating system
+
+* CentOS
+* MacOS
+* Microsoft Windows
+* Ubuntu
