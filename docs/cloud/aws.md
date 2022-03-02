@@ -10,14 +10,16 @@ something missing.
 ***Installing DocNow in AWS will cost money, both for running a server and collecting and storing data. Please remember to turn off your Virtual Private Server (VPS) when you are done to avoid extra charges.***
 
 ### 1. Install Ansible
-Start by opening the Terminal application on your Mac. 
 
-Install Homebrew by copying the following into your Terminal and hitting "Enter" 
+Ansible will be used to configure the VPS you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm) that will be hosting the DocNow App. Start by opening the Terminal application on your Mac. 
+
+Install Homebrew by copying the following into your Terminal and hitting "return" 
 
 ``` /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" ```
 
-[Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local machine by copying the commands from the instructions into Terminal. Ansible will be used to configure the VPS you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm) that will be hosting the DocNow App.
+Then install Ansible by copying the following into your Terminal and hitting "return"
 
+``` brew install Ansible ```
 
 ### 2. Configure your account
 
