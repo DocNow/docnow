@@ -1,17 +1,17 @@
 ## AWS Lightsail Service Provider
 
-The following is a step-by-step guide to installing DocNow in AWS. The instructions currently use terminology for macOS.
+The following is a step-by-step guide to installing DocNow in AWS. The instructions currently use terminology for MacOS.
 
-It is intended for anyone without prior experience.
+You should be able to follow these instructions without prior experience with AWS or MacOS Terminal.
 
 Please follow each step carefully and open an issue on the [Github
 Repository](https://github.com/DocNow/docnow-ansible/issues) if you find
 something missing.
 
 
-***The following instructions will cost you money. Please remember to turn off your Virtual Private Server (VPS) when you are done to avoid extra charges.***
+***Installing DocNow in AWS will cost money, both for running a server and collecting and storing data. Please remember to turn off your Virtual Private Server (VPS) when you are done to avoid extra charges.***
 
-* Mininally you will need to [install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).  Ansible will be used to configure the VPS you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm) that will be hosting the docnow app.
+*  [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).  Ansible will be used to configure the VPS you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm) that will be hosting the docnow app.
 
 
 ### Configure your account
