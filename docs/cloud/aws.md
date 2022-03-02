@@ -46,7 +46,7 @@ Now your computer has the tools it needs to interface with AWS.
   * Select blueprint:  "OS Only"
   * Select: either Ubuntu (18.04) or Centos (7)
   * Change SSH Key Pair: Selecte "Create New"
-    * Give your keys a name (example: LighSailKeyPair)
+    * Give your keys the name DocNowLighSailKeyPair
     * Download your keys
     * Move key file to Documents directory
   * Choose the US$10 option
@@ -55,7 +55,7 @@ Now your computer has the tools it needs to interface with AWS.
   * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
 
-```ssh -i Documents/LightSailKeyPair.pem ubuntu@[yourIPaddresshere]```
+```ssh -i Documents/DocNowLightSailKeyPair.pem ubuntu@[yourIPaddresshere]```
 
 You will see:
 
