@@ -6,9 +6,10 @@ There are many benefits to installing your own instance of the DocNow app in the
 Installing DocNow in the cloud will cost money, both for running a server and collecting and storing data. You will need a credit card and cloud service provider account to continue.  
 
 ## Benefits of running your own instance
-* A
-* B
-* C
+* You are the administrator of the application
+* Full control of collected data
+* User management
+* API key management
 
 ## Cloud Service Providers
 
