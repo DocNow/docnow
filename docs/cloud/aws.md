@@ -46,7 +46,8 @@ Now your computer has the tools it needs to interface with AWS.
   * Select blueprint:  "OS Only"
   * Select: either Ubuntu (18.04) or Centos (7)
   * Change SSH Key Pair: Selecte "Create New"
-    * Give your Keys a Name and download (for example: LighSailKeyPair) it and save
+    * Give your keys a name (example: LighSailKeyPair)
+    * Download  and save
   * Choose the US$10 option
   * Identify your instance (Give it a name)
   * Create the Instance and take note of the resulting IP address (for example 1.2.2.4) of your Virtual Private Server
