@@ -36,7 +36,7 @@ You need to [install Ansible](https://docs.ansible.com/ansible/latest/installati
 
 ```bash
 ssh -i ~/.ssh/LightSailKeyPair.cer ubuntu@1.2.2.4
-The authenticity of host '1.2.2.4 (1.2.2.4)' can't be established.
+The authenticity of host '1.2.2.4 (1.2.2.4)' cannot be established.
 ED25519 key fingerprint is SHA256:MtFD6zgLJkyr6Ju8nmzwNqwvqy+rayVVnp1NW97DW0s.
 This key is not known by any other names
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
