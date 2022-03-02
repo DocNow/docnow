@@ -1,6 +1,6 @@
 ## AWS Lightsail Service Provider
 
-The following is a step-by-step guide to installing DocNow in AWS. The instructions use terminology for MacOS. You should be able to follow these instructions without prior experience with AWS or MacOS Terminal, but if this is your first time administering an application, fair warning! This may take up to 2 hours.
+The following is a step-by-step guide to installing DocNow in AWS. The instructions use terminology for MacOS. You should be able to follow these instructions without prior experience with AWS or MacOS Terminal, but if this is your first time administering an application, fair warning! This may take up to 2 hours to install.
 
 Please follow each step carefully and open an issue on the [Github
 Repository](https://github.com/DocNow/docnow-ansible/issues) if you find
