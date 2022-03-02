@@ -9,9 +9,9 @@ Repository](https://github.com/DocNow/docnow-ansible/issues) if you find
 something missing.
 
 
-***The following instructions will cost you money. Please remember to turn off your VPS when you are done to avoid extra charges.***
+***The following instructions will cost you money. Please remember to turn off your Virtual Private Server (VPS) when you are done to avoid extra charges.***
 
-* Mininally you will need to [install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).  Ansible will be used to configure the Virtual Private Server you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm) that will be hosting the docnow app.
+* Mininally you will need to [install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html).  Ansible will be used to configure the VPS you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm) that will be hosting the docnow app.
 
 
 ### Configure your account
