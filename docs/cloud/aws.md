@@ -13,7 +13,7 @@ something missing.
 
 Ansible will be used to configure the Virtual Private Server you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm). This server will host the DocNow App. 
 
-Start by opening the Terminal application on your Mac. 
+Start by opening the Terminal application on your Mac in `Applications/Utilities` 
 
 Install Homebrew by copying the following into your Terminal: 
 
@@ -42,7 +42,7 @@ Now your computer has the tools it needs to interface with AWS.
   * Choose the US$10 option
   * Identify your instance (Give it a name)
   * Create the Instance and take note of the resulting IP address (for example 1.2.2.4) of your Virtual Private Server
-  * Open your Terminal Application in `Applications/Utilities`
+  * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
 
 ```bash
