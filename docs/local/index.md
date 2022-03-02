@@ -1,8 +1,10 @@
 # Running Locally
 
-The Docnow App can be run as a local installation on a computer under your control. The instructions assume you have administrator (elevated) privileges on your local personal computer. 
+The Docnow App can be run as a local installation on a computer under your control. These instructions assume you have administrator (elevated) privileges on your local personal computer. 
 
-The use case for this is to find out what the Docnow App is capable of. The installation will have scaled down capabilities as the [Community Instance](https://community.docnow.io) but will be on your personal computer. 
+## Why run locally?
+
+The use case for running locally is to learn what the DocNow app is built on and what features it has. The application will only function so long as you are actively running it in your terminal. It will have scaled down capabilities compared the [Community Instance](https://community.docnow.io), but will be on your personal computer with your own full control as administrator. 
 
 Some of the limitations will include:
 
