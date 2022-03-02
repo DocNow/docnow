@@ -12,8 +12,9 @@ something missing.
 ### 1. Install Ansible
 Start by opening the Terminal application on your Mac. 
 
-Install Homebrew. 
-``` homebrew instructions ```
+Install Homebrew by copying the following into your Terminal and hitting "Enter" 
+
+``` /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" ```
 
 [Install Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) on your local machine by copying the commands from the instructions into Terminal. Ansible will be used to configure the VPS you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm) that will be hosting the DocNow App.
 
