@@ -19,7 +19,7 @@ Install Homebrew by copying the following into your Terminal and hitting "return
 
 Then install Ansible by copying the following into your Terminal and hitting "return"
 
-``` brew install Ansible ```
+``` brew install ansible ```
 
 Now your computer has the tools it needs to interface with AWS. 
 
