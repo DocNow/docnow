@@ -65,11 +65,13 @@ Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-1021-aws x86_64)
 
 ### 4. Launch your application
 
-* Download and unzip the [docnow-ansible](https://github.com/docnow/docnow-ansible) zip file or clone the repository to a location on your computer. 
+* Download and unzip the [docnow-ansible](https://github.com/docnow/docnow-ansible) zip file or, if you are a GitHub user, clone the repository to a location on your computer. 
 * Modify the `hosts.example` to have the IP address from the steps above. 
 * rename the file  `hosts.example` file to `hosts`
 
-Run the following command in your Terminal application. 
+Run the following commands in Terminal: 
+
+``` cd [the directory where you stored docnow-ansible]```
 
 ```bash
 ansible-playbook -i hosts playbooks/lightsail_ubuntu_deploy.yml
