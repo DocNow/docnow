@@ -7,7 +7,7 @@ Installing DocNow in the cloud will cost money, both for running a server and co
 
 ## Benefits of running your own instance
 * You are the administrator of the application
-* Full control of collected data
+* Full control of collected data and 10 million monthly data limit
 * User management
 * API key management
 
