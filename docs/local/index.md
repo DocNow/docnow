@@ -15,6 +15,6 @@ Some of the limitations will include:
 ## Instructions per operating system
 
 * [CentOS](https://docnow.readthedocs.io/en/latest/local/centOSREADME/)
-* MacOS
-* Microsoft Windows
-* Ubuntu
+* [MacOS](https://docnow.readthedocs.io/en/latest/local/macOSREADME/)
+* [Microsoft Windows](https://docnow.readthedocs.io/en/latest/local/mswinOSREADME/)
+* [Ubuntu](https://docnow.readthedocs.io/en/latest/local/ubuntuREADME/)
