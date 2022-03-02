@@ -1,7 +1,6 @@
 ## AWS Lightsail Service Provider
 
-The following is a step-by-step guide to installing DocNow using
-macOS.
+The following is a step-by-step guide to installing DocNow in AWS. The instructions currently use terminology for macOS.
 
 It is intended for anyone without prior experience.
 
