@@ -41,9 +41,9 @@ Now your computer has the tools it needs to interface with AWS.
 ### 3. Create your Virtual Private Server
 
 * Create your [Virtual Private Server](https://aws.amazon.com/getting-started/hands-on/launch-a-virtual-machine/)
-  * Select any Region
-  * Select Linux/Unix platform option 
-  * Select a blueprint (OS Only)
+  * Instance Location: (any region is OK)
+  * Instance Image: Select Linux/Unix platform option 
+  * Select blueprint:  "OS Only"
   * Select either Ubuntu (18.04) or Centos (7)
   * Change SSH Key Pair (Create New)
     * Give your Keys a Name and download (for example: LighSailKeyPair) it and save
