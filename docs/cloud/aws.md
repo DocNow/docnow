@@ -54,8 +54,10 @@ Now your computer has the tools it needs to interface with AWS.
   * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
 
-```bash
-ssh -i ~/.ssh/LightSailKeyPair.cer ubuntu@1.2.2.4
+```bash ssh -i ~/.ssh/LightSailKeyPair.cer ubuntu@1.2.2.4```
+
+You will see:
+
 The authenticity of host '1.2.2.4 (1.2.2.4)' cannot be established.
 ED25519 key fingerprint is SHA256:MtFD6zgLJkyr6Ju8nmzwNqwvqy+rayVVnp1NW97DW0s.
 This key is not known by any other names
