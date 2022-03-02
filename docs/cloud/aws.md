@@ -82,8 +82,8 @@ Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-1021-aws x86_64)
 
 Run the following commands in Terminal: 
 
-``` cd Documents/docnow-ansible```
+``` cd Documents/docnow-ansible-main```
 
-``` bash ansible-playbook -i hosts playbooks/lightsail_ubuntu_deploy.yml```
+```ansible-playbook -i hosts playbooks/lightsail_ubuntu_deploy.yml```
 
 When it completes if you point your browser to the IP in the example thus far http://1.2.2.4 you will see the configuration page for your docnow application
