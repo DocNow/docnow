@@ -223,16 +223,11 @@ export default class CollectionList extends Component {
               <Link to="/collections">ALL COLLECTIONS</Link> ➔ {this.props.search.title.toUpperCase()}
             </Typography>
           </Grid>
-          <Grid item xs={8}>
-            <Typography variant="body1">
-              Collection Description:{ this.props.search.description || 'No description provided for this collection.' }
-            </Typography>
-          </Grid>
-          <Grid item xs={4}>
-            <Typography variant="body1">
-              Collected by <strong><a href={`https://twitter.com/${this.props.search.creator.twitterScreenName}`}>
-                @{this.props.search.creator.twitterScreenName}</a></strong>
-            </Typography>
+          <Grid item xs={12}>
+            <Intro>
+              Description: { this.props.search.description || 'No description provided for this collection.' } <br/>   Collected by <strong><a href={`https://twitter.com/${this.props.search.creator.twitterScreenName}`}>
+                  @{this.props.search.creator.twitterScreenName}</a></strong>
+            </Intro>
           </Grid>
         </Grid>
 

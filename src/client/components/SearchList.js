@@ -34,13 +34,17 @@ export default class SearchList extends Component {
       if (ids.length > 0) {
         this.props.getSearchesCounts(ids)
       }
-    } 
+    }
   }
 
   render() {
 
     const setPublicColumn = this.props.user.admin ?  <TableCell>Public</TableCell> : ''
     return (
+      <>
+      <Intro>
+        Activate a search to start collecting, view insights <sup><small><b>beta</b></small></sup>&nbsp; into collections, and download Tweet IDs for sharing.
+      </Intro>
       <Table>
         <TableHead>
           <TableRow>

@@ -32,17 +32,21 @@ export default class CollectionList extends Component {
     return (
       <>
         <Grid container spacing={3} className={style.Header}>
-          <Grid item xs={9}>
+          <Grid item xs={3}>
             <Typography variant="body1">
-              { this.props.settings.instanceDescription }
             </Typography>
+          </Grid>
+          <Grid item xs={6} className={style.Title}>
+          <Typography variant="h2">COLLECTIONS</Typography>
           </Grid>
           <Grid item xs={3}>
             <FindMe user={this.props.user} />
           </Grid>
           <Grid item xs={12} className={style.Title}>
-          <Typography variant="h2">COLLECTIONS</Typography>
-            <Typography variant="h2">Here you will find all active collections being collected by our DocNow users. Use the Find Me <sup><small><b>beta</b></small></sup>&nbsp; feature to learn if your content is in a collection and how you can specify or revoke consent.</Typography>
+            <Intro>
+            { this.props.settings.instanceDescription } <br/>
+              All active collections being collected by our DocNow users are listed below. Use the Find Me <sup><small><b>beta</b></small></sup>&nbsp; feature to learn if your content is in a collection and how you can specify or revoke consent.
+            </Intro>
           </Grid>
         </Grid>
         <Table>
