@@ -14,7 +14,7 @@ Please follow each step carefully and open an issue on the [Github
 Repository](https://github.com/DocNow/docnow-ansible/issues) if you find
 something missing.
 
-# Create an SSH Key
+### 1. Create an SSH Key
 
 To host your Docnow Application on DigitalOcean you will need SSH
 (Secure Shell, allows for secure access to remote servers).
@@ -117,7 +117,7 @@ cat ~/.ssh/docnow_id_rsa.pub*
 Copy all the output to a text file, as we\'ll use it when creating a
 DigitalOcean droplet in the next steps.
 
-# Sign up for Digital Ocean
+### 2. Sign up for Digital Ocean
 
 Your machine will connect to a server and admin that you alone have
 access to, and from which you control the machine's settings.
@@ -214,7 +214,7 @@ your-name@your-mac ~ %
 you've logged into your server. You are now ready to install the docnow
 software
 
-# Installing the Docnow software
+### 3. Installing the Docnow software
 
 -   Install Homebrew
 ```bash
