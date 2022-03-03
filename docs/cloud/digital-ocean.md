@@ -21,12 +21,12 @@ To host your Docnow Application on DigitalOcean you will need SSH
 
 SSH uses public and private keys.
 
-* Your public SSH key is what you\'ll provide DigitalOcean in order to authorize access to your server.
+* Your public SSH key is what you'll provide DigitalOcean in order to authorize access to your server.
 * Your private SSH key remains on your computer and is required to log into your DigitalOcean server.
 
 **Creating an SSH keypair**
 
-Open your computer\'s Terminal:
+Open your computer's Terminal:
 
 -   On macOS, this can be found by typing `terminal`' in Spotlight, or under `Applications \> Utilities \> Terminal`.
 
@@ -77,8 +77,8 @@ Enter same passphrase again:
 ⚠️Note: Nothing will appear in the terminal as you enter your
 passphrase. This is intentional. You\'re still typing though.
 
-You now have a public and private key that you\'ll use to authenticate
-with the server droplet you\'ll create. The screen output will look like
+You now have a public and private key that you'll use to authenticate
+with the server droplet you'll create. The screen output will look like
 this:
 
 ```bash
@@ -120,7 +120,7 @@ DigitalOcean droplet in the next steps.
 # Sign up for Digital Ocean
 
 Your machine will connect to a server and admin that you alone have
-access to, and from which you control the machine\'s settings.
+access to, and from which you control the machine's settings.
 
 DocNow is written to run on most cloud providers including DigitalOcean
 and you will need a virtual private server host (VPS).
@@ -211,27 +211,26 @@ instead of
 your-name@your-mac ~ %
 ```
 
-you\'ve logged into your server. You are now ready to install the docnow
+you've logged into your server. You are now ready to install the docnow
 software
 
 # Installing the Docnow software
 
--   Consider installing [homebrew](https://brew.sh/)
+-   Install Homebrew
+```bash
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
 -   Most versions of macOS already have git installed. If you happen to
-    find yours not to have it installed. We recommend using the homebrew
-    option listed in the instructions to [install and configure
-    git](https://github.com/git-guides/install-git).
+    find yours not to have it installed.
 
 ```bash
-your-name@your-mac ~ % brew install git
+ brew install git
 ```
 
--   You can follow the instructions to install
-    [Ansible](https://www.ansible.com/). Othewise if you installed
-    homebrew above install ansible via
+-   Install Ansible 
 
 ```bash
-your-name@your-mac ~ % brew install ansible
+ brew install ansible
 ```
 
 -   Edit the `hosts.example` file in the cloned
@@ -241,7 +240,7 @@ your-name@your-mac ~ % brew install ansible
 -   You can now run:
 
 ```bash
-your-name@your-mac ~ % ansible-playbook -i hosts playbooks/do_install.yml
+ ansible-playbook -i hosts playbooks/do_install.yml
 ```
 
 -   When your playbook runs you will be able to access your docnow
