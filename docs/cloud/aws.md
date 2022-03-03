@@ -53,8 +53,9 @@ Now your computer has the tools it needs to interface with AWS.
     * Move key file to the `/Users/[yourusername]/.ssh hidden directory
     * From your Terminal do the following:
     
-    ```mkdir /Users/[yourusername]/.ssh```
-    ```mv /Users/[yourusername]/Downloads/DocNowLightSailKeyPair.pem /Users/[yourusername]/.ssh ```
+    ```mkdir /Users/[yourusername]/.ssh
+       mv /Users/[yourusername]/Downloads/DocNowLightSailKeyPair.pem /Users/[yourusername]/.ssh
+    ```
     
   * Choose the US$10 option
   * Identify your instance (Give it a name)
@@ -72,6 +73,7 @@ If you have permissions issues, run the following in Terminal:
 
 You will see:
 
+```
 The authenticity of host '[yourIPaddress] [yourIPaddress]' cannot be established.
 ED25519 key fingerprint is SHA256:MtFD6zgLJkyr6Ju8nmzwNqwvqy+rayVVnp1NW97DW0s.
 This key is not known by any other names
