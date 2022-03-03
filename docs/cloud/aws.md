@@ -1,6 +1,6 @@
-## AWS Lightsail Service Provider
+## Lightsail AWS Service Provider
 
-The following is a step-by-step guide to installing DocNow in AWS. The instructions use terminology for MacOS. You should be able to follow these instructions without prior experience with AWS or MacOS Terminal, but if this is your first time administering an application, fair warning! This may take up to 2 hours to install.
+The following is a step-by-step guide to installing DocNow in AWS. The instructions use terminology for macOS. You should be able to follow these instructions without prior experience with AWS or macOS Terminal, but if this is your first time administering an application, fair warning! This may take up to 2 hours to install.
 
 Please follow each step carefully and open an issue on the [Github
 Repository](https://github.com/DocNow/docnow-ansible/issues) if you find
@@ -12,6 +12,8 @@ something missing.
 ### 1. Install Ansible
 
 Ansible will be used to configure the Virtual Private Server you will be setting up on [AWS Lightsail](https://aws.amazon.com/lightsail/?p=gsrc&c=ho_lvm). This server will host the DocNow App. 
+
+You will need a Programmers Editors like [Microsoft's VSCode](https://code.visualstudio.com) to make edits below
 
 Start by opening the Terminal application on your Mac in `Applications/Utilities` 
 
@@ -46,30 +48,35 @@ Now your computer has the tools it needs to interface with AWS.
   * Select blueprint:  "OS Only"
   * Select: either Ubuntu (18.04) or Centos (7)
   * Change SSH Key Pair: Selecte "Create New"
-    * Give your keys the name DocNowLighSailKeyPair
+    * Give your keys the name DocNowLightSailKeyPair
     * Download your keys
-    * Move key file to Documents directory
+    * Move key file to the `/Users/[yourusername]/.ssh hidden directory
+    * From your Terminal do the following:
+    
+    ```mkdir /Users/[yourusername]/.ssh```
+    ```mv /Users/[yourusername]/Downloads/DocNowLightSailKeyPair.pem /Users/[yourusername]/.ssh ```
+    
   * Choose the US$10 option
   * Identify your instance (Give it a name)
-  * Create the Instance and take note of the resulting IP address (for example 1.2.2.4) of your Virtual Private Server
+  * Create the Instance and take note of the resulting IP address (for this example we will use 1.2.2.4) of your Virtual Private Server
   * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
 
-```ssh -i Documents/DocNowLightSailKeyPair.pem ubuntu@[yourIPaddresshere]```
+```ssh -i ~/.ssh/DocNowLightSailKeyPair.pem ubuntu@[yourIPaddresshere]```
 
 If you have permissions issues, run the following in Terminal:
 
-```chmod 0400 ~Documents/DocNowLightSailKeyPair.pem```
+```chmod 0400 ~/.ssh/DocNowLightSailKeyPair.pem```
 
 ```exit```
 
 You will see:
 
-The authenticity of host '1.2.2.4 (1.2.2.4)' cannot be established.
+The authenticity of host '[yourIPaddress] [yourIPaddress]' cannot be established.
 ED25519 key fingerprint is SHA256:MtFD6zgLJkyr6Ju8nmzwNqwvqy+rayVVnp1NW97DW0s.
 This key is not known by any other names
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added '1.2.2.4' (ED25519) to the list of known hosts.
+Warning: Permanently added '[yourIPaddress]' (ED25519) to the list of known hosts.
 Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-1021-aws x86_64)
 ```
 
@@ -82,7 +89,7 @@ Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-1021-aws x86_64)
 
 Run the following commands in Terminal: 
 
-``` cd Documents/docnow-ansible-main```
+``` cd /Users/<yourusername>/Documents/docnow-ansible-main```
 
 ```ansible-playbook -i hosts playbooks/lightsail_ubuntu_deploy.yml```
 
