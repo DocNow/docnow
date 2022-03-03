@@ -13,11 +13,10 @@
   border-radius: 10px;
   padding: 8px;
   margin: 0 10% 0 10%;
+  text-align: center;
 }
 
 .Intro button {
   margin-left: 20px;
   min-width: 250px;
 }
-
-

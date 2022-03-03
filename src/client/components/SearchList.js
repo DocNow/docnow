@@ -35,7 +35,7 @@ export default class SearchList extends Component {
       if (ids.length > 0) {
         this.props.getSearchesCounts(ids)
       }
-    } 
+    }
   }
 
   render() {
@@ -44,7 +44,7 @@ export default class SearchList extends Component {
     return (
       <>
       <Intro>
-        Activate a search to start collecting, view insights <sup>beta</sup> into collections, and download Tweet IDs for sharing.
+         Activate a search to start collecting, view insights <sup><small><b>beta</b></small></sup>&nbsp; into collections, and download Tweet IDs for sharing.
       </Intro>
       <Table>
         <TableHead>
