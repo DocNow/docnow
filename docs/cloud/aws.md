@@ -50,12 +50,13 @@ Now your computer has the tools it needs to interface with AWS.
   * Change SSH Key Pair: Selecte "Create New"
     * Give your keys the name DocNowLightSailKeyPair
     * Download your keys
-    * Move key file to the `/Users/[yourusername]/.ssh hidden directory
-    * From your Terminal do the following:
+    * Move key file to the `/Users/[yourusername]/.ssh hidden directory withthe following:
     
-    ```mkdir /Users/[yourusername]/.ssh
-       mv /Users/[yourusername]/Downloads/DocNowLightSailKeyPair.pem /Users/[yourusername]/.ssh
-    ```
+    ```mkdir /Users/[yourusername]/.ssh``` 
+    
+    this directory may already exist
+    
+    ```mv /Users/[yourusername]/Downloads/DocNowLightSailKeyPair.pem /Users/[yourusername]/.ssh```
     
   * Choose the US$10 option
   * Identify your instance (Give it a name)
