@@ -27,6 +27,7 @@ nav:
     - Overview: cloud/index.md
     - AWS: cloud/aws.md
     - Digital Ocean: cloud/digital-ocean.md
+    - Linode: cloud/linode.md
     - Scaleway: cloud/scaleway.md
   - Troubleshooting: troubleshooting.md
   - API: api.md

@@ -17,6 +17,7 @@ The Docnow App has been successfully tested to run on the following Cloud Servic
 
 * [AWS](https://docnow.readthedocs.io/en/latest/cloud/aws/)
 * [Digital Ocean](https://docnow.readthedocs.io/en/latest/cloud/digital-ocean/)
+* [Linode](https://docnow.readthedocs.io/en/latest/cloud/linode)
 * [Scaleway](https://docnow.readthedocs.io/en/latest/cloud/scaleway/)
 
 Looking to use a CSP not listed here? We'd love to work with you to add documentation. Feel free to edit this repository, or reach out to info@docnow.io
