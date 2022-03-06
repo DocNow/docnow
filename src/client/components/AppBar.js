@@ -24,19 +24,28 @@ export default class AppBar extends Component {
         </Link>
       )
     }
+
+    let terms = <span className={style.TermsNotAgreed}>Not Read</span>
+    if (this.props.termsOfService) {
+      terms = <span className={style.TermsAgreed}>Read</span>
+    }
+    let access = <span className={style.Provisional}>Provisional</span>
+    if (this.props.active) {
+      access = <span className={style.Full}>Full Access</span>
+    }
+
     return (
       <nav className={style.AppBar}>
-
-          <Link to="/profile/">
-            <ion-icon name="contact"></ion-icon> Account Profile - <span className={style.Access}>Full Access</span>
-          </Link>
-          <Link to="/termsofservice/">
-            <ion-icon name="document"></ion-icon> Terms of Service - <span className={style.Access}>Read</span>
-          </Link>
-          <a href="/auth/logout">
-            <ion-icon name="log-out"></ion-icon> Logout
-          </a>
-          {admin}
+        <Link to="/profile/">
+          <ion-icon name="contact"></ion-icon> Account Profile - {access} 
+        </Link>
+        <Link to="/termsofservice/">
+          <ion-icon name="document"></ion-icon> Terms of Service - {terms} 
+        </Link>
+        <a href="/auth/logout">
+          <ion-icon name="log-out"></ion-icon> Logout
+        </a>
+        {admin}
       </nav>
     )
   }
@@ -45,5 +54,7 @@ export default class AppBar extends Component {
 
 AppBar.propTypes = {
   isSuperUser: PropTypes.bool,
+  termsOfService: PropTypes.bool,
+  active: PropTypes.bool,
   notifications: PropTypes.number,
 }

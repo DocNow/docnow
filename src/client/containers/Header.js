@@ -8,6 +8,8 @@ const mapStateToProps = (state) => {
     twitterScreenName: state.user.twitterScreenName,
     twitterAvatarUrl: state.user.twitterAvatarUrl,
     isSuperUser: state.user.isSuperUser,
+    termsOfService: state.user.termsOfService,
+    active: state.user.active,
     location: state.router.location.pathname,
     logoUrl: state.settings.logoUrl,
     instanceInfoLink: state.settings.instanceInfoLink,

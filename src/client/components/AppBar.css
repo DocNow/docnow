@@ -30,6 +30,22 @@
  vertical-align: middle;
 }
 
+.Full {
+  color: green;
+}
+
+.Provisional {
+  color: yellow;
+}
+
+.TermsAgreed {
+  color: green;
+}
+
+.TermsNotAgreed {
+  color: Orange;
+}
+
 .Notifications {
   color: white;
   background-color: red;
