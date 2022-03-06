@@ -40,7 +40,7 @@ export default class SearchList extends Component {
 
   render() {
 
-    const setPublicColumn = this.props.user.admin ?  <TableCell>Public</TableCell> : ''
+    const setPublicColumn = this.props.user.admin ?  <TableCell>Public</TableCell> : <TableCell />
     return (
       <>
       <Intro>
@@ -63,7 +63,7 @@ export default class SearchList extends Component {
           const created = moment(search.created).local().format('LL')
 
           // only admins can set whether a search is a public collection or not
-          let setPublicCell = ''
+          let setPublicCell = <TableCell />
           if (this.props.user.admin) {
             setPublicCell = (
               <TableCell>
@@ -134,5 +134,5 @@ SearchList.propTypes = {
   user: PropTypes.object,
   forUserId: PropTypes.number,
   instanceTweetText: PropTypes.string,
-  academic: PropTypes.boolean
+  academic: PropTypes.bool
 }

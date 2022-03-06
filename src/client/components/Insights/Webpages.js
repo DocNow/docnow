@@ -82,7 +82,7 @@ Webpages.propTypes = {
   search: PropTypes.object,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
-  academic: PropTypes.boolean,
+  academic: PropTypes.bool,
   webpages: PropTypes.array,
   getWebpages: PropTypes.func,
   resetWebpages: PropTypes.func,

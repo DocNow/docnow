@@ -136,7 +136,7 @@ SearchInfo.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   instanceTweetText: PropTypes.string,
-  academic: PropTypes.boolean,
+  academic: PropTypes.bool,
   updateSearch: PropTypes.func,
   deleteSearch: PropTypes.func,
   createArchive: PropTypes.func

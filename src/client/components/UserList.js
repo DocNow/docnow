@@ -20,7 +20,7 @@ export default class UserList extends Component {
     super()
     this.toggleActive = this.toggleActive.bind(this)
     this.toggleAdmin = this.toggleAdmin.bind(this)
-    this.udpateQuota = this.updateQuota.bind(this)
+    this.updateQuota = this.updateQuota.bind(this)
   }
 
   componentDidMount() {

@@ -276,5 +276,5 @@ SearchToggle.propTypes = {
   user: PropTypes.object,
   updateSearch: PropTypes.func,
   instanceTweetText: PropTypes.string,
-  academic: PropTypes.boolean
+  academic: PropTypes.bool
 }

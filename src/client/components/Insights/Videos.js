@@ -68,7 +68,7 @@ Videos.propTypes = {
   search: PropTypes.object,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
-  academic: PropTypes.boolean,
+  academic: PropTypes.bool,
   getVideos: PropTypes.func,
   getSearch: PropTypes.func,
   getTweetsForVideo: PropTypes.func,

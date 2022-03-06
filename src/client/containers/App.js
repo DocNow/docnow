@@ -22,6 +22,7 @@ import UserListPage from './UserListPage'
 import ActionsPage from './ActionsPage'
 import CollectionListPage from './CollectionListPage'
 import CollectionPage from './CollectionPage'
+import TermsPage from './TermsPage'
 import { getUser } from '../actions/user'
 import { getSettings } from '../actions/settings'
 import { getWorld } from '../actions/trends'
@@ -72,6 +73,7 @@ class App extends MediaQueryComponent {
               <Route exact name="actions" path="/search/:searchId/actions/" component={ActionsPage} />
               <Route exact name="collections" path="/collections/" component={CollectionListPage} />
               <Route exact name="collection" path="/collection/:searchId/" component={CollectionPage} />
+              <Route exact name="terms" path="/terms/" component={TermsPage} />
             </Switch>
           </ScrollToTop>
           <Message />

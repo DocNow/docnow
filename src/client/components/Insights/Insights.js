@@ -73,7 +73,7 @@ Insights.propTypes = {
   actions: PropTypes.array,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
-  academic: PropTypes.boolean,
+  academic: PropTypes.bool,
   webpages: PropTypes.array,
   getSearch: PropTypes.func,
   getTweets: PropTypes.func,

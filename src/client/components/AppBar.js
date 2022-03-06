@@ -39,7 +39,7 @@ export default class AppBar extends Component {
         <Link to="/profile/">
           <ion-icon name="contact"></ion-icon> Account - {access} 
         </Link>
-        <Link to="/termsofservice/">
+        <Link to="/terms/">
           <ion-icon name="document"></ion-icon> Terms - {terms} 
         </Link>
         <a href="/auth/logout">
