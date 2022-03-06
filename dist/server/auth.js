@@ -110,8 +110,10 @@ app.get('/twitter/callback', _passport["default"].authenticate('twitter', {
           case 2:
             user = _context.sent;
 
-            if (user.active || req.query.dest) {
-              res.redirect(req.query.dest || '/');
+            if (req.query.dest) {
+              res.redirect(req.query.dest);
+            } else if (user.active && user.termsOfService) {
+              res.redirect('/');
             } else {
               res.redirect('/profile/');
             }

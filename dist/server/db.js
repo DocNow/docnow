@@ -19,6 +19,10 @@ var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/creat
 
 require("../env");
 
+var _fs = _interopRequireDefault(require("fs"));
+
+var _path = _interopRequireDefault(require("path"));
+
 var _knex = _interopRequireDefault(require("knex"));
 
 var _moment = _interopRequireDefault(require("moment"));
@@ -198,7 +202,7 @@ var Database = /*#__PURE__*/function () {
     key: "getSettings",
     value: function () {
       var _getSettings = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee4() {
-        var settings, rows, _iterator, _step, row;
+        var settings, rows, _iterator, _step, row, defaultTermsFile;
 
         return _regenerator["default"].wrap(function _callee4$(_context4) {
           while (1) {
@@ -229,9 +233,14 @@ var Database = /*#__PURE__*/function () {
                   settings.instanceTweetText = "I'm creating a collection of tweets that match {query}. You can learn more about why I'm creating it and specify your terms of your consent here {collection-url}";
                 }
 
+                if (!settings.termsOfService) {
+                  defaultTermsFile = _path["default"].resolve(__dirname, '../../userData/terms-of-service.md');
+                  settings.termsOfService = _fs["default"].readFileSync(defaultTermsFile, 'utf8').toString();
+                }
+
                 return _context4.abrupt("return", settings);
 
-              case 9:
+              case 10:
               case "end":
                 return _context4.stop();
             }
@@ -249,7 +258,7 @@ var Database = /*#__PURE__*/function () {
     key: "addUser",
     value: function () {
       var _addUser = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee5(user) {
-        var settings, su, newUser;
+        var settings, superUserExists, newUser;
         return _regenerator["default"].wrap(function _callee5$(_context5) {
           while (1) {
             switch (_context5.prev = _context5.next) {
@@ -259,45 +268,54 @@ var Database = /*#__PURE__*/function () {
 
               case 2:
                 settings = _context5.sent;
-                user.tweetQuota = user.tweetQuota || settings.defaultQuota; // first user is the super user (and an admin)
+                user.tweetQuota = user.tweetQuota || settings.defaultQuota; // first user is the super user, an admin and active
 
                 _context5.next = 6;
                 return this.getSuperUser();
 
               case 6:
-                su = _context5.sent;
-                user.isSuperUser = su ? false : true;
-                user.admin = user.isSuperUser;
-                _context5.prev = 9;
-                _context5.next = 12;
+                superUserExists = _context5.sent;
+
+                if (!superUserExists) {
+                  user.isSuperUser = true;
+                  user.admin = true;
+                  user.active = true;
+                } else {
+                  user.isSuperUser = false;
+                  user.admin = false;
+                  user.active = false;
+                }
+
+                _context5.prev = 8;
+                _context5.next = 11;
                 return _User["default"].query().insert(user);
 
-              case 12:
+              case 11:
                 newUser = _context5.sent;
 
                 if (!newUser.isSuperUser) {
-                  _context5.next = 16;
+                  _context5.next = 15;
                   break;
                 }
 
-                _context5.next = 16;
+                _context5.next = 15;
                 return this.loadPlaces();
 
-              case 16:
+              case 15:
                 return _context5.abrupt("return", newUser);
 
-              case 19:
-                _context5.prev = 19;
-                _context5.t0 = _context5["catch"](9);
+              case 18:
+                _context5.prev = 18;
+                _context5.t0 = _context5["catch"](8);
 
                 _logger["default"].error(_context5.t0);
 
-              case 22:
+              case 21:
               case "end":
                 return _context5.stop();
             }
           }
-        }, _callee5, this, [[9, 19]]);
+        }, _callee5, this, [[8, 18]]);
       }));
 
       function addUser(_x3) {
@@ -1949,13 +1967,13 @@ var Database = /*#__PURE__*/function () {
                 tweetsEnd = (0, _moment["default"])().subtract(1, 'minutes');
 
                 if ((0, _moment["default"])(lastQuery.value.endDate) < tweetsEnd) {
-                  tweetsEnd = lastQuery.value.endDate;
+                  tweetsEnd = (0, _moment["default"])(lastQuery.value.endDate);
                 }
 
-                tweetsStart = lastQuery.value.startDate;
+                tweetsStart = (0, _moment["default"])(lastQuery.value.startDate);
 
                 if (!(tweetsStart < tweetsEnd)) {
-                  _context34.next = 13;
+                  _context34.next = 15;
                   break;
                 }
 
@@ -1974,9 +1992,13 @@ var Database = /*#__PURE__*/function () {
 
                 _logger["default"].info("adding job ".concat(job.id, " to search job queue"));
 
-                return _context34.abrupt("return", this.redis.lpushAsync(_redis.startSearchJobKey, job.id));
+                _context34.next = 14;
+                return this.redis.lpushAsync(_redis.startSearchJobKey, job.id);
 
-              case 13:
+              case 14:
+                return _context34.abrupt("return", job);
+
+              case 15:
               case "end":
                 return _context34.stop();
             }
