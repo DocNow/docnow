@@ -13,11 +13,6 @@
   text-decoration: none
 }
 
-.AppBar a:visited {
-  color: #ffffff;
-  text-decoration: none
-}
-
 .AppBar a {
   padding: 10px;
   margin-right: 10px;
@@ -53,4 +48,10 @@
   padding-left: 2px;
   padding-right: 2px;
   border-radius: 50%;
+}
+
+@media screen and (max-width: 660px) {
+  .AppBar {
+    display: none;
+  }
 }

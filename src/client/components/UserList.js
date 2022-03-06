@@ -60,7 +60,7 @@ export default class UserList extends Component {
             <TableCell className={style.Joined}>Joined</TableCell>
             <TableCell className={style.Searches}>Searches</TableCell>
             <TableCell className={style.Tweets}>Tweets</TableCell>
-            <TableCell>Terms</TableCell>
+            <TableCell className={style.Terms}>Terms</TableCell>
             <TableCell className={style.Active}>Active</TableCell>
             <TableCell className={style.Admin}>Admin</TableCell>
             <TableCell className={style.Quota}>Quota</TableCell>
@@ -76,7 +76,7 @@ export default class UserList extends Component {
               <TableCell className={style.Joined}>{moment(user.created).local().format('MMM D, Y')}</TableCell>
               <TableCell className={style.Searches}>{user.searches.filter(s => s.saved).length}</TableCell>
               <TableCell className={style.Tweets}>{user.tweetCount.toLocaleString()}</TableCell>
-              <TableCell>{ user.termsOfService ? <ion-icon name="checkmark"></ion-icon> : "" }</TableCell>
+              <TableCell className={style.Terms}>{ user.termsOfService ? <ion-icon name="checkmark"></ion-icon> : "" }</TableCell>
               <TableCell className={style.Active}>
                 <Switch
                   checked={user.active}

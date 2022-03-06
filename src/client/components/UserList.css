@@ -7,7 +7,7 @@
 
 @media screen and (max-width: 660px) {
 
-  .UserList .Avatar, .UserList .Joined, .UserList .Name, .UserList .Searches, .UserList .Tweets {
+  .UserList .Avatar, .UserList .Joined, .UserList .Name, .UserList .Searches, .UserList, .UserList .Terms, .UserList .Tweets {
     display: none;
   }
 

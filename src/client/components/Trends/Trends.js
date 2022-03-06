@@ -34,14 +34,18 @@ export default class Trends extends MediaQueryComponent {
     let newLocation = null
     if (!loggedIn) {
       introElement = (
+        <>
         <Intro>
           Welcome to DocNow, a social media appraisal tool.
-          <Button
-            variant="contained" color="primary"
-            onClick={() => {window.location = '/auth/twitter'; return false}}>
-            <ion-icon name="logo-twitter"></ion-icon> &nbsp; Login with Twitter
-          </Button>
         </Intro>
+          <div className={style.Login}>
+            <Button
+              variant="contained" color="primary"
+              onClick={() => {window.location = '/auth/twitter'; return false}}>
+              <ion-icon name="logo-twitter"></ion-icon> &nbsp; Login with Twitter
+            </Button>
+          </div>
+        </>
       )
     } else {
       introElement = (
