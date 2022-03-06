@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import defaultLogo from '../images/mith.png'
+import defaultLogo from '../images/shift.png'
 import styles from './LogoUpload.css'
 import PropTypes from 'prop-types'
 

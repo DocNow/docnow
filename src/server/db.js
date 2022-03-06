@@ -86,11 +86,18 @@ export class Database {
     const settings = await this.getSettings()
     user.tweetQuota = user.tweetQuota || settings.defaultQuota
 
-    // first user is the super user (and an admin)
-    const su = await this.getSuperUser()
-    user.isSuperUser = su ? false : true
-    user.admin = user.isSuperUser
-  
+    // first user is the super user, an admin and active
+    const superUserExists = await this.getSuperUser()
+    if (! superUserExists) {
+      user.isSuperUser = true
+      user.admin = true
+      user.active = true
+    } else {
+      user.isSuperUser = false
+      user.admin = false
+      user.active = false
+    }
+
     try {
       const newUser = await User.query().insert(user)
 

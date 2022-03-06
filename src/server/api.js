@@ -57,6 +57,8 @@ app.put('/user', async (req, res) => {
     const newUser = {
       ...user,
       email: req.body.email,
+      termsOfService: req.body.termsOfService,
+      tweetQuota: req.body.tweetQuota
     }
     await db.updateUser(newUser)
     res.json(newUser)

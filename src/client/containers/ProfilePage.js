@@ -7,14 +7,12 @@ import { updateUserSettings, saveUserSettings } from '../actions/user'
 const mapStateToProps = (state) => {
   return {
     user: state.user,
-    updatedSettings: state.settings.updated,
-    updatedUserSettings: state.user.updated,
+    updatedSettings: state.settings.updated
   }
 }
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   const { updatedSettings } = stateProps
-  const { updatedUserSettings } = stateProps
   const { dispatchSave } = dispatchProps
 
   return {
@@ -23,9 +21,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       if (updatedSettings) {
         dispatchSave(saveSettings)
       }
-      if (updatedUserSettings) {
-        dispatchSave(saveUserSettings)
-      }
+      dispatchSave(saveUserSettings)
     }
   }
 }
@@ -33,7 +29,9 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
   return Object.assign( bindActionCreators({}, dispatch), {
     updateUserSettings: (e) => {
-      dispatch(updateUserSettings(e.target.name, e.target.value))
+      const name = e.target.name
+      const value = e.target.type == 'checkbox' ? e.target.checked : e.target.value
+      dispatch(updateUserSettings(name, value))
     },
     dispatchSave: (save) => {
       dispatch(save())

@@ -26,16 +26,10 @@ export const updateUserSettings = (name, value) => {
   }
 }
 
-const saveUserSettingsAction = () => {
-  return {
-    type: SAVE_USER_SETTINGS,
-    saved: true
-  }
-}
-
 export const saveUserSettings = () => {
   return (dispatch, getState) => {
     const { user } = getState()
+    console.log(user)
     const opts = {
       method: 'PUT',
       headers: {'Content-Type': 'application/json'},
@@ -44,7 +38,9 @@ export const saveUserSettings = () => {
     }
     return fetch('/api/v1/user', opts)
       .then((resp) => {
-        dispatch(saveUserSettingsAction())
+        dispatch({
+          type: SAVE_USER_SETTINGS
+        })
         resp.json()
       })
   }

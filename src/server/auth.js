@@ -89,8 +89,10 @@ app.get('/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/'}),
   async (req, res) => {
     const user = await db.getUser(req.user)
-    if (user.active || req.query.dest) {
-      res.redirect(req.query.dest || '/')
+    if (req.query.dest) {
+      res.redirect(req.query.dest)
+    } else if (user.active && user.termsOfService) {
+      res.redirect('/')
     } else {
       res.redirect('/profile/')
     }
