@@ -99,7 +99,9 @@ app.put('/user', /*#__PURE__*/function () {
           case 3:
             user = _context.sent;
             newUser = _objectSpread(_objectSpread({}, user), {}, {
-              email: req.body.email
+              email: req.body.email,
+              termsOfService: req.body.termsOfService,
+              tweetQuota: req.body.tweetQuota
             });
             _context.next = 7;
             return db.updateUser(newUser);
@@ -213,7 +215,7 @@ app.put('/settings', /*#__PURE__*/function () {
             superUser = _context4.sent;
 
             if (!(!superUser || req.user && req.user.isSuperUser)) {
-              _context4.next = 34;
+              _context4.next = 35;
               break;
             }
 
@@ -230,11 +232,12 @@ app.put('/settings', /*#__PURE__*/function () {
             _context4.t10 = req.body.emailPassword;
             _context4.t11 = req.body.emailFromAddress;
             _context4.t12 = parseInt(req.body.defaultQuota, 10) || 50000;
-            _context4.next = 19;
+            _context4.t13 = req.body.termsOfService;
+            _context4.next = 20;
             return (0, _twitter.isAcademic)(req.body.appKey, req.body.appSecret);
 
-          case 19:
-            _context4.t13 = _context4.sent;
+          case 20:
+            _context4.t14 = _context4.sent;
             settings = {
               logoUrl: _context4.t0,
               instanceTitle: _context4.t1,
@@ -249,41 +252,42 @@ app.put('/settings', /*#__PURE__*/function () {
               emailPassword: _context4.t10,
               emailFromAddress: _context4.t11,
               defaultQuota: _context4.t12,
-              academic: _context4.t13
+              termsOfService: _context4.t13,
+              academic: _context4.t14
             };
-            _context4.prev = 21;
-            _context4.next = 24;
+            _context4.prev = 22;
+            _context4.next = 25;
             return db.addSettings(settings);
 
-          case 24:
+          case 25:
             (0, _auth.activateKeys)();
             res.json({
               status: 'updated'
             });
-            _context4.next = 32;
+            _context4.next = 33;
             break;
 
-          case 28:
-            _context4.prev = 28;
-            _context4.t14 = _context4["catch"](21);
-            console.error(_context4.t14);
+          case 29:
+            _context4.prev = 29;
+            _context4.t15 = _context4["catch"](22);
+            console.error(_context4.t15);
             res.json({
               status: 'error'
             });
 
-          case 32:
-            _context4.next = 35;
+          case 33:
+            _context4.next = 36;
             break;
 
-          case 34:
+          case 35:
             notAuthorized(res);
 
-          case 35:
+          case 36:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[21, 28]]);
+    }, _callee4, null, [[22, 29]]);
   }));
 
   return function (_x7, _x8) {

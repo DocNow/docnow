@@ -73,7 +73,7 @@ function Academic({active}) {
 }
 
 Academic.propTypes = {
-  active: PropTypes.boolean
+  active: PropTypes.bool
 }
 
 export default class Settings extends MediaQueryComponent {
@@ -347,7 +347,7 @@ Settings.propTypes = {
   logoUrl: PropTypes.string,
   appKey: PropTypes.string,
   appSecret: PropTypes.string,
-  academic: PropTypes.boolean,
+  academic: PropTypes.bool,
   defaultQuota: PropTypes.number,
   userLoggedIn: PropTypes.bool,
   isSuperUser: PropTypes.bool,

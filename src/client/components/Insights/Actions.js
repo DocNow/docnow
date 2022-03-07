@@ -43,7 +43,7 @@ Actions.propTypes = {
   search: PropTypes.object,
   user: PropTypes.object,
   instanceTweetText: PropTypes.string,
-  academic: PropTypes.boolean,
+  academic: PropTypes.bool,
   getSearch: PropTypes.func,
   getActions: PropTypes.func,
   updateSearch: PropTypes.func,

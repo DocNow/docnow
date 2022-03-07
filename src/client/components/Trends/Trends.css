@@ -16,6 +16,7 @@
   background-size: 300%;
 }
 
-.Mobile p {
-  display: none;
+.Login {
+  margin: 30px;
+  text-align: center;
 }

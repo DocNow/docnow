@@ -1,19 +1,14 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
+import { Link } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField'
 import Button from '@material-ui/core/Button'
+import Checkbox from '@material-ui/core/Checkbox'
 import style from './Profile.css'
 
 export default class Profile extends Component {
 
   render() {
-    let disableSave = true
-
-    if (this.props.updatedSettings || this.props.updatedUserSettings) {
-      disableSave = false
-    }
-
-    const tweetQuota = this.props.user.tweetQuota ? this.props.user.tweetQuota.toLocaleString() : ''
 
     const awaitingActivation = this.props.user.active ? ''
       : <p className={style.Inactive}>
@@ -21,10 +16,6 @@ export default class Profile extends Component {
           and save searches, but you will not be able to activate your search and 
           collect live data from the Twitter stream. 
         </p>
-
-      // Once we have emails in place, change text above to:
-      // Your account is awaiting activation. The admin has been notified. 
-      // You will receive an email when activated. etc.
 
     return (
       <div className={style.Profile}>
@@ -59,17 +50,28 @@ export default class Profile extends Component {
 
           <p>
             <TextField
-              name="quota"
+              name="tweetQuota"
               label="Tweet Quota"
-              disabled={true}
-              value={tweetQuota || 25000} />
+              disabled={! this.props.user.admin}
+              onChange={this.props.updateUserSettings}
+              value={this.props.user.tweetQuota || 25000} />
+          </p>
+
+          <p>
+            I have read and acknowledge the&nbsp;
+            <Link to="/terms/">Terms of Service</Link>&nbsp;
+            <Checkbox 
+              name="termsOfService"
+              color="primary"
+              onChange={this.props.updateUserSettings}
+              checked={this.props.user.termsOfService || false} />
           </p>
 
           <p>
             <Button 
               color="primary"
+              disabled={! this.props.user.formUpdated}
               variant="outlined"
-              disabled={disableSave}
               onClick={this.props.saveAllSettings}>
               Save
             </Button>
@@ -85,7 +87,6 @@ export default class Profile extends Component {
 Profile.propTypes = {
   user: PropTypes.object,
   updatedSettings: PropTypes.bool,
-  updatedUserSettings: PropTypes.bool,
   updateUserSettings: PropTypes.func,
   saveAllSettings: PropTypes.func,
 }

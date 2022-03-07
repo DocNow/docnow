@@ -1,4 +1,5 @@
 import { SET_SETTINGS, UPDATE_SETTINGS, SAVE_SETTINGS } from '../actions/settings'
+import { UPDATE_TERMS } from '../actions/terms'
 
 const initialState = {
   logoUrl: '',
@@ -15,7 +16,8 @@ const initialState = {
   emailPassword: '',
   emailFromAddress: '',
   updated: false,
-  academic: false
+  academic: false,
+  termsOfService: ''
 }
 
 export default function settings(state = initialState, action) {
@@ -38,7 +40,8 @@ export default function settings(state = initialState, action) {
         emailUser: action.emailUser,
         emailPassword: action.emailPassword,
         emailFromAddress: action.emailFromAddress,
-        academic: action.academic
+        academic: action.academic,
+        termsOfService: action.termsOfService
       }
     }
 
@@ -57,6 +60,13 @@ export default function settings(state = initialState, action) {
         // flush file from memory
         logoFile: null,
         updated: !action.saved
+      }
+    }
+
+    case UPDATE_TERMS: {
+      return {
+        ...state,
+        termsOfService: action.markdown
       }
     }
 

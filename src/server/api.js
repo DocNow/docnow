@@ -57,6 +57,8 @@ app.put('/user', async (req, res) => {
     const newUser = {
       ...user,
       email: req.body.email,
+      termsOfService: req.body.termsOfService,
+      tweetQuota: req.body.tweetQuota
     }
     await db.updateUser(newUser)
     res.json(newUser)
@@ -110,6 +112,7 @@ app.put('/settings', async (req, res) => {
       emailPassword: req.body.emailPassword,
       emailFromAddress: req.body.emailFromAddress,
       defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000,
+      termsOfService: req.body.termsOfService,
       academic: await isAcademic(req.body.appKey, req.body.appSecret)
     }
     try {

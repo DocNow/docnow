@@ -33,6 +33,8 @@ export default class Header extends MediaQueryComponent {
       appBar = (
         <AppBar
           notifications={this.props.notifications}
+          active={this.props.active}
+          termsOfService={this.props.termsOfService}
           isSuperUser={this.props.isSuperUser} />
       )
       tabBar = <TabBar 
@@ -66,5 +68,7 @@ Header.propTypes = {
   logoUrl: PropTypes.string,
   isSuperUser: PropTypes.bool,
   notifications: PropTypes.number,
+  termsOfService: PropTypes.bool,
+  active: PropTypes.bool,
   navigateTo: PropTypes.func,
 }

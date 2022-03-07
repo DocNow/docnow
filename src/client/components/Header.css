@@ -35,3 +35,11 @@
 .HeaderUnder480px .Logo img {
   width: 80%;
 }
+
+@media screen and (max-width: 660px) {
+  .Header {
+    display: none;
+  }
+}
+
+

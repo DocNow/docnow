@@ -1,5 +1,7 @@
 import '../env'
 
+import fs from 'fs'
+import path from 'path'
 import knex from 'knex'
 import moment from 'moment'
 import { Model } from 'objection'
@@ -79,6 +81,11 @@ export class Database {
       settings.instanceTweetText = "I'm creating a collection of tweets that match {query}. You can learn more about why I'm creating it and specify your terms of your consent here {collection-url}"
     }
 
+    if (! settings.termsOfService) {
+      const defaultTermsFile = path.resolve(__dirname, '../../userData/terms-of-service.md')
+      settings.termsOfService = fs.readFileSync(defaultTermsFile, 'utf8').toString()
+    }
+
     return settings
   }
 
@@ -86,11 +93,18 @@ export class Database {
     const settings = await this.getSettings()
     user.tweetQuota = user.tweetQuota || settings.defaultQuota
 
-    // first user is the super user (and an admin)
-    const su = await this.getSuperUser()
-    user.isSuperUser = su ? false : true
-    user.admin = user.isSuperUser
-  
+    // first user is the super user, an admin and active
+    const superUserExists = await this.getSuperUser()
+    if (! superUserExists) {
+      user.isSuperUser = true
+      user.admin = true
+      user.active = true
+    } else {
+      user.isSuperUser = false
+      user.admin = false
+      user.active = false
+    }
+
     try {
       const newUser = await User.query().insert(user)
 
@@ -637,11 +651,11 @@ export class Database {
     // can't search into the future
     let tweetsEnd = moment().subtract(1, 'minutes')
     if (moment(lastQuery.value.endDate) < tweetsEnd) {
-      tweetsEnd = lastQuery.value.endDate
+      tweetsEnd = moment(lastQuery.value.endDate)
     }
 
-    const tweetsStart = lastQuery.value.startDate
-
+    const tweetsStart = moment(lastQuery.value.startDate)
+  
     if (tweetsStart < tweetsEnd) {
       const job = await this.createSearchJob({
         type: 'search',
@@ -653,7 +667,9 @@ export class Database {
       })
 
       log.info(`adding job ${job.id} to search job queue`)
-      return this.redis.lpushAsync(startSearchJobKey, job.id)
+      await this.redis.lpushAsync(startSearchJobKey, job.id)
+
+      return job
     }
   }
 

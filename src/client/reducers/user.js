@@ -25,7 +25,7 @@ export default function user(state = initialState, action) {
     case UPDATE_USER_SETTINGS: {
       const s = {
         ...state,
-        updated: true
+        formUpdated: true
       }
       s[action.name] = action.value
       return s
@@ -34,7 +34,7 @@ export default function user(state = initialState, action) {
     case SAVE_USER_SETTINGS: {
       return {
         ...state,
-        updated: !action.saved
+        formUpdated: false
       }
     }
 

@@ -70,7 +70,7 @@ Images.propTypes = {
   search: PropTypes.object,
   user: PropTypes.user,
   instanceTweetText: PropTypes.string,
-  academic: PropTypes.boolean,
+  academic: PropTypes.bool,
   getImages: PropTypes.func,
   getSearch: PropTypes.func,
   getTweetsForImage: PropTypes.func,
