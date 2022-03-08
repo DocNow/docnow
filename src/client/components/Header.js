@@ -37,7 +37,7 @@ export default class Header extends MediaQueryComponent {
           termsOfService={this.props.termsOfService}
           isSuperUser={this.props.isSuperUser} />
       )
-      tabBar = <TabBar 
+      tabBar = <TabBar
         isSuperUser={this.props.isSuperUser}
         location={this.props.location}
         navigateTo={this.props.navigateTo} />
@@ -53,6 +53,7 @@ export default class Header extends MediaQueryComponent {
             </Link>
           </div>
           <div className={styles.Logo}><center>{logo}</center></div>
+          <div><button className={styles.Donate}>Donate</button></div>
         </header>
         {tabBar}
       </div>
