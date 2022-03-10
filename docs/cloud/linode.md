@@ -174,8 +174,14 @@ applicable law.
 
 root@localhost:~#
 ```
+Enter *exit* to logout of your VPS. 
 
+You will see the following:
 
+```bash
+logout
+Connection to [youIPaddresshere] closed
+```
 
 ### 4. Launch your application
 
