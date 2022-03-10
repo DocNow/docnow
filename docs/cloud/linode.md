@@ -135,8 +135,6 @@ If you have permissions issues, run the following in Terminal:
 
 ```chmod 0400 ~/.ssh/docnow_id_rsa```
 
-```exit```
-
 You will see:
 
 ```
@@ -147,6 +145,37 @@ Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
 Warning: Permanently added '[yourIPaddress]' (ED25519) to the list of known hosts.
 Welcome to Ubuntu 18.04.1 LTS (GNU/Linux 4.15.0-1021-Linode x86_64)
 ```
+Enter *yes* to connect to your server:
+
+You will see your connection to the server:
+
+```bash
+Warning: Permanently added '[yourIPaddresshere]' (ECDSA) to the list of known hosts.
+Welcome to Ubuntu 18.04.6 LTS (GNU/Linux 4.15.0-169-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/advantage
+
+  System information as of Thu Mar 10 18:31:06 UTC 2022
+
+  System load:  0.02              Processes:           101
+  Usage of /:   2.0% of 78.19GB   Users logged in:     0
+  Memory usage: 3%                IP address for eth0: [yourIPaddresshere]
+  Swap usage:   0%
+
+
+The programs included with the Ubuntu system are free software;
+the exact distribution terms for each program are described in the
+individual files in /usr/share/doc/*/copyright.
+
+Ubuntu comes with ABSOLUTELY NO WARRANTY, to the extent permitted by
+applicable law.
+
+root@localhost:~#
+```
+
+
 
 ### 4. Launch your application
 
