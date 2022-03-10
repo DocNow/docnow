@@ -43,6 +43,14 @@ export default class Header extends MediaQueryComponent {
         navigateTo={this.props.navigateTo} />
     }
 
+    let supportUsButton = ''
+    if (this.props.supportUsText && this.props.supportUsUrl) {
+      supportUsButton = (
+        <a href={ this.props.supportUsUrl } target="_new">
+          <button className={styles.Donate}>{this.props.supportUsText}</button>
+        </a>
+      )
+    }
     return (
       <div>
         {appBar}
@@ -53,7 +61,7 @@ export default class Header extends MediaQueryComponent {
             </Link>
           </div>
           <div className={styles.Logo}><center>{logo}</center></div>
-          <div><button className={styles.Donate}>Donate</button></div>
+          <div>{supportUsButton}</div>
         </header>
         {tabBar}
       </div>
@@ -71,5 +79,7 @@ Header.propTypes = {
   notifications: PropTypes.number,
   termsOfService: PropTypes.bool,
   active: PropTypes.bool,
+  supportUsText: PropTypes.string,
+  supportUsUrl: PropTypes.string,
   navigateTo: PropTypes.func,
 }

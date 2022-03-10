@@ -14,7 +14,9 @@ const mapStateToProps = (state) => {
     logoUrl: state.settings.logoUrl,
     instanceInfoLink: state.settings.instanceInfoLink,
     instanceDescription: state.settings.instanceDescription,
-    notifications: 0
+    notifications: 0,
+    supportUsText: state.settings.supportUsText,
+    supportUsUrl: state.settings.supportUsUrl
   }
 }
 

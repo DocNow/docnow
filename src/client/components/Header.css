@@ -51,6 +51,7 @@
   padding: 5px;
   font-weight: 600;
   border: 2px solid #3f50b5;
+  cursor: pointer;
 }
 .Donate:hover {
   margin-top:15px;

@@ -24,6 +24,8 @@ const mapStateToProps = (state) => {
     userLoggedIn: state.user.twitterScreenName !== '',
     tweetCount: state.stats.tweetCount,
     userCount: state.stats.userCount,
+    supportUsText: state.settings.supportUsText,
+    supportUsUrl: state.settings.supportUsUrl
   }
 }
 
