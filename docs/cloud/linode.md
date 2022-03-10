@@ -121,7 +121,15 @@ key and `id_rsa.pub` public pair.
   * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
 
-```ssh -i ~/.ssh/docnow_id_rsa root@[yourIPaddresshere]```
+  ```ssh -i ~/.ssh/docnow_id_rsa root@[yourIPaddresshere]```
+
+  * The resulting screen will look like this:
+   ```bash
+   The authenticity of host '[yourIPaddresshere] ([yourIPaddresshere])' can't be established.
+   ECDSA key fingerprint is SHA256:B7X6z+GIBBERISH+Ozscdht3FB/3WfzcM/076S9ylEh4No.
+   Are you sure you want to continue connecting (yes/no/[fingerprint])?
+   ```
+
 
 If you have permissions issues, run the following in Terminal:
 
