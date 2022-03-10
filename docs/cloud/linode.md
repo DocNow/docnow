@@ -113,7 +113,9 @@ key and `id_rsa.pub` public pair.
   * Choose a Distribution: Select Ubuntu 18.04 LTS
   * Region: (any region is OK)
   * Linode Plan: Select "Shared CPU/ Linode 4GB"
-  * SSH Keys: Select: "Add an SSH Key" Label: Docnow SSH Public Key: "contents of ```cat ~/.ssh docnow_id_rsa.pub``` Add Key
+  * SSH Keys: Select: "Add an SSH Key" 
+  * Label: Enter Docnow 
+  * SSH Public Key: Type in your Terminal: ```cat ~/.ssh docnow_id_rsa.pub``` and enter the results in the box. Add Key
   * Create the Linode and take note of the resulting IP address (for this example we will use 1.2.2.4) of your Virtual Private Server
   * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
