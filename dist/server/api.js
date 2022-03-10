@@ -215,7 +215,7 @@ app.put('/settings', /*#__PURE__*/function () {
             superUser = _context4.sent;
 
             if (!(!superUser || req.user && req.user.isSuperUser)) {
-              _context4.next = 35;
+              _context4.next = 37;
               break;
             }
 
@@ -238,6 +238,8 @@ app.put('/settings', /*#__PURE__*/function () {
 
           case 20:
             _context4.t14 = _context4.sent;
+            _context4.t15 = req.body.supportUsText;
+            _context4.t16 = req.body.supportUsUrl;
             settings = {
               logoUrl: _context4.t0,
               instanceTitle: _context4.t1,
@@ -253,41 +255,43 @@ app.put('/settings', /*#__PURE__*/function () {
               emailFromAddress: _context4.t11,
               defaultQuota: _context4.t12,
               termsOfService: _context4.t13,
-              academic: _context4.t14
+              academic: _context4.t14,
+              supportUsText: _context4.t15,
+              supportUsUrl: _context4.t16
             };
-            _context4.prev = 22;
-            _context4.next = 25;
+            _context4.prev = 24;
+            _context4.next = 27;
             return db.addSettings(settings);
 
-          case 25:
+          case 27:
             (0, _auth.activateKeys)();
             res.json({
               status: 'updated'
             });
-            _context4.next = 33;
+            _context4.next = 35;
             break;
 
-          case 29:
-            _context4.prev = 29;
-            _context4.t15 = _context4["catch"](22);
-            console.error(_context4.t15);
+          case 31:
+            _context4.prev = 31;
+            _context4.t17 = _context4["catch"](24);
+            console.error(_context4.t17);
             res.json({
               status: 'error'
             });
 
-          case 33:
-            _context4.next = 36;
+          case 35:
+            _context4.next = 38;
             break;
 
-          case 35:
+          case 37:
             notAuthorized(res);
 
-          case 36:
+          case 38:
           case "end":
             return _context4.stop();
         }
       }
-    }, _callee4, null, [[22, 29]]);
+    }, _callee4, null, [[24, 31]]);
   }));
 
   return function (_x7, _x8) {
