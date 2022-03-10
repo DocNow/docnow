@@ -65,15 +65,33 @@ ssh-keygen -f ~/.ssh/docnow_id_rsa
 This step will save your Linode keys under a hidden directory name
 `/Users/[macOSusername]/.ssh` which is the default location of your ssh keys.
 
-Hit Enter without typing anything to save it to the default location. After hitting enter, you'll be prompted for an optional passphrase which will encrypt the private SSH key. (This is an added security to protect your
+Hit Enter without typing anything to save it to the default location. After hitting enter, you will be prompted for an optional passphrase which will encrypt the private SSH key. (This is an added security to protect your
 keys, should you ever lose your computer.). 
 
-The resulting screen will look like this:
+You now have a public and private key that you'll use to authenticate
+with the server you'll create. The screen output will look something like
+this:
 
 ```bash
 Generating public/private rsa key pair.
-Enter file in which to save the key
-(/Users/[macOSusername]/.ssh/docnow_id_rsa):
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /Users/[macOSusername]/.ssh/docnow_id_rsa
+Your public key has been saved in /Users/[macOSusername]/.ssh/docnow_id_rsa.pub
+The key fingerprint is:
+SHA256:j0QCWjKqsmvUG2OAhlmFGruiLdpMgcqXwWIePlbi5Qs [macOSusername]@YOURMACOS
+The key's randomart image is:
++---[RSA 3072]----+
+|  oo+            |
+|..o= .           |
+|+*.   . .        |
+|B+.    o         |
+|=*+=    S        |
+|@oB*o  . o       |
+|*Eo++   . .      |
+|+*=..            |
+|=.o.             |
++----[SHA256]-----+
 ```
 
 You can list the contents of the directory by running the following:
@@ -83,47 +101,11 @@ ls -alt ~/.ssh/
 ```
 
 If this your first time you will see the `docnow_id_rsa`
-private key and it's public pair of `docnow_id_rsa.pub]`
+private key and it's public pair of `docnow_id_rsa.pub`
 
 If you already have keys you will also see `id_rsa` private
 key and `id_rsa.pub` public pair.
 
-
-```bash
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-```
-
-⚠️Note: Nothing will appear in the terminal as you enter your
-passphrase. This is intentional. You're still typing though.
-
-You now have a public and private key that you'll use to authenticate
-with the server you'll create. The screen output will look like
-this:
-
-```bash
-Your identification has been saved in
-/Users/[macOSusername]/.ssh/docnow_id_rsa.
-Your public key has been saved in
-/Users/[macOSusername]/.ssh/docnow_id_rsa.pub.
-
-The key fingerprint is:
-
-a9:49:EX:AM:PL:E3:3e:a9:de:4e:77:11:58:b6:90:26 [macOSusername]@mac-mini
-
-The key's randomart image is:
-+--[ RSA 2048]----+
-\| ..o \|
-\| E o= . \|
-\| o. o \|
-\| .. \|
-\| ..S \|
-\| o o. \|
-\| =o.+. \|
-\| . =++.. \|
-\| o=++. \|
-+-----------------+
-```
 
 **Obtaining your public SSH key**
 
