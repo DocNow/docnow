@@ -65,7 +65,7 @@ ssh-keygen -f ~/.ssh/docnow_id_rsa
 This step will save your Linode keys under a hidden directory name
 `/Users/[macOSusername]/.ssh` which is the default location of your ssh keys.
 
-You'll be prompted to enter the file where you want to save the key. If you've never created an SSH key before on this computer, hit Enter without typing anything to save it to the default location described above. After hitting enter, you'll be prompted for an optional passphrase which will encrypt the private SSH key. (This is an added security to protect your
+Hit Enter without typing anything to save it to the default location. After hitting enter, you'll be prompted for an optional passphrase which will encrypt the private SSH key. (This is an added security to protect your
 keys, should you ever lose your computer.). 
 
 The resulting screen will look like this:
