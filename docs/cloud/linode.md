@@ -116,6 +116,7 @@ key and `id_rsa.pub` public pair.
   * SSH Keys: Select: "Add an SSH Key" 
     * Label: Enter Docnow 
     * SSH Public Key: Type in your Terminal: ```cat ~/.ssh/docnow_id_rsa.pub``` and enter the output in the box. Add Key
+  * You will be asked to create the root password of your VPS Server
   * Create the Linode and take note of the resulting IP address (for this example we will use 1.2.2.4) of your Virtual Private Server
   * Open your Terminal Application 
   * Connect to your Virtual Private Server with the following command using the key you created above 
