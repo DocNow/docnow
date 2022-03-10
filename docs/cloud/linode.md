@@ -107,14 +107,6 @@ If you already have keys you will also see `id_rsa` private
 key and `id_rsa.pub` public pair.
 
 
-**Obtaining your public SSH key**
-
-After generating an SSH keypair, run the following command in your
-terminal to display your public key:
-
-
-
-
 ### 3. Create your Virtual Private Server
 
 * Create your Linode [Virtual Private Server](https://cloud.linode.com/linodes)
