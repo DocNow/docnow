@@ -196,9 +196,37 @@ export default class Settings extends MediaQueryComponent {
           </div>
 
           <div>
-            <LogoUpload
+            <p>If you upload an instance logo it will be placed in the center of the header in each page. The image will be linked to the <em>More Information Link</em> that you provided above.</p>
+             <LogoUpload
               logoUrl={this.props.logoUrl}
               updateSettings={this.props.updateSettings} />
+          </div>
+
+          <div className={style.Separator}>
+            <h2>Support Us Button 💰</h2>
+            <p>The DocNow app can optionally display a &quot;Support Us&quot; button on the top right of every page. You can define the text of this button and the URL to link to by filling in the following information. If you leave these boxes blank no button will appear.</p>
+          </div>
+
+          <div>
+            <TextField
+              variant="outlined"
+              id="supportUsText"
+              name="supportUsText"
+              label="Support Us Text"
+              helperText="This is the text of your Support Us button, keep it short so it looks good as a button (5-10 characters)"
+              value={this.props.supportUsText}
+              onChange={this.props.updateSettings} />
+          </div>
+
+          <div>
+            <TextField
+              variant="outlined"
+              id="supportUsUrl"
+              name="supportUsUrl"
+              label="Support Us URL"
+              helperText="This is the URL of your Support Us button. Users who click on it will leave the application and go to the URL you provide."
+              value={this.props.supportUsUrl}
+              onChange={this.props.updateSettings} />
           </div>
 
           <div className={style.Separator}>

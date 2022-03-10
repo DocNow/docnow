@@ -113,7 +113,9 @@ app.put('/settings', async (req, res) => {
       emailFromAddress: req.body.emailFromAddress,
       defaultQuota: parseInt(req.body.defaultQuota, 10) || 50000,
       termsOfService: req.body.termsOfService,
-      academic: await isAcademic(req.body.appKey, req.body.appSecret)
+      academic: await isAcademic(req.body.appKey, req.body.appSecret),
+      supportUsText: req.body.supportUsText,
+      supportUsUrl: req.body.supportUsUrl
     }
     try {
       await db.addSettings(settings)

@@ -42,4 +42,24 @@
   }
 }
 
-
+.Donate {
+  margin-top:15px;
+  margin-right: 15px;
+  text-transform: uppercase;
+  color: #3f50b5;
+  background-color: white;
+  padding: 5px;
+  font-weight: 600;
+  border: 2px solid #3f50b5;
+  cursor: pointer;
+}
+.Donate:hover {
+  margin-top:15px;
+  margin-right: 15px;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: white;
+  background-color: #3f50b5;
+  padding: 5px;
+  border: 2px solid #3f50b5;
+}

@@ -17,7 +17,9 @@ const initialState = {
   emailFromAddress: '',
   updated: false,
   academic: false,
-  termsOfService: ''
+  termsOfService: '',
+  supportUsText: '',
+  supportUsUrl: ''
 }
 
 export default function settings(state = initialState, action) {
@@ -41,7 +43,9 @@ export default function settings(state = initialState, action) {
         emailPassword: action.emailPassword,
         emailFromAddress: action.emailFromAddress,
         academic: action.academic,
-        termsOfService: action.termsOfService
+        termsOfService: action.termsOfService,
+        supportUsText: action.supportUsText,
+        supportUsUrl: action.supportUsUrl
       }
     }
 
