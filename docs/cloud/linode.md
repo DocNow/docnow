@@ -13,17 +13,17 @@ something missing.
 
 Ansible will be used to configure the Virtual Private Server you will be setting up on [Linode](https://login.linode.com/signup?promo=DOCS32SAFC). This server will host the DocNow App. 
 
-You will need a Programmers Editors like [Microsoft's VSCode](https://code.visualstudio.com) to make edits below
+You will need a Programmers Editors like [Microsoft's VSCode](https://code.visualstudio.com) to make edits below. Download and unzip the file at the link to install it.
 
-Start by opening the Terminal application on your Mac in `Applications/Utilities` 
+Start by opening the Terminal application on your Mac in `Applications/Utilities` (you can also search for `terminal`)
 
 Install Homebrew by copying the following into your Terminal: 
 
-``` /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" ```
+``` /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" ``` This step will prompt you for the `macOSusername` password. Please remember to hit `Enter` after each entry. 
 
 *This will take a few minutes*
 
-Then copy the following into your Terminal:
+Then copy the following into your Terminal if this is your first time installing Homebrew:
 
 ```git -C /usr/local/Homebrew/Library/Taps/homebrew/homebrew-core fetch --unshallow```
 
