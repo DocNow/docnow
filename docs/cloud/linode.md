@@ -67,7 +67,8 @@ This will save your Linode keys under a hidden directory name
 
 You'll then be prompted to enter the file where you want to save the
 key. If you've never created an SSH key before on this computer, hit
-Enter without typing anything to save it to the default location.
+Enter without typing anything to save it to the default location. After hitting enter, you'll be prompted for an optional passphrase which will encrypt the private SSH key. (This is an added security to protect your
+keys, should you ever lose your computer.)
 
 ```bash
 Generating public/private rsa key pair.
@@ -87,14 +88,6 @@ private key and it's public pair of `docnow_id_rsa.pub]`
 If you already have keys you will also see `id_rsa` private
 key and `id_rsa.pub` public pair.
 
-
-After hitting enter, you'll be prompted for an optional passphrase which
-encrypts the private SSH key. (This is an added security to protect your
-keys, should you ever lose your computer.)
-
-We strongly recommend setting a passphrase. Keep in mind forgetting this
-passphrase will at least temporarily lock you out of your Linode
-server.
 
 ```bash
 Enter passphrase (empty for no passphrase):
