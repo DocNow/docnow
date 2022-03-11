@@ -13,6 +13,7 @@ Ansible will be used to configure the Virtual Private Server you will be setting
 You will need a Programmers Editors like [Microsoft's VSCode](https://code.visualstudio.com) to make edits below
 
 Start by opening the Terminal application on your Mac in `Applications/Utilities` 
+This can be also found by typing `terminal`' in Spotlight.
 
 Install Homebrew by copying the following into your Terminal: 
 
@@ -36,13 +37,13 @@ Now your computer has the tools it needs to interface with DigitalOcean
 
 ### Create an SSH Key
 
-To host your Docnow Application on DigitalOcean you will need SSH
+To host your Docnow Application on Linode you will need SSH
 (Secure Shell, allows for secure access to remote servers).
 
 SSH uses public and private keys.
 
-* Your public SSH key is what you'll provide DigitalOcean in order to authorize access to your server.
-* Your private SSH key remains on your computer and is required to log into your DigitalOcean server.
+* Your public SSH key is what you'll provide Linode in order to authorize access to your server.
+* Your private SSH key remains on your computer and is required to log into your Linode server.
 
 **Creating an SSH keypair**
 
@@ -57,8 +58,38 @@ command and hit Enter:
 ssh-keygen -f ~/.ssh/docnow_id_rsa
 ```
 
-This will save your DigitalOcean keys under a hidden directory name
+This step will save your Linode keys under a hidden directory name
 `/Users/[macOSusername]/.ssh` which is the default location of your ssh keys.
+
+Hit Enter without typing anything to save it to the default location. After hitting enter, you will be prompted for an optional passphrase which will encrypt the private SSH key. (This is an added security to protect your
+keys, should you ever lose your computer.). 
+
+You now have a public and private key that you'll use to authenticate
+with the server you'll create. The screen output will look something like
+this:
+
+```bash
+Generating public/private rsa key pair.
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /Users/[macOSusername]/.ssh/docnow_id_rsa
+Your public key has been saved in /Users/[macOSusername]/.ssh/docnow_id_rsa.pub
+The key fingerprint is:
+SHA256:j0QCWjKqsmvUG2OAhlmFGruiLdpMgcqXwWIePlbi5Qs [macOSusername]@YOURMACOS
+The key's randomart image is:
++---[RSA 3072]----+
+|  oo+            |
+|..o= .           |
+|+*.   . .        |
+|B+.    o         |
+|=*+=    S        |
+|@oB*o  . o       |
+|*Eo++   . .      |
+|+*=..            |
+|=.o.             |
++----[SHA256]-----+
+```
+
 You can list the contents of the directory by running the following:
 
 ```bash
@@ -66,64 +97,10 @@ ls -alt ~/.ssh/
 ```
 
 If this your first time you will see the `docnow_id_rsa`
-private key and it's public pair of `docnow_id_rsa.pub]`
+private key and it's public pair of `docnow_id_rsa.pub`
 
 If you already have keys you will also see `id_rsa` private
 key and `id_rsa.pub` public pair.
-
-You'll then be prompted to enter the file where you want to save the
-key. If you've never created an SSH key before on this computer, hit
-Enter without typing anything to save it to the default location.
-
-```bash
-Generating public/private rsa key pair.
-Enter file in which to save the key
-(/Users/[macOSusername]/.ssh/docnow_id_rsa):
-```
-
-After hitting enter, you'll be prompted for an optional passphrase which
-encrypts the private SSH key. (This is an added security to protect your
-keys, should you ever lose your computer.)
-
-We strongly recommend setting a passphrase. Keep in mind forgetting this
-passphrase will at least temporarily lock you out of your DigitalOcean
-server droplet.
-
-```bash
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-```
-
-⚠️Note: Nothing will appear in the terminal as you enter your
-passphrase. This is intentional. You're still typing though.
-
-You now have a public and private key that you'll use to authenticate
-with the server droplet you'll create. The screen output will look like
-this:
-
-```bash
-Your identification has been saved in
-/Users/[macOSusername]/.ssh/docnow_id_rsa.
-Your public key has been saved in
-/Users/[macOSusername]/.ssh/docnow_id_rsa.pub.
-
-The key fingerprint is:
-
-a9:49:EX:AM:PL:E3:3e:a9:de:4e:77:11:58:b6:90:26 [macOSusername]@mac-mini
-
-The key's randomart image is:
-+--[ RSA 2048]----+
-\| ..o \|
-\| E o= . \|
-\| o. o \|
-\| .. \|
-\| ..S \|
-\| o o. \|
-\| =o.+. \|
-\| . =++.. \|
-\| o=++. \|
-+-----------------+
-```
 
 **Obtaining your public SSH key**
 

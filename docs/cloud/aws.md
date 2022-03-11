@@ -16,6 +16,7 @@ Ansible will be used to configure the Virtual Private Server you will be setting
 You will need a Programmers Editors like [Microsoft's VSCode](https://code.visualstudio.com) to make edits below
 
 Start by opening the Terminal application on your Mac in `Applications/Utilities` 
+This can be also found by typing `terminal`' in Spotlight.
 
 Install Homebrew by copying the following into your Terminal: 
 

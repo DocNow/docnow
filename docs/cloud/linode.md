@@ -15,7 +15,8 @@ Ansible will be used to configure the Virtual Private Server you will be setting
 
 You will need a Programmers Editors like [Microsoft's VSCode](https://code.visualstudio.com) to make edits below. Download and unzip the file at the link to install it.
 
-Start by opening the Terminal application on your Mac in `Applications/Utilities` (you can also search for `terminal`)
+Start by opening the Terminal application on your Mac in `Applications/Utilities` 
+This can be also found by typing `terminal`' in Spotlight.
 
 Install Homebrew by copying the following into your Terminal: 
 
@@ -39,7 +40,7 @@ Now your computer has the tools it needs to interface with Linode.
 
 * Follow the Linode instructions to [create a Linode account here](https://www.linode.com/docs/guides/getting-started/)
 
-### Create an SSH Key
+## Create an SSH Key
 
 To host your Docnow Application on Linode you will need SSH
 (Secure Shell, allows for secure access to remote servers).

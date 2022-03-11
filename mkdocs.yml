@@ -32,6 +32,7 @@ nav:
   - Troubleshooting: troubleshooting.md
   - API: api.md
   - Database: db.md
+  - Docnow App Configuration: configuration.md
 
 plugins:
 - search
