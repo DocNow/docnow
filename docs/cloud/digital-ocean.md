@@ -117,11 +117,6 @@ DigitalOcean droplet in the next steps.
 Your machine will connect to a server and admin that you alone have
 access to, and from which you control the machine's settings.
 
-DocNow is written to run on most cloud providers including DigitalOcean
-and you will need a virtual private server host (VPS).
-
-(Advanced users may install the docnow application using DigitalOcean's
-API.)
 
 **Create an account**
 
