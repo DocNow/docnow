@@ -182,8 +182,8 @@ export class Twitter {
         }
       })
       .catch(err => {
-        log.error(`error during search: ${err}`)
-        cb(err, null, null)
+        log.error(`error during search: ${err.message}`)
+        cb(err.message, null, null)
       })
     }
 

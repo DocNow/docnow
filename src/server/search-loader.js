@@ -95,7 +95,7 @@ export class SearchLoader {
   }
 
   async stopJob(job) {
-    log.info(`no more search results for search job ${job.id}`)
+    log.info(`stopping job ${job.id}`)
     await this.db.updateSearchJob({
       id: job.id,
       ended: new Date()
@@ -119,7 +119,6 @@ export class SearchLoader {
       log.info(`flagging search ${query.search.id} as inactive`)
     }
   }
-
 
   async stop() {
     this.active = false
