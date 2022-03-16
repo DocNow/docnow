@@ -258,8 +258,13 @@ export class Twitter {
         this.filter(cb)
       }
     } catch (error) {
-      await timer(1000)
-      log.error(`stream disconnected with error`, error)
+      if (error.message && error.message.match(/stream unresponsive/i)) {
+        log.warn(`caught stream unresponsive error, sleeping and reconnecting`)
+        await timer(1000)
+        this.filter(cb)
+      } else {
+        log.error(`unexpected stream error, unable to reconnect ${error}`)
+      }
     }
   }
 
