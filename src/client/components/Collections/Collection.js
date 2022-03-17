@@ -172,12 +172,12 @@ export default class CollectionList extends Component {
           })}
         </>)
       } else {
-        userTweets = <Typography variant="body1">There are no tweets by you in this collection.</Typography>
+        userTweets = <Typography variant="h2">There are no tweets by you in this collection</Typography>
       }
     }
 
     let usersInfo = (<div>
-      <Typography variant="body2">Showing {this.props.search.users.length} of {this.props.search.userCount.toLocaleString()} users.</Typography>
+
       {this.props.search.users.map((u, i) => {
         return (
           <a
@@ -226,8 +226,9 @@ export default class CollectionList extends Component {
           </Grid>
           <Grid item xs={12}>
             <Intro>
-              Description: { this.props.search.description || 'No description provided for this collection.' } <br/>   Collected by <strong><a href={`https://twitter.com/${this.props.search.creator.twitterScreenName}`}>
+              Description: { this.props.search.description || 'No description provided for this collection.' } <br/> <strong>{tweetCount}</strong> tweets in collection | collected by <strong><a href={`https://twitter.com/${this.props.search.creator.twitterScreenName}`}>
                   @{this.props.search.creator.twitterScreenName}</a></strong>
+
             </Intro>
           </Grid>
         </Grid>
@@ -244,6 +245,7 @@ export default class CollectionList extends Component {
           <Card raised className={`${card.Card} ${style.Card}`} >
             <CardContent>
               <div className={style.CardTitle}>
+              <Typography variant="h2"><center>Showing {this.props.search.users.length} of {this.props.search.userCount.toLocaleString()} users</center></Typography><br />
                 <Paper id="box" elevation={4} className={style.Search}>
                   <TextField name="usersearch" className={style.SearchInput}
                     onChange={(e) => this.handleFindUserInput(e.target.value)} />
@@ -258,9 +260,9 @@ export default class CollectionList extends Component {
           <Card raised className={`${card.Card} ${style.Card}`} >
             <CardContent>
               <Typography variant="h2" className={style.CardTitle}>
-                {tweetCount} tweets (all users)
+                10 random tweets from collection
               </Typography>
-              <Typography variant="body2">Showing random tweets from the collection.</Typography>
+                            <hr />
               { this.props.randomTweets.slice(0, 10).map((t, i) => (
                 <Tweet key={`t${i}`} data={t} />
               ))}

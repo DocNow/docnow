@@ -15,9 +15,7 @@ export default class Tweet extends Component {
               @{ this.props.data.user.screenName}
           </div>
         </div>
-        <div className={style.TweetTime}>
-          <a href={this.props.data.twitterUrl}>{created}</a>
-        </div>
+
         <p>{this.props.data.text}</p>
         <div className={style.TweetStats}>
           <div className={style.Inline}>
@@ -27,6 +25,9 @@ export default class Tweet extends Component {
           <div className={style.Inline}>
             <ion-icon name="heart-empty"></ion-icon>&nbsp;
             {this.props.data.likeCount}
+          </div>
+          <div className={style.TweetTime}>
+            <a href={this.props.data.twitterUrl}>{created}</a>
           </div>
           <div className={style.Inline}>
             {this.props.action ? this.props.action.name : ''}

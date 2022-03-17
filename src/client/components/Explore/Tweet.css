@@ -3,19 +3,20 @@
   background-color: #fff;
   break-inside: avoid;
   margin: 2px;
-  padding: 6px;
+  padding: 5px;
   padding-left: 2px;
   margin-left: 5px;
-  margin-top:6px;
+  margin-top:5px;
   font-size: 10pt;
   width: 94%;
-  border: thin solid rgb(204, 214, 221);
-  border-radius: 15px;
+  border-bottom: thin solid rgb(204, 214, 221);
+  border-radius: 0px;
 }
 
 .Tweet p {
   margin: 5px;
-  font-size: 10pt;
+  padding-top: 5px;
+  font-size: 11pt;
   color: #333;
 }
 
@@ -34,17 +35,18 @@
   display: flex;
   align-items: center;
   justify-content: flex-start;
+  font-weight: bold;
 }
 
 .TweetName {
   padding-left: 5px;
   padding-right: 10px;
+  font-weight: bold;
 }
 
 .TweetTime {
   display: flex;
-  justify-content: flex-start;
-  border-bottom: 1px solid #CCCCCC;
+  justify-content: flex-end;
   padding-right: 10px;
   padding-bottom: 3px;
   padding-top: 3px;
@@ -53,10 +55,10 @@
 
 .TweetStats {
   height: 2em;
-  border-top: 1px solid #CCCCCC;
   background-color: #ffffff;
   display: flex;
   justify-content: space-around;
+  margin: 5px;
   align-items: center;
 }
 

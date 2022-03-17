@@ -1,12 +1,11 @@
 .User {
   background-color: #ffffff;
   border: thin solid rgb(204, 214, 221);
-  border-radius: 15px;
   margin: 2px;
   margin-top:6px;
   padding: 2px;
   font-size: 10pt;
-  width: 94%;
+  width: 96%;
   padding-left: 2px;
   margin-left: 5px;
 }
@@ -31,11 +30,13 @@
 
 .UserName {
   padding-left: 10px;
-  padding-right: 10px;
+  padding-right: 5px;
+  font-weight: bold;
 }
 
 .UserHandle {
-  padding-right: 10px;
+  padding-right: 2px;
+  font-weight: bold;
 }
 
 .UserStats {
@@ -52,7 +53,6 @@
   height: 3em;
   display: flex;
   justify-content: space-around;
-  border-bottom: 1px solid #CCCCCC;
   margin-top: 2px;
   padding-right: 10px;
   align-items: center;
@@ -69,5 +69,6 @@
 
 .User p {
   margin: 5px;
-  font-size: 10pt;
+  font-size: 11pt;
+  padding-left: 10px;
 }

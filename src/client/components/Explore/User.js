@@ -52,25 +52,19 @@ export default class User extends Component {
           <div className={style.Inline}>
             <b>{this.props.data.tweetsCount.toLocaleString()}</b> <br /> tweets
           </div>
+          <div className={style.Inline}>
+            <b>{tweetsPerHour}</b> <br /> tw/hr
+          </div>
         </div>
         <p>{this.props.data.description}</p>
-        <div className={style.Inline}>
-          <ion-icon name="pin"></ion-icon>
-          &nbsp;
-          {this.props.data.location}
-        </div>
-        <div className={style.Inline}>
+        <div>
           <a href={this.props.data.url} target="_new">
-            {this.props.data.url}
+          <p>  {this.props.data.url}</p>
           </a>
         </div>
         <div className={style.UserStats}>
           <div className={style.Inline}>
-            <ion-icon name="logo-twitter"></ion-icon> &nbsp;
-            {this.props.data.tweetsInSearch}
-          </div>
-          <div className={style.Inline}>
-            {tweetsPerHour} tw/hr
+            <b>{this.props.data.tweetsInSearch}</b> tweets in this collection
           </div>
         </div>
       </div>
