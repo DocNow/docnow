@@ -226,7 +226,7 @@ export default class CollectionList extends Component {
           </Grid>
           <Grid item xs={12}>
             <Intro>
-              Description: { this.props.search.description || 'No description provided for this collection.' } <br/> <strong>{tweetCount}</strong> tweets in collection | collected by <strong><a href={`https://twitter.com/${this.props.search.creator.twitterScreenName}`}>
+              Description: { this.props.search.description || 'No description provided for this collection.' } <br/> <strong>{tweetCount}</strong> tweets | collected by <strong><a href={`https://twitter.com/${this.props.search.creator.twitterScreenName}`}>
                   @{this.props.search.creator.twitterScreenName}</a></strong>
 
             </Intro>
