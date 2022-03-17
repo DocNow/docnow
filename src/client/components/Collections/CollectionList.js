@@ -54,11 +54,11 @@ export default class CollectionList extends Component {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell>Tweets</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Last Update</TableCell>
-              <TableCell>Collector</TableCell>
+              <TableCell><b>Title</b></TableCell>
+              <TableCell><b>Tweets</b></TableCell>
+              <TableCell><b>Created</b></TableCell>
+              <TableCell><b>Last Update</b></TableCell>
+              <TableCell><b>Collector</b></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

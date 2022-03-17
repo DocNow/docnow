@@ -3,6 +3,7 @@ import { Redirect } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 
+
 import Table from '@material-ui/core/Table'
 import TableHead from '@material-ui/core/TableHead'
 import TableCell from '@material-ui/core/TableCell'
@@ -74,14 +75,14 @@ export default class SearchInfo extends Component {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Title</TableCell>
-            <TableCell>Tweet Count</TableCell>
-            <TableCell>Created</TableCell>
-            <TableCell>Tweet Time Range</TableCell>
-            <TableCell>Active</TableCell>
+            <TableCell><b>Title</b></TableCell>
+            <TableCell><center><b>Tweet Count</b></center></TableCell>
+            <TableCell><center><b>Created</b></center></TableCell>
+            <TableCell><center><b>Time Range</b></center></TableCell>
+            <TableCell><center><b>Active</b></center></TableCell>
             {setPublicColumn}
-            <TableCell>Archive</TableCell>
-            <TableCell>Delete</TableCell>
+            <TableCell><center><b>Archive</b></center></TableCell>
+            <TableCell><center><b>Delete</b></center></TableCell>
           </TableRow>
         </TableHead>
         <TableRow>
@@ -90,40 +91,41 @@ export default class SearchInfo extends Component {
               text={this.props.search.title}
               update={(t) => {this.updateTitle(t)}} />
           </TableCell>
-          <TableCell>
+          <TableCell><center>
             <ion-icon name="logo-twitter"></ion-icon>
             &nbsp;
-            { this.props.search.tweetCount.toLocaleString() }
+            { this.props.search.tweetCount.toLocaleString() }</center>
           </TableCell>
-          <TableCell>
-            {created}
+          <TableCell><center>
+            {created} </center>
           </TableCell>
-          <TableCell>
-            {minDate} - {maxDate}
+          <TableCell><center>
+            {minDate} - {maxDate} </center>
           </TableCell>
-          <TableCell>
+          <TableCell><center>
             <SearchToggle
               search={this.props.search}
               instanceTweetText={this.props.instanceTweetText}
               academic={this.props.academic}
               user={this.props.user}
-              updateSearch={this.props.updateSearch} />  
+              updateSearch={this.props.updateSearch} /></center>
           </TableCell>
           {setPublicCell}
-          <TableCell>
+          <TableCell><center>
             <DownloadOptions
               id={this.props.search.id}
               active={this.props.search.active}
               archived={this.props.search.archived}
-              archiveStarted={this.props.search.archiveStarted}/>
+              archiveStarted={this.props.search.archiveStarted}/></center>
           </TableCell>
-          <TableCell>
+          <TableCell><center>
             <Trash
               id={this.props.search.id}
-              deleteSearch={(id) => {this.delete(id)}} />
+              deleteSearch={(id) => {this.delete(id)}} /></center>
           </TableCell>
         </TableRow>
       </Table>
+
     )
   }
 

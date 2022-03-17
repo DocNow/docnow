@@ -2,11 +2,13 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import SearchInfo from './SearchInfo'
 import InsightsBody from './InsightsBody'
+import Intro from '../Intro'
+
 
 import style from './Insights.css'
 
 export default class Insights extends Component {
-  
+
   componentDidMount() {
     this.props.resetTwitterSearch()
     this.fetchData()
@@ -45,7 +47,12 @@ export default class Insights extends Component {
     }
 
     return (
+
       <div className={style.Insights}>
+      <Intro>
+        {this.props.search.title.toUpperCase()} INSIGHTS
+       </Intro>
+       <br />
 
         <SearchInfo
           search={this.props.search}

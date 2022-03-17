@@ -17,7 +17,7 @@ export default class DownloadOptions extends Component {
 
     if (this.props.active) {
       disabled = true
-      titleTxt = <span className={style.DownloadInfo}>Stop collecting to download.</span>
+      titleTxt = <span className={style.DownloadInfo}>Stop collecting to download</span>
     } else if (this.props.archiveStarted) {
       text = 'Creating Archive'
       onClick = null
