@@ -50,7 +50,7 @@ export default class Insights extends Component {
 
       <div className={style.Insights}>
       <Intro>
-        {this.props.search.title.toUpperCase()} INSIGHTS
+        {this.props.search.title.toUpperCase()} INSIGHTS OVERVIEW
        </Intro>
        <br />
 
