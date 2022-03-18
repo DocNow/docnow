@@ -56,7 +56,7 @@ export default class SearchInfo extends Component {
     const maxDate = moment(this.props.search.maxDate).local().format('LLL')
 
     // only admins can change whether a search is public (a collection) or not
-    const setPublicColumn = this.props.user.admin ? <TableCell>Public</TableCell> : ''
+    const setPublicColumn = this.props.user.admin ? <TableCell><b>Public</b></TableCell> : ''
     let setPublicCell = ''
     if (this.props.user.admin) {
       setPublicCell = (
