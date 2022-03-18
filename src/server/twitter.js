@@ -8,7 +8,7 @@ import emojiRegex from 'emoji-regex'
 import { AllHtmlEntities } from 'html-entities'
 import { flatten, EVERYTHING } from 'flatten-tweet'
 
-const emojiMatch = emojiRegex()
+const emojMatch = emojiRegex()
 const entities = new AllHtmlEntities()
 
 function decode(s) {
@@ -261,6 +261,10 @@ export class Twitter {
       if (error.message && error.message.match(/stream unresponsive/i)) {
         log.warn(`caught stream unresponsive error, sleeping and reconnecting`)
         await timer(1000)
+        this.filter(cb)
+      } else if (error.match(/ECONNREFUSED/)) {
+        log.warn(`caught connection refused, sleeping and reconnecting`)
+        await timer(10000)
         this.filter(cb)
       } else {
         log.error(`unexpected stream error, unable to reconnect ${error}`)
