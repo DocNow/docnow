@@ -4,18 +4,22 @@
   margin-top: 5px;
   margin-left: 2px;
   margin-bottom: 2px;
-  padding-top: 6px;
-  font-size: 10pt;
-  width: 94%;
+  font-size: 11pt;
+  width: 97%;
   margin-left: 5px;
   border: thin solid rgb(204, 214, 221);
-  border-radius: 15px;
   text-align: center;
+  padding-bottom: 5px;
 }
 
 .WebPreview a {
   color: rgb(27, 149, 224);
 }
+
 .WebPreview span {
   display: block;
+}
+
+.WebPreview img {
+  width: 100%;
 }

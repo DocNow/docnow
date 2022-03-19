@@ -1,14 +1,22 @@
 .Header {
-  padding: 1em;
+  padding: .5em;
 }
 
 .Title {
   text-align: center;
-}
+  padding-bottom: 0px !important;
 
+}
+.Typography {
+  padding-top: 0px !important;
+}
 .FoundInSearch td {
   font-weight: bold;
   background-color: lightgreen;
+}
+
+p {
+  padding: 0px !important;
 }
 
 .NotFoundInSearch {

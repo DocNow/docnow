@@ -44,21 +44,20 @@ export default class CollectionList extends Component {
           <Grid item xs={3}>
             <FindMe user={this.props.user} />
           </Grid>
-          <Grid item xs={12} className={style.Title}>
+          <Grid item xs={12}>
             <Intro>
-              { this.props.settings.instanceDescription } <br/>
-              All active collections being collected by our DocNow users are listed below. Use the Find Me <sup><small><b>beta</b></small></sup>&nbsp; feature to learn if your content is in a collection and how you can specify or revoke consent.
+              { this.props.settings.instanceDescription }. All active collections being collected by our DocNow users are listed below. Use the Find Me <sup><small><b>beta</b></small></sup>&nbsp; feature to learn if your content is in a collection and how you can specify or revoke consent.
             </Intro>
           </Grid>
         </Grid>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Title</TableCell>
-              <TableCell>Tweets</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Last Update</TableCell>
-              <TableCell>Collector</TableCell>
+              <TableCell><b>Title</b></TableCell>
+              <TableCell><b>Tweets</b></TableCell>
+              <TableCell><b>Created</b></TableCell>
+              <TableCell><b>Last Update</b></TableCell>
+              <TableCell><b>Collector</b></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>

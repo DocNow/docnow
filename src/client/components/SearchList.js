@@ -49,13 +49,13 @@ export default class SearchList extends Component {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell>Title</TableCell>
-            <TableCell>Tweet Count</TableCell>
-            <TableCell>Created</TableCell>
-            <TableCell>Active</TableCell>
+            <TableCell><b>Title</b></TableCell>
+            <TableCell><b>Tweet Count</b></TableCell>
+            <TableCell><b>Created</b></TableCell>
+            <TableCell><b>Active</b></TableCell>
             {setPublicColumn}
-            <TableCell>Archive</TableCell>
-            <TableCell>Delete</TableCell>
+            <TableCell><center><b>Archive</b></center></TableCell>
+            <TableCell><b>Delete</b></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
