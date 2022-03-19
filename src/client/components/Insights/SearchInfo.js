@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Redirect } from 'react-router-dom'
+import { Redirect, Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import moment from 'moment'
 
@@ -56,11 +56,11 @@ export default class SearchInfo extends Component {
     const maxDate = moment(this.props.search.maxDate).local().format('LLL')
 
     // only admins can change whether a search is public (a collection) or not
-    const setPublicColumn = this.props.user.admin ? <TableCell><b>Public</b></TableCell> : ''
+    const setPublicColumn = this.props.user.admin ? <TableCell align="center"><b>Public</b></TableCell> : ''
     let setPublicCell = ''
     if (this.props.user.admin) {
       setPublicCell = (
-        <TableCell>
+        <TableCell align="center">
           <SearchPublic
             public={this.props.search.public}
             id={this.props.search.id}
@@ -71,18 +71,24 @@ export default class SearchInfo extends Component {
       )
     }
 
+    let consent = '0'
+    if (this.props.search && this.props.search.actions.length > 0) {
+      consent = <Link to={`/search/${this.props.search.id}/actions/`}>{this.props.search.actions.length}</Link>
+    }
+
     return (
       <Table>
         <TableHead>
           <TableRow>
             <TableCell><b>Title</b></TableCell>
-            <TableCell><center><b>Tweet Count</b></center></TableCell>
-            <TableCell><center><b>Created</b></center></TableCell>
-            <TableCell><center><b>Time Range</b></center></TableCell>
-            <TableCell><center><b>Active</b></center></TableCell>
+            <TableCell align="center"><b>Tweet Count</b></TableCell>
+            <TableCell align="center"><b>Created</b></TableCell>
+            <TableCell align="center"><b>Time Range</b></TableCell>
+            <TableCell align="center"><b>Consent</b></TableCell>
+            <TableCell align="center"><b>Active</b></TableCell>
             {setPublicColumn}
-            <TableCell><center><b>Archive</b></center></TableCell>
-            <TableCell><center><b>Delete</b></center></TableCell>
+            <TableCell align="center"><b>Archive</b></TableCell>
+            <TableCell align="center"><b>Delete</b></TableCell>
           </TableRow>
         </TableHead>
         <TableRow>
@@ -91,37 +97,40 @@ export default class SearchInfo extends Component {
               text={this.props.search.title}
               update={(t) => {this.updateTitle(t)}} />
           </TableCell>
-          <TableCell><center>
+          <TableCell align="center">
             <ion-icon name="logo-twitter"></ion-icon>
             &nbsp;
-            { this.props.search.tweetCount.toLocaleString() }</center>
+            { this.props.search.tweetCount.toLocaleString() }
           </TableCell>
-          <TableCell><center>
-            {created} </center>
+          <TableCell align="center">
+            {created}
           </TableCell>
-          <TableCell><center>
-            {minDate} - {maxDate} </center>
+          <TableCell align="center">
+            {minDate} - {maxDate}
           </TableCell>
-          <TableCell><center>
+          <TableCell align="center">
+            {consent}
+          </TableCell>
+          <TableCell align="center">
             <SearchToggle
               search={this.props.search}
               instanceTweetText={this.props.instanceTweetText}
               academic={this.props.academic}
               user={this.props.user}
-              updateSearch={this.props.updateSearch} /></center>
+              updateSearch={this.props.updateSearch} />
           </TableCell>
           {setPublicCell}
-          <TableCell><center>
+          <TableCell align="center">
             <DownloadOptions
               id={this.props.search.id}
               active={this.props.search.active}
               archived={this.props.search.archived}
-              archiveStarted={this.props.search.archiveStarted}/></center>
+              archiveStarted={this.props.search.archiveStarted}/>
           </TableCell>
-          <TableCell><center>
+          <TableCell align="center">
             <Trash
               id={this.props.search.id}
-              deleteSearch={(id) => {this.delete(id)}} /></center>
+              deleteSearch={(id) => {this.delete(id)}} />
           </TableCell>
         </TableRow>
       </Table>
