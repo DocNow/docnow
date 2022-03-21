@@ -295,9 +295,9 @@ var Twitter = /*#__PURE__*/function () {
             cb(null, [], null);
           }
         })["catch"](function (err) {
-          _logger["default"].error("error during search: ".concat(err));
+          _logger["default"].error("error during search: ".concat(err.message));
 
-          cb(err, null, null);
+          cb(err.message, null, null);
         });
       };
 
@@ -562,19 +562,64 @@ var Twitter = /*#__PURE__*/function () {
                 this.filter(cb);
 
               case 62:
-                _context5.next = 69;
+                _context5.next = 88;
                 break;
 
               case 64:
                 _context5.prev = 64;
                 _context5.t2 = _context5["catch"](17);
-                _context5.next = 68;
+
+                if (!(_context5.t2.message && _context5.t2.message.match(/stream unresponsive/i))) {
+                  _context5.next = 73;
+                  break;
+                }
+
+                _logger["default"].warn("caught stream unresponsive error, sleeping and reconnecting");
+
+                _context5.next = 70;
                 return (0, _utils.timer)(1000);
 
-              case 68:
-                _logger["default"].error("stream disconnected with error", _context5.t2);
+              case 70:
+                this.filter(cb);
+                _context5.next = 88;
+                break;
 
-              case 69:
+              case 73:
+                if (!(_context5.t2.message && _context5.t2.message.match(/ECONNREFUSED/))) {
+                  _context5.next = 80;
+                  break;
+                }
+
+                _logger["default"].warn("caught connection refused, sleeping and reconnecting");
+
+                _context5.next = 77;
+                return (0, _utils.timer)(10000);
+
+              case 77:
+                this.filter(cb);
+                _context5.next = 88;
+                break;
+
+              case 80:
+                if (!(_context5.t2.message && _context5.t2.message.match(/ENOTFOUND/))) {
+                  _context5.next = 87;
+                  break;
+                }
+
+                _logger["default"].warn("caught address not found, sleeping and reconnecting");
+
+                _context5.next = 84;
+                return (0, _utils.timer)(10000);
+
+              case 84:
+                this.filter(cb);
+                _context5.next = 88;
+                break;
+
+              case 87:
+                _logger["default"].error("unexpected stream error, unable to reconnect ".concat(_context5.t2));
+
+              case 88:
               case "end":
                 return _context5.stop();
             }
