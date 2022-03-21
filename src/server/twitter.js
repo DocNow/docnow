@@ -182,8 +182,8 @@ export class Twitter {
         }
       })
       .catch(err => {
-        log.error(`error during search: ${err}`)
-        cb(err, null, null)
+        log.error(`error during search: ${err.message}`)
+        cb(err.message, null, null)
       })
     }
 
@@ -258,8 +258,21 @@ export class Twitter {
         this.filter(cb)
       }
     } catch (error) {
-      await timer(1000)
-      log.error(`stream disconnected with error`, error)
+      if (error.message && error.message.match(/stream unresponsive/i)) {
+        log.warn(`caught stream unresponsive error, sleeping and reconnecting`)
+        await timer(1000)
+        this.filter(cb)
+      } else if (error.message && error.message.match(/ECONNREFUSED/)) {
+        log.warn(`caught connection refused, sleeping and reconnecting`)
+        await timer(10000)
+        this.filter(cb)
+      } else if (error.message && error.message.match(/ENOTFOUND/)) {
+        log.warn(`caught address not found, sleeping and reconnecting`)
+        await timer(10000)
+        this.filter(cb)
+      } else {
+        log.error(`unexpected stream error, unable to reconnect ${error}`)
+      }
     }
   }
 
