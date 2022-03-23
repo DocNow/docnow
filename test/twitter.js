@@ -92,10 +92,14 @@ describe('twitter', () => {
 
   it('should list filter rules', async () => {
     const rules = await t.getFilterRules()
-    equal(rules.length, 1)
-    equal(rules[0].value, 'music')
-    equal(rules[0].tag, tag)
-    ok(rules[0].id)
+    ok(rules.length > 0)
+    let found = false
+    for (const rule of rules) {
+      if (rule.tag === tag && rule.value === 'music' && rule.id) {
+        found = true
+      }
+    }
+    ok(found, 'found rule with tag, value and id')
   })
 
   it('should filter', async () => {
