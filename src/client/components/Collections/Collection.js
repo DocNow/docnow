@@ -120,13 +120,14 @@ export default class CollectionList extends Component {
     const tweetCount = this.props.search.tweetCount.toLocaleString()
 
     let userTweets = (<div className={style.CardInnerContent}>
-      <Typography variant="body1">Authenticate to Twitter to find out if any of your tweets are
-      in this collection.</Typography>
-      <Typography variant="body1">When you authenticate, you can specify consent, request removal,
-      or start a conversation with the collector about your content.</Typography>
+      <Typography variant="body1">
+        <p>Authenticate with Twitter to find out if any of your tweets are in this collection.</p>
+        <p>When you authenticate, you can specify consent, request removal, or start a conversation with the collector about your content.</p>
+      </Typography>
     </div>)
 
-    if (this.props.user) {
+    // if the user is logged into DocNow we can see if we have their tweets
+    if (this.props.user && this.props.user.twitterScreenName) {
       if (this.props.user.tweets && this.props.user.tweets.length > 0) {
         const userTweetsContent = this.props.user.tweets || []
         const consentDisabled = this.state.selectedTweets.length == 0
