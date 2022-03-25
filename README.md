@@ -1,6 +1,6 @@
 # docnow
 
-[![Build Status](https://github.com/docnow/docnow/workflows/tests/badge.svg)](https://github.com/docnow/docnow/actions/workflows/main.yml)
+[![Build Status](https://github.com/docnow/docnow/actions/workflows/main.yml/badge.svg)](https://github.com/docnow/docnow/actions/workflows/main.yml)
 
 The web is a big and rapidly changing place, so it can be challenging to
 discover what resources related to a particular event or topic are in need of
