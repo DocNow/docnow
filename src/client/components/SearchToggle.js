@@ -111,7 +111,7 @@ export default class SearchToggle extends Component {
     // it has academic search turned on for the twitter app credentials
     const minDate = this.props.academic 
       ? new Date(2006, 2, 21)
-      : moment().subtract(1, 'week')
+      : moment().subtract(6, 'days')
 
     return (
       <>

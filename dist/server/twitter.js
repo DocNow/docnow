@@ -59,12 +59,13 @@ function decode(s) {
 
 var Twitter = /*#__PURE__*/function () {
   function Twitter() {
-    var keys = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var opts = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     (0, _classCallCheck2["default"])(this, Twitter);
-    this.consumerKey = keys.consumerKey || process.env.CONSUMER_KEY;
-    this.consumerSecret = keys.consumerSecret || process.env.CONSUMER_SECRET;
-    this.accessToken = keys.accessToken || process.env.ACCESS_TOKEN;
-    this.accessTokenSecret = keys.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET; // user client for Twitter v1.1 and v2 API endpoints
+    this.consumerKey = opts.consumerKey || process.env.CONSUMER_KEY;
+    this.consumerSecret = opts.consumerSecret || process.env.CONSUMER_SECRET;
+    this.accessToken = opts.accessToken || process.env.ACCESS_TOKEN;
+    this.accessTokenSecret = opts.accessTokenSecret || process.env.ACCESS_TOKEN_SECRET;
+    this.academic = opts.academic || false; // user client for Twitter v1.1 and v2 API endpoints
 
     if (this.consumerKey && this.consumerSecret && this.accessToken && this.accessTokenSecret) {
       this.twit = new _twit["default"]({
@@ -235,9 +236,11 @@ var Twitter = /*#__PURE__*/function () {
 
       var endpoint = 'tweets/search/recent';
 
-      if (opts.all) {
+      if (opts.all && this.academic) {
         endpoint = 'tweets/search/all';
         params.start_time = '2006-03-21T00:00:00Z';
+      } else if (opts.all) {
+        _logger["default"].warn('unable to search all endpoint since settings indicate no academic access');
       }
 
       if (opts.startDate) {
@@ -285,7 +288,7 @@ var Twitter = /*#__PURE__*/function () {
             }), nextToken).then(function () {
               if (!opts.once && newTotal < count && nextToken) {
                 recurse(nextToken, newTotal);
-              } else {
+              } else if (!opts.once) {
                 cb(null, [], null);
               }
             });

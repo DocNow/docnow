@@ -933,7 +933,8 @@ var Database = /*#__PURE__*/function () {
 
                 return _context15.abrupt("return", new _twitter.Twitter({
                   consumerKey: settings.appKey,
-                  consumerSecret: settings.appSecret
+                  consumerSecret: settings.appSecret,
+                  academic: settings.academic
                 }));
 
               case 7:

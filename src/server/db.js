@@ -313,6 +313,7 @@ export class Database {
       return new Twitter({
         consumerKey: settings.appKey,
         consumerSecret: settings.appSecret,
+        academic: settings.academic
       })
     } else {
       return null
