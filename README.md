@@ -14,6 +14,7 @@ ensure ethical practices in web archiving by building conversations between
 archivists and the communities they are documenting.
 
 The DocNow application has been developed with generous support from the 
+[Mellon Foundation].
 
 ## Architecture
 
