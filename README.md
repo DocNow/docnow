@@ -13,6 +13,8 @@ content more collaborative and consentful. The purpose of DocNow is to help
 ensure ethical practices in web archiving by building conversations between
 archivists and the communities they are documenting.
 
+The DocNow application has been developed with generous support from the 
+
 ## Architecture
 
 This repository houses the complete DocNow application which is comprised of a
@@ -70,3 +72,4 @@ Do not commit `.env.test` to git since it contains your Twitter API keys!
 [Appraisal]: https://www2.archivists.org/glossary/terms/a/appraisal
 [releases]: https://github.com/DocNow/docnow/releases
 [trunk based development]: https://www.atlassian.com/continuous-delivery/continuous-integration/trunk-based-development
+[Mellon Foundation]: https://mellon.org/
