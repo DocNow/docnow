@@ -13,6 +13,9 @@ content more collaborative and consentful. The purpose of DocNow is to help
 ensure ethical practices in web archiving by building conversations between
 archivists and the communities they are documenting.
 
+The DocNow application has been developed with generous support from the 
+[Mellon Foundation].
+
 ## Architecture
 
 This repository houses the complete DocNow application which is comprised of a
@@ -50,3 +53,4 @@ If you run into an error above
 [Git]: https://git-scm.com/
 [Docker]: https://www.docker.com/
 [Appraisal]: https://www2.archivists.org/glossary/terms/a/appraisal
+[Mellon Foundation]: https://mellon.org/
