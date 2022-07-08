@@ -27,6 +27,7 @@ nav:
     - Overview: cloud/index.md
     - AWS: cloud/aws.md
     - Digital Ocean: cloud/digital-ocean.md
+    - Google Cloud Platform: cloud/google.md
     - Linode: cloud/linode.md
     - Scaleway: cloud/scaleway.md
   - Troubleshooting: troubleshooting.md
