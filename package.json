@@ -70,7 +70,7 @@
     "express-session": "^1.17.2",
     "flatten-tweet": "0.0.4",
     "html-entities": "^1.4.0",
-    "knex": "^0.21.21",
+    "knex": "^2.4.0",
     "metaweb": "^0.1.0",
     "mocha": "^6.2.3",
     "moment": "^2.29.1",
