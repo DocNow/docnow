@@ -48,7 +48,7 @@ Now your computer has the tools it needs to interface with AWS.
   * Instance Image: Select "Linux/Unix" platform 
   * Select blueprint:  "OS Only"
   * Select: either Ubuntu (18.04) or Centos (7)
-  * Change SSH Key Pair: Selecte "Create New"
+  * Change SSH Key Pair: Select "Create New"
     * Give your keys the name DocNowLightSailKeyPair
     * Download your keys
     * Move key file to the `/Users/[yourusername]/.ssh hidden directory withthe following:
