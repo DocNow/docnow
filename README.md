@@ -8,7 +8,7 @@ DocNow is an appraisal tool for the social web that uses Twitter.
 
 DocNow allows archivists to tap into conversations in Twitter to help them
 discover what web resources for collection and preservation. It also connects
-archivists with content creators in order to make the process of archving web
+archivists with content creators in order to make the process of archiving web
 content more collaborative and consentful. The purpose of DocNow is to help
 ensure ethical practices in web archiving by building conversations between
 archivists and the communities they are documenting.
